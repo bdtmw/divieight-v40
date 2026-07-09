@@ -15,6 +15,8 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as OnboardingIndexRouteImport } from './routes/onboarding.index'
+import { Route as OnboardingIdentityRouteImport } from './routes/onboarding.identity'
 import { Route as ListingsNewRouteImport } from './routes/listings.new'
 import { Route as ListingsIdRouteImport } from './routes/listings.$id'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
@@ -49,6 +51,16 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OnboardingIndexRoute = OnboardingIndexRouteImport.update({
+  id: '/onboarding/',
+  path: '/onboarding/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingIdentityRoute = OnboardingIdentityRouteImport.update({
+  id: '/onboarding/identity',
+  path: '/onboarding/identity',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ListingsNewRoute = ListingsNewRouteImport.update({
   id: '/listings/new',
   path: '/listings/new',
@@ -75,6 +87,8 @@ export interface FileRoutesByFullPath {
   '/auth/callback': typeof AuthCallbackRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
+  '/onboarding/identity': typeof OnboardingIdentityRoute
+  '/onboarding/': typeof OnboardingIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -86,6 +100,8 @@ export interface FileRoutesByTo {
   '/auth/callback': typeof AuthCallbackRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
+  '/onboarding/identity': typeof OnboardingIdentityRoute
+  '/onboarding': typeof OnboardingIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -98,6 +114,8 @@ export interface FileRoutesById {
   '/auth/callback': typeof AuthCallbackRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
+  '/onboarding/identity': typeof OnboardingIdentityRoute
+  '/onboarding/': typeof OnboardingIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +129,8 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/listings/$id'
     | '/listings/new'
+    | '/onboarding/identity'
+    | '/onboarding/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -122,6 +142,8 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/listings/$id'
     | '/listings/new'
+    | '/onboarding/identity'
+    | '/onboarding'
   id:
     | '__root__'
     | '/'
@@ -133,6 +155,8 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/listings/$id'
     | '/listings/new'
+    | '/onboarding/identity'
+    | '/onboarding/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -145,6 +169,8 @@ export interface RootRouteChildren {
   AuthCallbackRoute: typeof AuthCallbackRoute
   ListingsIdRoute: typeof ListingsIdRoute
   ListingsNewRoute: typeof ListingsNewRoute
+  OnboardingIdentityRoute: typeof OnboardingIdentityRoute
+  OnboardingIndexRoute: typeof OnboardingIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -191,6 +217,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/onboarding/': {
+      id: '/onboarding/'
+      path: '/onboarding'
+      fullPath: '/onboarding/'
+      preLoaderRoute: typeof OnboardingIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding/identity': {
+      id: '/onboarding/identity'
+      path: '/onboarding/identity'
+      fullPath: '/onboarding/identity'
+      preLoaderRoute: typeof OnboardingIdentityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/listings/new': {
       id: '/listings/new'
       path: '/listings/new'
@@ -225,6 +265,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthCallbackRoute: AuthCallbackRoute,
   ListingsIdRoute: ListingsIdRoute,
   ListingsNewRoute: ListingsNewRoute,
+  OnboardingIdentityRoute: OnboardingIdentityRoute,
+  OnboardingIndexRoute: OnboardingIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
