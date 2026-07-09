@@ -14,7 +14,7 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "List your property in fractional 1/8th shares. A trusted co-ownership platform for modern sellers.",
+          "divieight helps homeowners list, manage, and sell their property as eight fractional co-ownership shares.",
       },
     ],
   }),

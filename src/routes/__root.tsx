@@ -83,17 +83,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "divieight is a fractional real estate co-ownership platform for sellers to list and manage properties sold in 1/8th shares.",
+          "divieight helps homeowners list, manage, and sell their property as eight fractional co-ownership shares.",
       },
       { name: "author", content: "divieight" },
       { property: "og:title", content: "divieight — Sell Your Home in 1/8th Shares" },
       {
         property: "og:description",
         content:
-          "List and manage your property as eight fractional co-ownership shares.",
+          "divieight helps homeowners list, manage, and sell their property as eight fractional co-ownership shares.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "divieight — Sell Your Home in 1/8th Shares" },
+      { name: "twitter:description", content: "divieight helps homeowners list, manage, and sell their property as eight fractional co-ownership shares." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/cc9a3540-9333-444d-85df-635984fbba58/id-preview-50acbde3--1b711437-0847-4eb8-96ae-d712f5d23fda.lovable.app-1783622348037.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/cc9a3540-9333-444d-85df-635984fbba58/id-preview-50acbde3--1b711437-0847-4eb8-96ae-d712f5d23fda.lovable.app-1783622348037.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
