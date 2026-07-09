@@ -18,28 +18,34 @@ export type Database = {
         Row: {
           created_at: string
           email: string
+          exit_type: string | null
           full_name: string
           id: string
           onboarding_status: string
           phone: string | null
+          retained_shares: number | null
           updated_at: string
         }
         Insert: {
           created_at?: string
           email: string
+          exit_type?: string | null
           full_name?: string
           id: string
           onboarding_status?: string
           phone?: string | null
+          retained_shares?: number | null
           updated_at?: string
         }
         Update: {
           created_at?: string
           email?: string
+          exit_type?: string | null
           full_name?: string
           id?: string
           onboarding_status?: string
           phone?: string | null
+          retained_shares?: number | null
           updated_at?: string
         }
         Relationships: []
