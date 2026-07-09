@@ -16,6 +16,7 @@ import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OnboardingIndexRouteImport } from './routes/onboarding.index'
+import { Route as OnboardingPropertyRouteImport } from './routes/onboarding.property'
 import { Route as OnboardingIdentityRouteImport } from './routes/onboarding.identity'
 import { Route as ListingsNewRouteImport } from './routes/listings.new'
 import { Route as ListingsIdRouteImport } from './routes/listings.$id'
@@ -56,6 +57,11 @@ const OnboardingIndexRoute = OnboardingIndexRouteImport.update({
   path: '/onboarding/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OnboardingPropertyRoute = OnboardingPropertyRouteImport.update({
+  id: '/onboarding/property',
+  path: '/onboarding/property',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingIdentityRoute = OnboardingIdentityRouteImport.update({
   id: '/onboarding/identity',
   path: '/onboarding/identity',
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/identity': typeof OnboardingIdentityRoute
+  '/onboarding/property': typeof OnboardingPropertyRoute
   '/onboarding/': typeof OnboardingIndexRoute
 }
 export interface FileRoutesByTo {
@@ -101,6 +108,7 @@ export interface FileRoutesByTo {
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/identity': typeof OnboardingIdentityRoute
+  '/onboarding/property': typeof OnboardingPropertyRoute
   '/onboarding': typeof OnboardingIndexRoute
 }
 export interface FileRoutesById {
@@ -115,6 +123,7 @@ export interface FileRoutesById {
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/identity': typeof OnboardingIdentityRoute
+  '/onboarding/property': typeof OnboardingPropertyRoute
   '/onboarding/': typeof OnboardingIndexRoute
 }
 export interface FileRouteTypes {
@@ -130,6 +139,7 @@ export interface FileRouteTypes {
     | '/listings/$id'
     | '/listings/new'
     | '/onboarding/identity'
+    | '/onboarding/property'
     | '/onboarding/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -143,6 +153,7 @@ export interface FileRouteTypes {
     | '/listings/$id'
     | '/listings/new'
     | '/onboarding/identity'
+    | '/onboarding/property'
     | '/onboarding'
   id:
     | '__root__'
@@ -156,6 +167,7 @@ export interface FileRouteTypes {
     | '/listings/$id'
     | '/listings/new'
     | '/onboarding/identity'
+    | '/onboarding/property'
     | '/onboarding/'
   fileRoutesById: FileRoutesById
 }
@@ -170,6 +182,7 @@ export interface RootRouteChildren {
   ListingsIdRoute: typeof ListingsIdRoute
   ListingsNewRoute: typeof ListingsNewRoute
   OnboardingIdentityRoute: typeof OnboardingIdentityRoute
+  OnboardingPropertyRoute: typeof OnboardingPropertyRoute
   OnboardingIndexRoute: typeof OnboardingIndexRoute
 }
 
@@ -224,6 +237,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/onboarding/property': {
+      id: '/onboarding/property'
+      path: '/onboarding/property'
+      fullPath: '/onboarding/property'
+      preLoaderRoute: typeof OnboardingPropertyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding/identity': {
       id: '/onboarding/identity'
       path: '/onboarding/identity'
@@ -266,6 +286,7 @@ const rootRouteChildren: RootRouteChildren = {
   ListingsIdRoute: ListingsIdRoute,
   ListingsNewRoute: ListingsNewRoute,
   OnboardingIdentityRoute: OnboardingIdentityRoute,
+  OnboardingPropertyRoute: OnboardingPropertyRoute,
   OnboardingIndexRoute: OnboardingIndexRoute,
 }
 export const routeTree = rootRouteImport
