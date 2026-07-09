@@ -16,33 +16,42 @@ export type Database = {
     Tables: {
       sellers: {
         Row: {
+          address: string | null
           created_at: string
+          date_of_birth: string | null
           email: string
           exit_type: string | null
           full_name: string
           id: string
+          id_document_url: string | null
           onboarding_status: string
           phone: string | null
           retained_shares: number | null
           updated_at: string
         }
         Insert: {
+          address?: string | null
           created_at?: string
+          date_of_birth?: string | null
           email: string
           exit_type?: string | null
           full_name?: string
           id: string
+          id_document_url?: string | null
           onboarding_status?: string
           phone?: string | null
           retained_shares?: number | null
           updated_at?: string
         }
         Update: {
+          address?: string | null
           created_at?: string
+          date_of_birth?: string | null
           email?: string
           exit_type?: string | null
           full_name?: string
           id?: string
+          id_document_url?: string | null
           onboarding_status?: string
           phone?: string | null
           retained_shares?: number | null
