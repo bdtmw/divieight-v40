@@ -1,7 +1,19 @@
-import { Link } from "@tanstack/react-router";
-import { UserCircle2 } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { UserCircle2, LogOut } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export function NavBar() {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  async function onSignOut() {
+    await supabase.auth.signOut();
+    toast.success("Signed out");
+    navigate({ to: "/" });
+  }
+
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -31,20 +43,37 @@ export function NavBar() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Link
-            to="/login"
-            className="hidden text-sm font-medium text-muted-foreground transition-colors hover:text-foreground sm:inline-flex"
-          >
-            Sign in
-          </Link>
-          <button
-            type="button"
-            className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-2 py-1.5 text-sm text-foreground shadow-sm transition-colors hover:bg-secondary"
-            aria-label="Profile menu"
-          >
-            <UserCircle2 className="h-5 w-5 text-muted-foreground" />
-            <span className="hidden pr-1 text-xs font-medium sm:inline">Account</span>
-          </button>
+          {loading ? null : user ? (
+            <>
+              <span className="hidden max-w-[180px] truncate text-xs text-muted-foreground sm:inline">
+                {user.email}
+              </span>
+              <button
+                type="button"
+                onClick={onSignOut}
+                className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-sm text-foreground shadow-sm transition-colors hover:bg-secondary"
+              >
+                <LogOut className="h-4 w-4 text-muted-foreground" />
+                <span className="hidden text-xs font-medium sm:inline">Sign out</span>
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="hidden text-sm font-medium text-muted-foreground transition-colors hover:text-foreground sm:inline-flex"
+              >
+                Sign in
+              </Link>
+              <Link
+                to="/register"
+                className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground shadow-sm transition-transform hover:-translate-y-0.5"
+              >
+                <UserCircle2 className="h-4 w-4" />
+                Get started
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>

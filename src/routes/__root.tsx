@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { NavBar } from "@/components/NavBar";
+import { Toaster } from "sonner";
 
 function NotFoundComponent() {
   return (
@@ -144,6 +145,7 @@ function RootComponent() {
           © {new Date().getFullYear()} divieight — Fractional real estate co-ownership
         </footer>
       </div>
+      <Toaster position="top-right" richColors closeButton />
     </QueryClientProvider>
   );
 }

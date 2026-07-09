@@ -1,5 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { PagePlaceholder } from "@/components/PagePlaceholder";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { useState, type FormEvent } from "react";
+import { z } from "zod";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
+import { getPostLoginRedirect } from "@/lib/post-login";
+import { AuthCard, GoogleButton, Divider } from "@/components/AuthCard";
+import { Field } from "@/components/Field";
 
 export const Route = createFileRoute("/register")({
   head: () => ({
@@ -8,11 +15,154 @@ export const Route = createFileRoute("/register")({
       { name: "description", content: "Create your divieight seller account." },
     ],
   }),
-  component: () => (
-    <PagePlaceholder
-      eyebrow="Account"
-      title="Create your seller account"
-      description="Registration flow will be wired up in the next step."
-    />
-  ),
+  component: RegisterPage,
 });
+
+const phoneRegex = /^[+()\-\s\d]{7,20}$/;
+
+const schema = z.object({
+  email: z.string().trim().email({ message: "Enter a valid email address" }).max(255),
+  phone: z
+    .string()
+    .trim()
+    .min(7, { message: "Enter a valid phone number" })
+    .regex(phoneRegex, { message: "Enter a valid phone number" }),
+  password: z.string().min(8, { message: "Password must be at least 8 characters" }).max(72),
+});
+
+function RegisterPage() {
+  const navigate = useNavigate();
+  const [values, setValues] = useState({ email: "", phone: "", password: "" });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
+
+  const set = (k: keyof typeof values) => (e: React.ChangeEvent<HTMLInputElement>) =>
+    setValues((v) => ({ ...v, [k]: e.target.value }));
+
+  async function onSubmit(e: FormEvent) {
+    e.preventDefault();
+    setErrors({});
+    const parsed = schema.safeParse(values);
+    if (!parsed.success) {
+      const fieldErrors: Record<string, string> = {};
+      for (const issue of parsed.error.issues) {
+        fieldErrors[issue.path[0] as string] = issue.message;
+      }
+      setErrors(fieldErrors);
+      return;
+    }
+
+    setSubmitting(true);
+    const { data, error } = await supabase.auth.signUp({
+      email: parsed.data.email,
+      password: parsed.data.password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/dashboard`,
+        data: { phone: parsed.data.phone },
+      },
+    });
+    setSubmitting(false);
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    // If email confirmation is required, session will be null.
+    if (!data.session) {
+      toast.success("Check your email to confirm your account.");
+      navigate({ to: "/login" });
+      return;
+    }
+
+    // Signed in immediately — new sellers start with onboarding.
+    const to = data.user ? await getPostLoginRedirect(data.user.id) : "/onboarding";
+    toast.success("Account created");
+    navigate({ to });
+  }
+
+  async function onGoogle() {
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: `${window.location.origin}/auth/callback`,
+    });
+    if (result.error) {
+      toast.error(result.error.message ?? "Google sign-in failed");
+      return;
+    }
+    if (!result.redirected && "tokens" in result) {
+      const { data } = await supabase.auth.getUser();
+      if (data.user) {
+        const to = await getPostLoginRedirect(data.user.id);
+        navigate({ to });
+      }
+    }
+  }
+
+  return (
+    <AuthCard
+      eyebrow="Seller Account"
+      title="Create your account"
+      description="Start listing your property in 1/8th shares."
+      footer={
+        <>
+          Already have an account?{" "}
+          <Link to="/login" className="font-medium text-foreground hover:text-accent">
+            Sign in
+          </Link>
+        </>
+      }
+    >
+      <GoogleButton onClick={onGoogle} disabled={submitting} label="Sign up with Google" />
+      <Divider />
+
+      <form onSubmit={onSubmit} className="space-y-4" noValidate>
+        <Field
+          label="Email"
+          type="email"
+          name="email"
+          autoComplete="email"
+          placeholder="you@example.com"
+          value={values.email}
+          onChange={set("email")}
+          error={errors.email}
+          required
+        />
+        <Field
+          label="Phone number"
+          type="tel"
+          name="phone"
+          autoComplete="tel"
+          placeholder="+1 555 123 4567"
+          value={values.phone}
+          onChange={set("phone")}
+          error={errors.phone}
+          hint="We'll use this later to reach you about your listings."
+          required
+        />
+        <Field
+          label="Password"
+          type="password"
+          name="password"
+          autoComplete="new-password"
+          placeholder="At least 8 characters"
+          value={values.password}
+          onChange={set("password")}
+          error={errors.password}
+          required
+        />
+
+        <button
+          type="submit"
+          disabled={submitting}
+          className="inline-flex h-11 w-full items-center justify-center rounded-md bg-primary text-sm font-semibold text-primary-foreground shadow-[var(--shadow-elegant)] transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70"
+        >
+          {submitting ? "Creating account…" : "Create seller account"}
+        </button>
+
+        <p className="text-center text-xs text-muted-foreground">
+          By creating an account you agree to our terms and privacy policy.
+        </p>
+      </form>
+    </AuthCard>
+  );
+}
