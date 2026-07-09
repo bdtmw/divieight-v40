@@ -83,10 +83,18 @@ function RegisterPage() {
 
   async function onGoogle() {
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+      redirect_uri: `${window.location.origin}/auth/callback`,
     });
     if (result.error) {
       toast.error(result.error.message ?? "Google sign-in failed");
+      return;
+    }
+    if (!result.redirected && "tokens" in result) {
+      const { data } = await supabase.auth.getUser();
+      if (data.user) {
+        const to = await getPostLoginRedirect(data.user.id);
+        navigate({ to });
+      }
     }
   }
 
