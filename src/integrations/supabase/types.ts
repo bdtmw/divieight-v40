@@ -14,6 +14,62 @@ export type Database = {
   }
   public: {
     Tables: {
+      properties: {
+        Row: {
+          address: string
+          city: string
+          co_owners: Json
+          created_at: string
+          encumbrances: Json
+          has_co_owners: boolean
+          id: string
+          seller_id: string
+          state: string
+          status: string
+          supporting_documents: Json
+          updated_at: string
+          zip: string
+        }
+        Insert: {
+          address: string
+          city: string
+          co_owners?: Json
+          created_at?: string
+          encumbrances?: Json
+          has_co_owners?: boolean
+          id?: string
+          seller_id: string
+          state: string
+          status?: string
+          supporting_documents?: Json
+          updated_at?: string
+          zip: string
+        }
+        Update: {
+          address?: string
+          city?: string
+          co_owners?: Json
+          created_at?: string
+          encumbrances?: Json
+          has_co_owners?: boolean
+          id?: string
+          seller_id?: string
+          state?: string
+          status?: string
+          supporting_documents?: Json
+          updated_at?: string
+          zip?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "properties_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sellers: {
         Row: {
           address: string | null
