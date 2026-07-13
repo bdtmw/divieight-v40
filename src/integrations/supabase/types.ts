@@ -94,6 +94,50 @@ export type Database = {
           },
         ]
       }
+      property_media: {
+        Row: {
+          caption: string | null
+          created_at: string
+          display_order: number
+          id: string
+          media_type: string
+          narrative: string | null
+          property_id: string
+          updated_at: string
+          url: string | null
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          media_type?: string
+          narrative?: string | null
+          property_id: string
+          updated_at?: string
+          url?: string | null
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          media_type?: string
+          narrative?: string | null
+          property_id?: string
+          updated_at?: string
+          url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_media_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sellers: {
         Row: {
           address: string | null
