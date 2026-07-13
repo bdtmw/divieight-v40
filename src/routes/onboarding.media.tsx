@@ -211,7 +211,15 @@ function MediaScreen() {
     }
     setSubmitting(true);
 
-    const photoRows = items
+    type MediaInsert = {
+      property_id: string;
+      url: string | null;
+      caption: string | null;
+      display_order: number;
+      media_type: string;
+      narrative?: string | null;
+    };
+    const photoRows: MediaInsert[] = items
       .filter((i) => i.status === "done" && i.storagePath)
       .map((i, idx) => ({
         property_id: propertyId,
@@ -221,7 +229,7 @@ function MediaScreen() {
         media_type: "photo",
       }));
 
-    const rows: Array<Record<string, unknown>> = [...photoRows];
+    const rows: MediaInsert[] = [...photoRows];
     const narrativeTrimmed = narrative.trim();
     if (narrativeTrimmed) {
       rows.push({
