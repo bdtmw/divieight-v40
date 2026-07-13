@@ -17,47 +17,71 @@ export type Database = {
       properties: {
         Row: {
           address: string
+          amenities: Json
+          bathrooms: number | null
+          bedrooms: number | null
           city: string
           co_owners: Json
           created_at: string
+          description: string | null
           encumbrances: Json
           has_co_owners: boolean
           id: string
+          listing_price: number | null
+          property_type: string | null
           seller_id: string
+          square_footage: number | null
           state: string
           status: string
           supporting_documents: Json
           updated_at: string
+          usage_tag: string | null
           zip: string
         }
         Insert: {
           address: string
+          amenities?: Json
+          bathrooms?: number | null
+          bedrooms?: number | null
           city: string
           co_owners?: Json
           created_at?: string
+          description?: string | null
           encumbrances?: Json
           has_co_owners?: boolean
           id?: string
+          listing_price?: number | null
+          property_type?: string | null
           seller_id: string
+          square_footage?: number | null
           state: string
           status?: string
           supporting_documents?: Json
           updated_at?: string
+          usage_tag?: string | null
           zip: string
         }
         Update: {
           address?: string
+          amenities?: Json
+          bathrooms?: number | null
+          bedrooms?: number | null
           city?: string
           co_owners?: Json
           created_at?: string
+          description?: string | null
           encumbrances?: Json
           has_co_owners?: boolean
           id?: string
+          listing_price?: number | null
+          property_type?: string | null
           seller_id?: string
+          square_footage?: number | null
           state?: string
           status?: string
           supporting_documents?: Json
           updated_at?: string
+          usage_tag?: string | null
           zip?: string
         }
         Relationships: [

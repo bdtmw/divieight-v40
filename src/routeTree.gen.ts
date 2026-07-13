@@ -17,6 +17,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OnboardingIndexRouteImport } from './routes/onboarding.index'
 import { Route as OnboardingPropertyRouteImport } from './routes/onboarding.property'
+import { Route as OnboardingMediaRouteImport } from './routes/onboarding.media'
 import { Route as OnboardingListingRouteImport } from './routes/onboarding.listing'
 import { Route as OnboardingIdentityRouteImport } from './routes/onboarding.identity'
 import { Route as ListingsNewRouteImport } from './routes/listings.new'
@@ -63,6 +64,11 @@ const OnboardingPropertyRoute = OnboardingPropertyRouteImport.update({
   path: '/onboarding/property',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OnboardingMediaRoute = OnboardingMediaRouteImport.update({
+  id: '/onboarding/media',
+  path: '/onboarding/media',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingListingRoute = OnboardingListingRouteImport.update({
   id: '/onboarding/listing',
   path: '/onboarding/listing',
@@ -101,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/identity': typeof OnboardingIdentityRoute
   '/onboarding/listing': typeof OnboardingListingRoute
+  '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/onboarding/': typeof OnboardingIndexRoute
 }
@@ -116,6 +123,7 @@ export interface FileRoutesByTo {
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/identity': typeof OnboardingIdentityRoute
   '/onboarding/listing': typeof OnboardingListingRoute
+  '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/onboarding': typeof OnboardingIndexRoute
 }
@@ -132,6 +140,7 @@ export interface FileRoutesById {
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/identity': typeof OnboardingIdentityRoute
   '/onboarding/listing': typeof OnboardingListingRoute
+  '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/onboarding/': typeof OnboardingIndexRoute
 }
@@ -149,6 +158,7 @@ export interface FileRouteTypes {
     | '/listings/new'
     | '/onboarding/identity'
     | '/onboarding/listing'
+    | '/onboarding/media'
     | '/onboarding/property'
     | '/onboarding/'
   fileRoutesByTo: FileRoutesByTo
@@ -164,6 +174,7 @@ export interface FileRouteTypes {
     | '/listings/new'
     | '/onboarding/identity'
     | '/onboarding/listing'
+    | '/onboarding/media'
     | '/onboarding/property'
     | '/onboarding'
   id:
@@ -179,6 +190,7 @@ export interface FileRouteTypes {
     | '/listings/new'
     | '/onboarding/identity'
     | '/onboarding/listing'
+    | '/onboarding/media'
     | '/onboarding/property'
     | '/onboarding/'
   fileRoutesById: FileRoutesById
@@ -195,6 +207,7 @@ export interface RootRouteChildren {
   ListingsNewRoute: typeof ListingsNewRoute
   OnboardingIdentityRoute: typeof OnboardingIdentityRoute
   OnboardingListingRoute: typeof OnboardingListingRoute
+  OnboardingMediaRoute: typeof OnboardingMediaRoute
   OnboardingPropertyRoute: typeof OnboardingPropertyRoute
   OnboardingIndexRoute: typeof OnboardingIndexRoute
 }
@@ -257,6 +270,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingPropertyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/onboarding/media': {
+      id: '/onboarding/media'
+      path: '/onboarding/media'
+      fullPath: '/onboarding/media'
+      preLoaderRoute: typeof OnboardingMediaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding/listing': {
       id: '/onboarding/listing'
       path: '/onboarding/listing'
@@ -307,6 +327,7 @@ const rootRouteChildren: RootRouteChildren = {
   ListingsNewRoute: ListingsNewRoute,
   OnboardingIdentityRoute: OnboardingIdentityRoute,
   OnboardingListingRoute: OnboardingListingRoute,
+  OnboardingMediaRoute: OnboardingMediaRoute,
   OnboardingPropertyRoute: OnboardingPropertyRoute,
   OnboardingIndexRoute: OnboardingIndexRoute,
 }
