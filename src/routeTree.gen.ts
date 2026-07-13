@@ -20,6 +20,7 @@ import { Route as OnboardingPropertyRouteImport } from './routes/onboarding.prop
 import { Route as OnboardingMediaRouteImport } from './routes/onboarding.media'
 import { Route as OnboardingListingRouteImport } from './routes/onboarding.listing'
 import { Route as OnboardingIdentityRouteImport } from './routes/onboarding.identity'
+import { Route as OnboardingAgreementRouteImport } from './routes/onboarding.agreement'
 import { Route as ListingsNewRouteImport } from './routes/listings.new'
 import { Route as ListingsIdRouteImport } from './routes/listings.$id'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
@@ -79,6 +80,11 @@ const OnboardingIdentityRoute = OnboardingIdentityRouteImport.update({
   path: '/onboarding/identity',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OnboardingAgreementRoute = OnboardingAgreementRouteImport.update({
+  id: '/onboarding/agreement',
+  path: '/onboarding/agreement',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ListingsNewRoute = ListingsNewRouteImport.update({
   id: '/listings/new',
   path: '/listings/new',
@@ -105,6 +111,7 @@ export interface FileRoutesByFullPath {
   '/auth/callback': typeof AuthCallbackRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
+  '/onboarding/agreement': typeof OnboardingAgreementRoute
   '/onboarding/identity': typeof OnboardingIdentityRoute
   '/onboarding/listing': typeof OnboardingListingRoute
   '/onboarding/media': typeof OnboardingMediaRoute
@@ -121,6 +128,7 @@ export interface FileRoutesByTo {
   '/auth/callback': typeof AuthCallbackRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
+  '/onboarding/agreement': typeof OnboardingAgreementRoute
   '/onboarding/identity': typeof OnboardingIdentityRoute
   '/onboarding/listing': typeof OnboardingListingRoute
   '/onboarding/media': typeof OnboardingMediaRoute
@@ -138,6 +146,7 @@ export interface FileRoutesById {
   '/auth/callback': typeof AuthCallbackRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
+  '/onboarding/agreement': typeof OnboardingAgreementRoute
   '/onboarding/identity': typeof OnboardingIdentityRoute
   '/onboarding/listing': typeof OnboardingListingRoute
   '/onboarding/media': typeof OnboardingMediaRoute
@@ -156,6 +165,7 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/listings/$id'
     | '/listings/new'
+    | '/onboarding/agreement'
     | '/onboarding/identity'
     | '/onboarding/listing'
     | '/onboarding/media'
@@ -172,6 +182,7 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/listings/$id'
     | '/listings/new'
+    | '/onboarding/agreement'
     | '/onboarding/identity'
     | '/onboarding/listing'
     | '/onboarding/media'
@@ -188,6 +199,7 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/listings/$id'
     | '/listings/new'
+    | '/onboarding/agreement'
     | '/onboarding/identity'
     | '/onboarding/listing'
     | '/onboarding/media'
@@ -205,6 +217,7 @@ export interface RootRouteChildren {
   AuthCallbackRoute: typeof AuthCallbackRoute
   ListingsIdRoute: typeof ListingsIdRoute
   ListingsNewRoute: typeof ListingsNewRoute
+  OnboardingAgreementRoute: typeof OnboardingAgreementRoute
   OnboardingIdentityRoute: typeof OnboardingIdentityRoute
   OnboardingListingRoute: typeof OnboardingListingRoute
   OnboardingMediaRoute: typeof OnboardingMediaRoute
@@ -291,6 +304,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingIdentityRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/onboarding/agreement': {
+      id: '/onboarding/agreement'
+      path: '/onboarding/agreement'
+      fullPath: '/onboarding/agreement'
+      preLoaderRoute: typeof OnboardingAgreementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/listings/new': {
       id: '/listings/new'
       path: '/listings/new'
@@ -325,6 +345,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthCallbackRoute: AuthCallbackRoute,
   ListingsIdRoute: ListingsIdRoute,
   ListingsNewRoute: ListingsNewRoute,
+  OnboardingAgreementRoute: OnboardingAgreementRoute,
   OnboardingIdentityRoute: OnboardingIdentityRoute,
   OnboardingListingRoute: OnboardingListingRoute,
   OnboardingMediaRoute: OnboardingMediaRoute,
