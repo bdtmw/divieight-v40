@@ -183,6 +183,57 @@ export type Database = {
         }
         Relationships: []
       }
+      signed_documents: {
+        Row: {
+          created_at: string
+          document_hash: string | null
+          document_type: string
+          document_version: string
+          id: string
+          ip_address: string | null
+          property_id: string | null
+          seller_id: string
+          signed_name: string
+        }
+        Insert: {
+          created_at?: string
+          document_hash?: string | null
+          document_type: string
+          document_version: string
+          id?: string
+          ip_address?: string | null
+          property_id?: string | null
+          seller_id: string
+          signed_name: string
+        }
+        Update: {
+          created_at?: string
+          document_hash?: string | null
+          document_type?: string
+          document_version?: string
+          id?: string
+          ip_address?: string | null
+          property_id?: string | null
+          seller_id?: string
+          signed_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "signed_documents_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "signed_documents_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
