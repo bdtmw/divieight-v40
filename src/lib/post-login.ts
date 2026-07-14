@@ -11,8 +11,22 @@ export async function getPostLoginRedirect(userId: string): Promise<string> {
     .eq("id", userId)
     .maybeSingle();
 
-  if (error || !data || data.onboarding_status === "not_started") {
-    return "/onboarding";
+  if (error || !data) return "/onboarding";
+
+  switch (data.onboarding_status) {
+    case "not_started":
+      return "/onboarding";
+    case "identity_pending":
+      return "/onboarding/identity";
+    case "property_verification_pending":
+      return "/onboarding/property";
+    case "listing_creation_pending":
+      return "/onboarding/listing";
+    case "media_pending":
+      return "/onboarding/media";
+    case "agreement_pending":
+      return "/onboarding/agreement";
+    default:
+      return "/dashboard";
   }
-  return "/dashboard";
 }
