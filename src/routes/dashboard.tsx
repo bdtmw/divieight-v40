@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { EightSlicesTracker } from "@/components/EightSlicesTracker";
+import { ListingStatusTimeline, type ListingStatus } from "@/components/ListingStatusTimeline";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -23,6 +24,7 @@ type Listing = {
   city: string;
   state: string;
   status: string;
+  listing_status: ListingStatus;
   listing_price: number | null;
   property_type: string | null;
 };
@@ -36,7 +38,7 @@ function Dashboard() {
     if (!user) return;
     supabase
       .from("properties")
-      .select("id, address, city, state, status, listing_price, property_type")
+      .select("id, address, city, state, status, listing_status, listing_price, property_type")
       .eq("seller_id", user.id)
       .order("created_at", { ascending: false })
       .then(({ data }) => {
@@ -97,6 +99,9 @@ function Dashboard() {
               </div>
               <div className="mt-5">
                 <EightSlicesTracker propertyId={l.id} />
+              </div>
+              <div className="mt-5 border-t border-border pt-4">
+                <ListingStatusTimeline status={l.listing_status ?? "forming"} />
               </div>
             </Link>
           ))
