@@ -1,10 +1,11 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { OnboardingStepper } from "@/components/OnboardingStepper";
 import { Field } from "@/components/Field";
+import { EightSlicesTracker } from "@/components/EightSlicesTracker";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/onboarding/listing")({
@@ -64,6 +65,23 @@ function ListingScreen() {
 
   const [errors, setErrors] = useState<Errors>({});
   const [submitting, setSubmitting] = useState(false);
+  const [retainedShares, setRetainedShares] = useState<number>(0);
+
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from("sellers")
+      .select("exit_type, retained_shares")
+      .eq("id", user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data?.exit_type === "hybrid_exit" && typeof data.retained_shares === "number") {
+          setRetainedShares(data.retained_shares);
+        } else {
+          setRetainedShares(0);
+        }
+      });
+  }, [user]);
 
   const listingPrice = useMemo(() => Number(priceStr.replace(/[^0-9.]/g, "")) || 0, [priceStr]);
   const sharePrice = listingPrice > 0 ? listingPrice / 8 : 0;
@@ -406,6 +424,9 @@ function ListingScreen() {
                   Your description will appear here.
                 </p>
               )}
+              <div className="mt-5 border-t border-border pt-4">
+                <EightSlicesTracker retainedShares={retainedShares} reservedShares={0} compact />
+              </div>
               {selectedAmenities.length > 0 ? (
                 <div className="mt-4 flex flex-wrap gap-1.5">
                   {selectedAmenities.slice(0, 6).map((a) => (
