@@ -28,6 +28,7 @@ export type Database = {
           has_co_owners: boolean
           id: string
           listing_price: number | null
+          listing_status: Database["public"]["Enums"]["listing_status"]
           property_type: string | null
           seller_id: string
           square_footage: number | null
@@ -51,6 +52,7 @@ export type Database = {
           has_co_owners?: boolean
           id?: string
           listing_price?: number | null
+          listing_status?: Database["public"]["Enums"]["listing_status"]
           property_type?: string | null
           seller_id: string
           square_footage?: number | null
@@ -74,6 +76,7 @@ export type Database = {
           has_co_owners?: boolean
           id?: string
           listing_price?: number | null
+          listing_status?: Database["public"]["Enums"]["listing_status"]
           property_type?: string | null
           seller_id?: string
           square_footage?: number | null
@@ -242,7 +245,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      listing_status: "forming" | "system_lock" | "closing_ready" | "active"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -369,6 +372,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      listing_status: ["forming", "system_lock", "closing_ready", "active"],
+    },
   },
 } as const
