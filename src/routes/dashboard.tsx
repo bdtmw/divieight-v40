@@ -100,6 +100,9 @@ function Dashboard() {
               <div className="mt-5">
                 <EightSlicesTracker propertyId={l.id} />
               </div>
+              <div className="mt-5 border-t border-border pt-4">
+                <ListingStatusTimeline status={l.listing_status ?? "forming"} />
+              </div>
             </Link>
           ))
         )}
