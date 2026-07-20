@@ -24,6 +24,7 @@ type Listing = {
   city: string;
   state: string;
   status: string;
+  listing_status: ListingStatus;
   listing_price: number | null;
   property_type: string | null;
 };
@@ -37,7 +38,7 @@ function Dashboard() {
     if (!user) return;
     supabase
       .from("properties")
-      .select("id, address, city, state, status, listing_price, property_type")
+      .select("id, address, city, state, status, listing_status, listing_price, property_type")
       .eq("seller_id", user.id)
       .order("created_at", { ascending: false })
       .then(({ data }) => {
