@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { EightSlicesTracker } from "@/components/EightSlicesTracker";
+import { ListingStatusTimeline, type ListingStatus } from "@/components/ListingStatusTimeline";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
