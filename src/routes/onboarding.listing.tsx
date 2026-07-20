@@ -1,10 +1,11 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { OnboardingStepper } from "@/components/OnboardingStepper";
 import { Field } from "@/components/Field";
+import { EightSlicesTracker } from "@/components/EightSlicesTracker";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/onboarding/listing")({
