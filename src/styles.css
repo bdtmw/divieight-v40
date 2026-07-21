@@ -49,8 +49,8 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.19 0.02 260);
 
-  /* Logo blue */
-  --primary: oklch(0.66 0.13 235);
+  /* Teal primary — buttons/CTAs (#46ACB4) */
+  --primary: oklch(0.68 0.07 200);
   --primary-foreground: oklch(0.99 0 0);
 
   --secondary: oklch(0.96 0.008 220);
@@ -59,9 +59,9 @@
   --muted: oklch(0.955 0.008 220);
   --muted-foreground: oklch(0.48 0.02 240);
 
-  /* Teal accent #46ACB4 */
-  --accent: oklch(0.68 0.07 200);
-  --accent-foreground: oklch(0.19 0.02 240);
+  /* Logo blue accent — highlights */
+  --accent: oklch(0.66 0.13 235);
+  --accent-foreground: oklch(0.99 0 0);
 
   --destructive: oklch(0.55 0.22 27);
   --destructive-foreground: oklch(0.985 0 0);
