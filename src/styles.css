@@ -40,8 +40,8 @@
 :root {
   --radius: 0.5rem;
 
-  /* Warm off-white canvas */
-  --background: oklch(0.985 0.005 85);
+  /* Clean white canvas */
+  --background: oklch(1 0 0);
   --foreground: oklch(0.19 0.02 260);
 
   --card: oklch(1 0 0);
