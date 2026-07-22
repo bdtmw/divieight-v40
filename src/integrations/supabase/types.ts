@@ -25,11 +25,13 @@ export type Database = {
           created_at: string
           description: string | null
           encumbrances: Json
+          exit_type: string | null
           has_co_owners: boolean
           id: string
           listing_price: number | null
           listing_status: Database["public"]["Enums"]["listing_status"]
           property_type: string | null
+          retained_shares: number | null
           seller_id: string
           square_footage: number | null
           state: string
@@ -49,11 +51,13 @@ export type Database = {
           created_at?: string
           description?: string | null
           encumbrances?: Json
+          exit_type?: string | null
           has_co_owners?: boolean
           id?: string
           listing_price?: number | null
           listing_status?: Database["public"]["Enums"]["listing_status"]
           property_type?: string | null
+          retained_shares?: number | null
           seller_id: string
           square_footage?: number | null
           state: string
@@ -73,11 +77,13 @@ export type Database = {
           created_at?: string
           description?: string | null
           encumbrances?: Json
+          exit_type?: string | null
           has_co_owners?: boolean
           id?: string
           listing_price?: number | null
           listing_status?: Database["public"]["Enums"]["listing_status"]
           property_type?: string | null
+          retained_shares?: number | null
           seller_id?: string
           square_footage?: number | null
           state?: string
