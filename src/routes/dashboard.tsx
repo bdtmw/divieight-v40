@@ -71,7 +71,7 @@ function Dashboard() {
       const [{ data: sellerData }, { data: props }] = await Promise.all([
         supabase
           .from("sellers")
-          .select("full_name, email, onboarding_status, enrollment_fee_paid, exit_type")
+          .select("full_name, email, onboarding_status, exit_type")
           .eq("id", user.id)
           .maybeSingle(),
         supabase
