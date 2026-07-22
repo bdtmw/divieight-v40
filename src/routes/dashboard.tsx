@@ -96,8 +96,8 @@ function Dashboard() {
           .in("property_id", ids)
           .order("display_order", { ascending: true });
         const firstByProp = new Map<string, string>();
-        (media ?? []).forEach((m: { property_id: string; url: string }) => {
-          if (!firstByProp.has(m.property_id)) firstByProp.set(m.property_id, m.url);
+        (media ?? []).forEach((m: { property_id: string; url: string | null }) => {
+          if (m.url && !firstByProp.has(m.property_id)) firstByProp.set(m.property_id, m.url);
         });
         propRows.forEach((p) => {
           p.primary_photo = firstByProp.get(p.id) ?? null;
