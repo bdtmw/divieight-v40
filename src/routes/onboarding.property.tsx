@@ -129,6 +129,19 @@ function PropertyScreen() {
       ? coOwners.map((n) => n.trim()).filter(Boolean)
       : [];
 
+    // Snapshot the seller's current exit election onto this property so future
+    // changes to the seller-wide default don't retroactively alter old listings.
+    const { data: sellerSnap } = await supabase
+      .from("sellers")
+      .select("exit_type, retained_shares")
+      .eq("id", user.id)
+      .maybeSingle();
+    const snapshotExit = sellerSnap?.exit_type ?? "full_exit";
+    const snapshotRetained =
+      snapshotExit === "hybrid_exit" && typeof sellerSnap?.retained_shares === "number"
+        ? sellerSnap.retained_shares
+        : 0;
+
     const { data: property, error: insertErr } = await supabase
       .from("properties")
       .insert({
@@ -138,6 +151,8 @@ function PropertyScreen() {
         state: addr.state.trim(),
         zip: addr.zip.trim(),
         status: "draft",
+        exit_type: snapshotExit,
+        retained_shares: snapshotRetained,
         has_co_owners: hasCoOwners,
         co_owners: cleanedCoOwners,
         encumbrances: {
