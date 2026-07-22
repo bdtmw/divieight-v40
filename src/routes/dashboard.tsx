@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { EightSlicesTracker } from "@/components/EightSlicesTracker";
 import { ListingStatusTimeline, type ListingStatus } from "@/components/ListingStatusTimeline";
+import { NotificationsBell } from "@/components/NotificationsBell";
+import { CheckCircle2, Home, LayoutGrid, Wallet } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -27,86 +30,317 @@ type Listing = {
   listing_status: ListingStatus;
   listing_price: number | null;
   property_type: string | null;
+  exit_type: string | null;
+  retained_shares: number | null;
+  primary_photo?: string | null;
 };
+
+type SellerInfo = {
+  full_name: string | null;
+  email: string | null;
+  onboarding_status: string | null;
+  enrollment_fee_paid: boolean | null;
+  exit_type: string | null;
+};
+
+function formatPrice(n: number | null) {
+  if (n == null) return "—";
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(n);
+}
 
 function Dashboard() {
   const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
+  const [seller, setSeller] = useState<SellerInfo | null>(null);
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) return;
-    supabase
-      .from("properties")
-      .select("id, address, city, state, status, listing_status, listing_price, property_type")
-      .eq("seller_id", user.id)
-      .order("created_at", { ascending: false })
-      .then(({ data }) => {
-        setListings((data as Listing[]) ?? []);
-        setLoading(false);
-      });
-  }, [user]);
+    if (authLoading) return;
+    if (!user) {
+      navigate({ to: "/login" });
+      return;
+    }
+
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      const [{ data: sellerData }, { data: props }] = await Promise.all([
+        supabase
+          .from("sellers")
+          .select("full_name, email, onboarding_status, enrollment_fee_paid, exit_type")
+          .eq("id", user.id)
+          .maybeSingle(),
+        supabase
+          .from("properties")
+          .select(
+            "id, address, city, state, status, listing_status, listing_price, property_type, exit_type, retained_shares",
+          )
+          .eq("seller_id", user.id)
+          .order("created_at", { ascending: false }),
+      ]);
+
+      if (cancelled) return;
+      setSeller((sellerData as SellerInfo) ?? null);
+
+      const propRows = (props as Listing[]) ?? [];
+      // Fetch primary photo per property (display_order 0 or first)
+      if (propRows.length > 0) {
+        const ids = propRows.map((p) => p.id);
+        const { data: media } = await supabase
+          .from("property_media")
+          .select("property_id, url, display_order")
+          .in("property_id", ids)
+          .order("display_order", { ascending: true });
+        const firstByProp = new Map<string, string>();
+        (media ?? []).forEach((m: { property_id: string; url: string }) => {
+          if (!firstByProp.has(m.property_id)) firstByProp.set(m.property_id, m.url);
+        });
+        propRows.forEach((p) => {
+          p.primary_photo = firstByProp.get(p.id) ?? null;
+        });
+      }
+
+      setListings(propRows);
+      setLoading(false);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user, authLoading, navigate]);
+
+  const totalProps = listings.length;
+  const totalAvailable = listings.reduce((acc, l) => {
+    const retained =
+      l.exit_type === "hybrid_exit" ? Math.max(0, Math.min(7, l.retained_shares ?? 0)) : 0;
+    return acc + (8 - retained);
+  }, 0);
+
+  const feeStatus = (() => {
+    if (seller?.exit_type !== "hybrid_exit") return "N/A";
+    return seller?.enrollment_fee_paid ? "Paid" : "Due";
+  })();
+
+  const fullyOnboarded = seller?.onboarding_status === "active";
+  const displayName =
+    seller?.full_name?.trim() ||
+    (seller?.email ? seller.email.split("@")[0] : "there");
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="flex items-end justify-between gap-4">
+      {/* Header */}
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
             Seller Dashboard
           </p>
-          <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-foreground">
-            Your listings
-          </h1>
+          <div className="mt-2 flex flex-wrap items-center gap-3">
+            <h1 className="font-display text-3xl font-semibold tracking-tight text-foreground">
+              Welcome back, {displayName}
+            </h1>
+            {fullyOnboarded ? (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                Onboarded
+              </span>
+            ) : null}
+          </div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Manage your fractional listings and track share availability.
+          </p>
         </div>
-        <Link
-          to="/onboarding"
-          className="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
-        >
-          New listing
-        </Link>
+        <div className="flex items-center gap-3">
+          <NotificationsBell />
+          <Link
+            to="/onboarding"
+            className="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+          >
+            New listing
+          </Link>
+        </div>
       </div>
 
-      <div className="mt-8 space-y-4">
-        {authLoading || loading ? (
-          <p className="text-sm text-muted-foreground">Loading…</p>
-        ) : listings.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-border bg-card p-10 text-center">
-            <p className="text-sm text-muted-foreground">
-              You don't have any listings yet.
-            </p>
-          </div>
-        ) : (
-          listings.map((l) => (
-            <Link
-              key={l.id}
-              to="/listings/$id"
-              params={{ id: l.id }}
-              className="block rounded-xl border border-border bg-card p-5 shadow-sm transition-colors hover:border-foreground/20"
-            >
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div>
-                  <h3 className="font-display text-lg font-semibold text-foreground">
-                    {l.address}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {l.city}, {l.state}
-                    {l.property_type ? ` · ${l.property_type}` : ""}
-                  </p>
-                </div>
-                <span className="rounded-full border border-border bg-background px-2.5 py-0.5 text-xs font-medium capitalize text-foreground">
-                  {l.status.replace(/_/g, " ")}
-                </span>
-              </div>
-              <div className="mt-5">
-                <EightSlicesTracker propertyId={l.id} />
-              </div>
-              <div className="mt-5 border-t border-border pt-4">
-                <ListingStatusTimeline status={l.listing_status ?? "forming"} />
-              </div>
-            </Link>
-          ))
-        )}
+      {/* Quick Stats */}
+      <div className="mt-8 grid gap-4 sm:grid-cols-3">
+        <StatCard
+          icon={<Home className="h-4 w-4" />}
+          label="Total Properties Listed"
+          value={String(totalProps)}
+        />
+        <StatCard
+          icon={<LayoutGrid className="h-4 w-4" />}
+          label="Total Shares Available"
+          value={String(totalAvailable)}
+          hint={`${totalProps * 8} total across all listings`}
+        />
+        <StatCard
+          icon={<Wallet className="h-4 w-4" />}
+          label="Enrollment Fee"
+          value={feeStatus}
+          tone={
+            feeStatus === "Paid"
+              ? "success"
+              : feeStatus === "Due"
+                ? "warning"
+                : "muted"
+          }
+        />
       </div>
+
+      {/* My Listings */}
+      <section className="mt-10">
+        <div className="flex items-end justify-between">
+          <h2 className="font-display text-xl font-semibold tracking-tight text-foreground">
+            My Listings
+          </h2>
+          {listings.length > 0 ? (
+            <p className="text-xs text-muted-foreground">
+              {listings.length} {listings.length === 1 ? "property" : "properties"}
+            </p>
+          ) : null}
+        </div>
+
+        <div className="mt-4 space-y-4">
+          {authLoading || loading ? (
+            <p className="text-sm text-muted-foreground">Loading…</p>
+          ) : listings.length === 0 ? (
+            <div className="rounded-xl border border-dashed border-border bg-card p-12 text-center">
+              <Home className="mx-auto h-8 w-8 text-muted-foreground" />
+              <h3 className="mt-3 font-display text-lg font-semibold text-foreground">
+                You haven't listed a property yet
+              </h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Get started by listing your first fractional property.
+              </p>
+              <Link
+                to="/onboarding"
+                className="mt-5 inline-flex h-10 items-center rounded-md bg-primary px-5 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+              >
+                List a Property
+              </Link>
+            </div>
+          ) : (
+            listings.map((l) => (
+              <article
+                key={l.id}
+                className="overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-colors hover:border-foreground/20"
+              >
+                <div className="grid gap-0 md:grid-cols-[240px_1fr]">
+                  <div className="relative aspect-[4/3] w-full bg-secondary md:aspect-auto md:h-full">
+                    {l.primary_photo ? (
+                      <img
+                        src={l.primary_photo}
+                        alt={l.address}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full min-h-32 w-full items-center justify-center text-muted-foreground">
+                        <Home className="h-8 w-8 opacity-40" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-5">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <h3 className="font-display text-lg font-semibold text-foreground">
+                          {l.address}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          {l.city}, {l.state}
+                          {l.property_type ? ` · ${l.property_type}` : ""}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-display text-lg font-semibold text-foreground">
+                          {formatPrice(l.listing_price)}
+                        </p>
+                        {l.listing_price ? (
+                          <p className="text-[11px] text-muted-foreground">
+                            {formatPrice(l.listing_price / 8)} / share
+                          </p>
+                        ) : null}
+                      </div>
+                    </div>
+
+                    <div className="mt-4">
+                      <EightSlicesTracker
+                        propertyId={l.id}
+                        retainedShares={
+                          l.exit_type === "hybrid_exit" ? l.retained_shares ?? 0 : 0
+                        }
+                        compact
+                      />
+                    </div>
+
+                    <div className="mt-4 border-t border-border pt-4">
+                      <ListingStatusTimeline
+                        status={l.listing_status ?? "forming"}
+                        showDescription={false}
+                      />
+                    </div>
+
+                    <div className="mt-4 flex flex-wrap items-center justify-end gap-2">
+                      <Link
+                        to="/listings/$id"
+                        params={{ id: l.id }}
+                        className="inline-flex h-9 items-center rounded-md border border-border bg-background px-4 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+                      >
+                        View Details
+                      </Link>
+                      <Link
+                        to="/listings/$id"
+                        params={{ id: l.id }}
+                        className="inline-flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+                      >
+                        Manage Listing
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            ))
+          )}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function StatCard({
+  icon,
+  label,
+  value,
+  hint,
+  tone = "muted",
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  hint?: string;
+  tone?: "muted" | "success" | "warning";
+}) {
+  return (
+    <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+      <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+        <span
+          className={cn(
+            "inline-flex h-6 w-6 items-center justify-center rounded-md",
+            tone === "success" && "bg-primary/10 text-primary",
+            tone === "warning" && "bg-accent/10 text-accent",
+            tone === "muted" && "bg-secondary text-foreground",
+          )}
+        >
+          {icon}
+        </span>
+        {label}
+      </div>
+      <p className="mt-3 font-display text-2xl font-semibold text-foreground">{value}</p>
+      {hint ? <p className="mt-1 text-xs text-muted-foreground">{hint}</p> : null}
     </div>
   );
 }
