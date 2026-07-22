@@ -120,10 +120,7 @@ function Dashboard() {
     return acc + (8 - retained);
   }, 0);
 
-  const feeStatus = (() => {
-    if (seller?.exit_type !== "hybrid_exit") return "N/A";
-    return seller?.enrollment_fee_paid ? "Paid" : "Due";
-  })();
+  const feeStatus = seller?.exit_type === "hybrid_exit" ? "Due" : "N/A";
 
   const fullyOnboarded = seller?.onboarding_status === "active";
   const displayName =
