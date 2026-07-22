@@ -178,13 +178,7 @@ function Dashboard() {
           icon={<Wallet className="h-4 w-4" />}
           label="Enrollment Fee"
           value={feeStatus}
-          tone={
-            feeStatus === "Paid"
-              ? "success"
-              : feeStatus === "Due"
-                ? "warning"
-                : "muted"
-          }
+          tone={feeStatus === "Due" ? "warning" : "muted"}
         />
       </div>
 
