@@ -39,6 +39,8 @@ function PropertyScreen() {
   const { user, loading } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  console.log(user);
+
   const [ownerConfirmed, setOwnerConfirmed] = useState(false);
   const [addr, setAddr] = useState<AddressFields>({
     address: "",
@@ -125,9 +127,7 @@ function PropertyScreen() {
       uploaded.push({ name: f.name, path, size: f.size, type: f.type });
     }
 
-    const cleanedCoOwners = hasCoOwners
-      ? coOwners.map((n) => n.trim()).filter(Boolean)
-      : [];
+    const cleanedCoOwners = hasCoOwners ? coOwners.map((n) => n.trim()).filter(Boolean) : [];
 
     // Snapshot the seller's current exit election onto this property so future
     // changes to the seller-wide default don't retroactively alter old listings.
@@ -191,9 +191,7 @@ function PropertyScreen() {
       <OnboardingStepper current={3} />
 
       <div className="mt-10 text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
-          Step 3 · Property
-        </p>
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Step 3 · Property</p>
         <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           Verify your property
         </h1>
@@ -212,13 +210,9 @@ function PropertyScreen() {
             onChange={(e) => setOwnerConfirmed(e.target.checked)}
             className="mt-0.5 h-4 w-4 rounded border-input text-primary focus:ring-ring"
           />
-          <span>
-            I confirm I am the owner of record, or the authorized agent of the owner, of the property below.
-          </span>
+          <span>I confirm I am the owner of record, or the authorized agent of the owner, of the property below.</span>
         </label>
-        {errors.owner ? (
-          <p className="mt-2 text-xs text-destructive">{errors.owner}</p>
-        ) : null}
+        {errors.owner ? <p className="mt-2 text-xs text-destructive">{errors.owner}</p> : null}
 
         <div className="mt-6 grid gap-4">
           <Field
@@ -260,9 +254,7 @@ function PropertyScreen() {
       {/* Co-owners */}
       <section className="mt-8 rounded-xl border border-border bg-card p-6 shadow-sm">
         <h2 className="font-display text-lg font-semibold text-foreground">Co-owners</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Does anyone else appear on title with you?
-        </p>
+        <p className="mt-1 text-sm text-muted-foreground">Does anyone else appear on title with you?</p>
         <div className="mt-4 inline-flex overflow-hidden rounded-md border border-border">
           {[
             { label: "No", value: false },
@@ -320,9 +312,7 @@ function PropertyScreen() {
       {/* Encumbrance disclosure */}
       <section className="mt-8 rounded-xl border border-border bg-card p-6 shadow-sm">
         <h2 className="font-display text-lg font-semibold text-foreground">Encumbrance disclosure</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Select anything that applies to this property.
-        </p>
+        <p className="mt-1 text-sm text-muted-foreground">Select anything that applies to this property.</p>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           {ENCUMBRANCE_OPTIONS.map((opt) => (
             <label
@@ -332,9 +322,7 @@ function PropertyScreen() {
               <input
                 type="checkbox"
                 checked={encumbrances[opt.key]}
-                onChange={(e) =>
-                  setEncumbrances((s) => ({ ...s, [opt.key]: e.target.checked }))
-                }
+                onChange={(e) => setEncumbrances((s) => ({ ...s, [opt.key]: e.target.checked }))}
                 className="h-4 w-4 rounded border-input text-primary focus:ring-ring"
               />
               {opt.label}
