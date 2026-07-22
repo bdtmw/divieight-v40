@@ -46,7 +46,7 @@ export function EightSlicesTracker({
     (async () => {
       const { data, error: err } = await supabase
         .from("properties")
-        .select("seller_id, sellers ( exit_type, retained_shares )")
+        .select("exit_type, retained_shares, seller_id, sellers ( exit_type, retained_shares )")
         .eq("id", propertyId)
         .maybeSingle();
 
@@ -56,10 +56,23 @@ export function EightSlicesTracker({
         setLoading(false);
         return;
       }
-      const seller = (data as { sellers?: { exit_type?: string | null; retained_shares?: number | null } } | null)?.sellers;
+      const row = data as
+        | {
+            exit_type?: string | null;
+            retained_shares?: number | null;
+            sellers?: { exit_type?: string | null; retained_shares?: number | null } | null;
+          }
+        | null;
+      // Prefer the per-property snapshot; fall back to the seller-wide setting
+      // for legacy rows created before the snapshot column existed.
+      const effectiveExit = row?.exit_type ?? row?.sellers?.exit_type ?? null;
+      const effectiveRetained =
+        row?.exit_type != null
+          ? row?.retained_shares ?? 0
+          : row?.sellers?.retained_shares ?? 0;
       const r =
-        seller?.exit_type === "hybrid_exit" && typeof seller.retained_shares === "number"
-          ? Math.max(0, Math.min(7, seller.retained_shares))
+        effectiveExit === "hybrid_exit" && typeof effectiveRetained === "number"
+          ? Math.max(0, Math.min(7, effectiveRetained))
           : 0;
       setRetained(r);
       // TODO(buyer-module): read from `reservations` / `share_holdings` when Month 2 lands.
