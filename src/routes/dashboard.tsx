@@ -39,7 +39,6 @@ type SellerInfo = {
   full_name: string | null;
   email: string | null;
   onboarding_status: string | null;
-  enrollment_fee_paid: boolean | null;
   exit_type: string | null;
 };
 
