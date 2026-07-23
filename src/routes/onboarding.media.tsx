@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { OnboardingStepper } from "@/components/OnboardingStepper";
 import { cn } from "@/lib/utils";
+import { logAudit } from "@/lib/audit";
 
 export const Route = createFileRoute("/onboarding/media")({
   head: () => ({
@@ -259,6 +260,13 @@ function MediaScreen() {
       toast.error(updateErr.message);
       return;
     }
+    await logAudit({
+      actorId: user!.id,
+      actionType: "seller.property_media_uploaded",
+      entityType: "property",
+      entityId: propertyId,
+      metadata: { photo_count: photoRows.length, has_narrative: Boolean(narrativeTrimmed) },
+    });
     toast.success("Media saved. Listing moved to review.");
     navigate({ to: "/onboarding/agreement" });
   }

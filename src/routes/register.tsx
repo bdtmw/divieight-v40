@@ -5,8 +5,10 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { getPostLoginRedirect } from "@/lib/post-login";
+import { logAudit } from "@/lib/audit";
 import { AuthCard, GoogleButton, Divider } from "@/components/AuthCard";
 import { Field } from "@/components/Field";
+
 
 export const Route = createFileRoute("/register")({
   head: () => ({
@@ -76,6 +78,15 @@ function RegisterPage() {
     }
 
     // Signed in immediately — new sellers start with onboarding.
+    if (data.user) {
+      await logAudit({
+        actorId: data.user.id,
+        actionType: "seller.registered",
+        entityType: "seller",
+        entityId: data.user.id,
+        metadata: { method: "email" },
+      });
+    }
     const to = data.user ? await getPostLoginRedirect(data.user.id) : "/onboarding";
     toast.success("Account created");
     navigate({ to });

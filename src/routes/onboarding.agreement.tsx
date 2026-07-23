@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { OnboardingStepper } from "@/components/OnboardingStepper";
 import { cn } from "@/lib/utils";
 import { notifySeller } from "@/lib/notify";
+import { logAudit } from "@/lib/audit";
 
 export const Route = createFileRoute("/onboarding/agreement")({
   head: () => ({
@@ -199,6 +200,18 @@ function AgreementScreen() {
     }
 
     await notifySeller(user.id, "listing_live");
+    await logAudit({
+      actorId: user.id,
+      actionType: "seller.listing_agreement_signed",
+      entityType: "property",
+      entityId: property?.id ?? null,
+      metadata: {
+        document_version: DOCUMENT_VERSION,
+        document_hash: documentHash,
+        signed_name: typed,
+        ip_address: ip,
+      },
+    });
 
     setSubmitting(false);
     setModalOpen(false);

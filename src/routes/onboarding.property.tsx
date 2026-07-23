@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { OnboardingStepper } from "@/components/OnboardingStepper";
 import { Field } from "@/components/Field";
 import { cn } from "@/lib/utils";
+import { logAudit } from "@/lib/audit";
 
 export const Route = createFileRoute("/onboarding/property")({
   head: () => ({
@@ -182,6 +183,19 @@ function PropertyScreen() {
       toast.error(sellerErr.message);
       return;
     }
+    await logAudit({
+      actorId: user.id,
+      actionType: "seller.property_created",
+      entityType: "property",
+      entityId: property.id,
+      metadata: {
+        city: addr.city.trim(),
+        state: addr.state.trim(),
+        exit_type: snapshotExit,
+        retained_shares: snapshotRetained,
+        has_co_owners: hasCoOwners,
+      },
+    });
     toast.success("Property saved.");
     navigate({ to: "/onboarding/listing" });
   }
