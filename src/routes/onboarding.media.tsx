@@ -255,11 +255,18 @@ function MediaScreen() {
       .update({ status: "pending_review" })
       .eq("id", propertyId);
 
-    setSubmitting(false);
     if (updateErr) {
+      setSubmitting(false);
       toast.error(updateErr.message);
       return;
     }
+
+    await supabase
+      .from("sellers")
+      .update({ onboarding_status: "agreement_pending" })
+      .eq("id", user!.id);
+
+    setSubmitting(false);
     await logAudit({
       actorId: user!.id,
       actionType: "seller.property_media_uploaded",
