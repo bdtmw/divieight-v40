@@ -37,7 +37,7 @@ export function NavBar() {
           </Link>
           <Link
             to="/listings/new"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            className="inline-flex h-9 items-center rounded-full bg-accent px-4 text-sm font-medium text-accent-foreground shadow-sm transition-colors hover:bg-accent/90"
           >
             List a Property
           </Link>
