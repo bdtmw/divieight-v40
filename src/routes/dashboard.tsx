@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { EightSlicesTracker } from "@/components/EightSlicesTracker";
 import { ListingStatusTimeline, type ListingStatus } from "@/components/ListingStatusTimeline";
-import { NotificationsBell } from "@/components/NotificationsBell";
+
 import { CheckCircle2, Home, LayoutGrid, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
 
