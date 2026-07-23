@@ -94,14 +94,26 @@ function Dashboard() {
           .from("property_media")
           .select("property_id, url, display_order")
           .in("property_id", ids)
+          .eq("media_type", "photo")
           .order("display_order", { ascending: true });
         const firstByProp = new Map<string, string>();
         (media ?? []).forEach((m: { property_id: string; url: string | null }) => {
           if (m.url && !firstByProp.has(m.property_id)) firstByProp.set(m.property_id, m.url);
         });
-        propRows.forEach((p) => {
-          p.primary_photo = firstByProp.get(p.id) ?? null;
-        });
+        const paths = Array.from(firstByProp.values());
+        if (paths.length > 0) {
+          const { data: signed } = await supabase.storage
+            .from("property-media")
+            .createSignedUrls(paths, 60 * 60);
+          const signedByPath = new Map<string, string>();
+          (signed ?? []).forEach((s) => {
+            if (s.path && s.signedUrl) signedByPath.set(s.path, s.signedUrl);
+          });
+          propRows.forEach((p) => {
+            const path = firstByProp.get(p.id);
+            p.primary_photo = path ? signedByPath.get(path) ?? null : null;
+          });
+        }
       }
 
       setListings(propRows);
