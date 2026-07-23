@@ -109,7 +109,7 @@ export function EightSlicesTracker({
             title={sliceLabel(state, i)}
             className={cn(
               "flex-1 rounded-sm border transition-colors",
-              state === "retained" && "border-muted-foreground/30 bg-muted-foreground/25",
+              state === "retained" && "border-accent bg-accent",
               state === "reserved" && "border-accent bg-accent",
               state === "available" && "border-border bg-transparent",
             )}
