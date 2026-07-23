@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { OnboardingStepper } from "@/components/OnboardingStepper";
 import { cn } from "@/lib/utils";
+import { notifySeller } from "@/lib/notify";
 
 export const Route = createFileRoute("/onboarding/agreement")({
   head: () => ({
@@ -196,6 +197,8 @@ function AgreementScreen() {
     if (property?.id) {
       await supabase.from("properties").update({ status: "listed" }).eq("id", property.id);
     }
+
+    await notifySeller(user.id, "listing_live");
 
     setSubmitting(false);
     setModalOpen(false);
