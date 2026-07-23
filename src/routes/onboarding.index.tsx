@@ -38,12 +38,32 @@ function IntentScreen() {
     }
 
     setSubmitting(true);
+
+    // Check if identity is already verified — if so, skip identity step
+    const { data: sellerData } = await supabase
+      .from("sellers")
+      .select("full_name, address, date_of_birth, onboarding_status")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    const identityDone =
+      !!sellerData?.full_name?.trim() &&
+      !!sellerData?.address?.trim() &&
+      !!sellerData?.date_of_birth;
+
+    const nextStatus =
+      sellerData?.onboarding_status === "active"
+        ? "active"
+        : identityDone
+          ? "property_verification_pending"
+          : "identity_pending";
+
     const { error } = await supabase
       .from("sellers")
       .update({
         exit_type: selected,
         retained_shares: selected === "hybrid_exit" ? retained : null,
-        onboarding_status: "identity_pending",
+        onboarding_status: nextStatus,
       })
       .eq("id", user.id);
     setSubmitting(false);
@@ -52,7 +72,7 @@ function IntentScreen() {
       toast.error(error.message);
       return;
     }
-    navigate({ to: "/onboarding/identity" });
+    navigate({ to: identityDone ? "/onboarding/property" : "/onboarding/identity" });
   }
 
   return (
