@@ -156,11 +156,19 @@ function ListingScreen() {
       })
       .eq("id", property.id);
 
-    setSubmitting(false);
     if (updateErr) {
+      setSubmitting(false);
       toast.error(updateErr.message);
       return;
     }
+
+    // Advance the seller's onboarding pointer so mid-flow returns land here.
+    await supabase
+      .from("sellers")
+      .update({ onboarding_status: "media_pending" })
+      .eq("id", user.id);
+
+    setSubmitting(false);
     toast.success("Listing details saved.");
     navigate({ to: "/onboarding/media" });
   }
