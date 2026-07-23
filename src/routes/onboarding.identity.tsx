@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { OnboardingStepper } from "@/components/OnboardingStepper";
 import { Field } from "@/components/Field";
 import { cn } from "@/lib/utils";
+import { notifySeller } from "@/lib/notify";
 
 export const Route = createFileRoute("/onboarding/identity")({
   head: () => ({
