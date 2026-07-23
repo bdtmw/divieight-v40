@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Bell, Check } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
@@ -26,7 +27,7 @@ export function NotificationsBell() {
       .select("id, message, type, is_read, created_at")
       .eq("seller_id", user.id)
       .order("created_at", { ascending: false })
-      .limit(20);
+      .limit(10);
     setItems((data as Notification[]) ?? []);
     setLoading(false);
   }
@@ -114,6 +115,13 @@ export function NotificationsBell() {
                 ))
               )}
             </div>
+            <Link
+              to="/notifications"
+              onClick={() => setOpen(false)}
+              className="block border-t border-border px-4 py-2.5 text-center text-xs font-medium text-primary hover:bg-secondary/60"
+            >
+              View all notifications
+            </Link>
           </div>
         </>
       ) : null}
