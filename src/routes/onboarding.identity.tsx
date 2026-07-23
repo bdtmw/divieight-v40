@@ -133,6 +133,7 @@ function IdentityScreen() {
       toast.error(error.message);
       return;
     }
+    await notifySeller(user.id, "identity_submitted");
     navigate({ to: "/onboarding/property" });
   }
 
