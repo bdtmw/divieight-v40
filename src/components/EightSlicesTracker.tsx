@@ -109,7 +109,7 @@ export function EightSlicesTracker({
             title={sliceLabel(state, i)}
             className={cn(
               "flex-1 rounded-sm border transition-colors",
-              state === "retained" && "border-muted-foreground/30 bg-muted-foreground/25",
+              state === "retained" && "border-accent bg-accent",
               state === "reserved" && "border-accent bg-accent",
               state === "available" && "border-border bg-transparent",
             )}
@@ -136,7 +136,7 @@ export function EightSlicesTracker({
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[11px] text-muted-foreground">
           <LegendSwatch className="border-border bg-transparent" label="Available" />
           <LegendSwatch className="border-accent bg-accent" label="Reserved" />
-          <LegendSwatch className="border-muted-foreground/30 bg-muted-foreground/25" label="Seller retained" />
+          <LegendSwatch className="border-accent bg-accent" label="Seller retained" />
         </div>
       ) : null}
     </div>

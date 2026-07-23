@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { EightSlicesTracker } from "@/components/EightSlicesTracker";
 import { ListingStatusTimeline, type ListingStatus } from "@/components/ListingStatusTimeline";
-import { NotificationsBell } from "@/components/NotificationsBell";
+
 import { CheckCircle2, Home, LayoutGrid, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -163,7 +163,6 @@ function Dashboard() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <NotificationsBell />
           <Link
             to="/onboarding"
             className="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
