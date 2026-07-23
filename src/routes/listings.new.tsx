@@ -1,21 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { PagePlaceholder } from "@/components/PagePlaceholder";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
+// The property intake flow lives inside /onboarding (property → listing → media
+// → agreement). "List a Property" from the nav funnels sellers into that flow
+// so there is only one path to create a listing.
 export const Route = createFileRoute("/listings/new")({
-  head: () => ({
-    meta: [
-      { title: "List a new property — divieight" },
-      {
-        name: "description",
-        content: "Create a new fractional property listing on divieight.",
-      },
-    ],
-  }),
-  component: () => (
-    <PagePlaceholder
-      eyebrow="New Listing"
-      title="List a new property"
-      description="The property intake form and 1/8th share configuration will appear here."
-    />
-  ),
+  beforeLoad: () => {
+    throw redirect({ to: "/onboarding/property" });
+  },
 });

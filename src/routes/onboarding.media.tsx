@@ -255,11 +255,18 @@ function MediaScreen() {
       .update({ status: "pending_review" })
       .eq("id", propertyId);
 
-    setSubmitting(false);
     if (updateErr) {
+      setSubmitting(false);
       toast.error(updateErr.message);
       return;
     }
+
+    await supabase
+      .from("sellers")
+      .update({ onboarding_status: "agreement_pending" })
+      .eq("id", user!.id);
+
+    setSubmitting(false);
     await logAudit({
       actorId: user!.id,
       actionType: "seller.property_media_uploaded",
@@ -273,11 +280,11 @@ function MediaScreen() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-      <OnboardingStepper current={4} />
+      <OnboardingStepper current={5} />
 
       <div className="mt-10 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
-          Step 4 · Media
+          Step 5 · Media
         </p>
         <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           Add photos & media

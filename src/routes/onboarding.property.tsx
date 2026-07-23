@@ -40,7 +40,7 @@ function PropertyScreen() {
   const { user, loading } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  console.log(user);
+
 
   const [ownerConfirmed, setOwnerConfirmed] = useState(false);
   const [addr, setAddr] = useState<AddressFields>({

@@ -142,13 +142,13 @@ function Dashboard() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
       {/* Header */}
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 sm:flex sm:flex-wrap sm:justify-between">
+        <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
             Seller Dashboard
           </p>
           <div className="mt-2 flex flex-wrap items-center gap-3">
-            <h1 className="font-display text-3xl font-semibold tracking-tight text-foreground">
+            <h1 className="truncate font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
               Welcome back, {displayName}
             </h1>
             {fullyOnboarded ? (
@@ -162,7 +162,7 @@ function Dashboard() {
             Manage your fractional listings and track share availability.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-3">
           <Link
             to="/onboarding"
             className="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
@@ -208,7 +208,14 @@ function Dashboard() {
 
         <div className="mt-4 space-y-4">
           {authLoading || loading ? (
-            <p className="text-sm text-muted-foreground">Loading…</p>
+            <div className="grid gap-4">
+              {[0, 1].map((i) => (
+                <div
+                  key={i}
+                  className="h-40 animate-pulse rounded-xl border border-border bg-card"
+                />
+              ))}
+            </div>
           ) : listings.length === 0 ? (
             <div className="rounded-xl border border-dashed border-border bg-card p-12 text-center">
               <Home className="mx-auto h-8 w-8 text-muted-foreground" />

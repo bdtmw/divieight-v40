@@ -15,6 +15,33 @@ export const Route = createFileRoute("/listings/$id")({
     ],
   }),
   component: ListingDetail,
+  errorComponent: ({ error }) => (
+    <div className="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6">
+      <h1 className="font-display text-2xl font-semibold text-foreground">
+        Something went wrong
+      </h1>
+      <p className="mt-2 text-sm text-muted-foreground">{error.message}</p>
+      <Link
+        to="/dashboard"
+        className="mt-4 inline-block text-sm text-accent underline-offset-4 hover:underline"
+      >
+        ← Back to dashboard
+      </Link>
+    </div>
+  ),
+  notFoundComponent: () => (
+    <div className="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6">
+      <h1 className="font-display text-2xl font-semibold text-foreground">
+        Listing not found
+      </h1>
+      <Link
+        to="/dashboard"
+        className="mt-4 inline-block text-sm text-accent underline-offset-4 hover:underline"
+      >
+        ← Back to dashboard
+      </Link>
+    </div>
+  ),
 });
 
 type Property = {
