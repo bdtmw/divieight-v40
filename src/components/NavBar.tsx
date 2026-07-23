@@ -3,6 +3,7 @@ import { UserCircle2, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { NotificationsBell } from "./NotificationsBell";
 
 export function NavBar() {
   const { user, loading } = useAuth();
@@ -45,6 +46,7 @@ export function NavBar() {
         <div className="flex items-center gap-3">
           {loading ? null : user ? (
             <>
+              <NotificationsBell />
               <span className="hidden max-w-[180px] truncate text-xs text-muted-foreground sm:inline">
                 {user.email}
               </span>
