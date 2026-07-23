@@ -33,7 +33,8 @@ export async function logAudit(params: {
     action_type: actionType,
     entity_type: entityType,
     entity_id: entityId ?? null,
-    metadata: metadata ?? {},
+    metadata: (metadata ?? {}) as never,
   });
   if (error) console.error("[audit] insert failed", error);
 }
+
