@@ -179,11 +179,11 @@ function ListingScreen() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-      <OnboardingStepper current={3} />
+      <OnboardingStepper current={4} />
 
       <div className="mt-10 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
-          Step 3 · Listing details
+          Step 4 · Listing details
         </p>
         <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           Create your listing
