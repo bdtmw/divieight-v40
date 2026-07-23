@@ -7,6 +7,7 @@ import { OnboardingStepper } from "@/components/OnboardingStepper";
 import { Field } from "@/components/Field";
 import { cn } from "@/lib/utils";
 import { notifySeller } from "@/lib/notify";
+import { logAudit } from "@/lib/audit";
 
 export const Route = createFileRoute("/onboarding/identity")({
   head: () => ({
@@ -135,6 +136,13 @@ function IdentityScreen() {
       return;
     }
     await notifySeller(user.id, "identity_submitted");
+    await logAudit({
+      actorId: user.id,
+      actionType: "seller.identity_submitted",
+      entityType: "seller",
+      entityId: user.id,
+      metadata: { has_document: Boolean(idDocumentUrl), manual_mode: manualMode },
+    });
     navigate({ to: "/onboarding/property" });
   }
 
