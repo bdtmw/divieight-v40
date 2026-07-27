@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { NotificationsBell } from "./NotificationsBell";
+import logoAsset from "@/assets/divieight-logo.png.asset.json";
 
 export function NavBar() {
   const { user, loading } = useAuth();
@@ -18,13 +19,12 @@ export function NavBar() {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link to="/" className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
-            <span className="font-display text-sm font-semibold tracking-tight">DE</span>
-          </span>
-          <span className="font-display text-lg font-semibold tracking-tight text-foreground">
-            divieight
-          </span>
+        <Link to="/" className="flex items-center">
+          <img
+            src={logoAsset.url}
+            alt="divieight — independent co-ownership"
+            className="h-8 w-auto"
+          />
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
