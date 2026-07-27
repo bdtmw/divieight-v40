@@ -3,7 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { OnboardingStepper } from "@/components/OnboardingStepper";
+import { OnboardingStepper, useIdentityDone } from "@/components/OnboardingStepper";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/onboarding/")({
