@@ -239,7 +239,7 @@ function Dashboard() {
               </Link>
             </div>
           ) : (
-            listings.map((l) => (
+            listings.map((l, idx) => (
               <article
                 key={l.id}
                 className="overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-colors hover:border-foreground/20"
