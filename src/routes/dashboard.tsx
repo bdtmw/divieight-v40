@@ -261,14 +261,26 @@ function Dashboard() {
                   <div className="p-5">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <h3 className="font-display text-lg font-semibold text-foreground">
-                          {l.address}
-                        </h3>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="font-display text-lg font-semibold text-foreground">
+                            {l.address}
+                          </h3>
+                          {l.status !== "listed" ? (
+                            <span className="inline-flex items-center rounded-full border border-accent/30 bg-accent/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-accent">
+                              Draft
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-primary">
+                              Live
+                            </span>
+                          )}
+                        </div>
                         <p className="text-sm text-muted-foreground">
                           {l.city}, {l.state}
                           {l.property_type ? ` · ${l.property_type}` : ""}
                         </p>
                       </div>
+
                       <div className="text-right">
                         <p className="font-display text-lg font-semibold text-foreground">
                           {formatPrice(l.listing_price)}
