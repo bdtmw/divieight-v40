@@ -21,7 +21,7 @@ export const Route = createFileRoute("/onboarding/media")({
   component: MediaScreen,
 });
 
-const MIN_IMAGES = 5;
+const MIN_IMAGES = 1;
 const MAX_IMAGES = 25;
 const MAX_BYTES = 10 * 1024 * 1024;
 const ACCEPTED = ["image/jpeg", "image/png", "image/webp"];
@@ -405,8 +405,8 @@ function MediaScreen() {
           Add photos & media
         </h1>
         <p className="mt-3 text-base text-muted-foreground">
-          Upload at least {MIN_IMAGES} photos (up to {MAX_IMAGES}). Drag to reorder — the first
-          photo is your cover image.
+          Upload at least 1 photo (up to {MAX_IMAGES}). Drag to reorder — the first photo is your
+          cover image.
         </p>
       </div>
 
@@ -547,7 +547,7 @@ function MediaScreen() {
           {/* Footer */}
           <div className="flex flex-col-reverse items-stretch justify-between gap-3 sm:flex-row sm:items-center">
             <p className="text-sm text-muted-foreground">
-              {uploadedCount} of at least {MIN_IMAGES} photos uploaded
+              {uploadedCount} photo{uploadedCount === 1 ? "" : "s"} uploaded
               {anyUploading ? " · uploads in progress…" : ""}
             </p>
             <button
