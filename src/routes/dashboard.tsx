@@ -33,6 +33,8 @@ type Listing = {
   exit_type: string | null;
   retained_shares: number | null;
   primary_photo?: string | null;
+  has_media?: boolean;
+
 };
 
 type SellerInfo = {
@@ -49,6 +51,13 @@ function formatPrice(n: number | null) {
     currency: "USD",
     maximumFractionDigits: 0,
   }).format(n);
+}
+
+/** Where an unfinished draft should pick back up in the onboarding flow. */
+function resumeStepFor(l: Listing) {
+  if (!l.listing_price || !l.property_type) return "/onboarding/listing" as const;
+  if (!l.has_media) return "/onboarding/media" as const;
+  return "/onboarding/agreement" as const;
 }
 
 function Dashboard() {
@@ -100,6 +109,9 @@ function Dashboard() {
         (media ?? []).forEach((m: { property_id: string; url: string | null }) => {
           if (m.url && !firstByProp.has(m.property_id)) firstByProp.set(m.property_id, m.url);
         });
+        propRows.forEach((p) => {
+          p.has_media = firstByProp.has(p.id);
+        });
         const paths = Array.from(firstByProp.values());
         if (paths.length > 0) {
           const { data: signed } = await supabase.storage
@@ -115,6 +127,7 @@ function Dashboard() {
           });
         }
       }
+
 
       setListings(propRows);
       setLoading(false);
@@ -233,7 +246,7 @@ function Dashboard() {
               </Link>
             </div>
           ) : (
-            listings.map((l) => (
+            listings.map((l, idx) => (
               <article
                 key={l.id}
                 className="overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-colors hover:border-foreground/20"
@@ -255,14 +268,26 @@ function Dashboard() {
                   <div className="p-5">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <h3 className="font-display text-lg font-semibold text-foreground">
-                          {l.address}
-                        </h3>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="font-display text-lg font-semibold text-foreground">
+                            {l.address}
+                          </h3>
+                          {l.status !== "listed" ? (
+                            <span className="inline-flex items-center rounded-full border border-accent/30 bg-accent/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-accent">
+                              Draft
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-primary">
+                              Live
+                            </span>
+                          )}
+                        </div>
                         <p className="text-sm text-muted-foreground">
                           {l.city}, {l.state}
                           {l.property_type ? ` · ${l.property_type}` : ""}
                         </p>
                       </div>
+
                       <div className="text-right">
                         <p className="font-display text-lg font-semibold text-foreground">
                           {formatPrice(l.listing_price)}
@@ -293,6 +318,16 @@ function Dashboard() {
                     </div>
 
                     <div className="mt-4 flex flex-wrap items-center justify-end gap-2">
+                      {l.status !== "listed" && idx === 0 ? (
+                        // The onboarding screens resume on the seller's most recent
+                        // property, so only the newest draft can be continued here.
+                        <Link
+                          to={resumeStepFor(l)}
+                          className="inline-flex h-9 items-center rounded-md border border-accent bg-accent/10 px-4 text-sm font-medium text-accent transition-colors hover:bg-accent/20"
+                        >
+                          Continue setup
+                        </Link>
+                      ) : null}
                       <Link
                         to="/listings/$id"
                         params={{ id: l.id }}
@@ -308,6 +343,7 @@ function Dashboard() {
                         Manage Listing
                       </Link>
                     </div>
+
                   </div>
                 </div>
               </article>

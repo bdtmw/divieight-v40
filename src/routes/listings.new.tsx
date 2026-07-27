@@ -1,9 +1,8 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 
-// The property intake flow lives inside /onboarding (property → listing → media
-// → agreement). "List a Property" from the nav funnels sellers into that flow
-// so there is only one path to create a listing — but only once signed in.
+// "List a Property" funnels sellers into the standard onboarding flow, starting
+// at the Intent screen — the same entry point as "New listing" on the dashboard.
 export const Route = createFileRoute("/listings/new")({
   ssr: false,
   beforeLoad: async () => {
@@ -11,6 +10,7 @@ export const Route = createFileRoute("/listings/new")({
     if (error || !data.user) {
       throw redirect({ to: "/login" });
     }
-    throw redirect({ to: "/onboarding/property" });
+    throw redirect({ to: "/onboarding" });
   },
 });
+

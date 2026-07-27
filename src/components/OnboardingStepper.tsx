@@ -1,14 +1,56 @@
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 
 const STEPS = ["Intent", "Identity", "Property", "Listing", "Media", "Agreement"] as const;
+const IDENTITY_STEP = 2;
 
 export type OnboardingStep = 1 | 2 | 3 | 4 | 5 | 6;
 
+/**
+ * Identity is a one-time check. Once the seller has completed it, we hide the
+ * Identity step from the stepper on every later listing so the flow reads
+ * Intent → Property → Listing → Media → Agreement.
+ */
+function useIdentityDone() {
+  const { user } = useAuth();
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("sellers")
+        .select("full_name, address, date_of_birth")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (cancelled) return;
+      setDone(
+        !!data?.full_name?.trim() && !!data?.address?.trim() && !!data?.date_of_birth,
+      );
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
+
+  return done;
+}
+
 export function OnboardingStepper({ current }: { current: OnboardingStep }) {
+  const identityDone = useIdentityDone();
+  // Never hide the step the user is currently standing on.
+  const hideIdentity = identityDone && current !== IDENTITY_STEP;
+
+  const visible = STEPS.map((label, i) => ({ label, step: (i + 1) as OnboardingStep })).filter(
+    (s) => !(hideIdentity && s.step === IDENTITY_STEP),
+  );
+
   return (
     <ol className="mx-auto flex w-full max-w-3xl items-center gap-1.5 sm:gap-2">
-      {STEPS.map((label, i) => {
-        const step = (i + 1) as OnboardingStep;
+      {visible.map(({ label, step }, i) => {
         const isActive = step === current;
         const isDone = step < current;
         return (
@@ -22,7 +64,7 @@ export function OnboardingStepper({ current }: { current: OnboardingStep }) {
                   !isActive && !isDone && "border-border bg-background text-muted-foreground",
                 )}
               >
-                {step}
+                {i + 1}
               </span>
               <span
                 className={cn(
@@ -33,13 +75,8 @@ export function OnboardingStepper({ current }: { current: OnboardingStep }) {
                 {label}
               </span>
             </div>
-            {i < STEPS.length - 1 ? (
-              <span
-                className={cn(
-                  "h-px flex-1",
-                  isDone ? "bg-primary" : "bg-border",
-                )}
-              />
+            {i < visible.length - 1 ? (
+              <span className={cn("h-px flex-1", isDone ? "bg-primary" : "bg-border")} />
             ) : null}
           </li>
         );
