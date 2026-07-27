@@ -52,8 +52,13 @@ function IntentScreen() {
       !!sellerData?.address?.trim() &&
       !!sellerData?.date_of_birth;
 
-    const nextStatus =
-      sellerData?.onboarding_status === "active"
+    // Hybrid sellers retaining more than one share owe the platform
+    // enrollment fee before continuing.
+    const feeDue = selected === "hybrid_exit" && retained > 1;
+
+    const nextStatus = feeDue
+      ? "enrollment_fee_pending"
+      : sellerData?.onboarding_status === "active"
         ? "active"
         : identityDone
           ? "property_verification_pending"
@@ -73,7 +78,13 @@ function IntentScreen() {
       toast.error(error.message);
       return;
     }
-    navigate({ to: identityDone ? "/onboarding/property" : "/onboarding/identity" });
+    navigate({
+      to: feeDue
+        ? "/onboarding/fee"
+        : identityDone
+          ? "/onboarding/property"
+          : "/onboarding/identity",
+    });
   }
 
   return (
