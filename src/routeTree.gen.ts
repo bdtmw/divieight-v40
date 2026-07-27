@@ -21,6 +21,7 @@ import { Route as OnboardingPropertyRouteImport } from './routes/onboarding.prop
 import { Route as OnboardingMediaRouteImport } from './routes/onboarding.media'
 import { Route as OnboardingListingRouteImport } from './routes/onboarding.listing'
 import { Route as OnboardingIdentityRouteImport } from './routes/onboarding.identity'
+import { Route as OnboardingFeeRouteImport } from './routes/onboarding.fee'
 import { Route as OnboardingAgreementRouteImport } from './routes/onboarding.agreement'
 import { Route as ListingsNewRouteImport } from './routes/listings.new'
 import { Route as ListingsIdRouteImport } from './routes/listings.$id'
@@ -87,6 +88,11 @@ const OnboardingIdentityRoute = OnboardingIdentityRouteImport.update({
   path: '/onboarding/identity',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OnboardingFeeRoute = OnboardingFeeRouteImport.update({
+  id: '/onboarding/fee',
+  path: '/onboarding/fee',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingAgreementRoute = OnboardingAgreementRouteImport.update({
   id: '/onboarding/agreement',
   path: '/onboarding/agreement',
@@ -126,6 +132,7 @@ export interface FileRoutesByFullPath {
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/agreement': typeof OnboardingAgreementRoute
+  '/onboarding/fee': typeof OnboardingFeeRoute
   '/onboarding/identity': typeof OnboardingIdentityRoute
   '/onboarding/listing': typeof OnboardingListingRoute
   '/onboarding/media': typeof OnboardingMediaRoute
@@ -145,6 +152,7 @@ export interface FileRoutesByTo {
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/agreement': typeof OnboardingAgreementRoute
+  '/onboarding/fee': typeof OnboardingFeeRoute
   '/onboarding/identity': typeof OnboardingIdentityRoute
   '/onboarding/listing': typeof OnboardingListingRoute
   '/onboarding/media': typeof OnboardingMediaRoute
@@ -165,6 +173,7 @@ export interface FileRoutesById {
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/agreement': typeof OnboardingAgreementRoute
+  '/onboarding/fee': typeof OnboardingFeeRoute
   '/onboarding/identity': typeof OnboardingIdentityRoute
   '/onboarding/listing': typeof OnboardingListingRoute
   '/onboarding/media': typeof OnboardingMediaRoute
@@ -186,6 +195,7 @@ export interface FileRouteTypes {
     | '/listings/$id'
     | '/listings/new'
     | '/onboarding/agreement'
+    | '/onboarding/fee'
     | '/onboarding/identity'
     | '/onboarding/listing'
     | '/onboarding/media'
@@ -205,6 +215,7 @@ export interface FileRouteTypes {
     | '/listings/$id'
     | '/listings/new'
     | '/onboarding/agreement'
+    | '/onboarding/fee'
     | '/onboarding/identity'
     | '/onboarding/listing'
     | '/onboarding/media'
@@ -224,6 +235,7 @@ export interface FileRouteTypes {
     | '/listings/$id'
     | '/listings/new'
     | '/onboarding/agreement'
+    | '/onboarding/fee'
     | '/onboarding/identity'
     | '/onboarding/listing'
     | '/onboarding/media'
@@ -244,6 +256,7 @@ export interface RootRouteChildren {
   ListingsIdRoute: typeof ListingsIdRoute
   ListingsNewRoute: typeof ListingsNewRoute
   OnboardingAgreementRoute: typeof OnboardingAgreementRoute
+  OnboardingFeeRoute: typeof OnboardingFeeRoute
   OnboardingIdentityRoute: typeof OnboardingIdentityRoute
   OnboardingListingRoute: typeof OnboardingListingRoute
   OnboardingMediaRoute: typeof OnboardingMediaRoute
@@ -337,6 +350,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingIdentityRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/onboarding/fee': {
+      id: '/onboarding/fee'
+      path: '/onboarding/fee'
+      fullPath: '/onboarding/fee'
+      preLoaderRoute: typeof OnboardingFeeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding/agreement': {
       id: '/onboarding/agreement'
       path: '/onboarding/agreement'
@@ -388,6 +408,7 @@ const rootRouteChildren: RootRouteChildren = {
   ListingsIdRoute: ListingsIdRoute,
   ListingsNewRoute: ListingsNewRoute,
   OnboardingAgreementRoute: OnboardingAgreementRoute,
+  OnboardingFeeRoute: OnboardingFeeRoute,
   OnboardingIdentityRoute: OnboardingIdentityRoute,
   OnboardingListingRoute: OnboardingListingRoute,
   OnboardingMediaRoute: OnboardingMediaRoute,
