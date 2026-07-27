@@ -174,6 +174,37 @@ function ListingDetail() {
         </span>
       </div>
 
+      {photos.length > 0 ? (
+        <section className="mt-8">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {photos.map((p, i) => (
+              <figure
+                key={i}
+                className="overflow-hidden rounded-xl border border-border bg-card shadow-sm"
+              >
+                <img
+                  src={p.url}
+                  alt={p.caption || `${property.address} photo ${i + 1}`}
+                  loading="lazy"
+                  className={
+                    i === 0
+                      ? "h-64 w-full object-cover sm:h-72"
+                      : "h-48 w-full object-cover"
+                  }
+                />
+                {p.caption ? (
+                  <figcaption className="px-3 py-2 text-xs text-muted-foreground">
+                    {p.caption}
+                  </figcaption>
+                ) : null}
+              </figure>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+
+
       <section className="mt-8 rounded-xl border border-border bg-card p-6 shadow-sm">
         <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
           Property Status
