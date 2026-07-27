@@ -405,8 +405,8 @@ function MediaScreen() {
           Add photos & media
         </h1>
         <p className="mt-3 text-base text-muted-foreground">
-          Upload at least {MIN_IMAGES} photos (up to {MAX_IMAGES}). Drag to reorder — the first
-          photo is your cover image.
+          Upload at least 1 photo (up to {MAX_IMAGES}). Drag to reorder — the first photo is your
+          cover image.
         </p>
       </div>
 
