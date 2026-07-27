@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -9,6 +9,11 @@ import { cn } from "@/lib/utils";
 import { logAudit } from "@/lib/audit";
 
 export const Route = createFileRoute("/onboarding/property")({
+  ssr: false,
+  beforeLoad: async () => {
+    const { data, error } = await supabase.auth.getUser();
+    if (error || !data.user) throw redirect({ to: "/login" });
+  },
   head: () => ({
     meta: [
       { title: "Property verification — divieight" },
@@ -17,6 +22,7 @@ export const Route = createFileRoute("/onboarding/property")({
   }),
   component: PropertyScreen,
 });
+
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB per doc
 const ENCUMBRANCE_OPTIONS = [
