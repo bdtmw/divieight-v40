@@ -83,6 +83,38 @@ function ListingScreen() {
       });
   }, [user]);
 
+  // Prefill from the seller's most recent property so a saved draft can be
+  // reopened and edited instead of starting over.
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("properties")
+        .select(
+          "property_type, listing_price, usage_tag, bedrooms, bathrooms, square_footage, description, amenities",
+        )
+        .eq("seller_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (cancelled || !data) return;
+      if (data.property_type) setPropertyType(data.property_type);
+      if (data.listing_price != null) setPriceStr(String(data.listing_price));
+      if (data.usage_tag) setUsageTag(data.usage_tag as UsageTag);
+      if (data.bedrooms != null) setBedrooms(String(data.bedrooms));
+      if (data.bathrooms != null) setBathrooms(String(data.bathrooms));
+      if (data.square_footage != null) setSqft(String(data.square_footage));
+      if (data.description) setDescription(data.description);
+      if (Array.isArray(data.amenities)) setSelectedAmenities(data.amenities as string[]);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
+
+
+
   const listingPrice = useMemo(() => Number(priceStr.replace(/[^0-9.]/g, "")) || 0, [priceStr]);
   const sharePrice = listingPrice > 0 ? listingPrice / 8 : 0;
 
