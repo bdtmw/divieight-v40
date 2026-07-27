@@ -335,13 +335,6 @@ function Dashboard() {
                       >
                         View Details
                       </Link>
-                      <Link
-                        to="/listings/$id"
-                        params={{ id: l.id }}
-                        className="inline-flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
-                      >
-                        Manage Listing
-                      </Link>
                     </div>
 
                   </div>
