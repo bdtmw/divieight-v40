@@ -53,6 +53,13 @@ function formatPrice(n: number | null) {
   }).format(n);
 }
 
+/** Where an unfinished draft should pick back up in the onboarding flow. */
+function resumeStepFor(l: Listing) {
+  if (!l.listing_price || !l.property_type) return "/onboarding/listing" as const;
+  if (!l.has_media) return "/onboarding/media" as const;
+  return "/onboarding/agreement" as const;
+}
+
 function Dashboard() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
