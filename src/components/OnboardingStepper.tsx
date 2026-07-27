@@ -13,7 +13,7 @@ export type OnboardingStep = 1 | 2 | 3 | 4 | 5 | 6;
  * Identity step from the stepper on every later listing so the flow reads
  * Intent → Property → Listing → Media → Agreement.
  */
-function useIdentityDone() {
+export function useIdentityDone() {
   const { user } = useAuth();
   const [done, setDone] = useState(false);
 
