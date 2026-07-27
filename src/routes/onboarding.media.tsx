@@ -28,7 +28,10 @@ const ACCEPTED = ["image/jpeg", "image/png", "image/webp"];
 
 type Item = {
   key: string;
-  file: File;
+  /** Set for photos already saved on the listing (edit path). */
+  existingId?: string;
+  /** Only present for newly picked files. */
+  file?: File;
   previewUrl: string;
   progress: number; // 0-100
   status: "queued" | "uploading" | "done" | "error";
@@ -48,8 +51,10 @@ function MediaScreen() {
 
   const [propertyId, setPropertyId] = useState<string | null>(null);
   const [propertyStatus, setPropertyStatus] = useState<string | null>(null);
-  const [existingPhotos, setExistingPhotos] = useState(0);
   const [loadingProperty, setLoadingProperty] = useState(true);
+  // Saved rows the seller deleted in this session; removed from the DB on save.
+  const [removedIds, setRemovedIds] = useState<string[]>([]);
+  const [narrativeRowId, setNarrativeRowId] = useState<string | null>(null);
 
   const [items, setItems] = useState<Item[]>([]);
   const [narrative, setNarrative] = useState("");
@@ -78,21 +83,50 @@ function MediaScreen() {
       setPropertyId(data.id);
       setPropertyStatus(data.status ?? null);
 
-      // Photos already saved for this listing count toward the minimum so an
-      // edit visit does not force a full re-upload.
-      const { count } = await supabase
+      // Load already-saved media so the seller can review, reorder, remove,
+      // and add to it instead of starting from an empty grid.
+      const { data: media } = await supabase
         .from("property_media")
-        .select("id", { count: "exact", head: true })
+        .select("id, url, caption, display_order, media_type, narrative")
         .eq("property_id", data.id)
-        .eq("media_type", "photo");
-      setExistingPhotos(count ?? 0);
+        .order("display_order", { ascending: true });
+
+      const photos = (media ?? []).filter((m) => m.media_type === "photo" && m.url);
+      const tour = (media ?? []).find((m) => m.media_type === "virtual_tour");
+      if (tour) {
+        setNarrativeRowId(tour.id);
+        setNarrative(tour.narrative ?? "");
+      }
+
+      if (photos.length > 0) {
+        const { data: signed } = await supabase.storage
+          .from("property-media")
+          .createSignedUrls(photos.map((m) => m.url as string), 60 * 60);
+        const urlByPath = new Map<string, string>();
+        (signed ?? []).forEach((s) => {
+          if (s.path && s.signedUrl) urlByPath.set(s.path, s.signedUrl);
+        });
+        setItems(
+          photos.map((m) => ({
+            key: m.id,
+            existingId: m.id,
+            previewUrl: urlByPath.get(m.url as string) ?? "",
+            progress: 100,
+            status: "done" as const,
+            storagePath: m.url as string,
+            caption: m.caption ?? "",
+          })),
+        );
+      }
       setLoadingProperty(false);
     })();
   }, [user, loading, navigate, propertyParam]);
 
   useEffect(() => {
     return () => {
-      items.forEach((i) => URL.revokeObjectURL(i.previewUrl));
+      items.forEach((i) => {
+        if (i.file) URL.revokeObjectURL(i.previewUrl);
+      });
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -108,11 +142,11 @@ function MediaScreen() {
         setItems((prev) => prev.map((p) => (p.key === item.key ? { ...p, progress } : p)));
       }, 200);
 
-      const ext = item.file.name.split(".").pop()?.toLowerCase() || "jpg";
+      const ext = item.file!.name.split(".").pop()?.toLowerCase() || "jpg";
       const path = `${pid}/${randomId()}-${Date.now()}.${ext}`;
       const { error } = await supabase.storage
         .from("property-media")
-        .upload(path, item.file, { contentType: item.file.type, upsert: false });
+        .upload(path, item.file!, { contentType: item.file!.type, upsert: false });
 
       clearInterval(ticker);
       if (error) {
@@ -183,7 +217,8 @@ function MediaScreen() {
   function removeItem(key: string) {
     setItems((prev) => {
       const found = prev.find((p) => p.key === key);
-      if (found) URL.revokeObjectURL(found.previewUrl);
+      if (found?.file) URL.revokeObjectURL(found.previewUrl);
+      if (found?.existingId) setRemovedIds((ids) => [...ids, found.existingId!]);
       return prev.filter((p) => p.key !== key);
     });
   }
@@ -213,7 +248,7 @@ function MediaScreen() {
 
   const uploadedCount = items.filter((i) => i.status === "done").length;
   const anyUploading = items.some((i) => i.status === "uploading" || i.status === "queued");
-  const totalPhotos = uploadedCount + existingPhotos;
+  const totalPhotos = uploadedCount;
   const canSubmit = totalPhotos >= MIN_IMAGES && !anyUploading && !submitting && !!propertyId;
 
   async function handleSubmit() {
@@ -236,34 +271,85 @@ function MediaScreen() {
       media_type: string;
       narrative?: string | null;
     };
-    const photoRows: MediaInsert[] = items
-      .filter((i) => i.status === "done" && i.storagePath)
-      .map((i, idx) => ({
+
+    const kept = items.filter((i) => i.status === "done" && i.storagePath);
+
+    // 1. Delete photos the seller removed (DB row + stored file).
+    if (removedIds.length > 0) {
+      const { data: goneRows } = await supabase
+        .from("property_media")
+        .select("url")
+        .in("id", removedIds);
+      const { error: delErr } = await supabase
+        .from("property_media")
+        .delete()
+        .in("id", removedIds);
+      if (delErr) {
+        setSubmitting(false);
+        toast.error(delErr.message);
+        return;
+      }
+      const paths = (goneRows ?? []).map((r) => r.url).filter(Boolean) as string[];
+      if (paths.length > 0) {
+        await supabase.storage.from("property-media").remove(paths);
+      }
+      setRemovedIds([]);
+    }
+
+    // 2. Update captions/order on photos that were already saved.
+    for (let idx = 0; idx < kept.length; idx++) {
+      const item = kept[idx];
+      if (!item.existingId) continue;
+      await supabase
+        .from("property_media")
+        .update({ caption: item.caption.trim() || null, display_order: idx })
+        .eq("id", item.existingId);
+    }
+
+    // 3. Insert newly uploaded photos.
+    const newRows: MediaInsert[] = kept
+      .map((i, idx) => ({ i, idx }))
+      .filter(({ i }) => !i.existingId)
+      .map(({ i, idx }) => ({
         property_id: propertyId,
         url: i.storagePath!,
         caption: i.caption.trim() || null,
         display_order: idx,
         media_type: "photo",
       }));
-
-    const rows: MediaInsert[] = [...photoRows];
-    const narrativeTrimmed = narrative.trim();
-    if (narrativeTrimmed) {
-      rows.push({
-        property_id: propertyId,
-        url: null,
-        caption: null,
-        display_order: photoRows.length,
-        media_type: "virtual_tour",
-        narrative: narrativeTrimmed,
-      });
+    if (newRows.length > 0) {
+      const { error: insertErr } = await supabase.from("property_media").insert(newRows);
+      if (insertErr) {
+        setSubmitting(false);
+        toast.error(insertErr.message);
+        return;
+      }
     }
 
-    const { error: insertErr } = await supabase.from("property_media").insert(rows);
-    if (insertErr) {
-      setSubmitting(false);
-      toast.error(insertErr.message);
-      return;
+    // 4. Upsert (or clear) the virtual tour narrative row.
+    const narrativeTrimmed = narrative.trim();
+    if (narrativeTrimmed && narrativeRowId) {
+      await supabase
+        .from("property_media")
+        .update({ narrative: narrativeTrimmed, display_order: kept.length })
+        .eq("id", narrativeRowId);
+    } else if (narrativeTrimmed) {
+      const { data: inserted } = await supabase
+        .from("property_media")
+        .insert({
+          property_id: propertyId,
+          url: null,
+          caption: null,
+          display_order: kept.length,
+          media_type: "virtual_tour",
+          narrative: narrativeTrimmed,
+        })
+        .select("id")
+        .maybeSingle();
+      if (inserted?.id) setNarrativeRowId(inserted.id);
+    } else if (narrativeRowId) {
+      await supabase.from("property_media").delete().eq("id", narrativeRowId);
+      setNarrativeRowId(null);
     }
 
     // Editing a listing that is already live must not push it back to review.
@@ -291,7 +377,12 @@ function MediaScreen() {
       actionType: "seller.property_media_uploaded",
       entityType: "property",
       entityId: propertyId,
-      metadata: { photo_count: photoRows.length, has_narrative: Boolean(narrativeTrimmed) },
+      metadata: {
+        photo_count: kept.length,
+        new_photos: newRows.length,
+        removed_photos: removedIds.length,
+        has_narrative: Boolean(narrativeTrimmed),
+      },
     });
     if (propertyStatus === "listed") {
       toast.success("Media updated.");
@@ -381,7 +472,7 @@ function MediaScreen() {
                   <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
                     <img
                       src={item.previewUrl}
-                      alt={item.caption || item.file.name}
+                      alt={item.caption || item.file?.name || "Listing photo"}
                       className="h-full w-full object-cover"
                       draggable={false}
                     />
@@ -426,7 +517,7 @@ function MediaScreen() {
                     <p className="text-[11px] text-muted-foreground">
                       {item.status === "uploading" && `Uploading… ${Math.round(item.progress)}%`}
                       {item.status === "queued" && "Queued…"}
-                      {item.status === "done" && "Uploaded"}
+                      {item.status === "done" && (item.existingId ? "Saved" : "Uploaded")}
                       {item.status === "error" && (item.error || "Upload failed")}
                     </p>
                   </div>
