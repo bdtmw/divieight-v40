@@ -20,7 +20,7 @@ export function NavBar() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link to="/" className="flex items-center gap-2">
           <span className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
-            <span className="font-display text-sm font-semibold tracking-tight">1/8</span>
+            <span className="font-display text-sm font-semibold tracking-tight">DE</span>
           </span>
           <span className="font-display text-lg font-semibold tracking-tight text-foreground">
             divieight
