@@ -547,7 +547,7 @@ function MediaScreen() {
           {/* Footer */}
           <div className="flex flex-col-reverse items-stretch justify-between gap-3 sm:flex-row sm:items-center">
             <p className="text-sm text-muted-foreground">
-              {uploadedCount} of at least {MIN_IMAGES} photos uploaded
+              {uploadedCount} photo{uploadedCount === 1 ? "" : "s"} uploaded
               {anyUploading ? " · uploads in progress…" : ""}
             </p>
             <button
