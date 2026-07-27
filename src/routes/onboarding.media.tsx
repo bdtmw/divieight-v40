@@ -21,7 +21,7 @@ export const Route = createFileRoute("/onboarding/media")({
   component: MediaScreen,
 });
 
-const MIN_IMAGES = 5;
+const MIN_IMAGES = 1;
 const MAX_IMAGES = 25;
 const MAX_BYTES = 10 * 1024 * 1024;
 const ACCEPTED = ["image/jpeg", "image/png", "image/webp"];
