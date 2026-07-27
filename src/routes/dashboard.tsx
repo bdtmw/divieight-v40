@@ -311,6 +311,16 @@ function Dashboard() {
                     </div>
 
                     <div className="mt-4 flex flex-wrap items-center justify-end gap-2">
+                      {l.status !== "listed" && idx === 0 ? (
+                        // The onboarding screens resume on the seller's most recent
+                        // property, so only the newest draft can be continued here.
+                        <Link
+                          to={resumeStepFor(l)}
+                          className="inline-flex h-9 items-center rounded-md border border-accent bg-accent/10 px-4 text-sm font-medium text-accent transition-colors hover:bg-accent/20"
+                        >
+                          Continue setup
+                        </Link>
+                      ) : null}
                       <Link
                         to="/listings/$id"
                         params={{ id: l.id }}
@@ -326,6 +336,7 @@ function Dashboard() {
                         Manage Listing
                       </Link>
                     </div>
+
                   </div>
                 </div>
               </article>
