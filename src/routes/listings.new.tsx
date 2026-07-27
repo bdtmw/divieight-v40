@@ -9,7 +9,7 @@ export const Route = createFileRoute("/listings/new")({
   beforeLoad: async () => {
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) {
-      throw redirect({ to: "/login", search: { redirect: "/listings/new" } });
+      throw redirect({ to: "/login" });
     }
     throw redirect({ to: "/onboarding/property" });
   },
