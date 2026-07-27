@@ -9,6 +9,11 @@ import { EightSlicesTracker } from "@/components/EightSlicesTracker";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/onboarding/listing")({
+  // Optional ?property=<id> lets a seller re-enter this step for a specific
+  // existing listing (edit path) instead of always resuming the newest draft.
+  validateSearch: (search: Record<string, unknown>) => ({
+    property: typeof search.property === "string" ? search.property : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Create your listing — divieight" },
@@ -51,6 +56,7 @@ function currency(n: number): string {
 function ListingScreen() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+  const { property: propertyParam } = Route.useSearch();
 
   const [propertyType, setPropertyType] = useState<string>("");
   const [priceStr, setPriceStr] = useState<string>("");
@@ -89,15 +95,16 @@ function ListingScreen() {
     if (!user) return;
     let cancelled = false;
     (async () => {
-      const { data } = await supabase
+      let query = supabase
         .from("properties")
         .select(
           "property_type, listing_price, usage_tag, bedrooms, bathrooms, square_footage, description, amenities",
         )
-        .eq("seller_id", user.id)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
+        .eq("seller_id", user.id);
+      query = propertyParam
+        ? query.eq("id", propertyParam)
+        : query.order("created_at", { ascending: false }).limit(1);
+      const { data } = await query.maybeSingle();
       if (cancelled || !data) return;
       if (data.property_type) setPropertyType(data.property_type);
       if (data.listing_price != null) setPriceStr(String(data.listing_price));
@@ -111,7 +118,7 @@ function ListingScreen() {
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [user, propertyParam]);
 
 
 
@@ -159,13 +166,11 @@ function ListingScreen() {
     setSubmitting(true);
 
     // Find the most recent draft property for this seller (created in the previous step).
-    const { data: property, error: findErr } = await supabase
-      .from("properties")
-      .select("id")
-      .eq("seller_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    let findQuery = supabase.from("properties").select("id").eq("seller_id", user.id);
+    findQuery = propertyParam
+      ? findQuery.eq("id", propertyParam)
+      : findQuery.order("created_at", { ascending: false }).limit(1);
+    const { data: property, error: findErr } = await findQuery.maybeSingle();
 
     if (findErr || !property) {
       setSubmitting(false);
@@ -184,7 +189,7 @@ function ListingScreen() {
         square_footage: Number(sqft),
         description: description.trim(),
         amenities: selectedAmenities,
-        status: "draft",
+        ...(propertyParam ? {} : { status: "draft" }),
       })
       .eq("id", property.id);
 
@@ -195,14 +200,17 @@ function ListingScreen() {
     }
 
     // Advance the seller's onboarding pointer so mid-flow returns land here.
-    await supabase
-      .from("sellers")
-      .update({ onboarding_status: "media_pending" })
-      .eq("id", user.id);
+    // Editing an existing listing must not rewind the seller's onboarding state.
+    if (!propertyParam) {
+      await supabase
+        .from("sellers")
+        .update({ onboarding_status: "media_pending" })
+        .eq("id", user.id);
+    }
 
     setSubmitting(false);
     toast.success("Listing details saved.");
-    navigate({ to: "/onboarding/media" });
+    navigate({ to: "/onboarding/media", search: { property: property.id } });
   }
 
   const previewTitle = propertyType

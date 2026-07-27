@@ -9,6 +9,10 @@ import { notifySeller } from "@/lib/notify";
 import { logAudit } from "@/lib/audit";
 
 export const Route = createFileRoute("/onboarding/agreement")({
+  // Optional ?property=<id> scopes the agreement to one existing listing.
+  validateSearch: (search: Record<string, unknown>) => ({
+    property: typeof search.property === "string" ? search.property : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Seller agreement — divieight" },
@@ -108,6 +112,7 @@ function hashDocument(text: string) {
 function AgreementScreen() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+  const { property: propertyParam } = Route.useSearch();
   const [seller, setSeller] = useState<SellerRow | null>(null);
   const [property, setProperty] = useState<PropertyRow | null>(null);
   const [scrolledEnd, setScrolledEnd] = useState(false);
@@ -128,16 +133,17 @@ function AgreementScreen() {
       setSeller(s ?? null);
       setSignedName((s?.full_name ?? "").trim());
 
-      const { data: p } = await supabase
+      let query = supabase
         .from("properties")
         .select("id, address, city, state, zip")
-        .eq("seller_id", user.id)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
+        .eq("seller_id", user.id);
+      query = propertyParam
+        ? query.eq("id", propertyParam)
+        : query.order("created_at", { ascending: false }).limit(1);
+      const { data: p } = await query.maybeSingle();
       setProperty(p ?? null);
     })();
-  }, [user]);
+  }, [user, propertyParam]);
 
   const agreement = useMemo(() => buildAgreement(seller, property), [seller, property]);
   const documentHash = useMemo(() => hashDocument(agreement), [agreement]);

@@ -246,7 +246,7 @@ function Dashboard() {
               </Link>
             </div>
           ) : (
-            listings.map((l, idx) => (
+            listings.map((l) => (
               <article
                 key={l.id}
                 className="overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-colors hover:border-foreground/20"
@@ -318,16 +318,16 @@ function Dashboard() {
                     </div>
 
                     <div className="mt-4 flex flex-wrap items-center justify-end gap-2">
-                      {l.status !== "listed" && idx === 0 ? (
-                        // The onboarding screens resume on the seller's most recent
-                        // property, so only the newest draft can be continued here.
-                        <Link
-                          to={resumeStepFor(l)}
-                          className="inline-flex h-9 items-center rounded-md border border-accent bg-accent/10 px-4 text-sm font-medium text-accent transition-colors hover:bg-accent/20"
-                        >
-                          Continue setup
-                        </Link>
-                      ) : null}
+                      {/* Each step is scoped by ?property=<id>, so any listing —
+                          draft or live — can be reopened at the right step without
+                          repeating Identity verification. */}
+                      <Link
+                        to={l.status !== "listed" ? resumeStepFor(l) : "/onboarding/listing"}
+                        search={{ property: l.id }}
+                        className="inline-flex h-9 items-center rounded-md border border-accent bg-accent/10 px-4 text-sm font-medium text-accent transition-colors hover:bg-accent/20"
+                      >
+                        {l.status !== "listed" ? "Continue setup" : "Edit listing"}
+                      </Link>
                       <Link
                         to="/listings/$id"
                         params={{ id: l.id }}
