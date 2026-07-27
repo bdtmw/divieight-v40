@@ -83,7 +83,9 @@ export const createEnrollmentCheckout = createServerFn({ method: "POST" })
         ui_mode: "embedded_page",
         return_url: data.returnUrl,
         customer: customerId,
-        automatic_tax: { enabled: true },
+        // Stripe Tax is not configured for this account yet (prices have no
+        // tax_behavior), which made the embedded checkout fail to render.
+        billing_address_collection: "required",
         payment_intent_data: { description: "Platform Enrollment Fee" },
         metadata: {
           userId,
