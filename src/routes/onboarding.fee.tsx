@@ -70,13 +70,25 @@ function FeeScreen() {
       setExitType(seller?.exit_type ?? null);
       setRetained(seller?.retained_shares ?? null);
 
-      const { data: existing } = await supabase
-        .from("enrollment_payments")
-        .select("id, status, property_id")
+      // The fee covers the listing currently being onboarded: a paid record
+      // counts only if it was made after the seller's most recent property.
+      const { data: lastProperty } = await supabase
+        .from("properties")
+        .select("created_at")
         .eq("seller_id", user.id)
-        .eq("status", "paid")
-        .is("property_id", null)
-        .limit(1);
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      let paidQuery = supabase
+        .from("enrollment_payments")
+        .select("id")
+        .eq("seller_id", user.id)
+        .eq("status", "paid");
+      if (lastProperty?.created_at) {
+        paidQuery = paidQuery.gt("created_at", lastProperty.created_at);
+      }
+      const { data: existing } = await paidQuery.limit(1);
       if (cancelled) return;
       if (existing && existing.length > 0) setPaid(true);
       setChecking(false);
