@@ -60,9 +60,12 @@ type Property = {
   description: string | null;
 };
 
+type Photo = { url: string; caption: string | null };
+
 function ListingDetail() {
   const { id } = Route.useParams();
   const [property, setProperty] = useState<Property | null>(null);
+  const [photos, setPhotos] = useState<Photo[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
@@ -80,11 +83,43 @@ function ListingDetail() {
       if (!data) setNotFound(true);
       setProperty((data as Property) ?? null);
       setLoading(false);
+
+      if (data) {
+        const { data: media } = await supabase
+          .from("property_media")
+          .select("url, caption, display_order")
+          .eq("property_id", id)
+          .eq("media_type", "photo")
+          .order("display_order", { ascending: true });
+        const rows = (media ?? []).filter((m) => !!m.url) as {
+          url: string;
+          caption: string | null;
+        }[];
+        if (rows.length > 0) {
+          const { data: signed } = await supabase.storage
+            .from("property-media")
+            .createSignedUrls(
+              rows.map((r) => r.url),
+              60 * 60,
+            );
+          const byPath = new Map<string, string>();
+          (signed ?? []).forEach((s) => {
+            if (s.path && s.signedUrl) byPath.set(s.path, s.signedUrl);
+          });
+          if (cancelled) return;
+          setPhotos(
+            rows
+              .map((r) => ({ url: byPath.get(r.url) ?? "", caption: r.caption }))
+              .filter((p) => !!p.url),
+          );
+        }
+      }
     })();
     return () => {
       cancelled = true;
     };
   }, [id]);
+
 
   if (loading) {
     return (
@@ -138,6 +173,37 @@ function ListingDetail() {
           {property.status.replace(/_/g, " ")}
         </span>
       </div>
+
+      {photos.length > 0 ? (
+        <section className="mt-8">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {photos.map((p, i) => (
+              <figure
+                key={i}
+                className="overflow-hidden rounded-xl border border-border bg-card shadow-sm"
+              >
+                <img
+                  src={p.url}
+                  alt={p.caption || `${property.address} photo ${i + 1}`}
+                  loading="lazy"
+                  className={
+                    i === 0
+                      ? "h-64 w-full object-cover sm:h-72"
+                      : "h-48 w-full object-cover"
+                  }
+                />
+                {p.caption ? (
+                  <figcaption className="px-3 py-2 text-xs text-muted-foreground">
+                    {p.caption}
+                  </figcaption>
+                ) : null}
+              </figure>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+
 
       <section className="mt-8 rounded-xl border border-border bg-card p-6 shadow-sm">
         <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">

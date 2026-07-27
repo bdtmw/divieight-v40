@@ -3,7 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { OnboardingStepper } from "@/components/OnboardingStepper";
+import { OnboardingStepper, useIdentityDone } from "@/components/OnboardingStepper";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/onboarding/")({
@@ -21,6 +21,7 @@ type ExitType = "full_exit" | "hybrid_exit";
 function IntentScreen() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+  const identityVerified = useIdentityDone();
   const [selected, setSelected] = useState<ExitType | null>(null);
   const [retained, setRetained] = useState<number>(1);
   const [submitting, setSubmitting] = useState(false);
@@ -135,7 +136,11 @@ function IntentScreen() {
           disabled={!selected || submitting || loading}
           className="inline-flex h-11 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {submitting ? "Saving..." : "Continue to identity"}
+          {submitting
+            ? "Saving..."
+            : identityVerified
+              ? "Continue to property"
+              : "Continue to identity"}
         </button>
       </div>
     </div>
