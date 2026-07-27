@@ -21,6 +21,7 @@ type ExitType = "full_exit" | "hybrid_exit";
 function IntentScreen() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+  const identityVerified = useIdentityDone();
   const [selected, setSelected] = useState<ExitType | null>(null);
   const [retained, setRetained] = useState<number>(1);
   const [submitting, setSubmitting] = useState(false);
