@@ -3,7 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { OnboardingStepper } from "@/components/OnboardingStepper";
+import { OnboardingStepper, useIdentityDone } from "@/components/OnboardingStepper";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { EnrollmentCheckout } from "@/components/EnrollmentCheckout";
 import {
@@ -44,6 +44,7 @@ function FeeScreen() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
   const { session_id: sessionId } = Route.useSearch();
+  const identityDone = useIdentityDone();
 
   const [retained, setRetained] = useState<number | null>(null);
   const [exitType, setExitType] = useState<string | null>(null);
@@ -136,7 +137,7 @@ function FeeScreen() {
   const noFeeDue = !checking && (exitType !== "hybrid_exit" || shares === 0);
 
   function goNext() {
-    navigate({ to: "/onboarding/identity" });
+    navigate({ to: identityDone ? "/onboarding/property" : "/onboarding/identity" });
   }
 
   return (

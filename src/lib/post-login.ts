@@ -16,6 +16,8 @@ export async function getPostLoginRedirect(userId: string): Promise<string> {
   switch (data.onboarding_status) {
     case "not_started":
       return "/onboarding";
+    case "enrollment_fee_pending":
+      return "/onboarding/fee";
     case "identity_pending":
       return "/onboarding/identity";
     case "property_verification_pending":
