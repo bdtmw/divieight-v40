@@ -136,7 +136,11 @@ function IntentScreen() {
           disabled={!selected || submitting || loading}
           className="inline-flex h-11 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {submitting ? "Saving..." : "Continue to identity"}
+          {submitting
+            ? "Saving..."
+            : identityVerified
+              ? "Continue to property"
+              : "Continue to identity"}
         </button>
       </div>
     </div>
