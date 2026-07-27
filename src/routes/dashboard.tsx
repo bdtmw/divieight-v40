@@ -33,6 +33,8 @@ type Listing = {
   exit_type: string | null;
   retained_shares: number | null;
   primary_photo?: string | null;
+  has_media?: boolean;
+
 };
 
 type SellerInfo = {
