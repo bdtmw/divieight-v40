@@ -8,6 +8,10 @@ import { cn } from "@/lib/utils";
 import { logAudit } from "@/lib/audit";
 
 export const Route = createFileRoute("/onboarding/media")({
+  // Optional ?property=<id> scopes this step to one existing listing (edit path).
+  validateSearch: (search: Record<string, unknown>) => ({
+    property: typeof search.property === "string" ? search.property : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Add photos & media — divieight" },
@@ -40,8 +44,11 @@ function randomId() {
 function MediaScreen() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+  const { property: propertyParam } = Route.useSearch();
 
   const [propertyId, setPropertyId] = useState<string | null>(null);
+  const [propertyStatus, setPropertyStatus] = useState<string | null>(null);
+  const [existingPhotos, setExistingPhotos] = useState(0);
   const [loadingProperty, setLoadingProperty] = useState(true);
 
   const [items, setItems] = useState<Item[]>([]);
@@ -58,22 +65,30 @@ function MediaScreen() {
       return;
     }
     (async () => {
-      const { data, error } = await supabase
-        .from("properties")
-        .select("id")
-        .eq("seller_id", user.id)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
+      let query = supabase.from("properties").select("id, status").eq("seller_id", user.id);
+      query = propertyParam
+        ? query.eq("id", propertyParam)
+        : query.order("created_at", { ascending: false }).limit(1);
+      const { data, error } = await query.maybeSingle();
       if (error || !data) {
         toast.error("Couldn't find your property. Please complete the previous step first.");
         navigate({ to: "/onboarding/property" });
         return;
       }
       setPropertyId(data.id);
+      setPropertyStatus(data.status ?? null);
+
+      // Photos already saved for this listing count toward the minimum so an
+      // edit visit does not force a full re-upload.
+      const { count } = await supabase
+        .from("property_media")
+        .select("id", { count: "exact", head: true })
+        .eq("property_id", data.id)
+        .eq("media_type", "photo");
+      setExistingPhotos(count ?? 0);
       setLoadingProperty(false);
     })();
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, propertyParam]);
 
   useEffect(() => {
     return () => {
@@ -198,11 +213,12 @@ function MediaScreen() {
 
   const uploadedCount = items.filter((i) => i.status === "done").length;
   const anyUploading = items.some((i) => i.status === "uploading" || i.status === "queued");
-  const canSubmit = uploadedCount >= MIN_IMAGES && !anyUploading && !submitting && !!propertyId;
+  const totalPhotos = uploadedCount + existingPhotos;
+  const canSubmit = totalPhotos >= MIN_IMAGES && !anyUploading && !submitting && !!propertyId;
 
   async function handleSubmit() {
     if (!propertyId) return;
-    if (uploadedCount < MIN_IMAGES) {
+    if (totalPhotos < MIN_IMAGES) {
       toast.error(`Please upload at least ${MIN_IMAGES} photos.`);
       return;
     }
@@ -250,21 +266,24 @@ function MediaScreen() {
       return;
     }
 
-    const { error: updateErr } = await supabase
-      .from("properties")
-      .update({ status: "pending_review" })
-      .eq("id", propertyId);
+    // Editing a listing that is already live must not push it back to review.
+    if (propertyStatus !== "listed") {
+      const { error: updateErr } = await supabase
+        .from("properties")
+        .update({ status: "pending_review" })
+        .eq("id", propertyId);
 
-    if (updateErr) {
-      setSubmitting(false);
-      toast.error(updateErr.message);
-      return;
+      if (updateErr) {
+        setSubmitting(false);
+        toast.error(updateErr.message);
+        return;
+      }
+
+      await supabase
+        .from("sellers")
+        .update({ onboarding_status: "agreement_pending" })
+        .eq("id", user!.id);
     }
-
-    await supabase
-      .from("sellers")
-      .update({ onboarding_status: "agreement_pending" })
-      .eq("id", user!.id);
 
     setSubmitting(false);
     await logAudit({
@@ -274,8 +293,13 @@ function MediaScreen() {
       entityId: propertyId,
       metadata: { photo_count: photoRows.length, has_narrative: Boolean(narrativeTrimmed) },
     });
+    if (propertyStatus === "listed") {
+      toast.success("Media updated.");
+      navigate({ to: "/listings/$id", params: { id: propertyId } });
+      return;
+    }
     toast.success("Media saved. Listing moved to review.");
-    navigate({ to: "/onboarding/agreement" });
+    navigate({ to: "/onboarding/agreement", search: { property: propertyId } });
   }
 
   return (
