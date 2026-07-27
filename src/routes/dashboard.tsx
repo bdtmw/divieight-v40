@@ -100,6 +100,9 @@ function Dashboard() {
         (media ?? []).forEach((m: { property_id: string; url: string | null }) => {
           if (m.url && !firstByProp.has(m.property_id)) firstByProp.set(m.property_id, m.url);
         });
+        propRows.forEach((p) => {
+          p.has_media = firstByProp.has(p.id);
+        });
         const paths = Array.from(firstByProp.values());
         if (paths.length > 0) {
           const { data: signed } = await supabase.storage
@@ -115,6 +118,7 @@ function Dashboard() {
           });
         }
       }
+
 
       setListings(propRows);
       setLoading(false);
