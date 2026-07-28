@@ -25,6 +25,11 @@ export type AuditAction =
   | "buyer.hold_harmless_signed"
   | "buyer.verification_requested"
   | "buyer.verification_documents_submitted"
+  | "buyer.plaid_consent_given"
+  | "buyer.liquidity_verified"
+  | "buyer.liquidity_insufficient"
+  | "buyer.liquidity_link_failed"
+  | "buyer.liquidity_documents_submitted"
   | "buyer.fcra_adverse_action_issued";
 
 export type AuditEntity = "seller" | "property" | "payment" | "media" | "buyer_account";
