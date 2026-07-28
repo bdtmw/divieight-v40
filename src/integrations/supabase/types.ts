@@ -107,6 +107,7 @@ export type Database = {
           phone: string | null
           primary_target_market: string | null
           priority_rank: number | null
+          priority_rank_timestamp: string | null
           target_budget: number | null
           target_zip_codes: Json
           updated_at: string
@@ -123,6 +124,7 @@ export type Database = {
           phone?: string | null
           primary_target_market?: string | null
           priority_rank?: number | null
+          priority_rank_timestamp?: string | null
           target_budget?: number | null
           target_zip_codes?: Json
           updated_at?: string
@@ -139,11 +141,59 @@ export type Database = {
           phone?: string | null
           primary_target_market?: string | null
           priority_rank?: number | null
+          priority_rank_timestamp?: string | null
           target_budget?: number | null
           target_zip_codes?: Json
           updated_at?: string
         }
         Relationships: []
+      }
+      buyer_enrollment_payments: {
+        Row: {
+          amount_cents: number
+          auth_user_id: string
+          buyer_account_id: string
+          created_at: string
+          currency: string
+          environment: string
+          id: string
+          status: string
+          stripe_session_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount_cents: number
+          auth_user_id: string
+          buyer_account_id: string
+          created_at?: string
+          currency?: string
+          environment?: string
+          id?: string
+          status?: string
+          stripe_session_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount_cents?: number
+          auth_user_id?: string
+          buyer_account_id?: string
+          created_at?: string
+          currency?: string
+          environment?: string
+          id?: string
+          status?: string
+          stripe_session_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "buyer_enrollment_payments_buyer_account_id_fkey"
+            columns: ["buyer_account_id"]
+            isOneToOne: false
+            referencedRelation: "buyer_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       contact_submissions: {
         Row: {
@@ -453,6 +503,7 @@ export type Database = {
       }
       signed_documents: {
         Row: {
+          buyer_account_id: string | null
           created_at: string
           document_hash: string | null
           document_type: string
@@ -460,10 +511,11 @@ export type Database = {
           id: string
           ip_address: string | null
           property_id: string | null
-          seller_id: string
+          seller_id: string | null
           signed_name: string
         }
         Insert: {
+          buyer_account_id?: string | null
           created_at?: string
           document_hash?: string | null
           document_type: string
@@ -471,10 +523,11 @@ export type Database = {
           id?: string
           ip_address?: string | null
           property_id?: string | null
-          seller_id: string
+          seller_id?: string | null
           signed_name: string
         }
         Update: {
+          buyer_account_id?: string | null
           created_at?: string
           document_hash?: string | null
           document_type?: string
@@ -482,10 +535,17 @@ export type Database = {
           id?: string
           ip_address?: string | null
           property_id?: string | null
-          seller_id?: string
+          seller_id?: string | null
           signed_name?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "signed_documents_buyer_account_id_fkey"
+            columns: ["buyer_account_id"]
+            isOneToOne: false
+            referencedRelation: "buyer_accounts"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "signed_documents_property_id_fkey"
             columns: ["property_id"]
