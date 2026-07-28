@@ -102,11 +102,13 @@ export type Database = {
           golden_ticket_issued: boolean
           id: string
           intent: string | null
+          non_negotiable_amenities: Json
           onboarding_status: string
           phone: string | null
           primary_target_market: string | null
           priority_rank: number | null
           target_budget: number | null
+          target_zip_codes: Json
           updated_at: string
         }
         Insert: {
@@ -116,11 +118,13 @@ export type Database = {
           golden_ticket_issued?: boolean
           id?: string
           intent?: string | null
+          non_negotiable_amenities?: Json
           onboarding_status?: string
           phone?: string | null
           primary_target_market?: string | null
           priority_rank?: number | null
           target_budget?: number | null
+          target_zip_codes?: Json
           updated_at?: string
         }
         Update: {
@@ -130,11 +134,13 @@ export type Database = {
           golden_ticket_issued?: boolean
           id?: string
           intent?: string | null
+          non_negotiable_amenities?: Json
           onboarding_status?: string
           phone?: string | null
           primary_target_market?: string | null
           priority_rank?: number | null
           target_budget?: number | null
+          target_zip_codes?: Json
           updated_at?: string
         }
         Relationships: []
