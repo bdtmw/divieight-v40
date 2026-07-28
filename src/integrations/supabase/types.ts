@@ -17,9 +17,12 @@ export type Database = {
       account_members: {
         Row: {
           address: string | null
+          background_check_at: string | null
+          background_check_result: string | null
           buyer_account_id: string
           created_at: string
           date_of_birth: string | null
+          fcra_consent_at: string | null
           full_name: string
           id: string
           id_document_url: string | null
@@ -29,9 +32,12 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          background_check_at?: string | null
+          background_check_result?: string | null
           buyer_account_id: string
           created_at?: string
           date_of_birth?: string | null
+          fcra_consent_at?: string | null
           full_name?: string
           id?: string
           id_document_url?: string | null
@@ -41,9 +47,12 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          background_check_at?: string | null
+          background_check_result?: string | null
           buyer_account_id?: string
           created_at?: string
           date_of_birth?: string | null
+          fcra_consent_at?: string | null
           full_name?: string
           id?: string
           id_document_url?: string | null
