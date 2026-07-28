@@ -117,9 +117,15 @@ export type Database = {
           golden_ticket_issued: boolean
           id: string
           intent: string | null
+          liquidity_documents: Json
+          liquidity_institution: string | null
+          liquidity_status: string
+          liquidity_verified: boolean
+          liquidity_verified_at: string | null
           non_negotiable_amenities: Json
           onboarding_status: string
           phone: string | null
+          plaid_consent_at: string | null
           primary_target_market: string | null
           priority_rank: number | null
           priority_rank_timestamp: string | null
@@ -134,9 +140,15 @@ export type Database = {
           golden_ticket_issued?: boolean
           id?: string
           intent?: string | null
+          liquidity_documents?: Json
+          liquidity_institution?: string | null
+          liquidity_status?: string
+          liquidity_verified?: boolean
+          liquidity_verified_at?: string | null
           non_negotiable_amenities?: Json
           onboarding_status?: string
           phone?: string | null
+          plaid_consent_at?: string | null
           primary_target_market?: string | null
           priority_rank?: number | null
           priority_rank_timestamp?: string | null
@@ -151,9 +163,15 @@ export type Database = {
           golden_ticket_issued?: boolean
           id?: string
           intent?: string | null
+          liquidity_documents?: Json
+          liquidity_institution?: string | null
+          liquidity_status?: string
+          liquidity_verified?: boolean
+          liquidity_verified_at?: string | null
           non_negotiable_amenities?: Json
           onboarding_status?: string
           phone?: string | null
+          plaid_consent_at?: string | null
           primary_target_market?: string | null
           priority_rank?: number | null
           priority_rank_timestamp?: string | null

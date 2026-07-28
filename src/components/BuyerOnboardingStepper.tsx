@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils";
 
-const STEPS = ["Identity", "Lifestyle", "Payment", "Vetting"] as const;
+const STEPS = ["Identity", "Lifestyle", "Payment", "Vetting", "Liquidity"] as const;
 
-export type BuyerOnboardingStep = 1 | 2 | 3 | 4;
+export type BuyerOnboardingStep = 1 | 2 | 3 | 4 | 5;
 
 export function BuyerOnboardingStepper({ current }: { current: BuyerOnboardingStep }) {
   return (

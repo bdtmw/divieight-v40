@@ -37,6 +37,7 @@ import { Route as AdminAuditLogRouteImport } from './routes/admin.audit-log'
 import { Route as BuyerOnboardingIndexRouteImport } from './routes/buyer.onboarding.index'
 import { Route as BuyerOnboardingVettingRouteImport } from './routes/buyer.onboarding.vetting'
 import { Route as BuyerOnboardingPaymentRouteImport } from './routes/buyer.onboarding.payment'
+import { Route as BuyerOnboardingLiquidityRouteImport } from './routes/buyer.onboarding.liquidity'
 import { Route as BuyerOnboardingLifestyleRouteImport } from './routes/buyer.onboarding.lifestyle'
 import { Route as BuyerOnboardingIdentityRouteImport } from './routes/buyer.onboarding.identity'
 
@@ -180,6 +181,12 @@ const BuyerOnboardingPaymentRoute = BuyerOnboardingPaymentRouteImport.update({
   path: '/buyer/onboarding/payment',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuyerOnboardingLiquidityRoute =
+  BuyerOnboardingLiquidityRouteImport.update({
+    id: '/buyer/onboarding/liquidity',
+    path: '/buyer/onboarding/liquidity',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const BuyerOnboardingLifestyleRoute =
   BuyerOnboardingLifestyleRouteImport.update({
     id: '/buyer/onboarding/lifestyle',
@@ -220,6 +227,7 @@ export interface FileRoutesByFullPath {
   '/onboarding/': typeof OnboardingIndexRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
+  '/buyer/onboarding/liquidity': typeof BuyerOnboardingLiquidityRoute
   '/buyer/onboarding/payment': typeof BuyerOnboardingPaymentRoute
   '/buyer/onboarding/vetting': typeof BuyerOnboardingVettingRoute
   '/buyer/onboarding/': typeof BuyerOnboardingIndexRoute
@@ -252,6 +260,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingIndexRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
+  '/buyer/onboarding/liquidity': typeof BuyerOnboardingLiquidityRoute
   '/buyer/onboarding/payment': typeof BuyerOnboardingPaymentRoute
   '/buyer/onboarding/vetting': typeof BuyerOnboardingVettingRoute
   '/buyer/onboarding': typeof BuyerOnboardingIndexRoute
@@ -285,6 +294,7 @@ export interface FileRoutesById {
   '/onboarding/': typeof OnboardingIndexRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
+  '/buyer/onboarding/liquidity': typeof BuyerOnboardingLiquidityRoute
   '/buyer/onboarding/payment': typeof BuyerOnboardingPaymentRoute
   '/buyer/onboarding/vetting': typeof BuyerOnboardingVettingRoute
   '/buyer/onboarding/': typeof BuyerOnboardingIndexRoute
@@ -319,6 +329,7 @@ export interface FileRouteTypes {
     | '/onboarding/'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
+    | '/buyer/onboarding/liquidity'
     | '/buyer/onboarding/payment'
     | '/buyer/onboarding/vetting'
     | '/buyer/onboarding/'
@@ -351,6 +362,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
+    | '/buyer/onboarding/liquidity'
     | '/buyer/onboarding/payment'
     | '/buyer/onboarding/vetting'
     | '/buyer/onboarding'
@@ -383,6 +395,7 @@ export interface FileRouteTypes {
     | '/onboarding/'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
+    | '/buyer/onboarding/liquidity'
     | '/buyer/onboarding/payment'
     | '/buyer/onboarding/vetting'
     | '/buyer/onboarding/'
@@ -416,6 +429,7 @@ export interface RootRouteChildren {
   OnboardingIndexRoute: typeof OnboardingIndexRoute
   BuyerOnboardingIdentityRoute: typeof BuyerOnboardingIdentityRoute
   BuyerOnboardingLifestyleRoute: typeof BuyerOnboardingLifestyleRoute
+  BuyerOnboardingLiquidityRoute: typeof BuyerOnboardingLiquidityRoute
   BuyerOnboardingPaymentRoute: typeof BuyerOnboardingPaymentRoute
   BuyerOnboardingVettingRoute: typeof BuyerOnboardingVettingRoute
   BuyerOnboardingIndexRoute: typeof BuyerOnboardingIndexRoute
@@ -619,6 +633,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyerOnboardingPaymentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/buyer/onboarding/liquidity': {
+      id: '/buyer/onboarding/liquidity'
+      path: '/buyer/onboarding/liquidity'
+      fullPath: '/buyer/onboarding/liquidity'
+      preLoaderRoute: typeof BuyerOnboardingLiquidityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/buyer/onboarding/lifestyle': {
       id: '/buyer/onboarding/lifestyle'
       path: '/buyer/onboarding/lifestyle'
@@ -664,6 +685,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingIndexRoute: OnboardingIndexRoute,
   BuyerOnboardingIdentityRoute: BuyerOnboardingIdentityRoute,
   BuyerOnboardingLifestyleRoute: BuyerOnboardingLifestyleRoute,
+  BuyerOnboardingLiquidityRoute: BuyerOnboardingLiquidityRoute,
   BuyerOnboardingPaymentRoute: BuyerOnboardingPaymentRoute,
   BuyerOnboardingVettingRoute: BuyerOnboardingVettingRoute,
   BuyerOnboardingIndexRoute: BuyerOnboardingIndexRoute,
