@@ -27,6 +27,7 @@ import { Route as OnboardingFeeRouteImport } from './routes/onboarding.fee'
 import { Route as OnboardingAgreementRouteImport } from './routes/onboarding.agreement'
 import { Route as ListingsNewRouteImport } from './routes/listings.new'
 import { Route as ListingsIdRouteImport } from './routes/listings.$id'
+import { Route as BuyerVerificationRouteImport } from './routes/buyer.verification'
 import { Route as BuyerRegisterRouteImport } from './routes/buyer.register'
 import { Route as BuyerLoginRouteImport } from './routes/buyer.login'
 import { Route as BuyerDashboardRouteImport } from './routes/buyer.dashboard'
@@ -128,6 +129,11 @@ const ListingsIdRoute = ListingsIdRouteImport.update({
   path: '/listings/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuyerVerificationRoute = BuyerVerificationRouteImport.update({
+  id: '/buyer/verification',
+  path: '/buyer/verification',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BuyerRegisterRoute = BuyerRegisterRouteImport.update({
   id: '/buyer/register',
   path: '/buyer/register',
@@ -195,6 +201,7 @@ export interface FileRoutesByFullPath {
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
+  '/buyer/verification': typeof BuyerVerificationRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/agreement': typeof OnboardingAgreementRoute
@@ -225,6 +232,7 @@ export interface FileRoutesByTo {
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
+  '/buyer/verification': typeof BuyerVerificationRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/agreement': typeof OnboardingAgreementRoute
@@ -256,6 +264,7 @@ export interface FileRoutesById {
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
+  '/buyer/verification': typeof BuyerVerificationRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/agreement': typeof OnboardingAgreementRoute
@@ -288,6 +297,7 @@ export interface FileRouteTypes {
     | '/buyer/dashboard'
     | '/buyer/login'
     | '/buyer/register'
+    | '/buyer/verification'
     | '/listings/$id'
     | '/listings/new'
     | '/onboarding/agreement'
@@ -318,6 +328,7 @@ export interface FileRouteTypes {
     | '/buyer/dashboard'
     | '/buyer/login'
     | '/buyer/register'
+    | '/buyer/verification'
     | '/listings/$id'
     | '/listings/new'
     | '/onboarding/agreement'
@@ -348,6 +359,7 @@ export interface FileRouteTypes {
     | '/buyer/dashboard'
     | '/buyer/login'
     | '/buyer/register'
+    | '/buyer/verification'
     | '/listings/$id'
     | '/listings/new'
     | '/onboarding/agreement'
@@ -379,6 +391,7 @@ export interface RootRouteChildren {
   BuyerDashboardRoute: typeof BuyerDashboardRoute
   BuyerLoginRoute: typeof BuyerLoginRoute
   BuyerRegisterRoute: typeof BuyerRegisterRoute
+  BuyerVerificationRoute: typeof BuyerVerificationRoute
   ListingsIdRoute: typeof ListingsIdRoute
   ListingsNewRoute: typeof ListingsNewRoute
   OnboardingAgreementRoute: typeof OnboardingAgreementRoute
@@ -523,6 +536,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ListingsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/buyer/verification': {
+      id: '/buyer/verification'
+      path: '/buyer/verification'
+      fullPath: '/buyer/verification'
+      preLoaderRoute: typeof BuyerVerificationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/buyer/register': {
       id: '/buyer/register'
       path: '/buyer/register'
@@ -611,6 +631,7 @@ const rootRouteChildren: RootRouteChildren = {
   BuyerDashboardRoute: BuyerDashboardRoute,
   BuyerLoginRoute: BuyerLoginRoute,
   BuyerRegisterRoute: BuyerRegisterRoute,
+  BuyerVerificationRoute: BuyerVerificationRoute,
   ListingsIdRoute: ListingsIdRoute,
   ListingsNewRoute: ListingsNewRoute,
   OnboardingAgreementRoute: OnboardingAgreementRoute,
