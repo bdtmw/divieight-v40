@@ -465,8 +465,12 @@ function RejectionPanel() {
       </div>
       <div className="mt-5 flex flex-wrap gap-3">
         <Button asChild>
+          <Link to="/buyer/adverse-action">View adverse action notice</Link>
+        </Button>
+        <Button asChild variant="outline">
           <Link to="/contact">Contact support</Link>
         </Button>
+
         <Button asChild variant="outline">
           <Link to="/">Back to home</Link>
         </Button>
