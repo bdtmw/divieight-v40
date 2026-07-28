@@ -31,6 +31,7 @@ import { Route as BuyerVerificationRouteImport } from './routes/buyer.verificati
 import { Route as BuyerRegisterRouteImport } from './routes/buyer.register'
 import { Route as BuyerLoginRouteImport } from './routes/buyer.login'
 import { Route as BuyerDashboardRouteImport } from './routes/buyer.dashboard'
+import { Route as BuyerAdverseActionRouteImport } from './routes/buyer.adverse-action'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AdminAuditLogRouteImport } from './routes/admin.audit-log'
 import { Route as BuyerOnboardingIndexRouteImport } from './routes/buyer.onboarding.index'
@@ -149,6 +150,11 @@ const BuyerDashboardRoute = BuyerDashboardRouteImport.update({
   path: '/buyer/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuyerAdverseActionRoute = BuyerAdverseActionRouteImport.update({
+  id: '/buyer/adverse-action',
+  path: '/buyer/adverse-action',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/auth/callback',
   path: '/auth/callback',
@@ -198,6 +204,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/buyer/adverse-action': typeof BuyerAdverseActionRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
@@ -229,6 +236,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/buyer/adverse-action': typeof BuyerAdverseActionRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
@@ -261,6 +269,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/buyer/adverse-action': typeof BuyerAdverseActionRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
@@ -294,6 +303,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/admin/audit-log'
     | '/auth/callback'
+    | '/buyer/adverse-action'
     | '/buyer/dashboard'
     | '/buyer/login'
     | '/buyer/register'
@@ -325,6 +335,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/admin/audit-log'
     | '/auth/callback'
+    | '/buyer/adverse-action'
     | '/buyer/dashboard'
     | '/buyer/login'
     | '/buyer/register'
@@ -356,6 +367,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/admin/audit-log'
     | '/auth/callback'
+    | '/buyer/adverse-action'
     | '/buyer/dashboard'
     | '/buyer/login'
     | '/buyer/register'
@@ -388,6 +400,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   AdminAuditLogRoute: typeof AdminAuditLogRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
+  BuyerAdverseActionRoute: typeof BuyerAdverseActionRoute
   BuyerDashboardRoute: typeof BuyerDashboardRoute
   BuyerLoginRoute: typeof BuyerLoginRoute
   BuyerRegisterRoute: typeof BuyerRegisterRoute
@@ -564,6 +577,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyerDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/buyer/adverse-action': {
+      id: '/buyer/adverse-action'
+      path: '/buyer/adverse-action'
+      fullPath: '/buyer/adverse-action'
+      preLoaderRoute: typeof BuyerAdverseActionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/callback': {
       id: '/auth/callback'
       path: '/auth/callback'
@@ -628,6 +648,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   AdminAuditLogRoute: AdminAuditLogRoute,
   AuthCallbackRoute: AuthCallbackRoute,
+  BuyerAdverseActionRoute: BuyerAdverseActionRoute,
   BuyerDashboardRoute: BuyerDashboardRoute,
   BuyerLoginRoute: BuyerLoginRoute,
   BuyerRegisterRoute: BuyerRegisterRoute,
