@@ -230,11 +230,27 @@ function VettingScreen() {
     if (outcome === "flagged_needs_review") {
       await supabase
         .from("buyer_accounts")
-        .update({ onboarding_status: "verification_request_pending" })
+        .update({ onboarding_status: "verification_pending" })
         .eq("id", buyer.id);
-      navigate({ to: "/buyer/dashboard" });
+      if (member) {
+        await supabase
+          .from("account_members")
+          .update({ vetting_status: "verification_pending" })
+          .eq("id", member.id);
+      }
+      if (user) {
+        await logAudit({
+          actorId: user.id,
+          actionType: "buyer.verification_requested",
+          entityType: "buyer_account",
+          entityId: buyer.id,
+          metadata: { member_id: member?.id ?? null, reason: "flagged_needs_review" },
+        });
+      }
+      navigate({ to: "/buyer/verification" });
     }
   }
+
 
   if (loading || !ready) {
     return (
@@ -449,8 +465,12 @@ function RejectionPanel() {
       </div>
       <div className="mt-5 flex flex-wrap gap-3">
         <Button asChild>
+          <Link to="/buyer/adverse-action">View adverse action notice</Link>
+        </Button>
+        <Button asChild variant="outline">
           <Link to="/contact">Contact support</Link>
         </Button>
+
         <Button asChild variant="outline">
           <Link to="/">Back to home</Link>
         </Button>

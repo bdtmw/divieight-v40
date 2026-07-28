@@ -27,9 +27,11 @@ import { Route as OnboardingFeeRouteImport } from './routes/onboarding.fee'
 import { Route as OnboardingAgreementRouteImport } from './routes/onboarding.agreement'
 import { Route as ListingsNewRouteImport } from './routes/listings.new'
 import { Route as ListingsIdRouteImport } from './routes/listings.$id'
+import { Route as BuyerVerificationRouteImport } from './routes/buyer.verification'
 import { Route as BuyerRegisterRouteImport } from './routes/buyer.register'
 import { Route as BuyerLoginRouteImport } from './routes/buyer.login'
 import { Route as BuyerDashboardRouteImport } from './routes/buyer.dashboard'
+import { Route as BuyerAdverseActionRouteImport } from './routes/buyer.adverse-action'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AdminAuditLogRouteImport } from './routes/admin.audit-log'
 import { Route as BuyerOnboardingIndexRouteImport } from './routes/buyer.onboarding.index'
@@ -128,6 +130,11 @@ const ListingsIdRoute = ListingsIdRouteImport.update({
   path: '/listings/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuyerVerificationRoute = BuyerVerificationRouteImport.update({
+  id: '/buyer/verification',
+  path: '/buyer/verification',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BuyerRegisterRoute = BuyerRegisterRouteImport.update({
   id: '/buyer/register',
   path: '/buyer/register',
@@ -141,6 +148,11 @@ const BuyerLoginRoute = BuyerLoginRouteImport.update({
 const BuyerDashboardRoute = BuyerDashboardRouteImport.update({
   id: '/buyer/dashboard',
   path: '/buyer/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuyerAdverseActionRoute = BuyerAdverseActionRouteImport.update({
+  id: '/buyer/adverse-action',
+  path: '/buyer/adverse-action',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
@@ -192,9 +204,11 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/buyer/adverse-action': typeof BuyerAdverseActionRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
+  '/buyer/verification': typeof BuyerVerificationRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/agreement': typeof OnboardingAgreementRoute
@@ -222,9 +236,11 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/buyer/adverse-action': typeof BuyerAdverseActionRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
+  '/buyer/verification': typeof BuyerVerificationRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/agreement': typeof OnboardingAgreementRoute
@@ -253,9 +269,11 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/buyer/adverse-action': typeof BuyerAdverseActionRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
+  '/buyer/verification': typeof BuyerVerificationRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/agreement': typeof OnboardingAgreementRoute
@@ -285,9 +303,11 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/admin/audit-log'
     | '/auth/callback'
+    | '/buyer/adverse-action'
     | '/buyer/dashboard'
     | '/buyer/login'
     | '/buyer/register'
+    | '/buyer/verification'
     | '/listings/$id'
     | '/listings/new'
     | '/onboarding/agreement'
@@ -315,9 +335,11 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/admin/audit-log'
     | '/auth/callback'
+    | '/buyer/adverse-action'
     | '/buyer/dashboard'
     | '/buyer/login'
     | '/buyer/register'
+    | '/buyer/verification'
     | '/listings/$id'
     | '/listings/new'
     | '/onboarding/agreement'
@@ -345,9 +367,11 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/admin/audit-log'
     | '/auth/callback'
+    | '/buyer/adverse-action'
     | '/buyer/dashboard'
     | '/buyer/login'
     | '/buyer/register'
+    | '/buyer/verification'
     | '/listings/$id'
     | '/listings/new'
     | '/onboarding/agreement'
@@ -376,9 +400,11 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   AdminAuditLogRoute: typeof AdminAuditLogRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
+  BuyerAdverseActionRoute: typeof BuyerAdverseActionRoute
   BuyerDashboardRoute: typeof BuyerDashboardRoute
   BuyerLoginRoute: typeof BuyerLoginRoute
   BuyerRegisterRoute: typeof BuyerRegisterRoute
+  BuyerVerificationRoute: typeof BuyerVerificationRoute
   ListingsIdRoute: typeof ListingsIdRoute
   ListingsNewRoute: typeof ListingsNewRoute
   OnboardingAgreementRoute: typeof OnboardingAgreementRoute
@@ -523,6 +549,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ListingsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/buyer/verification': {
+      id: '/buyer/verification'
+      path: '/buyer/verification'
+      fullPath: '/buyer/verification'
+      preLoaderRoute: typeof BuyerVerificationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/buyer/register': {
       id: '/buyer/register'
       path: '/buyer/register'
@@ -542,6 +575,13 @@ declare module '@tanstack/react-router' {
       path: '/buyer/dashboard'
       fullPath: '/buyer/dashboard'
       preLoaderRoute: typeof BuyerDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buyer/adverse-action': {
+      id: '/buyer/adverse-action'
+      path: '/buyer/adverse-action'
+      fullPath: '/buyer/adverse-action'
+      preLoaderRoute: typeof BuyerAdverseActionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/callback': {
@@ -608,9 +648,11 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   AdminAuditLogRoute: AdminAuditLogRoute,
   AuthCallbackRoute: AuthCallbackRoute,
+  BuyerAdverseActionRoute: BuyerAdverseActionRoute,
   BuyerDashboardRoute: BuyerDashboardRoute,
   BuyerLoginRoute: BuyerLoginRoute,
   BuyerRegisterRoute: BuyerRegisterRoute,
+  BuyerVerificationRoute: BuyerVerificationRoute,
   ListingsIdRoute: ListingsIdRoute,
   ListingsNewRoute: ListingsNewRoute,
   OnboardingAgreementRoute: OnboardingAgreementRoute,

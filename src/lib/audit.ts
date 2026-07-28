@@ -22,7 +22,10 @@ export type AuditAction =
   | "buyer.enrollment_fee_paid"
   | "buyer.pra_signed"
   | "buyer.background_check_completed"
-  | "buyer.hold_harmless_signed";
+  | "buyer.hold_harmless_signed"
+  | "buyer.verification_requested"
+  | "buyer.verification_documents_submitted"
+  | "buyer.fcra_adverse_action_issued";
 
 export type AuditEntity = "seller" | "property" | "payment" | "media" | "buyer_account";
 
