@@ -28,11 +28,13 @@ import { Route as OnboardingAgreementRouteImport } from './routes/onboarding.agr
 import { Route as ListingsNewRouteImport } from './routes/listings.new'
 import { Route as ListingsIdRouteImport } from './routes/listings.$id'
 import { Route as BuyerRegisterRouteImport } from './routes/buyer.register'
-import { Route as BuyerOnboardingRouteImport } from './routes/buyer.onboarding'
 import { Route as BuyerLoginRouteImport } from './routes/buyer.login'
 import { Route as BuyerDashboardRouteImport } from './routes/buyer.dashboard'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AdminAuditLogRouteImport } from './routes/admin.audit-log'
+import { Route as BuyerOnboardingIndexRouteImport } from './routes/buyer.onboarding.index'
+import { Route as BuyerOnboardingLifestyleRouteImport } from './routes/buyer.onboarding.lifestyle'
+import { Route as BuyerOnboardingIdentityRouteImport } from './routes/buyer.onboarding.identity'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -129,11 +131,6 @@ const BuyerRegisterRoute = BuyerRegisterRouteImport.update({
   path: '/buyer/register',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BuyerOnboardingRoute = BuyerOnboardingRouteImport.update({
-  id: '/buyer/onboarding',
-  path: '/buyer/onboarding',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const BuyerLoginRoute = BuyerLoginRouteImport.update({
   id: '/buyer/login',
   path: '/buyer/login',
@@ -154,6 +151,22 @@ const AdminAuditLogRoute = AdminAuditLogRouteImport.update({
   path: '/admin/audit-log',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuyerOnboardingIndexRoute = BuyerOnboardingIndexRouteImport.update({
+  id: '/buyer/onboarding/',
+  path: '/buyer/onboarding/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuyerOnboardingLifestyleRoute =
+  BuyerOnboardingLifestyleRouteImport.update({
+    id: '/buyer/onboarding/lifestyle',
+    path: '/buyer/onboarding/lifestyle',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const BuyerOnboardingIdentityRoute = BuyerOnboardingIdentityRouteImport.update({
+  id: '/buyer/onboarding/identity',
+  path: '/buyer/onboarding/identity',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -169,7 +182,6 @@ export interface FileRoutesByFullPath {
   '/auth/callback': typeof AuthCallbackRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/login': typeof BuyerLoginRoute
-  '/buyer/onboarding': typeof BuyerOnboardingRoute
   '/buyer/register': typeof BuyerRegisterRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
@@ -180,6 +192,9 @@ export interface FileRoutesByFullPath {
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/onboarding/': typeof OnboardingIndexRoute
+  '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
+  '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
+  '/buyer/onboarding/': typeof BuyerOnboardingIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -195,7 +210,6 @@ export interface FileRoutesByTo {
   '/auth/callback': typeof AuthCallbackRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/login': typeof BuyerLoginRoute
-  '/buyer/onboarding': typeof BuyerOnboardingRoute
   '/buyer/register': typeof BuyerRegisterRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
@@ -206,6 +220,9 @@ export interface FileRoutesByTo {
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/onboarding': typeof OnboardingIndexRoute
+  '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
+  '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
+  '/buyer/onboarding': typeof BuyerOnboardingIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -222,7 +239,6 @@ export interface FileRoutesById {
   '/auth/callback': typeof AuthCallbackRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/login': typeof BuyerLoginRoute
-  '/buyer/onboarding': typeof BuyerOnboardingRoute
   '/buyer/register': typeof BuyerRegisterRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
@@ -233,6 +249,9 @@ export interface FileRoutesById {
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/onboarding/': typeof OnboardingIndexRoute
+  '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
+  '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
+  '/buyer/onboarding/': typeof BuyerOnboardingIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -250,7 +269,6 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/buyer/dashboard'
     | '/buyer/login'
-    | '/buyer/onboarding'
     | '/buyer/register'
     | '/listings/$id'
     | '/listings/new'
@@ -261,6 +279,9 @@ export interface FileRouteTypes {
     | '/onboarding/media'
     | '/onboarding/property'
     | '/onboarding/'
+    | '/buyer/onboarding/identity'
+    | '/buyer/onboarding/lifestyle'
+    | '/buyer/onboarding/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -276,7 +297,6 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/buyer/dashboard'
     | '/buyer/login'
-    | '/buyer/onboarding'
     | '/buyer/register'
     | '/listings/$id'
     | '/listings/new'
@@ -287,6 +307,9 @@ export interface FileRouteTypes {
     | '/onboarding/media'
     | '/onboarding/property'
     | '/onboarding'
+    | '/buyer/onboarding/identity'
+    | '/buyer/onboarding/lifestyle'
+    | '/buyer/onboarding'
   id:
     | '__root__'
     | '/'
@@ -302,7 +325,6 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/buyer/dashboard'
     | '/buyer/login'
-    | '/buyer/onboarding'
     | '/buyer/register'
     | '/listings/$id'
     | '/listings/new'
@@ -313,6 +335,9 @@ export interface FileRouteTypes {
     | '/onboarding/media'
     | '/onboarding/property'
     | '/onboarding/'
+    | '/buyer/onboarding/identity'
+    | '/buyer/onboarding/lifestyle'
+    | '/buyer/onboarding/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -329,7 +354,6 @@ export interface RootRouteChildren {
   AuthCallbackRoute: typeof AuthCallbackRoute
   BuyerDashboardRoute: typeof BuyerDashboardRoute
   BuyerLoginRoute: typeof BuyerLoginRoute
-  BuyerOnboardingRoute: typeof BuyerOnboardingRoute
   BuyerRegisterRoute: typeof BuyerRegisterRoute
   ListingsIdRoute: typeof ListingsIdRoute
   ListingsNewRoute: typeof ListingsNewRoute
@@ -340,6 +364,9 @@ export interface RootRouteChildren {
   OnboardingMediaRoute: typeof OnboardingMediaRoute
   OnboardingPropertyRoute: typeof OnboardingPropertyRoute
   OnboardingIndexRoute: typeof OnboardingIndexRoute
+  BuyerOnboardingIdentityRoute: typeof BuyerOnboardingIdentityRoute
+  BuyerOnboardingLifestyleRoute: typeof BuyerOnboardingLifestyleRoute
+  BuyerOnboardingIndexRoute: typeof BuyerOnboardingIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -477,13 +504,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyerRegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/buyer/onboarding': {
-      id: '/buyer/onboarding'
-      path: '/buyer/onboarding'
-      fullPath: '/buyer/onboarding'
-      preLoaderRoute: typeof BuyerOnboardingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/buyer/login': {
       id: '/buyer/login'
       path: '/buyer/login'
@@ -512,6 +532,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAuditLogRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/buyer/onboarding/': {
+      id: '/buyer/onboarding/'
+      path: '/buyer/onboarding'
+      fullPath: '/buyer/onboarding/'
+      preLoaderRoute: typeof BuyerOnboardingIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buyer/onboarding/lifestyle': {
+      id: '/buyer/onboarding/lifestyle'
+      path: '/buyer/onboarding/lifestyle'
+      fullPath: '/buyer/onboarding/lifestyle'
+      preLoaderRoute: typeof BuyerOnboardingLifestyleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buyer/onboarding/identity': {
+      id: '/buyer/onboarding/identity'
+      path: '/buyer/onboarding/identity'
+      fullPath: '/buyer/onboarding/identity'
+      preLoaderRoute: typeof BuyerOnboardingIdentityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -529,7 +570,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthCallbackRoute: AuthCallbackRoute,
   BuyerDashboardRoute: BuyerDashboardRoute,
   BuyerLoginRoute: BuyerLoginRoute,
-  BuyerOnboardingRoute: BuyerOnboardingRoute,
   BuyerRegisterRoute: BuyerRegisterRoute,
   ListingsIdRoute: ListingsIdRoute,
   ListingsNewRoute: ListingsNewRoute,
@@ -540,6 +580,9 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingMediaRoute: OnboardingMediaRoute,
   OnboardingPropertyRoute: OnboardingPropertyRoute,
   OnboardingIndexRoute: OnboardingIndexRoute,
+  BuyerOnboardingIdentityRoute: BuyerOnboardingIdentityRoute,
+  BuyerOnboardingLifestyleRoute: BuyerOnboardingLifestyleRoute,
+  BuyerOnboardingIndexRoute: BuyerOnboardingIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
