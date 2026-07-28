@@ -53,5 +53,12 @@ export async function ensureBuyerAccount(params: {
 
 /** Where a buyer should land after signing in. */
 export function buyerRedirect(onboardingStatus: string): string {
-  return onboardingStatus === "not_started" ? "/buyer/onboarding" : "/buyer/dashboard";
+  switch (onboardingStatus) {
+    case "not_started":
+      return "/buyer/onboarding/identity";
+    case "lifestyle_survey_pending":
+      return "/buyer/onboarding/lifestyle";
+    default:
+      return "/buyer/dashboard";
+  }
 }

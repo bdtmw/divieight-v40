@@ -40,7 +40,7 @@ function BuyerOnboardingPage() {
         navigate({ to: "/buyer/register" });
         return;
       }
-      setStatus("ready");
+      navigate({ to: "/buyer/onboarding/identity", replace: true });
     })();
     return () => {
       cancelled = true;
