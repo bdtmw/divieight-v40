@@ -138,3 +138,126 @@ export const confirmEnrollmentPayment = createServerFn({ method: "POST" })
       return { error: getStripeErrorMessage(error) };
     }
   });
+
+/* ------------------------------------------------------------------ *
+ * Buyer Priority Reservation enrollment fee ($2,570, flat)            *
+ * ------------------------------------------------------------------ */
+
+const BUYER_ENROLLMENT_CENTS = 257000;
+
+export const createBuyerEnrollmentCheckout = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { returnUrl: string; environment: StripeEnv }) => data)
+  .handler(async ({ data, context }): Promise<CheckoutResult> => {
+    const { supabase, userId } = context;
+
+    const { data: account } = await supabase
+      .from("buyer_accounts")
+      .select("id, email, priority_rank_timestamp")
+      .eq("auth_user_id", userId)
+      .maybeSingle();
+
+    if (!account) return { error: "No buyer account found for this user." };
+    if (account.priority_rank_timestamp) {
+      return { error: "Your enrollment fee has already been paid." };
+    }
+
+    try {
+      const stripe = createStripeClient(data.environment);
+      const prices = await stripe.prices.list({ lookup_keys: [ENROLLMENT_PRICE_ID] });
+      if (!prices.data.length) return { error: "Enrollment fee price not found." };
+      const price = prices.data[0];
+
+      const customerId = await resolveCustomer(stripe, {
+        userId,
+        email: account.email ?? undefined,
+      });
+
+      const session = await stripe.checkout.sessions.create({
+        line_items: [{ price: price.id, quantity: 1 }],
+        mode: "payment",
+        ui_mode: "embedded_page",
+        return_url: data.returnUrl,
+        customer: customerId,
+        billing_address_collection: "required",
+        payment_intent_data: { description: "Buyer Platform Enrollment Fee" },
+        metadata: {
+          userId,
+          buyerAccountId: account.id,
+          kind: "buyer_enrollment_fee",
+        },
+      });
+
+      await supabase.from("buyer_enrollment_payments").insert({
+        buyer_account_id: account.id,
+        auth_user_id: userId,
+        amount_cents: BUYER_ENROLLMENT_CENTS,
+        status: "pending",
+        stripe_session_id: session.id,
+        environment: data.environment,
+      });
+
+      return { clientSecret: session.client_secret ?? "" };
+    } catch (error) {
+      return { error: getStripeErrorMessage(error) };
+    }
+  });
+
+type BuyerConfirmResult = { paid: boolean; priorityRankTimestamp?: string } | { error: string };
+
+/**
+ * Confirms the buyer enrollment payment server-side against Stripe.
+ *
+ * CRITICAL: `priority_rank_timestamp` (millisecond precision) determines buyer
+ * seniority. It is stamped ONLY here, after Stripe reports payment_status
+ * === "paid", and it is never overwritten once set.
+ * TODO: swap to live keys + a Stripe webhook (checkout.session.completed) as
+ * the authoritative confirmation path when going live.
+ */
+export const confirmBuyerEnrollmentPayment = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { sessionId: string; environment: StripeEnv }) => {
+    if (!/^[a-zA-Z0-9_-]+$/.test(data.sessionId)) throw new Error("Invalid sessionId");
+    return data;
+  })
+  .handler(async ({ data, context }): Promise<BuyerConfirmResult> => {
+    try {
+      const stripe = createStripeClient(data.environment);
+      const session = await stripe.checkout.sessions.retrieve(data.sessionId);
+
+      if (session.metadata?.userId !== context.userId) {
+        return { error: "This payment does not belong to your account." };
+      }
+      if (session.payment_status !== "paid") return { paid: false };
+
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+      await supabaseAdmin
+        .from("buyer_enrollment_payments")
+        .update({ status: "paid" })
+        .eq("stripe_session_id", session.id)
+        .eq("auth_user_id", context.userId);
+
+      const { data: account } = await supabaseAdmin
+        .from("buyer_accounts")
+        .select("id, priority_rank_timestamp")
+        .eq("auth_user_id", context.userId)
+        .maybeSingle();
+
+      if (!account) return { error: "No buyer account found for this user." };
+
+      let stamp = account.priority_rank_timestamp;
+      if (!stamp) {
+        stamp = new Date().toISOString(); // millisecond precision
+        await supabaseAdmin
+          .from("buyer_accounts")
+          .update({ priority_rank_timestamp: stamp })
+          .eq("id", account.id)
+          .is("priority_rank_timestamp", null);
+      }
+
+      return { paid: true, priorityRankTimestamp: stamp ?? undefined };
+    } catch (error) {
+      return { error: getStripeErrorMessage(error) };
+    }
+  });

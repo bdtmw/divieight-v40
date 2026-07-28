@@ -18,7 +18,9 @@ export type AuditAction =
   | "seller.enrollment_fee_paid"
   | "buyer.registered"
   | "buyer.identity_submitted"
-  | "buyer.lifestyle_submitted";
+  | "buyer.lifestyle_submitted"
+  | "buyer.enrollment_fee_paid"
+  | "buyer.pra_signed";
 
 export type AuditEntity = "seller" | "property" | "payment" | "media" | "buyer_account";
 

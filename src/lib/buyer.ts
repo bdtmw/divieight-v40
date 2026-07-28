@@ -60,6 +60,8 @@ export function buyerRedirect(onboardingStatus: string): string {
       return "/buyer/onboarding/lifestyle";
     case "payment_pending":
       return "/buyer/onboarding/payment";
+    case "vetting_pending":
+      return "/buyer/onboarding/vetting";
     default:
       return "/buyer/dashboard";
   }
