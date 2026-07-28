@@ -30,6 +30,7 @@ import { Route as ListingsIdRouteImport } from './routes/listings.$id'
 import { Route as BuyerRegisterRouteImport } from './routes/buyer.register'
 import { Route as BuyerOnboardingRouteImport } from './routes/buyer.onboarding'
 import { Route as BuyerLoginRouteImport } from './routes/buyer.login'
+import { Route as BuyerDashboardRouteImport } from './routes/buyer.dashboard'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AdminAuditLogRouteImport } from './routes/admin.audit-log'
 
@@ -138,6 +139,11 @@ const BuyerLoginRoute = BuyerLoginRouteImport.update({
   path: '/buyer/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuyerDashboardRoute = BuyerDashboardRouteImport.update({
+  id: '/buyer/dashboard',
+  path: '/buyer/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/auth/callback',
   path: '/auth/callback',
@@ -161,6 +167,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/onboarding': typeof BuyerOnboardingRoute
   '/buyer/register': typeof BuyerRegisterRoute
@@ -186,6 +193,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/onboarding': typeof BuyerOnboardingRoute
   '/buyer/register': typeof BuyerRegisterRoute
@@ -212,6 +220,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/onboarding': typeof BuyerOnboardingRoute
   '/buyer/register': typeof BuyerRegisterRoute
@@ -239,6 +248,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/admin/audit-log'
     | '/auth/callback'
+    | '/buyer/dashboard'
     | '/buyer/login'
     | '/buyer/onboarding'
     | '/buyer/register'
@@ -264,6 +274,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/admin/audit-log'
     | '/auth/callback'
+    | '/buyer/dashboard'
     | '/buyer/login'
     | '/buyer/onboarding'
     | '/buyer/register'
@@ -289,6 +300,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/admin/audit-log'
     | '/auth/callback'
+    | '/buyer/dashboard'
     | '/buyer/login'
     | '/buyer/onboarding'
     | '/buyer/register'
@@ -315,6 +327,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   AdminAuditLogRoute: typeof AdminAuditLogRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
+  BuyerDashboardRoute: typeof BuyerDashboardRoute
   BuyerLoginRoute: typeof BuyerLoginRoute
   BuyerOnboardingRoute: typeof BuyerOnboardingRoute
   BuyerRegisterRoute: typeof BuyerRegisterRoute
@@ -478,6 +491,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyerLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/buyer/dashboard': {
+      id: '/buyer/dashboard'
+      path: '/buyer/dashboard'
+      fullPath: '/buyer/dashboard'
+      preLoaderRoute: typeof BuyerDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/callback': {
       id: '/auth/callback'
       path: '/auth/callback'
@@ -507,6 +527,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   AdminAuditLogRoute: AdminAuditLogRoute,
   AuthCallbackRoute: AuthCallbackRoute,
+  BuyerDashboardRoute: BuyerDashboardRoute,
   BuyerLoginRoute: BuyerLoginRoute,
   BuyerOnboardingRoute: BuyerOnboardingRoute,
   BuyerRegisterRoute: BuyerRegisterRoute,
