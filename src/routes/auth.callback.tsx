@@ -1,7 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { getPostLoginRedirect } from "@/lib/post-login";
+import { consumeOAuthRole, resolveSignIn } from "@/lib/account-routing";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth/callback")({
   component: AuthCallbackPage,
@@ -20,8 +21,14 @@ function AuthCallbackPage() {
         navigate({ to: "/login" });
         return;
       }
-      const to = await getPostLoginRedirect(data.session.user.id);
-      navigate({ to });
+      const role = consumeOAuthRole();
+      const outcome = await resolveSignIn(data.session.user, role);
+      if (outcome.error) {
+        toast.error(outcome.error);
+        navigate({ to: role === "buyer" ? "/buyer/login" : "/login" });
+        return;
+      }
+      navigate({ to: outcome.to! });
     }
     go();
     return () => {
