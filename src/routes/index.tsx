@@ -84,50 +84,72 @@ function LandingPage() {
 
   return (
     <div className="relative overflow-hidden">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[540px] bg-gradient-to-b from-secondary/60 via-background to-background"
-      />
+      {/* Hero banner */}
+      <section className="relative isolate overflow-hidden">
+        <img
+          src={heroHome}
+          alt="Modern lakeside second home lit at golden hour"
+          width={1920}
+          height={1088}
+          className="absolute inset-0 -z-20 h-full w-full object-cover"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 bg-gradient-to-r from-background/95 via-background/80 to-background/30"
+        />
 
-      {/* Hero */}
-      <section className="mx-auto max-w-7xl px-4 pb-20 pt-16 sm:px-6 lg:px-8 lg:pt-24">
-        <div className="mx-auto max-w-3xl text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
-            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-            Fractional co-ownership, simplified
-          </span>
-
-          <h1 className="mt-6 font-display text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-            Own a Piece of Your{" "}
-            <span className="relative whitespace-nowrap">
-              <span className="relative z-10 text-accent">Dream Home</span>
-              <span
-                aria-hidden
-                className="absolute inset-x-0 bottom-1 -z-0 h-2 rounded bg-accent/20"
-              />
+        <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
+          <div className="max-w-2xl">
+            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/80 px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm backdrop-blur">
+              <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+              Fractional co-ownership, simplified
             </span>
-          </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            divieight divides a home into eight equal shares. Buy the 1/8th you'll actually
-            use — or sell your property share by share — with vetted co-owners, automated
-            legal structure, and a transparent record of every step.
-          </p>
+            <h1 className="mt-6 font-display text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+              Own a Piece of Your{" "}
+              <span className="relative whitespace-nowrap">
+                <span className="relative z-10 text-accent">Dream Home</span>
+                <span
+                  aria-hidden
+                  className="absolute inset-x-0 bottom-1 -z-0 h-2 rounded bg-accent/20"
+                />
+              </span>
+            </h1>
 
-          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <a
-              href="#featured"
-              className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-elegant)] transition-transform hover:-translate-y-0.5"
-            >
-              Browse Properties
-              <ArrowRight className="h-4 w-4" />
-            </a>
-            <Link
-              to="/listings/new"
-              className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
-            >
-              List Your Property
-            </Link>
+            <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+              divieight divides a home into eight equal shares. Buy the 1/8th you'll actually
+              use — or sell your property share by share — with vetted co-owners, automated
+              legal structure, and a transparent record of every step.
+            </p>
+
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+              <a
+                href="#featured"
+                className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-elegant)] transition-transform hover:-translate-y-0.5"
+              >
+                Browse Properties
+                <ArrowRight className="h-4 w-4" />
+              </a>
+              <Link
+                to="/listings/new"
+                className="inline-flex items-center justify-center gap-2 rounded-md border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
+              >
+                List Your Property
+              </Link>
+            </div>
+
+            <dl className="mt-12 grid max-w-lg grid-cols-3 gap-6 border-t border-border/60 pt-6">
+              {[
+                { k: "8", v: "Equal shares per home" },
+                { k: "100%", v: "Vetted co-owners" },
+                { k: "1 LLC", v: "Per property" },
+              ].map((s) => (
+                <div key={s.v}>
+                  <dt className="font-display text-2xl font-semibold text-foreground">{s.k}</dt>
+                  <dd className="mt-1 text-xs leading-relaxed text-muted-foreground">{s.v}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
         </div>
       </section>
