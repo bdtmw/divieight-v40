@@ -137,6 +137,14 @@ function AboutPage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <img
+          src={teamImg}
+          alt="divieight advisors reviewing a co-ownership agreement"
+          loading="lazy"
+          width={1280}
+          height={960}
+          className="mb-12 h-56 w-full rounded-2xl object-cover object-center shadow-sm sm:h-72"
+        />
         <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground">
           The team
         </h2>
