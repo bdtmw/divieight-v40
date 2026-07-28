@@ -106,6 +106,23 @@ function BuyerDashboardPage() {
           Browse properties
         </Link>
       </header>
+      {account.onboarding_status === "liquidity_pending" ? (
+        <div className="mt-8 rounded-xl border border-accent/50 bg-accent/10 p-5">
+          <p className="font-display text-base font-semibold text-foreground">
+            Liquidity verification pending
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Your Golden Ticket is on hold until we verify your liquidity — link your bank via
+            Plaid or submit proof of funds for Broker of Record review.
+          </p>
+          <Link
+            to="/buyer/onboarding/liquidity"
+            className="mt-4 inline-block rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+          >
+            Complete liquidity check
+          </Link>
+        </div>
+      ) : null}
       {account.onboarding_status === "verification_pending" ? (
         <div className="mt-8 rounded-xl border border-accent/50 bg-accent/10 p-5">
           <p className="font-display text-base font-semibold text-foreground">

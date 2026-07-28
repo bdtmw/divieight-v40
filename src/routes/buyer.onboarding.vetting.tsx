@@ -381,7 +381,7 @@ function VettingScreen() {
                   {signed ? "Signed" : "Sign acknowledgment"}
                 </Button>
                 <Button onClick={continueFromOutcome} disabled={!signed}>
-                  {outcome === "cleared" ? "Continue to Golden Ticket" : "Continue to review"}
+                  {outcome === "cleared" ? "Continue to liquidity check" : "Continue to review"}
                 </Button>
               </div>
             </section>
