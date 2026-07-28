@@ -57,9 +57,17 @@ const team = [
 function AboutPage() {
   return (
     <div>
-      <section className="border-b border-border/60 bg-secondary/30">
-        <div className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6 lg:px-8">
-          <h1 className="font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+      <section className="relative isolate overflow-hidden border-b border-border/60">
+        <img
+          src={aboutHero}
+          alt="Aerial view of a coastal neighborhood of second homes"
+          width={1920}
+          height={800}
+          className="absolute inset-0 -z-20 h-full w-full object-cover"
+        />
+        <div aria-hidden className="absolute inset-0 -z-10 bg-background/85" />
+        <div className="mx-auto max-w-3xl px-4 py-24 text-center sm:px-6 lg:px-8">
+          <h1 className="font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
             Making second-home ownership reachable
           </h1>
           <p className="mt-6 text-base leading-relaxed text-muted-foreground">
@@ -70,28 +78,40 @@ function AboutPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
-        <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground">
-          Our story
-        </h2>
-        <div className="mt-6 space-y-5 text-sm leading-relaxed text-muted-foreground sm:text-base">
-          <p>
-            divieight began with a simple observation: fractional ownership has existed for
-            decades, but it has always been slow, bespoke, and reserved for people with lawyers
-            on retainer. Every deal was rebuilt from scratch — a new entity, a new agreement, a
-            new set of assumptions about who pays for what.
-          </p>
-          <p>
-            We set out to standardize it. A home is divided into eight equal shares. Each share
-            carries the same rights, the same obligations, and the same documentation. Sellers
-            can exit fully or retain shares and stay in the home. Buyers can own the portion
-            they'll actually use.
-          </p>
-          <p>
-            The result is a process that scales: one listing flow, one legal structure, one
-            transparent record of every step from intent to closing. That's what makes
-            fractional ownership something a normal household can actually do.
-          </p>
+      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <div className="grid items-center gap-12 lg:grid-cols-2">
+          <img
+            src={aboutStory}
+            alt="Bright living room of a modern coastal co-owned home"
+            loading="lazy"
+            width={1280}
+            height={960}
+            className="aspect-[4/3] w-full rounded-2xl object-cover shadow-[var(--shadow-elegant)]"
+          />
+          <div>
+            <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground">
+              Our story
+            </h2>
+            <div className="mt-6 space-y-5 text-sm leading-relaxed text-muted-foreground sm:text-base">
+              <p>
+                divieight began with a simple observation: fractional ownership has existed for
+                decades, but it has always been slow, bespoke, and reserved for people with
+                lawyers on retainer. Every deal was rebuilt from scratch — a new entity, a new
+                agreement, a new set of assumptions about who pays for what.
+              </p>
+              <p>
+                We set out to standardize it. A home is divided into eight equal shares. Each
+                share carries the same rights, the same obligations, and the same documentation.
+                Sellers can exit fully or retain shares and stay in the home. Buyers can own the
+                portion they'll actually use.
+              </p>
+              <p>
+                The result is a process that scales: one listing flow, one legal structure, one
+                transparent record of every step from intent to closing. That's what makes
+                fractional ownership something a normal household can actually do.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
