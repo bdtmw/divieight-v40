@@ -17,6 +17,7 @@ export type Database = {
       account_members: {
         Row: {
           address: string | null
+          adverse_action_issued_at: string | null
           background_check_at: string | null
           background_check_result: string | null
           buyer_account_id: string
@@ -28,10 +29,12 @@ export type Database = {
           id_document_url: string | null
           role: string
           updated_at: string
+          verification_documents: Json
           vetting_status: string
         }
         Insert: {
           address?: string | null
+          adverse_action_issued_at?: string | null
           background_check_at?: string | null
           background_check_result?: string | null
           buyer_account_id: string
@@ -43,10 +46,12 @@ export type Database = {
           id_document_url?: string | null
           role?: string
           updated_at?: string
+          verification_documents?: Json
           vetting_status?: string
         }
         Update: {
           address?: string | null
+          adverse_action_issued_at?: string | null
           background_check_at?: string | null
           background_check_result?: string | null
           buyer_account_id?: string
@@ -58,6 +63,7 @@ export type Database = {
           id_document_url?: string | null
           role?: string
           updated_at?: string
+          verification_documents?: Json
           vetting_status?: string
         }
         Relationships: [
