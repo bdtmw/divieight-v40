@@ -4,7 +4,6 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
-import { getPostLoginRedirect } from "@/lib/post-login";
 import { resolveSignIn, setOAuthRole } from "@/lib/account-routing";
 import { AuthCard, GoogleButton, Divider } from "@/components/AuthCard";
 import { Field } from "@/components/Field";
@@ -58,9 +57,13 @@ function LoginPage() {
       return;
     }
 
-    const to = await getPostLoginRedirect(data.user.id);
+    const outcome = await resolveSignIn(data.user, "seller");
+    if (outcome.error) {
+      toast.error(outcome.error);
+      return;
+    }
     toast.success("Welcome back");
-    navigate({ to });
+    navigate({ to: outcome.to! });
   }
 
   async function onGoogle() {

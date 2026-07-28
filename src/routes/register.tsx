@@ -4,7 +4,6 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
-import { getPostLoginRedirect } from "@/lib/post-login";
 import { resolveSignIn, setOAuthRole } from "@/lib/account-routing";
 import { logAudit } from "@/lib/audit";
 import { AuthCard, GoogleButton, Divider } from "@/components/AuthCard";
@@ -88,9 +87,15 @@ function RegisterPage() {
         metadata: { method: "email" },
       });
     }
-    const to = data.user ? await getPostLoginRedirect(data.user.id) : "/onboarding";
+    const outcome = data.user
+      ? await resolveSignIn(data.user, "seller")
+      : { to: "/onboarding" as string, error: undefined };
+    if (outcome.error) {
+      toast.error(outcome.error);
+      return;
+    }
     toast.success("Account created");
-    navigate({ to });
+    navigate({ to: outcome.to! });
   }
 
   async function onGoogle() {
