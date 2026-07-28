@@ -300,27 +300,42 @@ function LandingPage() {
       </section>
 
       {/* Trust */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-            Built to be trusted
-          </h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Co-ownership only works when the structure and the people are solid.
-          </p>
-        </div>
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {trust.map(({ icon: Icon, title, body }) => (
-            <div key={title} className="rounded-xl border border-border bg-card p-6 shadow-sm">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-accent">
-                <Icon className="h-5 w-5" />
+      <section className="relative isolate overflow-hidden py-20">
+        <img
+          src={trustBand}
+          alt="Aerial view of a coastal neighborhood of modern homes"
+          loading="lazy"
+          width={1920}
+          height={800}
+          className="absolute inset-0 -z-20 h-full w-full object-cover"
+        />
+        <div aria-hidden className="absolute inset-0 -z-10 bg-background/90" />
+
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+              Built to be trusted
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
+              Co-ownership only works when the structure and the people are solid.
+            </p>
+          </div>
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {trust.map(({ icon: Icon, title, body }) => (
+              <div
+                key={title}
+                className="rounded-xl border border-border bg-card/90 p-6 shadow-sm backdrop-blur"
+              >
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-accent">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <h3 className="mt-4 font-display text-sm font-semibold text-foreground">
+                  {title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{body}</p>
               </div>
-              <h3 className="mt-4 font-display text-sm font-semibold text-foreground">
-                {title}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{body}</p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
     </div>
