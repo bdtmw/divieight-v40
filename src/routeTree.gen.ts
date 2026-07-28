@@ -27,6 +27,10 @@ import { Route as OnboardingFeeRouteImport } from './routes/onboarding.fee'
 import { Route as OnboardingAgreementRouteImport } from './routes/onboarding.agreement'
 import { Route as ListingsNewRouteImport } from './routes/listings.new'
 import { Route as ListingsIdRouteImport } from './routes/listings.$id'
+import { Route as BuyerRegisterRouteImport } from './routes/buyer.register'
+import { Route as BuyerOnboardingRouteImport } from './routes/buyer.onboarding'
+import { Route as BuyerLoginRouteImport } from './routes/buyer.login'
+import { Route as BuyerDashboardRouteImport } from './routes/buyer.dashboard'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AdminAuditLogRouteImport } from './routes/admin.audit-log'
 
@@ -120,6 +124,26 @@ const ListingsIdRoute = ListingsIdRouteImport.update({
   path: '/listings/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuyerRegisterRoute = BuyerRegisterRouteImport.update({
+  id: '/buyer/register',
+  path: '/buyer/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuyerOnboardingRoute = BuyerOnboardingRouteImport.update({
+  id: '/buyer/onboarding',
+  path: '/buyer/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuyerLoginRoute = BuyerLoginRouteImport.update({
+  id: '/buyer/login',
+  path: '/buyer/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuyerDashboardRoute = BuyerDashboardRouteImport.update({
+  id: '/buyer/dashboard',
+  path: '/buyer/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/auth/callback',
   path: '/auth/callback',
@@ -143,6 +167,10 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/buyer/dashboard': typeof BuyerDashboardRoute
+  '/buyer/login': typeof BuyerLoginRoute
+  '/buyer/onboarding': typeof BuyerOnboardingRoute
+  '/buyer/register': typeof BuyerRegisterRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/agreement': typeof OnboardingAgreementRoute
@@ -165,6 +193,10 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/buyer/dashboard': typeof BuyerDashboardRoute
+  '/buyer/login': typeof BuyerLoginRoute
+  '/buyer/onboarding': typeof BuyerOnboardingRoute
+  '/buyer/register': typeof BuyerRegisterRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/agreement': typeof OnboardingAgreementRoute
@@ -188,6 +220,10 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/buyer/dashboard': typeof BuyerDashboardRoute
+  '/buyer/login': typeof BuyerLoginRoute
+  '/buyer/onboarding': typeof BuyerOnboardingRoute
+  '/buyer/register': typeof BuyerRegisterRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/agreement': typeof OnboardingAgreementRoute
@@ -212,6 +248,10 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/admin/audit-log'
     | '/auth/callback'
+    | '/buyer/dashboard'
+    | '/buyer/login'
+    | '/buyer/onboarding'
+    | '/buyer/register'
     | '/listings/$id'
     | '/listings/new'
     | '/onboarding/agreement'
@@ -234,6 +274,10 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/admin/audit-log'
     | '/auth/callback'
+    | '/buyer/dashboard'
+    | '/buyer/login'
+    | '/buyer/onboarding'
+    | '/buyer/register'
     | '/listings/$id'
     | '/listings/new'
     | '/onboarding/agreement'
@@ -256,6 +300,10 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/admin/audit-log'
     | '/auth/callback'
+    | '/buyer/dashboard'
+    | '/buyer/login'
+    | '/buyer/onboarding'
+    | '/buyer/register'
     | '/listings/$id'
     | '/listings/new'
     | '/onboarding/agreement'
@@ -279,6 +327,10 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   AdminAuditLogRoute: typeof AdminAuditLogRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
+  BuyerDashboardRoute: typeof BuyerDashboardRoute
+  BuyerLoginRoute: typeof BuyerLoginRoute
+  BuyerOnboardingRoute: typeof BuyerOnboardingRoute
+  BuyerRegisterRoute: typeof BuyerRegisterRoute
   ListingsIdRoute: typeof ListingsIdRoute
   ListingsNewRoute: typeof ListingsNewRoute
   OnboardingAgreementRoute: typeof OnboardingAgreementRoute
@@ -418,6 +470,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ListingsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/buyer/register': {
+      id: '/buyer/register'
+      path: '/buyer/register'
+      fullPath: '/buyer/register'
+      preLoaderRoute: typeof BuyerRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buyer/onboarding': {
+      id: '/buyer/onboarding'
+      path: '/buyer/onboarding'
+      fullPath: '/buyer/onboarding'
+      preLoaderRoute: typeof BuyerOnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buyer/login': {
+      id: '/buyer/login'
+      path: '/buyer/login'
+      fullPath: '/buyer/login'
+      preLoaderRoute: typeof BuyerLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buyer/dashboard': {
+      id: '/buyer/dashboard'
+      path: '/buyer/dashboard'
+      fullPath: '/buyer/dashboard'
+      preLoaderRoute: typeof BuyerDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/callback': {
       id: '/auth/callback'
       path: '/auth/callback'
@@ -447,6 +527,10 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   AdminAuditLogRoute: AdminAuditLogRoute,
   AuthCallbackRoute: AuthCallbackRoute,
+  BuyerDashboardRoute: BuyerDashboardRoute,
+  BuyerLoginRoute: BuyerLoginRoute,
+  BuyerOnboardingRoute: BuyerOnboardingRoute,
+  BuyerRegisterRoute: BuyerRegisterRoute,
   ListingsIdRoute: ListingsIdRoute,
   ListingsNewRoute: ListingsNewRoute,
   OnboardingAgreementRoute: OnboardingAgreementRoute,

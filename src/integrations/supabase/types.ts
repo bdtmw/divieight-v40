@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      account_members: {
+        Row: {
+          buyer_account_id: string
+          created_at: string
+          full_name: string
+          id: string
+          role: string
+          updated_at: string
+          vetting_status: string
+        }
+        Insert: {
+          buyer_account_id: string
+          created_at?: string
+          full_name?: string
+          id?: string
+          role?: string
+          updated_at?: string
+          vetting_status?: string
+        }
+        Update: {
+          buyer_account_id?: string
+          created_at?: string
+          full_name?: string
+          id?: string
+          role?: string
+          updated_at?: string
+          vetting_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_members_buyer_account_id_fkey"
+            columns: ["buyer_account_id"]
+            isOneToOne: false
+            referencedRelation: "buyer_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_log: {
         Row: {
           action_type: string
@@ -44,6 +82,48 @@ export type Database = {
           entity_type?: string | null
           id?: string
           metadata?: Json
+        }
+        Relationships: []
+      }
+      buyer_accounts: {
+        Row: {
+          auth_user_id: string
+          created_at: string
+          email: string
+          golden_ticket_issued: boolean
+          id: string
+          intent: string | null
+          onboarding_status: string
+          phone: string | null
+          primary_target_market: string | null
+          priority_rank: number | null
+          updated_at: string
+        }
+        Insert: {
+          auth_user_id: string
+          created_at?: string
+          email: string
+          golden_ticket_issued?: boolean
+          id?: string
+          intent?: string | null
+          onboarding_status?: string
+          phone?: string | null
+          primary_target_market?: string | null
+          priority_rank?: number | null
+          updated_at?: string
+        }
+        Update: {
+          auth_user_id?: string
+          created_at?: string
+          email?: string
+          golden_ticket_issued?: boolean
+          id?: string
+          intent?: string | null
+          onboarding_status?: string
+          phone?: string | null
+          primary_target_market?: string | null
+          priority_rank?: number | null
+          updated_at?: string
         }
         Relationships: []
       }

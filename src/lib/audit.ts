@@ -15,21 +15,23 @@ export type AuditAction =
   | "seller.property_created"
   | "seller.property_media_uploaded"
   | "seller.listing_agreement_signed"
-  | "seller.enrollment_fee_paid";
+  | "seller.enrollment_fee_paid"
+  | "buyer.registered";
 
-export type AuditEntity = "seller" | "property" | "payment" | "media";
+export type AuditEntity = "seller" | "property" | "payment" | "media" | "buyer_account";
 
 export async function logAudit(params: {
   actorId: string;
   actionType: AuditAction;
   entityType: AuditEntity;
   entityId?: string | null;
+  actorType?: "seller" | "buyer";
   metadata?: Record<string, unknown>;
 }) {
-  const { actorId, actionType, entityType, entityId, metadata } = params;
+  const { actorId, actionType, entityType, entityId, actorType, metadata } = params;
   const { error } = await supabase.from("audit_log").insert({
     actor_id: actorId,
-    actor_type: "seller",
+    actor_type: actorType ?? (actionType.startsWith("buyer.") ? "buyer" : "seller"),
     action_type: actionType,
     entity_type: entityType,
     entity_id: entityId ?? null,
@@ -37,4 +39,5 @@ export async function logAudit(params: {
   });
   if (error) console.error("[audit] insert failed", error);
 }
+
 
