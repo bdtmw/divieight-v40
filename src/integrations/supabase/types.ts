@@ -16,28 +16,37 @@ export type Database = {
     Tables: {
       account_members: {
         Row: {
+          address: string | null
           buyer_account_id: string
           created_at: string
+          date_of_birth: string | null
           full_name: string
           id: string
+          id_document_url: string | null
           role: string
           updated_at: string
           vetting_status: string
         }
         Insert: {
+          address?: string | null
           buyer_account_id: string
           created_at?: string
+          date_of_birth?: string | null
           full_name?: string
           id?: string
+          id_document_url?: string | null
           role?: string
           updated_at?: string
           vetting_status?: string
         }
         Update: {
+          address?: string | null
           buyer_account_id?: string
           created_at?: string
+          date_of_birth?: string | null
           full_name?: string
           id?: string
+          id_document_url?: string | null
           role?: string
           updated_at?: string
           vetting_status?: string
@@ -97,6 +106,7 @@ export type Database = {
           phone: string | null
           primary_target_market: string | null
           priority_rank: number | null
+          target_budget: number | null
           updated_at: string
         }
         Insert: {
@@ -110,6 +120,7 @@ export type Database = {
           phone?: string | null
           primary_target_market?: string | null
           priority_rank?: number | null
+          target_budget?: number | null
           updated_at?: string
         }
         Update: {
@@ -123,6 +134,7 @@ export type Database = {
           phone?: string | null
           primary_target_market?: string | null
           priority_rank?: number | null
+          target_budget?: number | null
           updated_at?: string
         }
         Relationships: []
