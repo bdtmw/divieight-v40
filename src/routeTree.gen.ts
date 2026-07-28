@@ -27,6 +27,7 @@ import { Route as OnboardingFeeRouteImport } from './routes/onboarding.fee'
 import { Route as OnboardingAgreementRouteImport } from './routes/onboarding.agreement'
 import { Route as ListingsNewRouteImport } from './routes/listings.new'
 import { Route as ListingsIdRouteImport } from './routes/listings.$id'
+import { Route as BuyerRegisterRouteImport } from './routes/buyer.register'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AdminAuditLogRouteImport } from './routes/admin.audit-log'
 
@@ -120,6 +121,11 @@ const ListingsIdRoute = ListingsIdRouteImport.update({
   path: '/listings/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuyerRegisterRoute = BuyerRegisterRouteImport.update({
+  id: '/buyer/register',
+  path: '/buyer/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/auth/callback',
   path: '/auth/callback',
@@ -143,6 +149,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/buyer/register': typeof BuyerRegisterRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/agreement': typeof OnboardingAgreementRoute
@@ -165,6 +172,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/buyer/register': typeof BuyerRegisterRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/agreement': typeof OnboardingAgreementRoute
@@ -188,6 +196,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/buyer/register': typeof BuyerRegisterRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/agreement': typeof OnboardingAgreementRoute
@@ -212,6 +221,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/admin/audit-log'
     | '/auth/callback'
+    | '/buyer/register'
     | '/listings/$id'
     | '/listings/new'
     | '/onboarding/agreement'
@@ -234,6 +244,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/admin/audit-log'
     | '/auth/callback'
+    | '/buyer/register'
     | '/listings/$id'
     | '/listings/new'
     | '/onboarding/agreement'
@@ -256,6 +267,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/admin/audit-log'
     | '/auth/callback'
+    | '/buyer/register'
     | '/listings/$id'
     | '/listings/new'
     | '/onboarding/agreement'
@@ -279,6 +291,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   AdminAuditLogRoute: typeof AdminAuditLogRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
+  BuyerRegisterRoute: typeof BuyerRegisterRoute
   ListingsIdRoute: typeof ListingsIdRoute
   ListingsNewRoute: typeof ListingsNewRoute
   OnboardingAgreementRoute: typeof OnboardingAgreementRoute
@@ -418,6 +431,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ListingsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/buyer/register': {
+      id: '/buyer/register'
+      path: '/buyer/register'
+      fullPath: '/buyer/register'
+      preLoaderRoute: typeof BuyerRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/callback': {
       id: '/auth/callback'
       path: '/auth/callback'
@@ -447,6 +467,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   AdminAuditLogRoute: AdminAuditLogRoute,
   AuthCallbackRoute: AuthCallbackRoute,
+  BuyerRegisterRoute: BuyerRegisterRoute,
   ListingsIdRoute: ListingsIdRoute,
   ListingsNewRoute: ListingsNewRoute,
   OnboardingAgreementRoute: OnboardingAgreementRoute,
