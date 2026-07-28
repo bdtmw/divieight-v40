@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { getBuyerAccount } from "@/lib/buyer";
 
-export const Route = createFileRoute("/buyer/onboarding")({
+export const Route = createFileRoute("/buyer/onboarding/")({
   head: () => ({
     meta: [
       { title: "Buyer onboarding — divieight" },
