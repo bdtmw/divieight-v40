@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { getPostLoginRedirect } from "@/lib/post-login";
+import { resolveSignIn, setOAuthRole } from "@/lib/account-routing";
 import { logAudit } from "@/lib/audit";
 import { AuthCard, GoogleButton, Divider } from "@/components/AuthCard";
 import { Field } from "@/components/Field";
@@ -60,7 +61,7 @@ function RegisterPage() {
       password: parsed.data.password,
       options: {
         emailRedirectTo: `${window.location.origin}/dashboard`,
-        data: { phone: parsed.data.phone },
+        data: { account_type: "seller", phone: parsed.data.phone },
       },
     });
     setSubmitting(false);
@@ -93,6 +94,7 @@ function RegisterPage() {
   }
 
   async function onGoogle() {
+    setOAuthRole("seller");
     const result = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: `${window.location.origin}/auth/callback`,
     });
@@ -103,8 +105,12 @@ function RegisterPage() {
     if (!result.redirected && "tokens" in result) {
       const { data } = await supabase.auth.getUser();
       if (data.user) {
-        const to = await getPostLoginRedirect(data.user.id);
-        navigate({ to });
+        const outcome = await resolveSignIn(data.user, "seller");
+        if (outcome.error) {
+          toast.error(outcome.error);
+          return;
+        }
+        navigate({ to: outcome.to! });
       }
     }
   }
