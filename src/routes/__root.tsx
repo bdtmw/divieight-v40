@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { NavBar } from "@/components/NavBar";
 import { Toaster } from "sonner";
+import { SiteFooter } from "@/components/SiteFooter";
 
 function NotFoundComponent() {
   return (
@@ -145,9 +146,7 @@ function RootComponent() {
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
         </main>
-        <footer className="border-t border-border/60 py-6 text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} divieight — Fractional real estate co-ownership
-        </footer>
+        <SiteFooter />
       </div>
       <Toaster position="top-right" richColors closeButton />
     </QueryClientProvider>
