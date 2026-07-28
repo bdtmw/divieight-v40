@@ -33,6 +33,7 @@ import { Route as BuyerDashboardRouteImport } from './routes/buyer.dashboard'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AdminAuditLogRouteImport } from './routes/admin.audit-log'
 import { Route as BuyerOnboardingIndexRouteImport } from './routes/buyer.onboarding.index'
+import { Route as BuyerOnboardingIdentityRouteImport } from './routes/buyer.onboarding.identity'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -154,6 +155,11 @@ const BuyerOnboardingIndexRoute = BuyerOnboardingIndexRouteImport.update({
   path: '/buyer/onboarding/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuyerOnboardingIdentityRoute = BuyerOnboardingIdentityRouteImport.update({
+  id: '/buyer/onboarding/identity',
+  path: '/buyer/onboarding/identity',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -179,6 +185,7 @@ export interface FileRoutesByFullPath {
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/onboarding/': typeof OnboardingIndexRoute
+  '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/': typeof BuyerOnboardingIndexRoute
 }
 export interface FileRoutesByTo {
@@ -205,6 +212,7 @@ export interface FileRoutesByTo {
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/onboarding': typeof OnboardingIndexRoute
+  '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding': typeof BuyerOnboardingIndexRoute
 }
 export interface FileRoutesById {
@@ -232,6 +240,7 @@ export interface FileRoutesById {
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/onboarding/': typeof OnboardingIndexRoute
+  '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/': typeof BuyerOnboardingIndexRoute
 }
 export interface FileRouteTypes {
@@ -260,6 +269,7 @@ export interface FileRouteTypes {
     | '/onboarding/media'
     | '/onboarding/property'
     | '/onboarding/'
+    | '/buyer/onboarding/identity'
     | '/buyer/onboarding/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -286,6 +296,7 @@ export interface FileRouteTypes {
     | '/onboarding/media'
     | '/onboarding/property'
     | '/onboarding'
+    | '/buyer/onboarding/identity'
     | '/buyer/onboarding'
   id:
     | '__root__'
@@ -312,6 +323,7 @@ export interface FileRouteTypes {
     | '/onboarding/media'
     | '/onboarding/property'
     | '/onboarding/'
+    | '/buyer/onboarding/identity'
     | '/buyer/onboarding/'
   fileRoutesById: FileRoutesById
 }
@@ -339,6 +351,7 @@ export interface RootRouteChildren {
   OnboardingMediaRoute: typeof OnboardingMediaRoute
   OnboardingPropertyRoute: typeof OnboardingPropertyRoute
   OnboardingIndexRoute: typeof OnboardingIndexRoute
+  BuyerOnboardingIdentityRoute: typeof BuyerOnboardingIdentityRoute
   BuyerOnboardingIndexRoute: typeof BuyerOnboardingIndexRoute
 }
 
@@ -512,6 +525,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyerOnboardingIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/buyer/onboarding/identity': {
+      id: '/buyer/onboarding/identity'
+      path: '/buyer/onboarding/identity'
+      fullPath: '/buyer/onboarding/identity'
+      preLoaderRoute: typeof BuyerOnboardingIdentityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -539,6 +559,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingMediaRoute: OnboardingMediaRoute,
   OnboardingPropertyRoute: OnboardingPropertyRoute,
   OnboardingIndexRoute: OnboardingIndexRoute,
+  BuyerOnboardingIdentityRoute: BuyerOnboardingIdentityRoute,
   BuyerOnboardingIndexRoute: BuyerOnboardingIndexRoute,
 }
 export const routeTree = rootRouteImport
