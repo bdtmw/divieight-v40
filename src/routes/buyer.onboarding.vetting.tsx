@@ -220,11 +220,13 @@ function VettingScreen() {
   async function continueFromOutcome() {
     if (!buyer) return;
     if (outcome === "cleared") {
+      // Cleared buyers now pass through the Plaid liquidity gate before the
+      // Golden Ticket can be issued.
       await supabase
         .from("buyer_accounts")
-        .update({ onboarding_status: "golden_ticket_pending" })
+        .update({ onboarding_status: "liquidity_pending" })
         .eq("id", buyer.id);
-      navigate({ to: "/buyer/dashboard" });
+      navigate({ to: "/buyer/onboarding/liquidity" });
       return;
     }
     if (outcome === "flagged_needs_review") {
