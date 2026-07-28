@@ -1,6 +1,8 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { UserCircle2, LogOut } from "lucide-react";
+import { useEffect, useState } from "react";
+import { UserCircle2, LogOut, LayoutDashboard } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { getBuyerAccount } from "@/lib/buyer";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { NotificationsBell } from "./NotificationsBell";
@@ -9,6 +11,21 @@ import logoAsset from "@/assets/divieight-logo.png.asset.json";
 export function NavBar() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const [isBuyer, setIsBuyer] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!user) {
+      setIsBuyer(null);
+      return;
+    }
+    getBuyerAccount(user.id).then((account) => {
+      if (!cancelled) setIsBuyer(Boolean(account));
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
 
   async function onSignOut() {
     await supabase.auth.signOut();
@@ -42,20 +59,6 @@ export function NavBar() {
           >
             Contact
           </Link>
-          <Link
-            to="/dashboard"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            activeProps={{ className: "text-foreground" }}
-          >
-            Seller Dashboard
-          </Link>
-          <Link
-            to="/listings/new"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            activeProps={{ className: "text-foreground" }}
-          >
-            List a Property
-          </Link>
         </nav>
 
 
@@ -63,6 +66,15 @@ export function NavBar() {
           {loading ? null : user ? (
             <>
               <NotificationsBell />
+              {isBuyer !== null && (
+                <Link
+                  to={isBuyer ? "/buyer/dashboard" : "/dashboard"}
+                  className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground shadow-sm transition-transform hover:-translate-y-0.5"
+                >
+                  <LayoutDashboard className="h-4 w-4" />
+                  {isBuyer ? "Buyer dashboard" : "Seller dashboard"}
+                </Link>
+              )}
               <span className="hidden max-w-[180px] truncate text-xs text-muted-foreground sm:inline">
                 {user.email}
               </span>
