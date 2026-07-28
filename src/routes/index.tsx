@@ -155,35 +155,52 @@ function LandingPage() {
       </section>
 
       {/* How it works */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-            How it works
-          </h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Four steps from browsing to holding the keys.
-          </p>
-        </div>
+      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <div className="grid items-center gap-12 lg:grid-cols-2">
+          <div className="relative">
+            <img
+              src={howItWorksImg}
+              alt="Buyer reviewing co-ownership documents with an advisor"
+              loading="lazy"
+              width={1280}
+              height={960}
+              className="aspect-[4/3] w-full rounded-2xl object-cover shadow-[var(--shadow-elegant)]"
+            />
+            <div className="absolute -bottom-6 left-6 hidden rounded-xl border border-border bg-card p-5 shadow-sm sm:block">
+              <p className="font-display text-2xl font-semibold text-accent">1/8</p>
+              <p className="mt-1 text-xs text-muted-foreground">of a home, fully documented</p>
+            </div>
+          </div>
 
-        <ol className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {steps.map(({ icon: Icon, title, body }, i) => (
-            <li
-              key={title}
-              className="relative rounded-xl border border-border bg-card p-6 shadow-sm"
-            >
-              <span className="absolute right-5 top-5 text-xs font-semibold text-muted-foreground">
-                0{i + 1}
-              </span>
-              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-secondary text-accent">
-                <Icon className="h-5 w-5" />
-              </div>
-              <h3 className="mt-4 font-display text-base font-semibold text-foreground">
-                {title}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{body}</p>
-            </li>
-          ))}
-        </ol>
+          <div>
+            <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+              How it works
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
+              Four steps from browsing to holding the keys.
+            </p>
+
+            <ol className="mt-8 grid gap-4 sm:grid-cols-2">
+              {steps.map(({ icon: Icon, title, body }, i) => (
+                <li
+                  key={title}
+                  className="relative rounded-xl border border-border bg-card p-5 shadow-sm"
+                >
+                  <span className="absolute right-4 top-4 text-xs font-semibold text-muted-foreground">
+                    0{i + 1}
+                  </span>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-md bg-secondary text-accent">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="mt-4 font-display text-base font-semibold text-foreground">
+                    {title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{body}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
       </section>
 
       {/* Featured properties */}
