@@ -13,6 +13,9 @@ import {
 } from "lucide-react";
 import { EightSlicesTracker } from "@/components/EightSlicesTracker";
 import { getFeaturedProperties } from "@/lib/public.functions";
+import heroHome from "@/assets/hero-home.jpg";
+import howItWorksImg from "@/assets/how-it-works.jpg";
+import trustBand from "@/assets/trust-band.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -81,84 +84,123 @@ function LandingPage() {
 
   return (
     <div className="relative overflow-hidden">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[540px] bg-gradient-to-b from-secondary/60 via-background to-background"
-      />
+      {/* Hero banner */}
+      <section className="relative isolate overflow-hidden">
+        <img
+          src={heroHome}
+          alt="Modern lakeside second home lit at golden hour"
+          width={1920}
+          height={1088}
+          className="absolute inset-0 -z-20 h-full w-full object-cover"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 bg-gradient-to-r from-background/95 via-background/80 to-background/30"
+        />
 
-      {/* Hero */}
-      <section className="mx-auto max-w-7xl px-4 pb-20 pt-16 sm:px-6 lg:px-8 lg:pt-24">
-        <div className="mx-auto max-w-3xl text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm">
-            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-            Fractional co-ownership, simplified
-          </span>
-
-          <h1 className="mt-6 font-display text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-            Own a Piece of Your{" "}
-            <span className="relative whitespace-nowrap">
-              <span className="relative z-10 text-accent">Dream Home</span>
-              <span
-                aria-hidden
-                className="absolute inset-x-0 bottom-1 -z-0 h-2 rounded bg-accent/20"
-              />
+        <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
+          <div className="max-w-2xl">
+            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/80 px-3 py-1 text-xs font-medium text-muted-foreground shadow-sm backdrop-blur">
+              <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+              Fractional co-ownership, simplified
             </span>
-          </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            divieight divides a home into eight equal shares. Buy the 1/8th you'll actually
-            use — or sell your property share by share — with vetted co-owners, automated
-            legal structure, and a transparent record of every step.
-          </p>
+            <h1 className="mt-6 font-display text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+              Own a Piece of Your{" "}
+              <span className="relative whitespace-nowrap">
+                <span className="relative z-10 text-accent">Dream Home</span>
+                <span
+                  aria-hidden
+                  className="absolute inset-x-0 bottom-1 -z-0 h-2 rounded bg-accent/20"
+                />
+              </span>
+            </h1>
 
-          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <a
-              href="#featured"
-              className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-elegant)] transition-transform hover:-translate-y-0.5"
-            >
-              Browse Properties
-              <ArrowRight className="h-4 w-4" />
-            </a>
-            <Link
-              to="/listings/new"
-              className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
-            >
-              List Your Property
-            </Link>
+            <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+              divieight divides a home into eight equal shares. Buy the 1/8th you'll actually
+              use — or sell your property share by share — with vetted co-owners, automated
+              legal structure, and a transparent record of every step.
+            </p>
+
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+              <a
+                href="#featured"
+                className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-elegant)] transition-transform hover:-translate-y-0.5"
+              >
+                Browse Properties
+                <ArrowRight className="h-4 w-4" />
+              </a>
+              <Link
+                to="/listings/new"
+                className="inline-flex items-center justify-center gap-2 rounded-md border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
+              >
+                List Your Property
+              </Link>
+            </div>
+
+            <dl className="mt-12 grid max-w-lg grid-cols-3 gap-6 border-t border-border/60 pt-6">
+              {[
+                { k: "8", v: "Equal shares per home" },
+                { k: "100%", v: "Vetted co-owners" },
+                { k: "1 LLC", v: "Per property" },
+              ].map((s) => (
+                <div key={s.v}>
+                  <dt className="font-display text-2xl font-semibold text-foreground">{s.k}</dt>
+                  <dd className="mt-1 text-xs leading-relaxed text-muted-foreground">{s.v}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
         </div>
       </section>
 
       {/* How it works */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-            How it works
-          </h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Four steps from browsing to holding the keys.
-          </p>
-        </div>
+      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <div className="grid items-center gap-12 lg:grid-cols-2">
+          <div className="relative">
+            <img
+              src={howItWorksImg}
+              alt="Buyer reviewing co-ownership documents with an advisor"
+              loading="lazy"
+              width={1280}
+              height={960}
+              className="aspect-[4/3] w-full rounded-2xl object-cover shadow-[var(--shadow-elegant)]"
+            />
+            <div className="absolute -bottom-6 left-6 hidden rounded-xl border border-border bg-card p-5 shadow-sm sm:block">
+              <p className="font-display text-2xl font-semibold text-accent">1/8</p>
+              <p className="mt-1 text-xs text-muted-foreground">of a home, fully documented</p>
+            </div>
+          </div>
 
-        <ol className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {steps.map(({ icon: Icon, title, body }, i) => (
-            <li
-              key={title}
-              className="relative rounded-xl border border-border bg-card p-6 shadow-sm"
-            >
-              <span className="absolute right-5 top-5 text-xs font-semibold text-muted-foreground">
-                0{i + 1}
-              </span>
-              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-secondary text-accent">
-                <Icon className="h-5 w-5" />
-              </div>
-              <h3 className="mt-4 font-display text-base font-semibold text-foreground">
-                {title}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{body}</p>
-            </li>
-          ))}
-        </ol>
+          <div>
+            <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+              How it works
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
+              Four steps from browsing to holding the keys.
+            </p>
+
+            <ol className="mt-8 grid gap-4 sm:grid-cols-2">
+              {steps.map(({ icon: Icon, title, body }, i) => (
+                <li
+                  key={title}
+                  className="relative rounded-xl border border-border bg-card p-5 shadow-sm"
+                >
+                  <span className="absolute right-4 top-4 text-xs font-semibold text-muted-foreground">
+                    0{i + 1}
+                  </span>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-md bg-secondary text-accent">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="mt-4 font-display text-base font-semibold text-foreground">
+                    {title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{body}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
       </section>
 
       {/* Featured properties */}
@@ -258,27 +300,42 @@ function LandingPage() {
       </section>
 
       {/* Trust */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-            Built to be trusted
-          </h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Co-ownership only works when the structure and the people are solid.
-          </p>
-        </div>
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {trust.map(({ icon: Icon, title, body }) => (
-            <div key={title} className="rounded-xl border border-border bg-card p-6 shadow-sm">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-accent">
-                <Icon className="h-5 w-5" />
+      <section className="relative isolate overflow-hidden py-20">
+        <img
+          src={trustBand}
+          alt="Aerial view of a coastal neighborhood of modern homes"
+          loading="lazy"
+          width={1920}
+          height={800}
+          className="absolute inset-0 -z-20 h-full w-full object-cover"
+        />
+        <div aria-hidden className="absolute inset-0 -z-10 bg-background/90" />
+
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+              Built to be trusted
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
+              Co-ownership only works when the structure and the people are solid.
+            </p>
+          </div>
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {trust.map(({ icon: Icon, title, body }) => (
+              <div
+                key={title}
+                className="rounded-xl border border-border bg-card/90 p-6 shadow-sm backdrop-blur"
+              >
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-accent">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <h3 className="mt-4 font-display text-sm font-semibold text-foreground">
+                  {title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{body}</p>
               </div>
-              <h3 className="mt-4 font-display text-sm font-semibold text-foreground">
-                {title}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{body}</p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
     </div>
