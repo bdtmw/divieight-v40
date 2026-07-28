@@ -28,6 +28,7 @@ import { Route as OnboardingAgreementRouteImport } from './routes/onboarding.agr
 import { Route as ListingsNewRouteImport } from './routes/listings.new'
 import { Route as ListingsIdRouteImport } from './routes/listings.$id'
 import { Route as BuyerRegisterRouteImport } from './routes/buyer.register'
+import { Route as BuyerLoginRouteImport } from './routes/buyer.login'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AdminAuditLogRouteImport } from './routes/admin.audit-log'
 
@@ -126,6 +127,11 @@ const BuyerRegisterRoute = BuyerRegisterRouteImport.update({
   path: '/buyer/register',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuyerLoginRoute = BuyerLoginRouteImport.update({
+  id: '/buyer/login',
+  path: '/buyer/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/auth/callback',
   path: '/auth/callback',
@@ -149,6 +155,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
@@ -172,6 +179,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
@@ -196,6 +204,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
@@ -221,6 +230,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/admin/audit-log'
     | '/auth/callback'
+    | '/buyer/login'
     | '/buyer/register'
     | '/listings/$id'
     | '/listings/new'
@@ -244,6 +254,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/admin/audit-log'
     | '/auth/callback'
+    | '/buyer/login'
     | '/buyer/register'
     | '/listings/$id'
     | '/listings/new'
@@ -267,6 +278,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/admin/audit-log'
     | '/auth/callback'
+    | '/buyer/login'
     | '/buyer/register'
     | '/listings/$id'
     | '/listings/new'
@@ -291,6 +303,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   AdminAuditLogRoute: typeof AdminAuditLogRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
+  BuyerLoginRoute: typeof BuyerLoginRoute
   BuyerRegisterRoute: typeof BuyerRegisterRoute
   ListingsIdRoute: typeof ListingsIdRoute
   ListingsNewRoute: typeof ListingsNewRoute
@@ -438,6 +451,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyerRegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/buyer/login': {
+      id: '/buyer/login'
+      path: '/buyer/login'
+      fullPath: '/buyer/login'
+      preLoaderRoute: typeof BuyerLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/callback': {
       id: '/auth/callback'
       path: '/auth/callback'
@@ -467,6 +487,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   AdminAuditLogRoute: AdminAuditLogRoute,
   AuthCallbackRoute: AuthCallbackRoute,
+  BuyerLoginRoute: BuyerLoginRoute,
   BuyerRegisterRoute: BuyerRegisterRoute,
   ListingsIdRoute: ListingsIdRoute,
   ListingsNewRoute: ListingsNewRoute,
