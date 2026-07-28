@@ -13,6 +13,9 @@ import {
 } from "lucide-react";
 import { EightSlicesTracker } from "@/components/EightSlicesTracker";
 import { getFeaturedProperties } from "@/lib/public.functions";
+import heroHome from "@/assets/hero-home.jpg";
+import howItWorksImg from "@/assets/how-it-works.jpg";
+import trustBand from "@/assets/trust-band.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
