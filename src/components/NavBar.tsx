@@ -29,6 +29,20 @@ export function NavBar() {
 
         <nav className="hidden items-center gap-8 md:flex">
           <Link
+            to="/about"
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            activeProps={{ className: "text-foreground" }}
+          >
+            About
+          </Link>
+          <Link
+            to="/contact"
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            activeProps={{ className: "text-foreground" }}
+          >
+            Contact
+          </Link>
+          <Link
             to="/dashboard"
             className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
             activeProps={{ className: "text-foreground" }}
@@ -43,6 +57,7 @@ export function NavBar() {
             List a Property
           </Link>
         </nav>
+
 
         <div className="flex items-center gap-3">
           {loading ? null : user ? (
