@@ -106,6 +106,42 @@ function BuyerDashboardPage() {
           Browse properties
         </Link>
       </header>
+      {account.onboarding_status === "verification_pending" ? (
+        <div className="mt-8 rounded-xl border border-accent/50 bg-accent/10 p-5">
+          <p className="font-display text-base font-semibold text-foreground">
+            Your account is under review
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            We need additional information to verify your background check results. You can
+            add more documents at any time.
+          </p>
+          <Link
+            to="/buyer/verification"
+            className="mt-4 inline-block rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+          >
+            Upload documents
+          </Link>
+        </div>
+      ) : null}
+
+      {account.onboarding_status === "adverse_action" ? (
+        <div className="mt-8 rounded-xl border border-destructive/40 bg-destructive/5 p-5">
+          <p className="font-display text-base font-semibold text-foreground">
+            Adverse action notice issued
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Your Buyer Account cannot proceed to reservations. Review the notice for your
+            rights under the Fair Credit Reporting Act.
+          </p>
+          <Link
+            to="/buyer/adverse-action"
+            className="mt-4 inline-block rounded-md border border-border bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary"
+          >
+            View notice
+          </Link>
+        </div>
+      ) : null}
+
 
       <div className="mt-8 grid gap-4 sm:grid-cols-3">
         <Stat label="Onboarding" value={humanize(account.onboarding_status)} />
