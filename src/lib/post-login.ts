@@ -1,10 +1,14 @@
 import { supabase } from "@/integrations/supabase/client";
+import { buyerRedirect, getBuyerAccount } from "@/lib/buyer";
 
 /**
- * After a successful sign-in, look up the seller's onboarding status
- * and return the route the user should land on.
+ * After a successful sign-in, work out which side of the marketplace the
+ * account belongs to (buyer_accounts vs sellers) and return the landing route.
  */
 export async function getPostLoginRedirect(userId: string): Promise<string> {
+  const buyer = await getBuyerAccount(userId);
+  if (buyer) return buyerRedirect(buyer.onboarding_status);
+
   const { data, error } = await supabase
     .from("sellers")
     .select("onboarding_status")
