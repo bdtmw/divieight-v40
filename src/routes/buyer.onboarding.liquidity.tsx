@@ -196,6 +196,8 @@ function LiquidityGatePage() {
         liquidity_verified_at: passed ? now : null,
         liquidity_status: passed ? "verified" : "insufficient",
         liquidity_institution: PLAID_SANDBOX.institution,
+        last_activity_at: new Date().toISOString(),
+        stall_warning_sent_at: null,
         onboarding_status: passed ? "golden_ticket_pending" : "liquidity_pending",
       })
       .eq("id", buyer.id);
@@ -261,6 +263,8 @@ function LiquidityGatePage() {
         .update({
           liquidity_documents: next as never,
           liquidity_status: "manual_review_pending",
+          last_activity_at: new Date().toISOString(),
+          stall_warning_sent_at: null,
           onboarding_status: "liquidity_pending",
         })
         .eq("id", buyer.id);

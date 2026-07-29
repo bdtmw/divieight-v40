@@ -83,7 +83,7 @@ function VerificationRequestPage() {
       // Park the account in review so the buyer can log back out and return.
       await supabase
         .from("buyer_accounts")
-        .update({ onboarding_status: "verification_pending" })
+        .update({ last_activity_at: new Date().toISOString(), stall_warning_sent_at: null, onboarding_status: "verification_pending" })
         .eq("id", b.id);
       if (m?.id) {
         await supabase
