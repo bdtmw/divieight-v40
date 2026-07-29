@@ -16,9 +16,11 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OnboardingIndexRouteImport } from './routes/onboarding.index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as OnboardingPropertyRouteImport } from './routes/onboarding.property'
 import { Route as OnboardingMediaRouteImport } from './routes/onboarding.media'
 import { Route as OnboardingListingRouteImport } from './routes/onboarding.listing'
@@ -35,6 +37,12 @@ import { Route as BuyerDocumentsRouteImport } from './routes/buyer.documents'
 import { Route as BuyerDashboardRouteImport } from './routes/buyer.dashboard'
 import { Route as BuyerAdverseActionRouteImport } from './routes/buyer.adverse-action'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
+import { Route as AdminSellersRouteImport } from './routes/admin.sellers'
+import { Route as AdminPropertiesRouteImport } from './routes/admin.properties'
+import { Route as AdminPaymentsRouteImport } from './routes/admin.payments'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminContactsRouteImport } from './routes/admin.contacts'
+import { Route as AdminBuyersRouteImport } from './routes/admin.buyers'
 import { Route as AdminAuditLogRouteImport } from './routes/admin.audit-log'
 import { Route as BuyerOnboardingIndexRouteImport } from './routes/buyer.onboarding.index'
 import { Route as BuyerOnboardingVettingRouteImport } from './routes/buyer.onboarding.vetting'
@@ -79,6 +87,11 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -93,6 +106,11 @@ const OnboardingIndexRoute = OnboardingIndexRouteImport.update({
   id: '/onboarding/',
   path: '/onboarding/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
 } as any)
 const OnboardingPropertyRoute = OnboardingPropertyRouteImport.update({
   id: '/onboarding/property',
@@ -174,10 +192,40 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
   path: '/auth/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminSellersRoute = AdminSellersRouteImport.update({
+  id: '/sellers',
+  path: '/sellers',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPropertiesRoute = AdminPropertiesRouteImport.update({
+  id: '/properties',
+  path: '/properties',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPaymentsRoute = AdminPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminContactsRoute = AdminContactsRouteImport.update({
+  id: '/contacts',
+  path: '/contacts',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBuyersRoute = AdminBuyersRouteImport.update({
+  id: '/buyers',
+  path: '/buyers',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAuditLogRoute = AdminAuditLogRouteImport.update({
-  id: '/admin/audit-log',
-  path: '/admin/audit-log',
-  getParentRoute: () => rootRouteImport,
+  id: '/audit-log',
+  path: '/audit-log',
+  getParentRoute: () => AdminRoute,
 } as any)
 const BuyerOnboardingIndexRoute = BuyerOnboardingIndexRouteImport.update({
   id: '/buyer/onboarding/',
@@ -221,6 +269,7 @@ const ApiPublicEnrollmentMaintenanceRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -229,6 +278,12 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
+  '/admin/buyers': typeof AdminBuyersRoute
+  '/admin/contacts': typeof AdminContactsRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/payments': typeof AdminPaymentsRoute
+  '/admin/properties': typeof AdminPropertiesRoute
+  '/admin/sellers': typeof AdminSellersRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
@@ -245,6 +300,7 @@ export interface FileRoutesByFullPath {
   '/onboarding/listing': typeof OnboardingListingRoute
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
+  '/admin/': typeof AdminIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
@@ -265,6 +321,12 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
+  '/admin/buyers': typeof AdminBuyersRoute
+  '/admin/contacts': typeof AdminContactsRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/payments': typeof AdminPaymentsRoute
+  '/admin/properties': typeof AdminPropertiesRoute
+  '/admin/sellers': typeof AdminSellersRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
@@ -281,6 +343,7 @@ export interface FileRoutesByTo {
   '/onboarding/listing': typeof OnboardingListingRoute
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
+  '/admin': typeof AdminIndexRoute
   '/onboarding': typeof OnboardingIndexRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
@@ -294,6 +357,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -302,6 +366,12 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
+  '/admin/buyers': typeof AdminBuyersRoute
+  '/admin/contacts': typeof AdminContactsRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/payments': typeof AdminPaymentsRoute
+  '/admin/properties': typeof AdminPropertiesRoute
+  '/admin/sellers': typeof AdminSellersRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
@@ -318,6 +388,7 @@ export interface FileRoutesById {
   '/onboarding/listing': typeof OnboardingListingRoute
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
+  '/admin/': typeof AdminIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
@@ -332,6 +403,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/admin'
     | '/contact'
     | '/dashboard'
     | '/forgot-password'
@@ -340,6 +412,12 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-password'
     | '/admin/audit-log'
+    | '/admin/buyers'
+    | '/admin/contacts'
+    | '/admin/login'
+    | '/admin/payments'
+    | '/admin/properties'
+    | '/admin/sellers'
     | '/auth/callback'
     | '/buyer/adverse-action'
     | '/buyer/dashboard'
@@ -356,6 +434,7 @@ export interface FileRouteTypes {
     | '/onboarding/listing'
     | '/onboarding/media'
     | '/onboarding/property'
+    | '/admin/'
     | '/onboarding/'
     | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
@@ -376,6 +455,12 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-password'
     | '/admin/audit-log'
+    | '/admin/buyers'
+    | '/admin/contacts'
+    | '/admin/login'
+    | '/admin/payments'
+    | '/admin/properties'
+    | '/admin/sellers'
     | '/auth/callback'
     | '/buyer/adverse-action'
     | '/buyer/dashboard'
@@ -392,6 +477,7 @@ export interface FileRouteTypes {
     | '/onboarding/listing'
     | '/onboarding/media'
     | '/onboarding/property'
+    | '/admin'
     | '/onboarding'
     | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
@@ -404,6 +490,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/admin'
     | '/contact'
     | '/dashboard'
     | '/forgot-password'
@@ -412,6 +499,12 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-password'
     | '/admin/audit-log'
+    | '/admin/buyers'
+    | '/admin/contacts'
+    | '/admin/login'
+    | '/admin/payments'
+    | '/admin/properties'
+    | '/admin/sellers'
     | '/auth/callback'
     | '/buyer/adverse-action'
     | '/buyer/dashboard'
@@ -428,6 +521,7 @@ export interface FileRouteTypes {
     | '/onboarding/listing'
     | '/onboarding/media'
     | '/onboarding/property'
+    | '/admin/'
     | '/onboarding/'
     | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
@@ -441,6 +535,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRouteWithChildren
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
@@ -448,7 +543,6 @@ export interface RootRouteChildren {
   NotificationsRoute: typeof NotificationsRoute
   RegisterRoute: typeof RegisterRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
-  AdminAuditLogRoute: typeof AdminAuditLogRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   BuyerAdverseActionRoute: typeof BuyerAdverseActionRoute
   BuyerDashboardRoute: typeof BuyerDashboardRoute
@@ -526,6 +620,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -546,6 +647,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/onboarding/'
       preLoaderRoute: typeof OnboardingIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/onboarding/property': {
       id: '/onboarding/property'
@@ -659,12 +767,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/sellers': {
+      id: '/admin/sellers'
+      path: '/sellers'
+      fullPath: '/admin/sellers'
+      preLoaderRoute: typeof AdminSellersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/properties': {
+      id: '/admin/properties'
+      path: '/properties'
+      fullPath: '/admin/properties'
+      preLoaderRoute: typeof AdminPropertiesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/payments': {
+      id: '/admin/payments'
+      path: '/payments'
+      fullPath: '/admin/payments'
+      preLoaderRoute: typeof AdminPaymentsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/contacts': {
+      id: '/admin/contacts'
+      path: '/contacts'
+      fullPath: '/admin/contacts'
+      preLoaderRoute: typeof AdminContactsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/buyers': {
+      id: '/admin/buyers'
+      path: '/buyers'
+      fullPath: '/admin/buyers'
+      preLoaderRoute: typeof AdminBuyersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/audit-log': {
       id: '/admin/audit-log'
-      path: '/admin/audit-log'
+      path: '/audit-log'
       fullPath: '/admin/audit-log'
       preLoaderRoute: typeof AdminAuditLogRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/buyer/onboarding/': {
       id: '/buyer/onboarding/'
@@ -718,9 +868,34 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AdminRouteChildren {
+  AdminAuditLogRoute: typeof AdminAuditLogRoute
+  AdminBuyersRoute: typeof AdminBuyersRoute
+  AdminContactsRoute: typeof AdminContactsRoute
+  AdminLoginRoute: typeof AdminLoginRoute
+  AdminPaymentsRoute: typeof AdminPaymentsRoute
+  AdminPropertiesRoute: typeof AdminPropertiesRoute
+  AdminSellersRoute: typeof AdminSellersRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminAuditLogRoute: AdminAuditLogRoute,
+  AdminBuyersRoute: AdminBuyersRoute,
+  AdminContactsRoute: AdminContactsRoute,
+  AdminLoginRoute: AdminLoginRoute,
+  AdminPaymentsRoute: AdminPaymentsRoute,
+  AdminPropertiesRoute: AdminPropertiesRoute,
+  AdminSellersRoute: AdminSellersRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AdminRoute: AdminRouteWithChildren,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
@@ -728,7 +903,6 @@ const rootRouteChildren: RootRouteChildren = {
   NotificationsRoute: NotificationsRoute,
   RegisterRoute: RegisterRoute,
   ResetPasswordRoute: ResetPasswordRoute,
-  AdminAuditLogRoute: AdminAuditLogRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   BuyerAdverseActionRoute: BuyerAdverseActionRoute,
   BuyerDashboardRoute: BuyerDashboardRoute,
