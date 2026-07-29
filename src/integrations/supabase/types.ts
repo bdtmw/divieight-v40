@@ -628,6 +628,42 @@ export type Database = {
         }
         Relationships: []
       }
+      wishlist: {
+        Row: {
+          buyer_account_id: string
+          created_at: string
+          id: string
+          property_id: string
+        }
+        Insert: {
+          buyer_account_id: string
+          created_at?: string
+          id?: string
+          property_id: string
+        }
+        Update: {
+          buyer_account_id?: string
+          created_at?: string
+          id?: string
+          property_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wishlist_buyer_account_id_fkey"
+            columns: ["buyer_account_id"]
+            isOneToOne: false
+            referencedRelation: "buyer_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wishlist_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
