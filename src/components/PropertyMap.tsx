@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import type { Map as LeafletMap, LayerGroup } from "leaflet";
+import type { Map as LeafletMap } from "leaflet";
 
 export interface MapPin {
   id: string;
@@ -12,7 +12,7 @@ export interface MapPin {
 
 /**
  * Leaflet is browser-only: the library is imported dynamically inside an
- * effect so it never runs during SSR.
+ * effect so it never runs during SSR. `pins` must be memoized by the caller.
  */
 export function PropertyMap({
   pins,
@@ -25,10 +25,7 @@ export function PropertyMap({
 }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<LeafletMap | null>(null);
-  const layerRef = useRef<LayerGroup | null>(null);
-  const pinsRef = useRef(pins);
   const selectRef = useRef(onSelect);
-  pinsRef.current = pins;
   selectRef.current = onSelect;
 
   useEffect(() => {
@@ -36,7 +33,7 @@ export function PropertyMap({
 
     (async () => {
       const L = (await import("leaflet")).default;
-      if (cancelled || !containerRef.current || mapRef.current) return;
+      if (cancelled || !containerRef.current) return;
 
       const map = L.map(containerRef.current, { scrollWheelZoom: false }).setView(
         [39.5, -98.35],
@@ -46,20 +43,9 @@ export function PropertyMap({
         attribution: "&copy; OpenStreetMap contributors",
         maxZoom: 18,
       }).addTo(map);
-
       mapRef.current = map;
-      layerRef.current = L.layerGroup().addTo(map);
-      render(L);
-    })();
 
-    function render(L: typeof import("leaflet")) {
-      const map = mapRef.current;
-      const layer = layerRef.current;
-      if (!map || !layer) return;
-      layer.clearLayers();
-
-      const current = pinsRef.current;
-      current.forEach((p) => {
+      pins.forEach((p) => {
         const marker = L.circleMarker([p.lat, p.lng], {
           radius: 9,
           weight: 2,
@@ -69,32 +55,22 @@ export function PropertyMap({
         });
         marker.bindTooltip(`<strong>${p.title}</strong><br/>${p.subtitle}`);
         marker.on("click", () => selectRef.current?.(p.id));
-        marker.addTo(layer);
+        marker.addTo(map);
       });
 
-      if (current.length > 0) {
-        map.fitBounds(
-          L.latLngBounds(current.map((p) => [p.lat, p.lng] as [number, number])),
-          { padding: [40, 40], maxZoom: 12 },
-        );
+      if (pins.length > 0) {
+        map.fitBounds(L.latLngBounds(pins.map((p) => [p.lat, p.lng] as [number, number])), {
+          padding: [40, 40],
+          maxZoom: 12,
+        });
       }
       map.invalidateSize();
-    }
-
-    // Re-render pins whenever they change while the map is alive.
-    const id = window.setInterval(async () => {
-      if (!mapRef.current) return;
-      const L = (await import("leaflet")).default;
-      render(L);
-      window.clearInterval(id);
-    }, 0);
+    })();
 
     return () => {
       cancelled = true;
-      window.clearInterval(id);
       mapRef.current?.remove();
       mapRef.current = null;
-      layerRef.current = null;
     };
   }, [pins]);
 
