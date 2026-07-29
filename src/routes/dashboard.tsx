@@ -93,6 +93,13 @@ function Dashboard() {
       ]);
 
       if (cancelled) return;
+      if (!sellerData) {
+        // Not a seller — buyers get bounced to their own dashboard.
+        const buyer = await getBuyerAccount(user.id);
+        if (cancelled) return;
+        navigate({ to: buyer ? "/buyer/dashboard" : "/login" });
+        return;
+      }
       setSeller((sellerData as SellerInfo) ?? null);
 
       const propRows = (props as Listing[]) ?? [];
