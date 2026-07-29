@@ -118,6 +118,7 @@ export type Database = {
           golden_ticket_issued_at: string | null
           id: string
           intent: string | null
+          last_activity_at: string
           liquidity_documents: Json
           liquidity_institution: string | null
           liquidity_status: string
@@ -128,8 +129,10 @@ export type Database = {
           phone: string | null
           plaid_consent_at: string | null
           primary_target_market: string | null
+          priority_forfeited_at: string | null
           priority_rank: number | null
           priority_rank_timestamp: string | null
+          stall_warning_sent_at: string | null
           target_budget: number | null
           target_zip_codes: Json
           updated_at: string
@@ -142,6 +145,7 @@ export type Database = {
           golden_ticket_issued_at?: string | null
           id?: string
           intent?: string | null
+          last_activity_at?: string
           liquidity_documents?: Json
           liquidity_institution?: string | null
           liquidity_status?: string
@@ -152,8 +156,10 @@ export type Database = {
           phone?: string | null
           plaid_consent_at?: string | null
           primary_target_market?: string | null
+          priority_forfeited_at?: string | null
           priority_rank?: number | null
           priority_rank_timestamp?: string | null
+          stall_warning_sent_at?: string | null
           target_budget?: number | null
           target_zip_codes?: Json
           updated_at?: string
@@ -166,6 +172,7 @@ export type Database = {
           golden_ticket_issued_at?: string | null
           id?: string
           intent?: string | null
+          last_activity_at?: string
           liquidity_documents?: Json
           liquidity_institution?: string | null
           liquidity_status?: string
@@ -176,8 +183,10 @@ export type Database = {
           phone?: string | null
           plaid_consent_at?: string | null
           primary_target_market?: string | null
+          priority_forfeited_at?: string | null
           priority_rank?: number | null
           priority_rank_timestamp?: string | null
+          stall_warning_sent_at?: string | null
           target_budget?: number | null
           target_zip_codes?: Json
           updated_at?: string
