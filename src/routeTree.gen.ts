@@ -42,6 +42,7 @@ import { Route as BuyerOnboardingPaymentRouteImport } from './routes/buyer.onboa
 import { Route as BuyerOnboardingLiquidityRouteImport } from './routes/buyer.onboarding.liquidity'
 import { Route as BuyerOnboardingLifestyleRouteImport } from './routes/buyer.onboarding.lifestyle'
 import { Route as BuyerOnboardingIdentityRouteImport } from './routes/buyer.onboarding.identity'
+import { Route as ApiPublicEnrollmentMaintenanceRouteImport } from './routes/api.public.enrollment-maintenance'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -210,6 +211,12 @@ const BuyerOnboardingIdentityRoute = BuyerOnboardingIdentityRouteImport.update({
   path: '/buyer/onboarding/identity',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicEnrollmentMaintenanceRoute =
+  ApiPublicEnrollmentMaintenanceRouteImport.update({
+    id: '/api/public/enrollment-maintenance',
+    path: '/api/public/enrollment-maintenance',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -239,6 +246,7 @@ export interface FileRoutesByFullPath {
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/onboarding/': typeof OnboardingIndexRoute
+  '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
   '/buyer/onboarding/liquidity': typeof BuyerOnboardingLiquidityRoute
@@ -274,6 +282,7 @@ export interface FileRoutesByTo {
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/onboarding': typeof OnboardingIndexRoute
+  '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
   '/buyer/onboarding/liquidity': typeof BuyerOnboardingLiquidityRoute
@@ -310,6 +319,7 @@ export interface FileRoutesById {
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/onboarding/': typeof OnboardingIndexRoute
+  '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
   '/buyer/onboarding/liquidity': typeof BuyerOnboardingLiquidityRoute
@@ -347,6 +357,7 @@ export interface FileRouteTypes {
     | '/onboarding/media'
     | '/onboarding/property'
     | '/onboarding/'
+    | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
     | '/buyer/onboarding/liquidity'
@@ -382,6 +393,7 @@ export interface FileRouteTypes {
     | '/onboarding/media'
     | '/onboarding/property'
     | '/onboarding'
+    | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
     | '/buyer/onboarding/liquidity'
@@ -417,6 +429,7 @@ export interface FileRouteTypes {
     | '/onboarding/media'
     | '/onboarding/property'
     | '/onboarding/'
+    | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
     | '/buyer/onboarding/liquidity'
@@ -453,6 +466,7 @@ export interface RootRouteChildren {
   OnboardingMediaRoute: typeof OnboardingMediaRoute
   OnboardingPropertyRoute: typeof OnboardingPropertyRoute
   OnboardingIndexRoute: typeof OnboardingIndexRoute
+  ApiPublicEnrollmentMaintenanceRoute: typeof ApiPublicEnrollmentMaintenanceRoute
   BuyerOnboardingIdentityRoute: typeof BuyerOnboardingIdentityRoute
   BuyerOnboardingLifestyleRoute: typeof BuyerOnboardingLifestyleRoute
   BuyerOnboardingLiquidityRoute: typeof BuyerOnboardingLiquidityRoute
@@ -694,6 +708,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyerOnboardingIdentityRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/enrollment-maintenance': {
+      id: '/api/public/enrollment-maintenance'
+      path: '/api/public/enrollment-maintenance'
+      fullPath: '/api/public/enrollment-maintenance'
+      preLoaderRoute: typeof ApiPublicEnrollmentMaintenanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -725,6 +746,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingMediaRoute: OnboardingMediaRoute,
   OnboardingPropertyRoute: OnboardingPropertyRoute,
   OnboardingIndexRoute: OnboardingIndexRoute,
+  ApiPublicEnrollmentMaintenanceRoute: ApiPublicEnrollmentMaintenanceRoute,
   BuyerOnboardingIdentityRoute: BuyerOnboardingIdentityRoute,
   BuyerOnboardingLifestyleRoute: BuyerOnboardingLifestyleRoute,
   BuyerOnboardingLiquidityRoute: BuyerOnboardingLiquidityRoute,

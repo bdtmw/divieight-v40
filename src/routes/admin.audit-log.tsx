@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  runEnrollmentMaintenance,
+  type MaintenanceRunResult,
+} from "@/lib/enrollment-maintenance.functions";
+import { GRACE_DAYS, STALL_DAYS } from "@/lib/enrollment-maintenance";
 
 // NOTE: This admin view is intentionally unlocked for now. Auth/role-based
 // gating (admin/compliance officer) will be added in a later milestone.
