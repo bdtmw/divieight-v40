@@ -14,7 +14,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/properties")({
+export const Route = createFileRoute("/properties/")({
   head: () => ({
     meta: [
       { title: "Browse Fractional Homes — divieight Marketplace" },

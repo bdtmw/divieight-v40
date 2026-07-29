@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RegisterRouteImport } from './routes/register'
-import { Route as PropertiesRouteImport } from './routes/properties'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
@@ -20,6 +19,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PropertiesIndexRouteImport } from './routes/properties.index'
 import { Route as OnboardingIndexRouteImport } from './routes/onboarding.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as OnboardingPropertyRouteImport } from './routes/onboarding.property'
@@ -63,11 +63,6 @@ const RegisterRoute = RegisterRouteImport.update({
   path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PropertiesRoute = PropertiesRouteImport.update({
-  id: '/properties',
-  path: '/properties',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const NotificationsRoute = NotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
@@ -106,6 +101,11 @@ const AboutRoute = AboutRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PropertiesIndexRoute = PropertiesIndexRouteImport.update({
+  id: '/properties/',
+  path: '/properties/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingIndexRoute = OnboardingIndexRouteImport.update({
@@ -281,7 +281,6 @@ export interface FileRoutesByFullPath {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
-  '/properties': typeof PropertiesRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
@@ -309,6 +308,7 @@ export interface FileRoutesByFullPath {
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/admin/': typeof AdminIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
+  '/properties/': typeof PropertiesIndexRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -325,7 +325,6 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
-  '/properties': typeof PropertiesRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
@@ -353,6 +352,7 @@ export interface FileRoutesByTo {
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/admin': typeof AdminIndexRoute
   '/onboarding': typeof OnboardingIndexRoute
+  '/properties': typeof PropertiesIndexRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -371,7 +371,6 @@ export interface FileRoutesById {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
-  '/properties': typeof PropertiesRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
@@ -399,6 +398,7 @@ export interface FileRoutesById {
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/admin/': typeof AdminIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
+  '/properties/': typeof PropertiesIndexRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -418,7 +418,6 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/notifications'
-    | '/properties'
     | '/register'
     | '/reset-password'
     | '/admin/audit-log'
@@ -446,6 +445,7 @@ export interface FileRouteTypes {
     | '/onboarding/property'
     | '/admin/'
     | '/onboarding/'
+    | '/properties/'
     | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -462,7 +462,6 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/notifications'
-    | '/properties'
     | '/register'
     | '/reset-password'
     | '/admin/audit-log'
@@ -490,6 +489,7 @@ export interface FileRouteTypes {
     | '/onboarding/property'
     | '/admin'
     | '/onboarding'
+    | '/properties'
     | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -507,7 +507,6 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/notifications'
-    | '/properties'
     | '/register'
     | '/reset-password'
     | '/admin/audit-log'
@@ -535,6 +534,7 @@ export interface FileRouteTypes {
     | '/onboarding/property'
     | '/admin/'
     | '/onboarding/'
+    | '/properties/'
     | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -553,7 +553,6 @@ export interface RootRouteChildren {
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   NotificationsRoute: typeof NotificationsRoute
-  PropertiesRoute: typeof PropertiesRoute
   RegisterRoute: typeof RegisterRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
@@ -573,6 +572,7 @@ export interface RootRouteChildren {
   OnboardingMediaRoute: typeof OnboardingMediaRoute
   OnboardingPropertyRoute: typeof OnboardingPropertyRoute
   OnboardingIndexRoute: typeof OnboardingIndexRoute
+  PropertiesIndexRoute: typeof PropertiesIndexRoute
   ApiPublicEnrollmentMaintenanceRoute: typeof ApiPublicEnrollmentMaintenanceRoute
   BuyerOnboardingIdentityRoute: typeof BuyerOnboardingIdentityRoute
   BuyerOnboardingLifestyleRoute: typeof BuyerOnboardingLifestyleRoute
@@ -596,13 +596,6 @@ declare module '@tanstack/react-router' {
       path: '/register'
       fullPath: '/register'
       preLoaderRoute: typeof RegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/properties': {
-      id: '/properties'
-      path: '/properties'
-      fullPath: '/properties'
-      preLoaderRoute: typeof PropertiesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/notifications': {
@@ -659,6 +652,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/properties/': {
+      id: '/properties/'
+      path: '/properties'
+      fullPath: '/properties/'
+      preLoaderRoute: typeof PropertiesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding/': {
@@ -921,7 +921,6 @@ const rootRouteChildren: RootRouteChildren = {
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   NotificationsRoute: NotificationsRoute,
-  PropertiesRoute: PropertiesRoute,
   RegisterRoute: RegisterRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   AuthCallbackRoute: AuthCallbackRoute,
@@ -941,6 +940,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingMediaRoute: OnboardingMediaRoute,
   OnboardingPropertyRoute: OnboardingPropertyRoute,
   OnboardingIndexRoute: OnboardingIndexRoute,
+  PropertiesIndexRoute: PropertiesIndexRoute,
   ApiPublicEnrollmentMaintenanceRoute: ApiPublicEnrollmentMaintenanceRoute,
   BuyerOnboardingIdentityRoute: BuyerOnboardingIdentityRoute,
   BuyerOnboardingLifestyleRoute: BuyerOnboardingLifestyleRoute,
@@ -952,3 +952,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
