@@ -41,6 +41,29 @@ function AuditLogPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [actionFilter, setActionFilter] = useState<string>("all");
+  const [running, setRunning] = useState(false);
+  const [runResult, setRunResult] = useState<MaintenanceRunResult | null>(null);
+  const [runError, setRunError] = useState<string | null>(null);
+
+  async function fireMaintenance() {
+    setRunning(true);
+    setRunError(null);
+    try {
+      const result = await runEnrollmentMaintenance();
+      setRunResult(result);
+      const { data } = await supabase
+        .from("audit_log")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(500);
+      setRows((data as AuditRow[] | null) ?? []);
+    } catch (e) {
+      setRunError(e instanceof Error ? e.message : "Maintenance run failed");
+    } finally {
+      setRunning(false);
+    }
+  }
+
 
   useEffect(() => {
     (async () => {
