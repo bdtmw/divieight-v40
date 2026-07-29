@@ -244,7 +244,12 @@ function ListingDetail() {
           </p>
         </section>
       ) : null}
+        </>
+      ) : user ? (
+        <SellerDataRoom propertyId={property.id} sellerId={user.id} />
+      ) : null}
     </div>
+
   );
 }
 
