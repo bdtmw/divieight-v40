@@ -48,6 +48,13 @@ export function NavBar() {
 
         <nav className="hidden items-center gap-8 md:flex">
           <Link
+            to="/properties"
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            activeProps={{ className: "text-foreground" }}
+          >
+            Properties
+          </Link>
+          <Link
             to="/about"
             className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
             activeProps={{ className: "text-foreground" }}
