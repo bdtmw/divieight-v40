@@ -22,6 +22,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as PropertiesIndexRouteImport } from './routes/properties.index'
 import { Route as OnboardingIndexRouteImport } from './routes/onboarding.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as ReserveIdRouteImport } from './routes/reserve.$id'
 import { Route as PropertiesIdRouteImport } from './routes/properties.$id'
 import { Route as OnboardingPropertyRouteImport } from './routes/onboarding.property'
 import { Route as OnboardingMediaRouteImport } from './routes/onboarding.media'
@@ -118,6 +119,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const ReserveIdRoute = ReserveIdRouteImport.update({
+  id: '/reserve/$id',
+  path: '/reserve/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const PropertiesIdRoute = PropertiesIdRouteImport.update({
   id: '/properties/$id',
@@ -313,6 +319,7 @@ export interface FileRoutesByFullPath {
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/properties/$id': typeof PropertiesIdRoute
+  '/reserve/$id': typeof ReserveIdRoute
   '/admin/': typeof AdminIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
   '/properties/': typeof PropertiesIndexRoute
@@ -358,6 +365,7 @@ export interface FileRoutesByTo {
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/properties/$id': typeof PropertiesIdRoute
+  '/reserve/$id': typeof ReserveIdRoute
   '/admin': typeof AdminIndexRoute
   '/onboarding': typeof OnboardingIndexRoute
   '/properties': typeof PropertiesIndexRoute
@@ -405,6 +413,7 @@ export interface FileRoutesById {
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/properties/$id': typeof PropertiesIdRoute
+  '/reserve/$id': typeof ReserveIdRoute
   '/admin/': typeof AdminIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
   '/properties/': typeof PropertiesIndexRoute
@@ -453,6 +462,7 @@ export interface FileRouteTypes {
     | '/onboarding/media'
     | '/onboarding/property'
     | '/properties/$id'
+    | '/reserve/$id'
     | '/admin/'
     | '/onboarding/'
     | '/properties/'
@@ -498,6 +508,7 @@ export interface FileRouteTypes {
     | '/onboarding/media'
     | '/onboarding/property'
     | '/properties/$id'
+    | '/reserve/$id'
     | '/admin'
     | '/onboarding'
     | '/properties'
@@ -544,6 +555,7 @@ export interface FileRouteTypes {
     | '/onboarding/media'
     | '/onboarding/property'
     | '/properties/$id'
+    | '/reserve/$id'
     | '/admin/'
     | '/onboarding/'
     | '/properties/'
@@ -584,6 +596,7 @@ export interface RootRouteChildren {
   OnboardingMediaRoute: typeof OnboardingMediaRoute
   OnboardingPropertyRoute: typeof OnboardingPropertyRoute
   PropertiesIdRoute: typeof PropertiesIdRoute
+  ReserveIdRoute: typeof ReserveIdRoute
   OnboardingIndexRoute: typeof OnboardingIndexRoute
   PropertiesIndexRoute: typeof PropertiesIndexRoute
   ApiPublicEnrollmentMaintenanceRoute: typeof ApiPublicEnrollmentMaintenanceRoute
@@ -687,6 +700,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/reserve/$id': {
+      id: '/reserve/$id'
+      path: '/reserve/$id'
+      fullPath: '/reserve/$id'
+      preLoaderRoute: typeof ReserveIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/properties/$id': {
       id: '/properties/$id'
@@ -960,6 +980,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingMediaRoute: OnboardingMediaRoute,
   OnboardingPropertyRoute: OnboardingPropertyRoute,
   PropertiesIdRoute: PropertiesIdRoute,
+  ReserveIdRoute: ReserveIdRoute,
   OnboardingIndexRoute: OnboardingIndexRoute,
   PropertiesIndexRoute: PropertiesIndexRoute,
   ApiPublicEnrollmentMaintenanceRoute: ApiPublicEnrollmentMaintenanceRoute,
