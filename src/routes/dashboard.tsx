@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { EightSlicesTracker } from "@/components/EightSlicesTracker";
 import { ListingStatusTimeline, type ListingStatus } from "@/components/ListingStatusTimeline";
+import { getBuyerAccount } from "@/lib/buyer";
 
 import { CheckCircle2, Home, LayoutGrid, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -93,6 +94,13 @@ function Dashboard() {
       ]);
 
       if (cancelled) return;
+      if (!sellerData) {
+        // Not a seller — buyers get bounced to their own dashboard.
+        const buyer = await getBuyerAccount(user.id);
+        if (cancelled) return;
+        navigate({ to: buyer ? "/buyer/dashboard" : "/login" });
+        return;
+      }
       setSeller((sellerData as SellerInfo) ?? null);
 
       const propRows = (props as Listing[]) ?? [];

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Building2, FileText, Heart, KeyRound, Ticket } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { buyerRedirect } from "@/lib/buyer";
+import { getSellerAccount } from "@/lib/seller";
 import { enrollmentDaysRemaining, enrollmentEndDate } from "@/lib/golden-ticket";
 import { cn } from "@/lib/utils";
 
@@ -79,7 +80,10 @@ function BuyerDashboardPage() {
         .maybeSingle();
       if (cancelled) return;
       if (!acct) {
-        navigate({ to: "/buyer/register" });
+        // Not a buyer — sellers get bounced back to their own dashboard.
+        const seller = await getSellerAccount(auth.user.id);
+        if (cancelled) return;
+        navigate({ to: seller ? "/dashboard" : "/buyer/register" });
         return;
       }
       setAccount(acct as AccountView);
