@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { EightSlicesTracker } from "@/components/EightSlicesTracker";
+import { useAuth } from "@/hooks/use-auth";
+import { SellerDataRoom } from "@/components/SellerDataRoom";
 import {
   ListingStatusTimeline,
   type ListingStatus,
@@ -64,6 +66,8 @@ type Photo = { url: string; caption: string | null };
 
 function ListingDetail() {
   const { id } = Route.useParams();
+  const { user } = useAuth();
+  const [tab, setTab] = useState<"overview" | "data-room">("overview");
   const [property, setProperty] = useState<Property | null>(null);
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [loading, setLoading] = useState(true);
@@ -174,6 +178,26 @@ function ListingDetail() {
         </span>
       </div>
 
+      <div className="mt-6 flex gap-1 border-b border-border">
+        {(["overview", "data-room"] as const).map((t) => (
+          <button
+            key={t}
+            type="button"
+            onClick={() => setTab(t)}
+            className={
+              "-mb-px border-b-2 px-4 py-2 text-sm font-semibold transition " +
+              (tab === t
+                ? "border-accent text-foreground"
+                : "border-transparent text-muted-foreground hover:text-foreground")
+            }
+          >
+            {t === "overview" ? "Overview" : "Virtual Data Room"}
+          </button>
+        ))}
+      </div>
+
+      {tab === "overview" ? (
+        <>
       {photos.length > 0 ? (
         <section className="mt-8">
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -244,7 +268,12 @@ function ListingDetail() {
           </p>
         </section>
       ) : null}
+        </>
+      ) : user ? (
+        <SellerDataRoom propertyId={property.id} sellerId={user.id} />
+      ) : null}
     </div>
+
   );
 }
 

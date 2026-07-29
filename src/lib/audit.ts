@@ -32,9 +32,18 @@ export type AuditAction =
   | "buyer.liquidity_documents_submitted"
   | "buyer.fcra_adverse_action_issued"
   | "buyer.golden_ticket_issued"
-  | "buyer.priority_forfeited";
+  | "buyer.priority_forfeited"
+  | "buyer.data_room_document_viewed"
+  | "seller.data_room_document_uploaded"
+  | "seller.data_room_document_deleted";
 
-export type AuditEntity = "seller" | "property" | "payment" | "media" | "buyer_account";
+export type AuditEntity =
+  | "seller"
+  | "property"
+  | "payment"
+  | "media"
+  | "buyer_account"
+  | "property_document";
 
 export async function logAudit(params: {
   actorId: string;
