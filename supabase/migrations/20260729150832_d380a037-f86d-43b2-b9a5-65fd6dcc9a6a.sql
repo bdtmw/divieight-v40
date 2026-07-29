@@ -1,0 +1,1 @@
+ALTER TABLE public.buyer_accounts ADD COLUMN IF NOT EXISTS golden_ticket_issued_at timestamp with time zone;

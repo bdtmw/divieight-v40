@@ -115,6 +115,7 @@ export type Database = {
           created_at: string
           email: string
           golden_ticket_issued: boolean
+          golden_ticket_issued_at: string | null
           id: string
           intent: string | null
           liquidity_documents: Json
@@ -138,6 +139,7 @@ export type Database = {
           created_at?: string
           email: string
           golden_ticket_issued?: boolean
+          golden_ticket_issued_at?: string | null
           id?: string
           intent?: string | null
           liquidity_documents?: Json
@@ -161,6 +163,7 @@ export type Database = {
           created_at?: string
           email?: string
           golden_ticket_issued?: boolean
+          golden_ticket_issued_at?: string | null
           id?: string
           intent?: string | null
           liquidity_documents?: Json
