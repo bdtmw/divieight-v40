@@ -65,15 +65,25 @@ export function NavBar() {
         <div className="flex items-center gap-3">
           {loading ? null : user ? (
             <>
-              <NotificationsBell />
-              {isBuyer !== null && (
+              {!isAdmin && <NotificationsBell />}
+              {isAdmin ? (
                 <Link
-                  to={isBuyer ? "/buyer/dashboard" : "/dashboard"}
+                  to="/admin"
                   className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground shadow-sm transition-transform hover:-translate-y-0.5"
                 >
                   <LayoutDashboard className="h-4 w-4" />
-                  {isBuyer ? "Buyer dashboard" : "Seller dashboard"}
+                  Admin console
                 </Link>
+              ) : (
+                isBuyer !== null && (
+                  <Link
+                    to={isBuyer ? "/buyer/dashboard" : "/dashboard"}
+                    className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground shadow-sm transition-transform hover:-translate-y-0.5"
+                  >
+                    <LayoutDashboard className="h-4 w-4" />
+                    {isBuyer ? "Buyer dashboard" : "Seller dashboard"}
+                  </Link>
+                )
               )}
               <span className="hidden max-w-[180px] truncate text-xs text-muted-foreground sm:inline">
                 {user.email}
