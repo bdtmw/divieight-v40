@@ -22,6 +22,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as PropertiesIndexRouteImport } from './routes/properties.index'
 import { Route as OnboardingIndexRouteImport } from './routes/onboarding.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as PropertiesIdRouteImport } from './routes/properties.$id'
 import { Route as OnboardingPropertyRouteImport } from './routes/onboarding.property'
 import { Route as OnboardingMediaRouteImport } from './routes/onboarding.media'
 import { Route as OnboardingListingRouteImport } from './routes/onboarding.listing'
@@ -117,6 +118,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const PropertiesIdRoute = PropertiesIdRouteImport.update({
+  id: '/properties/$id',
+  path: '/properties/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingPropertyRoute = OnboardingPropertyRouteImport.update({
   id: '/onboarding/property',
@@ -306,6 +312,7 @@ export interface FileRoutesByFullPath {
   '/onboarding/listing': typeof OnboardingListingRoute
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
+  '/properties/$id': typeof PropertiesIdRoute
   '/admin/': typeof AdminIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
   '/properties/': typeof PropertiesIndexRoute
@@ -350,6 +357,7 @@ export interface FileRoutesByTo {
   '/onboarding/listing': typeof OnboardingListingRoute
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
+  '/properties/$id': typeof PropertiesIdRoute
   '/admin': typeof AdminIndexRoute
   '/onboarding': typeof OnboardingIndexRoute
   '/properties': typeof PropertiesIndexRoute
@@ -396,6 +404,7 @@ export interface FileRoutesById {
   '/onboarding/listing': typeof OnboardingListingRoute
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
+  '/properties/$id': typeof PropertiesIdRoute
   '/admin/': typeof AdminIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
   '/properties/': typeof PropertiesIndexRoute
@@ -443,6 +452,7 @@ export interface FileRouteTypes {
     | '/onboarding/listing'
     | '/onboarding/media'
     | '/onboarding/property'
+    | '/properties/$id'
     | '/admin/'
     | '/onboarding/'
     | '/properties/'
@@ -487,6 +497,7 @@ export interface FileRouteTypes {
     | '/onboarding/listing'
     | '/onboarding/media'
     | '/onboarding/property'
+    | '/properties/$id'
     | '/admin'
     | '/onboarding'
     | '/properties'
@@ -532,6 +543,7 @@ export interface FileRouteTypes {
     | '/onboarding/listing'
     | '/onboarding/media'
     | '/onboarding/property'
+    | '/properties/$id'
     | '/admin/'
     | '/onboarding/'
     | '/properties/'
@@ -571,6 +583,7 @@ export interface RootRouteChildren {
   OnboardingListingRoute: typeof OnboardingListingRoute
   OnboardingMediaRoute: typeof OnboardingMediaRoute
   OnboardingPropertyRoute: typeof OnboardingPropertyRoute
+  PropertiesIdRoute: typeof PropertiesIdRoute
   OnboardingIndexRoute: typeof OnboardingIndexRoute
   PropertiesIndexRoute: typeof PropertiesIndexRoute
   ApiPublicEnrollmentMaintenanceRoute: typeof ApiPublicEnrollmentMaintenanceRoute
@@ -674,6 +687,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/properties/$id': {
+      id: '/properties/$id'
+      path: '/properties/$id'
+      fullPath: '/properties/$id'
+      preLoaderRoute: typeof PropertiesIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/onboarding/property': {
       id: '/onboarding/property'
@@ -939,6 +959,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingListingRoute: OnboardingListingRoute,
   OnboardingMediaRoute: OnboardingMediaRoute,
   OnboardingPropertyRoute: OnboardingPropertyRoute,
+  PropertiesIdRoute: PropertiesIdRoute,
   OnboardingIndexRoute: OnboardingIndexRoute,
   PropertiesIndexRoute: PropertiesIndexRoute,
   ApiPublicEnrollmentMaintenanceRoute: ApiPublicEnrollmentMaintenanceRoute,
