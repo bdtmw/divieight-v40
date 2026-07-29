@@ -156,25 +156,22 @@ function MarketplacePage() {
     };
   }, [view, filtered]);
 
-  const pins: MapPin[] = useMemo(
-    () =>
-      filtered
-        .map((p) => {
-          const c = coords[`${p.city}, ${p.state} ${p.zip}`];
-          if (!c) return null;
-          return {
-            id: p.id,
-            lat: c.lat,
-            lng: c.lng,
-            title: `${p.city}, ${p.state}`,
-            subtitle:
-              p.listing_price != null ? `${money(p.listing_price / 8)} per 1/8th share` : "—",
-            dimmed: isIncompatible(buyerIntent, p.usage_tag),
-          } satisfies MapPin;
-        })
-        .filter((p): p is MapPin => p !== null),
-    [filtered, coords, buyerIntent],
-  );
+  const pins: MapPin[] = useMemo(() => {
+    const out: MapPin[] = [];
+    filtered.forEach((p) => {
+      const c = coords[`${p.city}, ${p.state} ${p.zip}`];
+      if (!c) return;
+      out.push({
+        id: p.id,
+        lat: c.lat,
+        lng: c.lng,
+        title: `${p.city}, ${p.state}`,
+        subtitle: p.listing_price != null ? `${money(p.listing_price / 8)} per 1/8th share` : "—",
+        dimmed: isIncompatible(buyerIntent, p.usage_tag),
+      });
+    });
+    return out;
+  }, [filtered, coords, buyerIntent]);
 
   async function toggleSave(propertyId: string) {
     if (!user || !buyerAccountId) {
