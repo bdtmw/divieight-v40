@@ -102,3 +102,78 @@ export const getMarketplaceProperties = createServerFn({ method: "GET" }).handle
     return rows;
   },
 );
+
+export interface MarketplacePropertyDetail extends MarketplaceProperty {
+  description: string | null;
+  photos: { url: string; caption: string | null }[];
+}
+
+/**
+ * Public detail read for /properties/$id. Anon RLS keeps drafts hidden;
+ * the service role only signs media URLs for the private bucket.
+ */
+export const getMarketplaceProperty = createServerFn({ method: "GET" })
+  .inputValidator((data: { id: string }) => ({ id: String(data.id) }))
+  .handler(async ({ data }): Promise<MarketplacePropertyDetail | null> => {
+    const url = process.env.SUPABASE_URL!;
+    const key = process.env.SUPABASE_PUBLISHABLE_KEY!;
+
+    const supabasePublic = createClient<Database>(url, key, {
+      auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
+      global: {
+        fetch: (input, init) => {
+          const h = new Headers(init?.headers);
+          if (key.startsWith("sb_") && h.get("Authorization") === `Bearer ${key}`) {
+            h.delete("Authorization");
+          }
+          h.set("apikey", key);
+          return fetch(input, { ...init, headers: h });
+        },
+      },
+    });
+
+    const { data: row, error } = await supabasePublic
+      .from("properties")
+      .select(
+        "id, address, city, state, zip, listing_price, property_type, usage_tag, bedrooms, bathrooms, square_footage, amenities, retained_shares, exit_type, listing_status, description",
+      )
+      .eq("id", data.id)
+      .eq("status", "listed")
+      .maybeSingle();
+
+    if (error || !row) return null;
+
+    const { data: media } = await supabasePublic
+      .from("property_media")
+      .select("url, caption, display_order")
+      .eq("property_id", data.id)
+      .eq("media_type", "photo")
+      .order("display_order", { ascending: true });
+
+    const paths = (media ?? []).map((m) => m.url).filter((u): u is string => !!u);
+    const byPath = new Map<string, string>();
+    if (paths.length > 0) {
+      try {
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const { data: signed } = await supabaseAdmin.storage
+          .from("property-media")
+          .createSignedUrls(paths, 60 * 60);
+        (signed ?? []).forEach((s) => {
+          if (s.path && s.signedUrl) byPath.set(s.path, s.signedUrl);
+        });
+      } catch {
+        // photos are optional on the public marketplace
+      }
+    }
+
+    const photos = (media ?? [])
+      .map((m) => ({ url: m.url ? (byPath.get(m.url) ?? null) : null, caption: m.caption }))
+      .filter((p): p is { url: string; caption: string | null } => !!p.url);
+
+    return {
+      ...row,
+      amenities: Array.isArray(row.amenities) ? (row.amenities as string[]) : [],
+      photo: photos[0]?.url ?? null,
+      photos,
+    };
+  });

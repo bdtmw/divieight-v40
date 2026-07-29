@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RegisterRouteImport } from './routes/register'
-import { Route as PropertiesRouteImport } from './routes/properties'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
@@ -20,8 +19,11 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PropertiesIndexRouteImport } from './routes/properties.index'
 import { Route as OnboardingIndexRouteImport } from './routes/onboarding.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as ReserveIdRouteImport } from './routes/reserve.$id'
+import { Route as PropertiesIdRouteImport } from './routes/properties.$id'
 import { Route as OnboardingPropertyRouteImport } from './routes/onboarding.property'
 import { Route as OnboardingMediaRouteImport } from './routes/onboarding.media'
 import { Route as OnboardingListingRouteImport } from './routes/onboarding.listing'
@@ -30,6 +32,7 @@ import { Route as OnboardingFeeRouteImport } from './routes/onboarding.fee'
 import { Route as OnboardingAgreementRouteImport } from './routes/onboarding.agreement'
 import { Route as ListingsNewRouteImport } from './routes/listings.new'
 import { Route as ListingsIdRouteImport } from './routes/listings.$id'
+import { Route as DataRoomIdRouteImport } from './routes/data-room.$id'
 import { Route as BuyerVerificationRouteImport } from './routes/buyer.verification'
 import { Route as BuyerRegisterRouteImport } from './routes/buyer.register'
 import { Route as BuyerLoginRouteImport } from './routes/buyer.login'
@@ -61,11 +64,6 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PropertiesRoute = PropertiesRouteImport.update({
-  id: '/properties',
-  path: '/properties',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NotificationsRoute = NotificationsRouteImport.update({
@@ -108,6 +106,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PropertiesIndexRoute = PropertiesIndexRouteImport.update({
+  id: '/properties/',
+  path: '/properties/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingIndexRoute = OnboardingIndexRouteImport.update({
   id: '/onboarding/',
   path: '/onboarding/',
@@ -117,6 +120,16 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const ReserveIdRoute = ReserveIdRouteImport.update({
+  id: '/reserve/$id',
+  path: '/reserve/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PropertiesIdRoute = PropertiesIdRouteImport.update({
+  id: '/properties/$id',
+  path: '/properties/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingPropertyRoute = OnboardingPropertyRouteImport.update({
   id: '/onboarding/property',
@@ -156,6 +169,11 @@ const ListingsNewRoute = ListingsNewRouteImport.update({
 const ListingsIdRoute = ListingsIdRouteImport.update({
   id: '/listings/$id',
   path: '/listings/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DataRoomIdRoute = DataRoomIdRouteImport.update({
+  id: '/data-room/$id',
+  path: '/data-room/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BuyerVerificationRoute = BuyerVerificationRouteImport.update({
@@ -281,7 +299,6 @@ export interface FileRoutesByFullPath {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
-  '/properties': typeof PropertiesRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
@@ -299,6 +316,7 @@ export interface FileRoutesByFullPath {
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
   '/buyer/verification': typeof BuyerVerificationRoute
+  '/data-room/$id': typeof DataRoomIdRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/agreement': typeof OnboardingAgreementRoute
@@ -307,8 +325,11 @@ export interface FileRoutesByFullPath {
   '/onboarding/listing': typeof OnboardingListingRoute
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
+  '/properties/$id': typeof PropertiesIdRoute
+  '/reserve/$id': typeof ReserveIdRoute
   '/admin/': typeof AdminIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
+  '/properties/': typeof PropertiesIndexRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -325,7 +346,6 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
-  '/properties': typeof PropertiesRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
@@ -343,6 +363,7 @@ export interface FileRoutesByTo {
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
   '/buyer/verification': typeof BuyerVerificationRoute
+  '/data-room/$id': typeof DataRoomIdRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/agreement': typeof OnboardingAgreementRoute
@@ -351,8 +372,11 @@ export interface FileRoutesByTo {
   '/onboarding/listing': typeof OnboardingListingRoute
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
+  '/properties/$id': typeof PropertiesIdRoute
+  '/reserve/$id': typeof ReserveIdRoute
   '/admin': typeof AdminIndexRoute
   '/onboarding': typeof OnboardingIndexRoute
+  '/properties': typeof PropertiesIndexRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -371,7 +395,6 @@ export interface FileRoutesById {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
-  '/properties': typeof PropertiesRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
@@ -389,6 +412,7 @@ export interface FileRoutesById {
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
   '/buyer/verification': typeof BuyerVerificationRoute
+  '/data-room/$id': typeof DataRoomIdRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/agreement': typeof OnboardingAgreementRoute
@@ -397,8 +421,11 @@ export interface FileRoutesById {
   '/onboarding/listing': typeof OnboardingListingRoute
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
+  '/properties/$id': typeof PropertiesIdRoute
+  '/reserve/$id': typeof ReserveIdRoute
   '/admin/': typeof AdminIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
+  '/properties/': typeof PropertiesIndexRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -418,7 +445,6 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/notifications'
-    | '/properties'
     | '/register'
     | '/reset-password'
     | '/admin/audit-log'
@@ -436,6 +462,7 @@ export interface FileRouteTypes {
     | '/buyer/login'
     | '/buyer/register'
     | '/buyer/verification'
+    | '/data-room/$id'
     | '/listings/$id'
     | '/listings/new'
     | '/onboarding/agreement'
@@ -444,8 +471,11 @@ export interface FileRouteTypes {
     | '/onboarding/listing'
     | '/onboarding/media'
     | '/onboarding/property'
+    | '/properties/$id'
+    | '/reserve/$id'
     | '/admin/'
     | '/onboarding/'
+    | '/properties/'
     | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -462,7 +492,6 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/notifications'
-    | '/properties'
     | '/register'
     | '/reset-password'
     | '/admin/audit-log'
@@ -480,6 +509,7 @@ export interface FileRouteTypes {
     | '/buyer/login'
     | '/buyer/register'
     | '/buyer/verification'
+    | '/data-room/$id'
     | '/listings/$id'
     | '/listings/new'
     | '/onboarding/agreement'
@@ -488,8 +518,11 @@ export interface FileRouteTypes {
     | '/onboarding/listing'
     | '/onboarding/media'
     | '/onboarding/property'
+    | '/properties/$id'
+    | '/reserve/$id'
     | '/admin'
     | '/onboarding'
+    | '/properties'
     | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -507,7 +540,6 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/notifications'
-    | '/properties'
     | '/register'
     | '/reset-password'
     | '/admin/audit-log'
@@ -525,6 +557,7 @@ export interface FileRouteTypes {
     | '/buyer/login'
     | '/buyer/register'
     | '/buyer/verification'
+    | '/data-room/$id'
     | '/listings/$id'
     | '/listings/new'
     | '/onboarding/agreement'
@@ -533,8 +566,11 @@ export interface FileRouteTypes {
     | '/onboarding/listing'
     | '/onboarding/media'
     | '/onboarding/property'
+    | '/properties/$id'
+    | '/reserve/$id'
     | '/admin/'
     | '/onboarding/'
+    | '/properties/'
     | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -553,7 +589,6 @@ export interface RootRouteChildren {
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   NotificationsRoute: typeof NotificationsRoute
-  PropertiesRoute: typeof PropertiesRoute
   RegisterRoute: typeof RegisterRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
@@ -564,6 +599,7 @@ export interface RootRouteChildren {
   BuyerLoginRoute: typeof BuyerLoginRoute
   BuyerRegisterRoute: typeof BuyerRegisterRoute
   BuyerVerificationRoute: typeof BuyerVerificationRoute
+  DataRoomIdRoute: typeof DataRoomIdRoute
   ListingsIdRoute: typeof ListingsIdRoute
   ListingsNewRoute: typeof ListingsNewRoute
   OnboardingAgreementRoute: typeof OnboardingAgreementRoute
@@ -572,7 +608,10 @@ export interface RootRouteChildren {
   OnboardingListingRoute: typeof OnboardingListingRoute
   OnboardingMediaRoute: typeof OnboardingMediaRoute
   OnboardingPropertyRoute: typeof OnboardingPropertyRoute
+  PropertiesIdRoute: typeof PropertiesIdRoute
+  ReserveIdRoute: typeof ReserveIdRoute
   OnboardingIndexRoute: typeof OnboardingIndexRoute
+  PropertiesIndexRoute: typeof PropertiesIndexRoute
   ApiPublicEnrollmentMaintenanceRoute: typeof ApiPublicEnrollmentMaintenanceRoute
   BuyerOnboardingIdentityRoute: typeof BuyerOnboardingIdentityRoute
   BuyerOnboardingLifestyleRoute: typeof BuyerOnboardingLifestyleRoute
@@ -596,13 +635,6 @@ declare module '@tanstack/react-router' {
       path: '/register'
       fullPath: '/register'
       preLoaderRoute: typeof RegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/properties': {
-      id: '/properties'
-      path: '/properties'
-      fullPath: '/properties'
-      preLoaderRoute: typeof PropertiesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/notifications': {
@@ -661,6 +693,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/properties/': {
+      id: '/properties/'
+      path: '/properties'
+      fullPath: '/properties/'
+      preLoaderRoute: typeof PropertiesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding/': {
       id: '/onboarding/'
       path: '/onboarding'
@@ -674,6 +713,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/reserve/$id': {
+      id: '/reserve/$id'
+      path: '/reserve/$id'
+      fullPath: '/reserve/$id'
+      preLoaderRoute: typeof ReserveIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/properties/$id': {
+      id: '/properties/$id'
+      path: '/properties/$id'
+      fullPath: '/properties/$id'
+      preLoaderRoute: typeof PropertiesIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/onboarding/property': {
       id: '/onboarding/property'
@@ -729,6 +782,13 @@ declare module '@tanstack/react-router' {
       path: '/listings/$id'
       fullPath: '/listings/$id'
       preLoaderRoute: typeof ListingsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/data-room/$id': {
+      id: '/data-room/$id'
+      path: '/data-room/$id'
+      fullPath: '/data-room/$id'
+      preLoaderRoute: typeof DataRoomIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/buyer/verification': {
@@ -921,7 +981,6 @@ const rootRouteChildren: RootRouteChildren = {
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   NotificationsRoute: NotificationsRoute,
-  PropertiesRoute: PropertiesRoute,
   RegisterRoute: RegisterRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   AuthCallbackRoute: AuthCallbackRoute,
@@ -932,6 +991,7 @@ const rootRouteChildren: RootRouteChildren = {
   BuyerLoginRoute: BuyerLoginRoute,
   BuyerRegisterRoute: BuyerRegisterRoute,
   BuyerVerificationRoute: BuyerVerificationRoute,
+  DataRoomIdRoute: DataRoomIdRoute,
   ListingsIdRoute: ListingsIdRoute,
   ListingsNewRoute: ListingsNewRoute,
   OnboardingAgreementRoute: OnboardingAgreementRoute,
@@ -940,7 +1000,10 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingListingRoute: OnboardingListingRoute,
   OnboardingMediaRoute: OnboardingMediaRoute,
   OnboardingPropertyRoute: OnboardingPropertyRoute,
+  PropertiesIdRoute: PropertiesIdRoute,
+  ReserveIdRoute: ReserveIdRoute,
   OnboardingIndexRoute: OnboardingIndexRoute,
+  PropertiesIndexRoute: PropertiesIndexRoute,
   ApiPublicEnrollmentMaintenanceRoute: ApiPublicEnrollmentMaintenanceRoute,
   BuyerOnboardingIdentityRoute: BuyerOnboardingIdentityRoute,
   BuyerOnboardingLifestyleRoute: BuyerOnboardingLifestyleRoute,

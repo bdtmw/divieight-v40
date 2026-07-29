@@ -14,7 +14,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/properties")({
+export const Route = createFileRoute("/properties/")({
   head: () => ({
     meta: [
       { title: "Browse Fractional Homes — divieight Marketplace" },
@@ -515,7 +515,7 @@ function PropertyCard({
         ) : null}
 
         <Link
-          to="/listings/$id"
+          to="/properties/$id"
           params={{ id: p.id }}
           className="mt-4 inline-block text-sm font-medium text-accent underline-offset-4 hover:underline"
         >
