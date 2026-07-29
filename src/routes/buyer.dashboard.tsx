@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Building2, FileText, Heart, KeyRound, Ticket } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { buyerRedirect } from "@/lib/buyer";
+import { getSellerAccount } from "@/lib/seller";
 import { enrollmentDaysRemaining, enrollmentEndDate } from "@/lib/golden-ticket";
 import { cn } from "@/lib/utils";
 
