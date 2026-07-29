@@ -7,8 +7,8 @@ import {
 } from "@/lib/enrollment-maintenance.functions";
 import { GRACE_DAYS, STALL_DAYS } from "@/lib/enrollment-maintenance";
 
-// NOTE: This admin view is intentionally unlocked for now. Auth/role-based
-// gating (admin/compliance officer) will be added in a later milestone.
+// Gated by the /admin layout: only accounts holding the `admin` role in
+// user_roles can reach this page (checked server-side via has_role).
 //
 // PII Sub-Vault access controls (restricting sensitive fields like SSN, ID
 // documents) will be implemented in Month 4 when compliance officer roles
@@ -99,7 +99,7 @@ function AuditLogPage() {
   }, [rows, search, actionFilter]);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <div>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
