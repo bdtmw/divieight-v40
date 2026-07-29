@@ -136,6 +136,52 @@ function AuditLogPage() {
         </div>
       </div>
 
+      <section className="mt-8 rounded-xl border border-border bg-card p-5 shadow-sm">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h2 className="font-display text-lg font-semibold text-foreground">
+              Enrollment maintenance sweep
+            </h2>
+            <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+              Warns buyers who paid the enrollment fee but have been inactive for{" "}
+              {STALL_DAYS} days, and forfeits priority rank {GRACE_DAYS} days after the
+              warning. No cron scheduler is wired yet — fire it manually here for testing.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={fireMaintenance}
+            disabled={running}
+            className="h-10 rounded-md bg-accent px-4 text-sm font-medium text-accent-foreground shadow-sm transition hover:opacity-90 disabled:opacity-60"
+          >
+            {running ? "Running…" : "Run maintenance check"}
+          </button>
+        </div>
+
+        {runError && <p className="mt-4 text-sm text-destructive">{runError}</p>}
+
+        {runResult && (
+          <div className="mt-4 rounded-lg border border-border bg-muted/30 p-4 text-sm">
+            <p className="font-medium text-foreground">
+              Scanned {runResult.scanned} · warned {runResult.warned} · forfeited{" "}
+              {runResult.forfeited}
+            </p>
+            {runResult.rows.length > 0 && (
+              <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+                {runResult.rows.map((r) => (
+                  <li key={r.buyerAccountId} className="font-mono">
+                    {r.email} — {r.action} ({r.daysInactive}d inactive, {r.graceDaysLeft}d
+                    grace left)
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+      </section>
+
+
+
       <div className="mt-8 overflow-hidden rounded-xl border border-border bg-card shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
