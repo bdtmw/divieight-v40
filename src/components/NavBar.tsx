@@ -10,6 +10,7 @@ import logoAsset from "@/assets/divieight-logo.png.asset.json";
 
 export function NavBar() {
   const { user, loading } = useAuth();
+  const { isAdmin } = useAdmin();
   const navigate = useNavigate();
   const [isBuyer, setIsBuyer] = useState<boolean | null>(null);
 
