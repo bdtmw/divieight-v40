@@ -30,7 +30,8 @@ export type AuditAction =
   | "buyer.liquidity_insufficient"
   | "buyer.liquidity_link_failed"
   | "buyer.liquidity_documents_submitted"
-  | "buyer.fcra_adverse_action_issued";
+  | "buyer.fcra_adverse_action_issued"
+  | "buyer.golden_ticket_issued";
 
 export type AuditEntity = "seller" | "property" | "payment" | "media" | "buyer_account";
 

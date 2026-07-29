@@ -43,3 +43,25 @@ export async function notifySeller(sellerId: string, kind: NotifyKind) {
   }
 }
 
+
+type BuyerNotifyKind = "golden_ticket_issued";
+
+const BUYER_MESSAGES: Record<BuyerNotifyKind, { message: string; type: string }> = {
+  golden_ticket_issued: {
+    message: "Your Golden Ticket is issued — you're a Vetted Buyer with full marketplace access.",
+    type: "golden_ticket",
+  },
+};
+
+/**
+ * Buyer-scoped notification. The notifications table keys rows by the
+ * authenticated user id (`seller_id`), and RLS scopes reads to auth.uid(),
+ * so buyers reuse the same bell/dropdown surface as sellers.
+ */
+export async function notifyBuyer(authUserId: string, kind: BuyerNotifyKind) {
+  const { message, type } = BUYER_MESSAGES[kind];
+  const { error } = await supabase
+    .from("notifications")
+    .insert({ seller_id: authUserId, message, type });
+  if (error) console.error("[notify] buyer insert failed", error);
+}
