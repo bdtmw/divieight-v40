@@ -64,6 +64,8 @@ export function buyerRedirect(onboardingStatus: string): string {
       return "/buyer/onboarding/vetting";
     case "liquidity_pending":
       return "/buyer/onboarding/liquidity";
+    case "golden_ticket_pending":
+      return "/buyer/golden-ticket";
     case "verification_pending":
       return "/buyer/verification";
     case "adverse_action":
