@@ -30,6 +30,7 @@ import { Route as ListingsIdRouteImport } from './routes/listings.$id'
 import { Route as BuyerVerificationRouteImport } from './routes/buyer.verification'
 import { Route as BuyerRegisterRouteImport } from './routes/buyer.register'
 import { Route as BuyerLoginRouteImport } from './routes/buyer.login'
+import { Route as BuyerGoldenTicketRouteImport } from './routes/buyer.golden-ticket'
 import { Route as BuyerDashboardRouteImport } from './routes/buyer.dashboard'
 import { Route as BuyerAdverseActionRouteImport } from './routes/buyer.adverse-action'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
@@ -146,6 +147,11 @@ const BuyerLoginRoute = BuyerLoginRouteImport.update({
   path: '/buyer/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuyerGoldenTicketRoute = BuyerGoldenTicketRouteImport.update({
+  id: '/buyer/golden-ticket',
+  path: '/buyer/golden-ticket',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BuyerDashboardRoute = BuyerDashboardRouteImport.update({
   id: '/buyer/dashboard',
   path: '/buyer/dashboard',
@@ -213,6 +219,7 @@ export interface FileRoutesByFullPath {
   '/auth/callback': typeof AuthCallbackRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
+  '/buyer/golden-ticket': typeof BuyerGoldenTicketRoute
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
   '/buyer/verification': typeof BuyerVerificationRoute
@@ -246,6 +253,7 @@ export interface FileRoutesByTo {
   '/auth/callback': typeof AuthCallbackRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
+  '/buyer/golden-ticket': typeof BuyerGoldenTicketRoute
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
   '/buyer/verification': typeof BuyerVerificationRoute
@@ -280,6 +288,7 @@ export interface FileRoutesById {
   '/auth/callback': typeof AuthCallbackRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
+  '/buyer/golden-ticket': typeof BuyerGoldenTicketRoute
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
   '/buyer/verification': typeof BuyerVerificationRoute
@@ -315,6 +324,7 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/buyer/adverse-action'
     | '/buyer/dashboard'
+    | '/buyer/golden-ticket'
     | '/buyer/login'
     | '/buyer/register'
     | '/buyer/verification'
@@ -348,6 +358,7 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/buyer/adverse-action'
     | '/buyer/dashboard'
+    | '/buyer/golden-ticket'
     | '/buyer/login'
     | '/buyer/register'
     | '/buyer/verification'
@@ -381,6 +392,7 @@ export interface FileRouteTypes {
     | '/auth/callback'
     | '/buyer/adverse-action'
     | '/buyer/dashboard'
+    | '/buyer/golden-ticket'
     | '/buyer/login'
     | '/buyer/register'
     | '/buyer/verification'
@@ -415,6 +427,7 @@ export interface RootRouteChildren {
   AuthCallbackRoute: typeof AuthCallbackRoute
   BuyerAdverseActionRoute: typeof BuyerAdverseActionRoute
   BuyerDashboardRoute: typeof BuyerDashboardRoute
+  BuyerGoldenTicketRoute: typeof BuyerGoldenTicketRoute
   BuyerLoginRoute: typeof BuyerLoginRoute
   BuyerRegisterRoute: typeof BuyerRegisterRoute
   BuyerVerificationRoute: typeof BuyerVerificationRoute
@@ -584,6 +597,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyerLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/buyer/golden-ticket': {
+      id: '/buyer/golden-ticket'
+      path: '/buyer/golden-ticket'
+      fullPath: '/buyer/golden-ticket'
+      preLoaderRoute: typeof BuyerGoldenTicketRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/buyer/dashboard': {
       id: '/buyer/dashboard'
       path: '/buyer/dashboard'
@@ -671,6 +691,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthCallbackRoute: AuthCallbackRoute,
   BuyerAdverseActionRoute: BuyerAdverseActionRoute,
   BuyerDashboardRoute: BuyerDashboardRoute,
+  BuyerGoldenTicketRoute: BuyerGoldenTicketRoute,
   BuyerLoginRoute: BuyerLoginRoute,
   BuyerRegisterRoute: BuyerRegisterRoute,
   BuyerVerificationRoute: BuyerVerificationRoute,
