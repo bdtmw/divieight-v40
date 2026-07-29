@@ -515,7 +515,7 @@ function PropertyCard({
         ) : null}
 
         <Link
-          to="/listings/$id"
+          to="/properties/$id"
           params={{ id: p.id }}
           className="mt-4 inline-block text-sm font-medium text-accent underline-offset-4 hover:underline"
         >
