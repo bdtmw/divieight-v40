@@ -79,7 +79,10 @@ function BuyerDashboardPage() {
         .maybeSingle();
       if (cancelled) return;
       if (!acct) {
-        navigate({ to: "/buyer/register" });
+        // Not a buyer — sellers get bounced back to their own dashboard.
+        const seller = await getSellerAccount(auth.user.id);
+        if (cancelled) return;
+        navigate({ to: seller ? "/dashboard" : "/buyer/register" });
         return;
       }
       setAccount(acct as AccountView);
