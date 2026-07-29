@@ -250,7 +250,7 @@ function PaymentScreen() {
 
     const { error: statusErr } = await supabase
       .from("buyer_accounts")
-      .update({ onboarding_status: "vetting_pending" })
+      .update({ last_activity_at: new Date().toISOString(), stall_warning_sent_at: null, onboarding_status: "vetting_pending" })
       .eq("id", buyer.id);
     if (statusErr) {
       setSubmitting(false);

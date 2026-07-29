@@ -85,7 +85,7 @@ function AdverseActionPage() {
           .eq("id", m.id);
         await supabase
           .from("buyer_accounts")
-          .update({ onboarding_status: "adverse_action" })
+          .update({ last_activity_at: new Date().toISOString(), stall_warning_sent_at: null, onboarding_status: "adverse_action" })
           .eq("id", b.id);
       }
       if (!logged.current) {

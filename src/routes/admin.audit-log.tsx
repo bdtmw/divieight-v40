@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  runEnrollmentMaintenance,
+  type MaintenanceRunResult,
+} from "@/lib/enrollment-maintenance.functions";
+import { GRACE_DAYS, STALL_DAYS } from "@/lib/enrollment-maintenance";
 
 // NOTE: This admin view is intentionally unlocked for now. Auth/role-based
 // gating (admin/compliance officer) will be added in a later milestone.
@@ -36,6 +41,29 @@ function AuditLogPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [actionFilter, setActionFilter] = useState<string>("all");
+  const [running, setRunning] = useState(false);
+  const [runResult, setRunResult] = useState<MaintenanceRunResult | null>(null);
+  const [runError, setRunError] = useState<string | null>(null);
+
+  async function fireMaintenance() {
+    setRunning(true);
+    setRunError(null);
+    try {
+      const result = await runEnrollmentMaintenance();
+      setRunResult(result);
+      const { data } = await supabase
+        .from("audit_log")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(500);
+      setRows((data as AuditRow[] | null) ?? []);
+    } catch (e) {
+      setRunError(e instanceof Error ? e.message : "Maintenance run failed");
+    } finally {
+      setRunning(false);
+    }
+  }
+
 
   useEffect(() => {
     (async () => {
@@ -107,6 +135,52 @@ function AuditLogPage() {
           </select>
         </div>
       </div>
+
+      <section className="mt-8 rounded-xl border border-border bg-card p-5 shadow-sm">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h2 className="font-display text-lg font-semibold text-foreground">
+              Enrollment maintenance sweep
+            </h2>
+            <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+              Warns buyers who paid the enrollment fee but have been inactive for{" "}
+              {STALL_DAYS} days, and forfeits priority rank {GRACE_DAYS} days after the
+              warning. No cron scheduler is wired yet — fire it manually here for testing.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={fireMaintenance}
+            disabled={running}
+            className="h-10 rounded-md bg-accent px-4 text-sm font-medium text-accent-foreground shadow-sm transition hover:opacity-90 disabled:opacity-60"
+          >
+            {running ? "Running…" : "Run maintenance check"}
+          </button>
+        </div>
+
+        {runError && <p className="mt-4 text-sm text-destructive">{runError}</p>}
+
+        {runResult && (
+          <div className="mt-4 rounded-lg border border-border bg-muted/30 p-4 text-sm">
+            <p className="font-medium text-foreground">
+              Scanned {runResult.scanned} · warned {runResult.warned} · forfeited{" "}
+              {runResult.forfeited}
+            </p>
+            {runResult.rows.length > 0 && (
+              <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+                {runResult.rows.map((r) => (
+                  <li key={r.buyerAccountId} className="font-mono">
+                    {r.email} — {r.action} ({r.daysInactive}d inactive, {r.graceDaysLeft}d
+                    grace left)
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+      </section>
+
+
 
       <div className="mt-8 overflow-hidden rounded-xl border border-border bg-card shadow-sm">
         <div className="overflow-x-auto">

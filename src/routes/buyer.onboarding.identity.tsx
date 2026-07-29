@@ -225,6 +225,8 @@ function BuyerIdentityScreen() {
       .update({
         intent,
         target_budget: Number(budget.replace(/[^0-9.]/g, "")),
+        last_activity_at: new Date().toISOString(),
+        stall_warning_sent_at: null,
         onboarding_status: "lifestyle_survey_pending",
       })
       .eq("id", accountId);

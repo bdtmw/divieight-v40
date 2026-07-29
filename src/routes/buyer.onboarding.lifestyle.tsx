@@ -134,6 +134,8 @@ function LifestyleScreen() {
         // The first zip entered is treated as the buyer's primary market.
         // Month 3 uses `primary_target_market` for Resident Agent matching.
         primary_target_market: cleaned[0].zip,
+        last_activity_at: new Date().toISOString(),
+        stall_warning_sent_at: null,
         onboarding_status: "payment_pending",
       })
       .eq("id", accountId);

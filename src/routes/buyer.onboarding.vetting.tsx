@@ -224,7 +224,7 @@ function VettingScreen() {
       // Golden Ticket can be issued.
       await supabase
         .from("buyer_accounts")
-        .update({ onboarding_status: "liquidity_pending" })
+        .update({ last_activity_at: new Date().toISOString(), stall_warning_sent_at: null, onboarding_status: "liquidity_pending" })
         .eq("id", buyer.id);
       navigate({ to: "/buyer/onboarding/liquidity" });
       return;
@@ -232,7 +232,7 @@ function VettingScreen() {
     if (outcome === "flagged_needs_review") {
       await supabase
         .from("buyer_accounts")
-        .update({ onboarding_status: "verification_pending" })
+        .update({ last_activity_at: new Date().toISOString(), stall_warning_sent_at: null, onboarding_status: "verification_pending" })
         .eq("id", buyer.id);
       if (member) {
         await supabase
