@@ -429,7 +429,7 @@ function LiquidityGatePage() {
               You're cleared for Golden Ticket issuance.
             </p>
             <Button asChild className="mt-4">
-              <Link to="/buyer/dashboard">Continue</Link>
+              <Link to="/buyer/golden-ticket">Claim my Golden Ticket</Link>
             </Button>
           </>
         ) : manualPending ? (
