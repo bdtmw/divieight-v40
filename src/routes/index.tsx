@@ -283,7 +283,7 @@ function LandingPage() {
                         <EightSlicesTracker retainedShares={retained} compact />
                       </div>
                       <Link
-                        to="/listings/$id"
+                        to="/properties/$id"
                         params={{ id: p.id }}
                         className="mt-5 inline-flex items-center justify-center gap-2 rounded-md border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
                       >
