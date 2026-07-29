@@ -32,6 +32,7 @@ import { Route as OnboardingFeeRouteImport } from './routes/onboarding.fee'
 import { Route as OnboardingAgreementRouteImport } from './routes/onboarding.agreement'
 import { Route as ListingsNewRouteImport } from './routes/listings.new'
 import { Route as ListingsIdRouteImport } from './routes/listings.$id'
+import { Route as DataRoomIdRouteImport } from './routes/data-room.$id'
 import { Route as BuyerVerificationRouteImport } from './routes/buyer.verification'
 import { Route as BuyerRegisterRouteImport } from './routes/buyer.register'
 import { Route as BuyerLoginRouteImport } from './routes/buyer.login'
@@ -168,6 +169,11 @@ const ListingsNewRoute = ListingsNewRouteImport.update({
 const ListingsIdRoute = ListingsIdRouteImport.update({
   id: '/listings/$id',
   path: '/listings/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DataRoomIdRoute = DataRoomIdRouteImport.update({
+  id: '/data-room/$id',
+  path: '/data-room/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BuyerVerificationRoute = BuyerVerificationRouteImport.update({
@@ -310,6 +316,7 @@ export interface FileRoutesByFullPath {
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
   '/buyer/verification': typeof BuyerVerificationRoute
+  '/data-room/$id': typeof DataRoomIdRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/agreement': typeof OnboardingAgreementRoute
@@ -356,6 +363,7 @@ export interface FileRoutesByTo {
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
   '/buyer/verification': typeof BuyerVerificationRoute
+  '/data-room/$id': typeof DataRoomIdRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/agreement': typeof OnboardingAgreementRoute
@@ -404,6 +412,7 @@ export interface FileRoutesById {
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
   '/buyer/verification': typeof BuyerVerificationRoute
+  '/data-room/$id': typeof DataRoomIdRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/agreement': typeof OnboardingAgreementRoute
@@ -453,6 +462,7 @@ export interface FileRouteTypes {
     | '/buyer/login'
     | '/buyer/register'
     | '/buyer/verification'
+    | '/data-room/$id'
     | '/listings/$id'
     | '/listings/new'
     | '/onboarding/agreement'
@@ -499,6 +509,7 @@ export interface FileRouteTypes {
     | '/buyer/login'
     | '/buyer/register'
     | '/buyer/verification'
+    | '/data-room/$id'
     | '/listings/$id'
     | '/listings/new'
     | '/onboarding/agreement'
@@ -546,6 +557,7 @@ export interface FileRouteTypes {
     | '/buyer/login'
     | '/buyer/register'
     | '/buyer/verification'
+    | '/data-room/$id'
     | '/listings/$id'
     | '/listings/new'
     | '/onboarding/agreement'
@@ -587,6 +599,7 @@ export interface RootRouteChildren {
   BuyerLoginRoute: typeof BuyerLoginRoute
   BuyerRegisterRoute: typeof BuyerRegisterRoute
   BuyerVerificationRoute: typeof BuyerVerificationRoute
+  DataRoomIdRoute: typeof DataRoomIdRoute
   ListingsIdRoute: typeof ListingsIdRoute
   ListingsNewRoute: typeof ListingsNewRoute
   OnboardingAgreementRoute: typeof OnboardingAgreementRoute
@@ -769,6 +782,13 @@ declare module '@tanstack/react-router' {
       path: '/listings/$id'
       fullPath: '/listings/$id'
       preLoaderRoute: typeof ListingsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/data-room/$id': {
+      id: '/data-room/$id'
+      path: '/data-room/$id'
+      fullPath: '/data-room/$id'
+      preLoaderRoute: typeof DataRoomIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/buyer/verification': {
@@ -971,6 +991,7 @@ const rootRouteChildren: RootRouteChildren = {
   BuyerLoginRoute: BuyerLoginRoute,
   BuyerRegisterRoute: BuyerRegisterRoute,
   BuyerVerificationRoute: BuyerVerificationRoute,
+  DataRoomIdRoute: DataRoomIdRoute,
   ListingsIdRoute: ListingsIdRoute,
   ListingsNewRoute: ListingsNewRoute,
   OnboardingAgreementRoute: OnboardingAgreementRoute,
@@ -994,3 +1015,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
