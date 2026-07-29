@@ -1,6 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { Building2, FileText, Heart, KeyRound, Ticket } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { buyerRedirect } from "@/lib/buyer";
+import { enrollmentDaysRemaining, enrollmentEndDate } from "@/lib/golden-ticket";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/buyer/dashboard")({
   head: () => ({
@@ -15,6 +19,8 @@ export const Route = createFileRoute("/buyer/dashboard")({
         property: "og:description",
         content: "Track your Buyer Account, members, vetting status, and reserved shares.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: BuyerDashboardPage,
@@ -35,12 +41,24 @@ interface AccountView {
   intent: string | null;
   primary_target_market: string | null;
   golden_ticket_issued: boolean;
+  golden_ticket_issued_at: string | null;
+  priority_rank: number | null;
+  priority_rank_timestamp: string | null;
+}
+
+interface SignedDoc {
+  id: string;
+  document_type: string;
+  document_version: string;
+  signed_name: string;
+  created_at: string;
 }
 
 function BuyerDashboardPage() {
   const navigate = useNavigate();
   const [account, setAccount] = useState<AccountView | null>(null);
   const [members, setMembers] = useState<Member[]>([]);
+  const [docs, setDocs] = useState<SignedDoc[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -55,7 +73,7 @@ function BuyerDashboardPage() {
       const { data: acct } = await supabase
         .from("buyer_accounts")
         .select(
-          "id, email, phone, onboarding_status, intent, primary_target_market, golden_ticket_issued",
+          "id, email, phone, onboarding_status, intent, primary_target_market, golden_ticket_issued, golden_ticket_issued_at, priority_rank, priority_rank_timestamp",
         )
         .eq("auth_user_id", auth.user.id)
         .maybeSingle();
@@ -66,13 +84,21 @@ function BuyerDashboardPage() {
       }
       setAccount(acct as AccountView);
 
-      const { data: mem } = await supabase
-        .from("account_members")
-        .select("id, full_name, role, vetting_status")
-        .eq("buyer_account_id", acct.id)
-        .order("created_at", { ascending: true });
+      const [{ data: mem }, { data: sd }] = await Promise.all([
+        supabase
+          .from("account_members")
+          .select("id, full_name, role, vetting_status")
+          .eq("buyer_account_id", acct.id)
+          .order("created_at", { ascending: true }),
+        supabase
+          .from("signed_documents")
+          .select("id, document_type, document_version, signed_name, created_at")
+          .eq("buyer_account_id", acct.id)
+          .order("created_at", { ascending: false }),
+      ]);
       if (cancelled) return;
       setMembers((mem as Member[]) ?? []);
+      setDocs((sd as SignedDoc[]) ?? []);
       setLoading(false);
     })();
     return () => {
@@ -88,84 +114,138 @@ function BuyerDashboardPage() {
     );
   }
 
+  const primaryName =
+    members.find((m) => m.role === "primary")?.full_name || members[0]?.full_name || account.email;
+  const onboardingComplete = account.onboarding_status === "active";
+  const daysLeft = enrollmentDaysRemaining(account.priority_rank_timestamp);
+  const endDate = enrollmentEndDate(account.priority_rank_timestamp);
+  const resumeTo = buyerRedirect(account.onboarding_status);
+
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-      <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 sm:flex sm:flex-wrap sm:justify-between">
+      <header className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 sm:flex sm:flex-wrap sm:justify-between">
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
             Buyer Account
           </p>
           <h1 className="truncate font-display text-2xl font-semibold text-foreground sm:text-3xl">
-            {account.email}
+            {primaryName}
           </h1>
+          <p className="truncate text-sm text-muted-foreground">{account.email}</p>
+          {account.golden_ticket_issued ? (
+            <span className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-accent/50 bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">
+              <Ticket className="h-3.5 w-3.5" /> Golden Ticket · Vetted Buyer
+            </span>
+          ) : null}
         </div>
-        <Link
-          to="/"
-          className="shrink-0 rounded-md border border-border bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary"
-        >
-          Browse properties
-        </Link>
+        {account.priority_rank != null ? (
+          <div className="shrink-0 rounded-xl border border-accent/40 bg-accent/10 px-5 py-3 text-center">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-accent">
+              Priority rank
+            </p>
+            <p className="font-display text-3xl font-semibold text-foreground">
+              #{account.priority_rank}
+            </p>
+          </div>
+        ) : (
+          <Link
+            to="/"
+            className="shrink-0 rounded-md border border-border bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary"
+          >
+            Browse properties
+          </Link>
+        )}
       </header>
-      {account.onboarding_status === "liquidity_pending" ? (
-        <div className="mt-8 rounded-xl border border-accent/50 bg-accent/10 p-5">
-          <p className="font-display text-base font-semibold text-foreground">
-            Liquidity verification pending
-          </p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Your Golden Ticket is on hold until we verify your liquidity — link your bank via
-            Plaid or submit proof of funds for Broker of Record review.
-          </p>
+
+      {!onboardingComplete ? (
+        <div className="mt-8 grid gap-3 rounded-xl border border-accent/50 bg-accent/10 p-5 sm:grid-cols-[1fr_auto] sm:items-center">
+          <div>
+            <p className="font-display text-base font-semibold text-foreground">
+              Continue onboarding
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              You're at the “{humanize(account.onboarding_status)}” stage. Pick up right where
+              you left off to unlock your Golden Ticket.
+            </p>
+          </div>
           <Link
-            to="/buyer/onboarding/liquidity"
-            className="mt-4 inline-block rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+            to={resumeTo}
+            className="justify-self-start rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground sm:justify-self-end"
           >
-            Complete liquidity check
-          </Link>
-        </div>
-      ) : null}
-      {account.onboarding_status === "verification_pending" ? (
-        <div className="mt-8 rounded-xl border border-accent/50 bg-accent/10 p-5">
-          <p className="font-display text-base font-semibold text-foreground">
-            Your account is under review
-          </p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            We need additional information to verify your background check results. You can
-            add more documents at any time.
-          </p>
-          <Link
-            to="/buyer/verification"
-            className="mt-4 inline-block rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
-          >
-            Upload documents
+            Continue onboarding
           </Link>
         </div>
       ) : null}
 
-      {account.onboarding_status === "adverse_action" ? (
-        <div className="mt-8 rounded-xl border border-destructive/40 bg-destructive/5 p-5">
-          <p className="font-display text-base font-semibold text-foreground">
-            Adverse action notice issued
-          </p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Your Buyer Account cannot proceed to reservations. Review the notice for your
-            rights under the Fair Credit Reporting Act.
-          </p>
-          <Link
-            to="/buyer/adverse-action"
-            className="mt-4 inline-block rounded-md border border-border bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary"
-          >
-            View notice
-          </Link>
+      <section className="mt-8 rounded-xl border border-border bg-card p-5">
+        <div className="flex items-start gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <KeyRound className="h-5 w-5" />
+          </span>
+          <div className="flex-1">
+            <p className="font-display text-base font-semibold text-foreground">Digital Key</p>
+            <p className="text-sm text-muted-foreground">
+              12-month enrollment period for your Buyer Account.
+            </p>
+            {daysLeft == null ? (
+              <p className="mt-3 text-sm text-muted-foreground">
+                Your enrollment period starts once your reservation payment clears.
+              </p>
+            ) : (
+              <>
+                <div className="mt-4 flex items-baseline gap-2">
+                  <span className="font-display text-3xl font-semibold text-foreground">
+                    {daysLeft}
+                  </span>
+                  <span className="text-sm text-muted-foreground">days remaining</span>
+                </div>
+                <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full rounded-full bg-accent"
+                    style={{ width: `${Math.min(100, (daysLeft / 365) * 100)}%` }}
+                  />
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Active through {endDate?.toLocaleDateString()}
+                </p>
+              </>
+            )}
+          </div>
         </div>
-      ) : null}
+      </section>
 
+      <section className="mt-6 grid gap-4 sm:grid-cols-3">
+        <QuickLink
+          to="/"
+          icon={<Building2 className="h-4 w-4" />}
+          title="Browse properties"
+          hint="Explore live 1/8th share listings"
+        />
+        <QuickLink
+          to="/buyer/dashboard"
+          icon={<Heart className="h-4 w-4" />}
+          title="My saved properties"
+          hint="Wishlist coming soon"
+          disabled
+        />
+        <QuickLink
+          to="/buyer/documents"
+          icon={<FileText className="h-4 w-4" />}
+          title="My documents"
+          hint={`${docs.length} signed document${docs.length === 1 ? "" : "s"}`}
+        />
+      </section>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-3">
         <Stat label="Onboarding" value={humanize(account.onboarding_status)} />
         <Stat label="Intent" value={account.intent ? humanize(account.intent) : "Not set"} />
         <Stat
           label="Golden ticket"
-          value={account.golden_ticket_issued ? "Issued" : "Not issued"}
+          value={
+            account.golden_ticket_issued
+              ? `Issued ${account.golden_ticket_issued_at ? new Date(account.golden_ticket_issued_at).toLocaleDateString() : ""}`.trim()
+              : "Not issued"
+          }
         />
       </div>
 
@@ -193,8 +273,13 @@ function BuyerDashboardPage() {
                   </p>
                   <p className="text-xs text-muted-foreground">{humanize(m.role)} member</p>
                 </div>
-                <span className="shrink-0 rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
-                  Vetting: {humanize(m.vetting_status)}
+                <span
+                  className={cn(
+                    "shrink-0 rounded-full border px-3 py-1 text-xs font-medium",
+                    vettingTone(m.vetting_status),
+                  )}
+                >
+                  {vettingLabel(m.vetting_status)}
                 </span>
               </div>
             ))
@@ -202,6 +287,55 @@ function BuyerDashboardPage() {
         </div>
       </section>
     </div>
+  );
+}
+
+function vettingLabel(status: string) {
+  if (status === "cleared") return "Cleared";
+  if (status === "failed" || status === "adverse_action") return "Failed";
+  return "Pending";
+}
+
+function vettingTone(status: string) {
+  if (status === "cleared") return "border-accent/50 bg-accent/10 text-accent";
+  if (status === "failed" || status === "adverse_action")
+    return "border-destructive/40 bg-destructive/5 text-destructive";
+  return "border-border bg-muted/40 text-muted-foreground";
+}
+
+function QuickLink({
+  to,
+  icon,
+  title,
+  hint,
+  disabled,
+}: {
+  to: string;
+  icon: React.ReactNode;
+  title: string;
+  hint: string;
+  disabled?: boolean;
+}) {
+  const body = (
+    <>
+      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+        {icon}
+      </span>
+      <span className="min-w-0">
+        <span className="block text-sm font-medium text-foreground">{title}</span>
+        <span className="block text-xs text-muted-foreground">{hint}</span>
+      </span>
+    </>
+  );
+  const className = cn(
+    "flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition-colors",
+    disabled ? "cursor-not-allowed opacity-60" : "hover:bg-secondary/60",
+  );
+  if (disabled) return <div className={className}>{body}</div>;
+  return (
+    <Link to={to} className={className}>
+      {body}
+    </Link>
   );
 }
 
