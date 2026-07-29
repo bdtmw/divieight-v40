@@ -457,6 +457,44 @@ export type Database = {
           },
         ]
       }
+      property_documents: {
+        Row: {
+          document_name: string
+          document_type: string
+          file_url: string
+          id: string
+          property_id: string
+          uploaded_at: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          document_name: string
+          document_type?: string
+          file_url: string
+          id?: string
+          property_id: string
+          uploaded_at?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          document_name?: string
+          document_type?: string
+          file_url?: string
+          id?: string
+          property_id?: string
+          uploaded_at?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_documents_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       property_media: {
         Row: {
           caption: string | null
