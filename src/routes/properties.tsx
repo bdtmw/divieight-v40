@@ -148,8 +148,9 @@ function MarketplacePage() {
     if (view !== "map" || filtered.length === 0) return;
     let cancelled = false;
     const places = filtered.map((p) => `${p.city}, ${p.state} ${p.zip}`);
-    geocodePlaces(places).then((res) => {
-      if (!cancelled) setCoords((prev) => ({ ...prev, ...res }));
+    geocodePlaces(places, (place, c) => {
+      // Stream pins onto the map as each place resolves.
+      if (!cancelled) setCoords((prev) => (prev[place] ? prev : { ...prev, [place]: c }));
     });
     return () => {
       cancelled = true;

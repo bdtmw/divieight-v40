@@ -27,7 +27,10 @@ function writeCache(cache: Record<string, LatLng | null>) {
  * key). Results are cached in localStorage and requests are serialized to
  * respect Nominatim's fair-use policy.
  */
-export async function geocodePlaces(places: string[]): Promise<Record<string, LatLng>> {
+export async function geocodePlaces(
+  places: string[],
+  onResult?: (place: string, coords: LatLng) => void,
+): Promise<Record<string, LatLng>> {
   const cache = readCache();
   const out: Record<string, LatLng> = {};
   let dirty = false;
@@ -35,7 +38,10 @@ export async function geocodePlaces(places: string[]): Promise<Record<string, La
   for (const place of Array.from(new Set(places))) {
     if (place in cache) {
       const hit = cache[place];
-      if (hit) out[place] = hit;
+      if (hit) {
+        out[place] = hit;
+        onResult?.(place, hit);
+      }
       continue;
     }
     try {
@@ -48,7 +54,10 @@ export async function geocodePlaces(places: string[]): Promise<Record<string, La
       const value = first ? { lat: Number(first.lat), lng: Number(first.lon) } : null;
       cache[place] = value;
       dirty = true;
-      if (value) out[place] = value;
+      if (value) {
+        out[place] = value;
+        onResult?.(place, value);
+      }
     } catch {
       cache[place] = null;
       dirty = true;
