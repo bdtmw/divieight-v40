@@ -2,6 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { UserCircle2, LogOut, LayoutDashboard } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { useAdmin } from "@/lib/admin";
 import { getBuyerAccount } from "@/lib/buyer";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
