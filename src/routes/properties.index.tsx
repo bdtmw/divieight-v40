@@ -406,7 +406,7 @@ function MarketplacePage() {
 
           {view === "map" ? (
             <div className="mt-4 overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-              <PropertyMap pins={pins} className="h-[560px] w-full" />
+              <PropertyMap pins={pins} className="h-[380px] w-full sm:h-[480px] lg:h-[560px]" />
               {pins.length === 0 ? (
                 <p className="border-t border-border px-4 py-3 text-xs text-muted-foreground">
                   Placing homes on the map…
@@ -516,6 +516,7 @@ function PropertyCard({
           <EightSlicesTracker
             compact
             retainedShares={p.exit_type === "hybrid_exit" ? (p.retained_shares ?? 0) : 0}
+            reservedShares={p.reserved_shares}
           />
         </div>
 

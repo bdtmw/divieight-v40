@@ -18,6 +18,8 @@ export interface MarketplaceProperty {
   retained_shares: number | null;
   exit_type: string | null;
   listing_status: string;
+  /** Live count of buyer-reserved 1/8th slices (aggregate only, no buyer PII). */
+  reserved_shares: number;
   photo: string | null;
 }
 
@@ -60,9 +62,31 @@ export const getMarketplaceProperties = createServerFn({ method: "GET" }).handle
     const rows: MarketplaceProperty[] = data.map((p) => ({
       ...p,
       amenities: Array.isArray(p.amenities) ? (p.amenities as string[]) : [],
+      reserved_shares: 0,
       photo: null,
     }));
     if (rows.length === 0) return rows;
+
+    // Aggregate reserved slices so the Eight-Slices Tracker on the marketplace
+    // matches the pod shown on the property detail page.
+    const { data: reservations } = await supabasePublic
+      .from("pod_reservations")
+      .select("property_id, shares_reserved")
+      .in(
+        "property_id",
+        rows.map((r) => r.id),
+      )
+      .eq("status", "reserved");
+    const reservedByProp = new Map<string, number>();
+    (reservations ?? []).forEach((r) => {
+      reservedByProp.set(
+        r.property_id,
+        (reservedByProp.get(r.property_id) ?? 0) + (r.shares_reserved ?? 0),
+      );
+    });
+    rows.forEach((r) => {
+      r.reserved_shares = reservedByProp.get(r.id) ?? 0;
+    });
 
     const { data: media } = await supabasePublic
       .from("property_media")
@@ -143,6 +167,16 @@ export const getMarketplaceProperty = createServerFn({ method: "GET" })
 
     if (error || !row) return null;
 
+    const { data: reservations } = await supabasePublic
+      .from("pod_reservations")
+      .select("shares_reserved")
+      .eq("property_id", data.id)
+      .eq("status", "reserved");
+    const reservedShares = (reservations ?? []).reduce(
+      (sum, r) => sum + (r.shares_reserved ?? 0),
+      0,
+    );
+
     const { data: media } = await supabasePublic
       .from("property_media")
       .select("url, caption, display_order")
@@ -173,6 +207,7 @@ export const getMarketplaceProperty = createServerFn({ method: "GET" })
     return {
       ...row,
       amenities: Array.isArray(row.amenities) ? (row.amenities as string[]) : [],
+      reserved_shares: reservedShares,
       photo: photos[0]?.url ?? null,
       photos,
     };

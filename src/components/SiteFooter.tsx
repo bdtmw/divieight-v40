@@ -32,19 +32,24 @@ export function SiteFooter() {
         </div>
 
         <FooterCol title="Company">
+          <FooterLink to="/">Home</FooterLink>
           <FooterLink to="/about">About</FooterLink>
           <FooterLink to="/contact">Contact</FooterLink>
+        </FooterCol>
+
+        <FooterCol title="Buyers">
+          <FooterLink to="/properties">Browse properties</FooterLink>
+          <FooterLink to="/buyer/register">Become a buyer</FooterLink>
+          <FooterLink to="/buyer/login">Buyer sign in</FooterLink>
         </FooterCol>
 
         <FooterCol title="Sellers">
           <FooterLink to="/listings/new">List your property</FooterLink>
           <FooterLink to="/dashboard">Seller dashboard</FooterLink>
+          <FooterLink to="/login">Seller sign in</FooterLink>
+          <FooterLink to="/register">Create seller account</FooterLink>
         </FooterCol>
 
-        <FooterCol title="Account">
-          <FooterLink to="/login">Sign in</FooterLink>
-          <FooterLink to="/register">Create account</FooterLink>
-        </FooterCol>
       </div>
 
       <div className="border-t border-border/60 py-5">

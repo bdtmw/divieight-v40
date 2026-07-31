@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { buyerRedirect } from "@/lib/buyer";
 import { getSellerAccount } from "@/lib/seller";
 import { getMyReservations, withdrawReservation } from "@/lib/reservations.functions";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { enrollmentDaysRemaining, enrollmentEndDate } from "@/lib/golden-ticket";
@@ -30,7 +30,38 @@ export const Route = createFileRoute("/buyer/dashboard")({
     ],
   }),
   component: BuyerDashboardPage,
+  notFoundComponent: () => <BuyerDashboardFallback />,
+  errorComponent: () => <BuyerDashboardFallback />,
 });
+
+/** Shown when the dashboard can't resolve a buyer account (wrong role, stale link). */
+function BuyerDashboardFallback() {
+  return (
+    <div className="mx-auto max-w-2xl px-4 py-20 text-center sm:px-6">
+      <h1 className="font-display text-2xl font-semibold text-foreground">
+        Buyer dashboard unavailable
+      </h1>
+      <p className="mt-2 text-sm text-muted-foreground">
+        We couldn&apos;t load a buyer account for this session. Sign in with your buyer account, or
+        head to the seller dashboard if that&apos;s the account you use.
+      </p>
+      <div className="mt-6 flex flex-wrap justify-center gap-2">
+        <Link
+          to="/buyer/login"
+          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+        >
+          Buyer sign in
+        </Link>
+        <Link
+          to="/dashboard"
+          className="rounded-md border border-border bg-card px-4 py-2 text-sm font-medium text-foreground"
+        >
+          Seller dashboard
+        </Link>
+      </div>
+    </div>
+  );
+}
 
 interface Member {
   id: string;
@@ -64,6 +95,7 @@ function BuyerDashboardPage() {
   const navigate = useNavigate();
   const fetchMyReservations = useServerFn(getMyReservations);
   const withdraw = useServerFn(withdrawReservation);
+  const queryClient = useQueryClient();
   const {
     data: reservations = [],
     refetch: refetchReservations,
@@ -86,6 +118,9 @@ function BuyerDashboardPage() {
       if (res.ok) {
         toast.success("Reservation withdrawn. The slice has been released.");
         await refetchReservations();
+        void queryClient.invalidateQueries({ queryKey: ["pod-composition"] });
+        void queryClient.invalidateQueries({ queryKey: ["marketplace-property"] });
+        void queryClient.invalidateQueries({ queryKey: ["marketplace-properties"] });
       } else {
         toast.error("Couldn't withdraw this reservation. Please try again.");
       }
@@ -192,7 +227,7 @@ function BuyerDashboardPage() {
           </div>
         ) : (
           <Link
-            to="/"
+            to="/properties"
             className="shrink-0 rounded-md border border-border bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary"
           >
             Browse properties
@@ -302,7 +337,7 @@ function BuyerDashboardPage() {
 
       <section className="mt-6 grid gap-4 sm:grid-cols-3">
         <QuickLink
-          to="/"
+          to="/properties"
           icon={<Building2 className="h-4 w-4" />}
           title="Browse properties"
           hint="Explore live 1/8th share listings"
@@ -347,7 +382,7 @@ function BuyerDashboardPage() {
             You haven&apos;t reserved a share yet. Explore homes on the marketplace to secure a priority rank.
             <div className="mt-4">
               <Link
-                to="/"
+                to="/properties"
                 className="inline-block rounded-md bg-primary px-4 py-2 text-xs font-medium text-primary-foreground"
               >
                 Browse properties
