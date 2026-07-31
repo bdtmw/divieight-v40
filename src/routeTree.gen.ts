@@ -41,6 +41,7 @@ import { Route as BuyerDocumentsRouteImport } from './routes/buyer.documents'
 import { Route as BuyerDashboardRouteImport } from './routes/buyer.dashboard'
 import { Route as BuyerAdverseActionRouteImport } from './routes/buyer.adverse-action'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
+import { Route as AdminSubstitutionsRouteImport } from './routes/admin.substitutions'
 import { Route as AdminSellersRouteImport } from './routes/admin.sellers'
 import { Route as AdminPropertiesRouteImport } from './routes/admin.properties'
 import { Route as AdminPaymentsRouteImport } from './routes/admin.payments'
@@ -216,6 +217,11 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
   path: '/auth/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminSubstitutionsRoute = AdminSubstitutionsRouteImport.update({
+  id: '/substitutions',
+  path: '/substitutions',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminSellersRoute = AdminSellersRouteImport.update({
   id: '/sellers',
   path: '/sellers',
@@ -308,6 +314,7 @@ export interface FileRoutesByFullPath {
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/properties': typeof AdminPropertiesRoute
   '/admin/sellers': typeof AdminSellersRoute
+  '/admin/substitutions': typeof AdminSubstitutionsRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
@@ -355,6 +362,7 @@ export interface FileRoutesByTo {
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/properties': typeof AdminPropertiesRoute
   '/admin/sellers': typeof AdminSellersRoute
+  '/admin/substitutions': typeof AdminSubstitutionsRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
@@ -404,6 +412,7 @@ export interface FileRoutesById {
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/properties': typeof AdminPropertiesRoute
   '/admin/sellers': typeof AdminSellersRoute
+  '/admin/substitutions': typeof AdminSubstitutionsRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
@@ -454,6 +463,7 @@ export interface FileRouteTypes {
     | '/admin/payments'
     | '/admin/properties'
     | '/admin/sellers'
+    | '/admin/substitutions'
     | '/auth/callback'
     | '/buyer/adverse-action'
     | '/buyer/dashboard'
@@ -501,6 +511,7 @@ export interface FileRouteTypes {
     | '/admin/payments'
     | '/admin/properties'
     | '/admin/sellers'
+    | '/admin/substitutions'
     | '/auth/callback'
     | '/buyer/adverse-action'
     | '/buyer/dashboard'
@@ -549,6 +560,7 @@ export interface FileRouteTypes {
     | '/admin/payments'
     | '/admin/properties'
     | '/admin/sellers'
+    | '/admin/substitutions'
     | '/auth/callback'
     | '/buyer/adverse-action'
     | '/buyer/dashboard'
@@ -847,6 +859,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/substitutions': {
+      id: '/admin/substitutions'
+      path: '/substitutions'
+      fullPath: '/admin/substitutions'
+      preLoaderRoute: typeof AdminSubstitutionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/sellers': {
       id: '/admin/sellers'
       path: '/sellers'
@@ -956,6 +975,7 @@ interface AdminRouteChildren {
   AdminPaymentsRoute: typeof AdminPaymentsRoute
   AdminPropertiesRoute: typeof AdminPropertiesRoute
   AdminSellersRoute: typeof AdminSellersRoute
+  AdminSubstitutionsRoute: typeof AdminSubstitutionsRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
@@ -967,6 +987,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminPaymentsRoute: AdminPaymentsRoute,
   AdminPropertiesRoute: AdminPropertiesRoute,
   AdminSellersRoute: AdminSellersRoute,
+  AdminSubstitutionsRoute: AdminSubstitutionsRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
