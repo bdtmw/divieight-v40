@@ -51,6 +51,7 @@ export type AuditEntity =
   | "payment"
   | "media"
   | "buyer_account"
+  | "wishlist"
   | "property_document";
 
 export async function logAudit(params: {
