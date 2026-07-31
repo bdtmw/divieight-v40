@@ -200,3 +200,114 @@ export const getMyReservations = createServerFn({ method: "GET" })
       };
     });
   });
+
+/**
+ * Withdraw a reservation before closing. Frees the slice on the Eight-Slices
+ * Tracker, releases System Lock if the pod was full, and opens the Member
+ * Substitution Pipeline (candidate identification is logged for the ops team).
+ */
+export const withdrawReservation = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { reservationId: string }) => ({
+    reservationId: String(data.reservationId),
+  }))
+  .handler(async ({ data, context }): Promise<{ ok: boolean; reason: string }> => {
+    const { supabase, userId } = context;
+
+    const { data: buyer } = await supabase
+      .from("buyer_accounts")
+      .select("id")
+      .eq("auth_user_id", userId)
+      .maybeSingle();
+    if (!buyer) return { ok: false, reason: "no_buyer_account" };
+
+    const { data: reservation } = await supabase
+      .from("pod_reservations")
+      .select("id, property_id, status, shares_reserved")
+      .eq("id", data.reservationId)
+      .eq("buyer_account_id", buyer.id)
+      .maybeSingle();
+    if (!reservation) return { ok: false, reason: "not_found" };
+    if (reservation.status !== "reserved") return { ok: false, reason: "not_active" };
+
+    const { error } = await supabase
+      .from("pod_reservations")
+      .update({ status: "withdrawn" })
+      .eq("id", reservation.id)
+      .eq("buyer_account_id", buyer.id);
+    if (error) return { ok: false, reason: "error" };
+
+    // Releasing System Lock needs to bypass seller-scoped RLS on properties.
+    let candidateCount = 0;
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { data: property } = await supabaseAdmin
+        .from("properties")
+        .select(
+          "id, address, city, state, zip, usage_tag, listing_price, listing_status, exit_type, retained_shares",
+        )
+        .eq("id", reservation.property_id)
+        .maybeSingle();
+
+      if (property?.listing_status === "system_lock") {
+        await supabaseAdmin
+          .from("properties")
+          .update({ listing_status: "forming" as const })
+          .eq("id", property.id);
+      }
+
+      if (property) {
+        const { findCandidates } = await import("@/lib/substitution.server");
+        const { data: active } = await supabaseAdmin
+          .from("pod_reservations")
+          .select("buyer_account_id")
+          .eq("property_id", property.id)
+          .eq("status", "reserved");
+        const candidates = await findCandidates(
+          supabaseAdmin,
+          property,
+          [buyer.id, ...(active ?? []).map((a) => a.buyer_account_id)],
+          5,
+        );
+        candidateCount = candidates.length;
+
+        // TODO: automated invitation dispatch to the top-ranked candidate
+        // once buyer notification infrastructure lands. For now the ops team
+        // works the ranked list from /admin/substitutions.
+        await supabase.from("audit_log").insert({
+          actor_id: userId,
+          actor_type: "buyer",
+          action_type: "substitution.pipeline_opened",
+          entity_type: "property",
+          entity_id: property.id,
+          metadata: {
+            reservation_id: reservation.id,
+            candidates_identified: candidateCount,
+            top_candidates: candidates.map((c) => ({
+              buyer_account_id: c.buyerAccountId,
+              priority_rank: c.priorityRank,
+              priority_rank_timestamp: c.priorityRankTimestamp,
+              matched_on: c.matchedOn,
+            })),
+          } as never,
+        });
+      }
+    } catch {
+      // withdrawal stands even if lock release / candidate scan fails
+    }
+
+    await supabase.from("audit_log").insert({
+      actor_id: userId,
+      actor_type: "buyer",
+      action_type: "buyer.reservation_withdrawn",
+      entity_type: "property",
+      entity_id: reservation.property_id,
+      metadata: {
+        reservation_id: reservation.id,
+        shares_released: reservation.shares_reserved,
+        candidates_identified: candidateCount,
+      } as never,
+    });
+
+    return { ok: true, reason: "ok" };
+  });
