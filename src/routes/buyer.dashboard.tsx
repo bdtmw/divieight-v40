@@ -378,6 +378,16 @@ function BuyerDashboardPage() {
                   >
                     View home →
                   </Link>
+                  {r.status === "reserved" ? (
+                    <button
+                      type="button"
+                      onClick={() => handleWithdraw(r.id)}
+                      disabled={withdrawingId === r.id}
+                      className="rounded-md border border-destructive/40 px-3 py-1.5 text-xs font-medium text-destructive transition-colors hover:bg-destructive/10 disabled:opacity-60"
+                    >
+                      {withdrawingId === r.id ? "Withdrawing…" : "Withdraw reservation"}
+                    </button>
+                  ) : null}
                 </div>
               </li>
             ))}
