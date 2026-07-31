@@ -1,106 +1,26 @@
 import { createServerFn } from "@tanstack/react-start";
-import { createClient } from "@supabase/supabase-js";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import type { Database } from "@/integrations/supabase/types";
-
-export interface PodComposition {
-  propertyId: string;
-  totalShares: number;
-  retainedShares: number;
-  reservedShares: number;
-  availableShares: number;
-  hardLocked: boolean;
-  listingStatus: string;
-  /** Ordered slot map, 8 entries: seller-retained first, then reserved, then available. */
-  slots: ("retained" | "reserved" | "available")[];
-}
-
-function publicClient() {
-  const url = process.env.SUPABASE_URL!;
-  const key = process.env.SUPABASE_PUBLISHABLE_KEY!;
-  return createClient<Database>(url, key, {
-    auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
-    global: {
-      fetch: (input, init) => {
-        const h = new Headers(init?.headers);
-        if (key.startsWith("sb_") && h.get("Authorization") === `Bearer ${key}`) {
-          h.delete("Authorization");
-        }
-        h.set("apikey", key);
-        return fetch(input, { ...init, headers: h });
-      },
-    },
-  });
-}
-
-function buildSlots(retained: number, reserved: number): PodComposition["slots"] {
-  const r = Math.max(0, Math.min(8, retained));
-  const v = Math.max(0, Math.min(8 - r, reserved));
-  return [
-    ...Array<"retained">(r).fill("retained"),
-    ...Array<"reserved">(v).fill("reserved"),
-    ...Array<"available">(8 - r - v).fill("available"),
-  ];
-}
+import type {
+  MyReservation,
+  PodComposition,
+  ReservationEligibility,
+  ReservationResult,
+} from "@/lib/pod";
 
 /** Public read: how many of the eight shares are taken. No buyer PII is exposed. */
 export const getPodComposition = createServerFn({ method: "GET" })
   .inputValidator((data: { propertyId: string }) => ({ propertyId: String(data.propertyId) }))
   .handler(async ({ data }): Promise<PodComposition | null> => {
-    const supabase = publicClient();
-
-    const { data: property } = await supabase
-      .from("properties")
-      .select("id, exit_type, retained_shares, listing_status, hard_locked")
-      .eq("id", data.propertyId)
-      .eq("status", "listed")
-      .maybeSingle();
-
-    if (!property) return null;
-
-    const { data: rows } = await supabase
-      .from("pod_reservations")
-      .select("shares_reserved")
-      .eq("property_id", data.propertyId)
-      .eq("status", "reserved");
-
-    const retained =
-      property.exit_type === "hybrid_exit" ? (property.retained_shares ?? 0) : 0;
-    const reserved = (rows ?? []).reduce((sum, r) => sum + (r.shares_reserved ?? 0), 0);
-    const slots = buildSlots(retained, reserved);
-
-    return {
-      propertyId: property.id,
-      totalShares: 8,
-      retainedShares: Math.max(0, Math.min(8, retained)),
-      reservedShares: slots.filter((s) => s === "reserved").length,
-      availableShares: slots.filter((s) => s === "available").length,
-      hardLocked: !!property.hard_locked,
-      listingStatus: property.listing_status,
-      slots,
-    };
+    const { fetchPodComposition } = await import("@/lib/pod.server");
+    return fetchPodComposition(data.propertyId);
   });
-
-export interface ReservationEligibility {
-  ok: boolean;
-  reason:
-    | "ok"
-    | "no_buyer_account"
-    | "not_liquidity_verified"
-    | "not_found"
-    | "sold_out"
-    | "already_reserved";
-  liquidityStatus: string | null;
-  targetBudget: number | null;
-  existingShares: number;
-  composition: PodComposition | null;
-}
 
 /** Mini Liquidity Gate + availability check for a specific property. */
 export const checkReservationEligibility = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { propertyId: string }) => ({ propertyId: String(data.propertyId) }))
   .handler(async ({ data, context }): Promise<ReservationEligibility> => {
+    const { fetchPodComposition } = await import("@/lib/pod.server");
     const { supabase, userId } = context;
     const base = {
       liquidityStatus: null as string | null,
@@ -117,7 +37,7 @@ export const checkReservationEligibility = createServerFn({ method: "GET" })
 
     if (!buyer) return { ok: false, reason: "no_buyer_account", ...base };
 
-    const composition = await getPodComposition({ data: { propertyId: data.propertyId } });
+    const composition = await fetchPodComposition(data.propertyId);
     const info = {
       liquidityStatus: buyer.liquidity_status ?? null,
       targetBudget: buyer.target_budget ?? null,
@@ -136,21 +56,12 @@ export const checkReservationEligibility = createServerFn({ method: "GET" })
 
     info.existingShares = (mine ?? []).reduce((s, r) => s + (r.shares_reserved ?? 0), 0);
 
-    if (!buyer.liquidity_verified)
-      return { ok: false, reason: "not_liquidity_verified", ...info };
+    if (!buyer.liquidity_verified) return { ok: false, reason: "not_liquidity_verified", ...info };
     if (info.existingShares > 0) return { ok: false, reason: "already_reserved", ...info };
     if (composition.availableShares < 1) return { ok: false, reason: "sold_out", ...info };
 
     return { ok: true, reason: "ok", ...info };
   });
-
-export interface ReservationResult {
-  ok: boolean;
-  reason: ReservationEligibility["reason"] | "error";
-  reservationId: string | null;
-  composition: PodComposition | null;
-  systemLocked: boolean;
-}
 
 /**
  * Creates the reservation, applies the Hard-Lock on first reservation
@@ -161,6 +72,7 @@ export const createReservation = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { propertyId: string }) => ({ propertyId: String(data.propertyId) }))
   .handler(async ({ data, context }): Promise<ReservationResult> => {
+    const { fetchPodComposition } = await import("@/lib/pod.server");
     const { supabase, userId } = context;
     const fail = (reason: ReservationResult["reason"]): ReservationResult => ({
       ok: false,
@@ -178,7 +90,7 @@ export const createReservation = createServerFn({ method: "POST" })
     if (!buyer) return fail("no_buyer_account");
     if (!buyer.liquidity_verified) return fail("not_liquidity_verified");
 
-    const before = await getPodComposition({ data: { propertyId: data.propertyId } });
+    const before = await fetchPodComposition(data.propertyId);
     if (!before) return fail("not_found");
     if (before.availableShares < 1) return fail("sold_out");
 
@@ -204,22 +116,24 @@ export const createReservation = createServerFn({ method: "POST" })
 
     if (error || !inserted) return fail("error");
 
-    const after = await getPodComposition({ data: { propertyId: data.propertyId } });
+    const after = await fetchPodComposition(data.propertyId);
     const systemLocked = (after?.availableShares ?? 1) === 0;
 
     // Hard-Lock + System Lock need to bypass seller-scoped RLS on properties.
     try {
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      const patch: Record<string, unknown> = {};
-      if (!before.hardLocked) {
-        patch.hard_locked = true;
-        patch.hard_locked_at = new Date().toISOString();
-      }
-      if (systemLocked && before.listingStatus !== "system_lock") {
-        patch.listing_status = "system_lock";
-      }
-      if (Object.keys(patch).length > 0) {
-        await supabaseAdmin.from("properties").update(patch).eq("id", data.propertyId);
+      const applyHardLock = !before.hardLocked;
+      const applySystemLock = systemLocked && before.listingStatus !== "system_lock";
+      if (applyHardLock || applySystemLock) {
+        await supabaseAdmin
+          .from("properties")
+          .update({
+            ...(applyHardLock
+              ? { hard_locked: true, hard_locked_at: new Date().toISOString() }
+              : {}),
+            ...(applySystemLock ? { listing_status: "system_lock" as const } : {}),
+          })
+          .eq("id", data.propertyId);
       }
     } catch {
       // reservation stands even if the lock write fails; maintenance can retry
@@ -247,20 +161,6 @@ export const createReservation = createServerFn({ method: "POST" })
       systemLocked,
     };
   });
-
-export interface MyReservation {
-  id: string;
-  property_id: string;
-  shares_reserved: number;
-  status: string;
-  reserved_at: string;
-  address: string;
-  city: string;
-  state: string;
-  zip: string;
-  listing_price: number | null;
-  listing_status: string;
-}
 
 /** "My Reservations" for the buyer dashboard. */
 export const getMyReservations = createServerFn({ method: "GET" })
