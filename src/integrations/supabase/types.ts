@@ -119,6 +119,9 @@ export type Database = {
           id: string
           intent: string | null
           last_activity_at: string
+          lifestyle_perks_consent: boolean
+          lifestyle_perks_consent_at: string | null
+          lifestyle_perks_prompt_dismissed_at: string | null
           liquidity_documents: Json
           liquidity_institution: string | null
           liquidity_status: string
@@ -146,6 +149,9 @@ export type Database = {
           id?: string
           intent?: string | null
           last_activity_at?: string
+          lifestyle_perks_consent?: boolean
+          lifestyle_perks_consent_at?: string | null
+          lifestyle_perks_prompt_dismissed_at?: string | null
           liquidity_documents?: Json
           liquidity_institution?: string | null
           liquidity_status?: string
@@ -173,6 +179,9 @@ export type Database = {
           id?: string
           intent?: string | null
           last_activity_at?: string
+          lifestyle_perks_consent?: boolean
+          lifestyle_perks_consent_at?: string | null
+          lifestyle_perks_prompt_dismissed_at?: string | null
           liquidity_documents?: Json
           liquidity_institution?: string | null
           liquidity_status?: string
