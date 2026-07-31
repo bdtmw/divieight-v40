@@ -293,7 +293,7 @@ function PropertyDetailPage() {
           {property.description ? (
             <section className="mt-8">
               <h2 className="font-display text-lg font-semibold text-foreground">About this home</h2>
-              <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
+              <p className="mt-2 whitespace-pre-line break-words [overflow-wrap:anywhere] text-sm leading-relaxed text-muted-foreground">
                 {property.description}
               </p>
             </section>

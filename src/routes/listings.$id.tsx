@@ -263,7 +263,7 @@ function ListingDetail() {
           <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
             Description
           </h2>
-          <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-foreground">
+          <p className="mt-3 whitespace-pre-line break-words [overflow-wrap:anywhere] text-sm leading-relaxed text-foreground">
             {property.description}
           </p>
         </section>
