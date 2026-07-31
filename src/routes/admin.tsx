@@ -7,6 +7,7 @@ import {
   Home,
   Mail,
   CreditCard,
+  Users2,
   ScrollText,
   LogOut,
 } from "lucide-react";
