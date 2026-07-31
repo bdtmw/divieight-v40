@@ -96,11 +96,16 @@ function BuyerDashboardPage() {
   const fetchMyReservations = useServerFn(getMyReservations);
   const withdraw = useServerFn(withdrawReservation);
   const queryClient = useQueryClient();
+  const [authUserId, setAuthUserId] = useState<string | null>(null);
   const {
     data: reservations = [],
     refetch: refetchReservations,
   } = useQuery({
-    queryKey: ["my-reservations"],
+    queryKey: ["my-reservations", authUserId],
+    // The server fn requires a bearer token — don't fire it until the Supabase
+    // session has resolved, otherwise it 401s on first paint.
+    enabled: !!authUserId,
+    retry: false,
     queryFn: () => fetchMyReservations(),
   });
   const [withdrawingId, setWithdrawingId] = useState<string | null>(null);
@@ -130,7 +135,6 @@ function BuyerDashboardPage() {
   }
 
   const [account, setAccount] = useState<AccountView | null>(null);
-  const [authUserId, setAuthUserId] = useState<string | null>(null);
   const [members, setMembers] = useState<Member[]>([]);
   const [docs, setDocs] = useState<SignedDoc[]>([]);
   const [loading, setLoading] = useState(true);
