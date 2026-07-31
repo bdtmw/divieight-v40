@@ -124,6 +124,7 @@ function BuyerDashboardPage() {
         return;
       }
       setAccount(acct as AccountView);
+      setAuthUserId(auth.user.id);
 
       const [{ data: mem }, { data: sd }] = await Promise.all([
         supabase
