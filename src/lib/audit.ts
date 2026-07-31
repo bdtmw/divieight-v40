@@ -34,6 +34,9 @@ export type AuditAction =
   | "buyer.golden_ticket_issued"
   | "buyer.priority_forfeited"
   | "buyer.share_reserved"
+  | "buyer.reservation_withdrawn"
+  | "substitution.pipeline_opened"
+  | "substitution.pipeline_viewed"
   | "buyer.data_room_document_viewed"
   | "seller.data_room_document_uploaded"
   | "seller.data_room_document_deleted";
