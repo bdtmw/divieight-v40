@@ -4,9 +4,10 @@ import { Building2, FileText, Heart, KeyRound, Ticket } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { buyerRedirect } from "@/lib/buyer";
 import { getSellerAccount } from "@/lib/seller";
-import { getMyReservations } from "@/lib/reservations.functions";
+import { getMyReservations, withdrawReservation } from "@/lib/reservations.functions";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { toast } from "sonner";
 import { enrollmentDaysRemaining, enrollmentEndDate } from "@/lib/golden-ticket";
 import { cn } from "@/lib/utils";
 
@@ -61,10 +62,37 @@ interface SignedDoc {
 function BuyerDashboardPage() {
   const navigate = useNavigate();
   const fetchMyReservations = useServerFn(getMyReservations);
-  const { data: reservations = [] } = useQuery({
+  const withdraw = useServerFn(withdrawReservation);
+  const {
+    data: reservations = [],
+    refetch: refetchReservations,
+  } = useQuery({
     queryKey: ["my-reservations"],
     queryFn: () => fetchMyReservations(),
   });
+  const [withdrawingId, setWithdrawingId] = useState<string | null>(null);
+
+  async function handleWithdraw(reservationId: string) {
+    if (
+      !window.confirm(
+        "Withdraw this reservation? Your slice is released back to the pod and your hold on this home ends.",
+      )
+    )
+      return;
+    setWithdrawingId(reservationId);
+    try {
+      const res = await withdraw({ data: { reservationId } });
+      if (res.ok) {
+        toast.success("Reservation withdrawn. The slice has been released.");
+        await refetchReservations();
+      } else {
+        toast.error("Couldn't withdraw this reservation. Please try again.");
+      }
+    } finally {
+      setWithdrawingId(null);
+    }
+  }
+
   const [account, setAccount] = useState<AccountView | null>(null);
   const [members, setMembers] = useState<Member[]>([]);
   const [docs, setDocs] = useState<SignedDoc[]>([]);
@@ -350,6 +378,16 @@ function BuyerDashboardPage() {
                   >
                     View home →
                   </Link>
+                  {r.status === "reserved" ? (
+                    <button
+                      type="button"
+                      onClick={() => handleWithdraw(r.id)}
+                      disabled={withdrawingId === r.id}
+                      className="rounded-md border border-destructive/40 px-3 py-1.5 text-xs font-medium text-destructive transition-colors hover:bg-destructive/10 disabled:opacity-60"
+                    >
+                      {withdrawingId === r.id ? "Withdrawing…" : "Withdraw reservation"}
+                    </button>
+                  ) : null}
                 </div>
               </li>
             ))}
