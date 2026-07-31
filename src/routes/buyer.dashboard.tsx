@@ -308,12 +308,12 @@ function BuyerDashboardPage() {
           hint="Explore live 1/8th share listings"
         />
         <QuickLink
-          to="/buyer/dashboard"
+          to="/buyer/wishlist"
           icon={<Heart className="h-4 w-4" />}
           title="My saved properties"
-          hint="Wishlist coming soon"
-          disabled
+          hint="View your wishlist"
         />
+
         <QuickLink
           to="/buyer/documents"
           icon={<FileText className="h-4 w-4" />}

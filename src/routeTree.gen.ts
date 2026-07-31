@@ -33,6 +33,7 @@ import { Route as OnboardingAgreementRouteImport } from './routes/onboarding.agr
 import { Route as ListingsNewRouteImport } from './routes/listings.new'
 import { Route as ListingsIdRouteImport } from './routes/listings.$id'
 import { Route as DataRoomIdRouteImport } from './routes/data-room.$id'
+import { Route as BuyerWishlistRouteImport } from './routes/buyer.wishlist'
 import { Route as BuyerVerificationRouteImport } from './routes/buyer.verification'
 import { Route as BuyerRegisterRouteImport } from './routes/buyer.register'
 import { Route as BuyerLoginRouteImport } from './routes/buyer.login'
@@ -175,6 +176,11 @@ const ListingsIdRoute = ListingsIdRouteImport.update({
 const DataRoomIdRoute = DataRoomIdRouteImport.update({
   id: '/data-room/$id',
   path: '/data-room/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuyerWishlistRoute = BuyerWishlistRouteImport.update({
+  id: '/buyer/wishlist',
+  path: '/buyer/wishlist',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BuyerVerificationRoute = BuyerVerificationRouteImport.update({
@@ -323,6 +329,7 @@ export interface FileRoutesByFullPath {
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
   '/buyer/verification': typeof BuyerVerificationRoute
+  '/buyer/wishlist': typeof BuyerWishlistRoute
   '/data-room/$id': typeof DataRoomIdRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
@@ -371,6 +378,7 @@ export interface FileRoutesByTo {
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
   '/buyer/verification': typeof BuyerVerificationRoute
+  '/buyer/wishlist': typeof BuyerWishlistRoute
   '/data-room/$id': typeof DataRoomIdRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
@@ -421,6 +429,7 @@ export interface FileRoutesById {
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
   '/buyer/verification': typeof BuyerVerificationRoute
+  '/buyer/wishlist': typeof BuyerWishlistRoute
   '/data-room/$id': typeof DataRoomIdRoute
   '/listings/$id': typeof ListingsIdRoute
   '/listings/new': typeof ListingsNewRoute
@@ -472,6 +481,7 @@ export interface FileRouteTypes {
     | '/buyer/login'
     | '/buyer/register'
     | '/buyer/verification'
+    | '/buyer/wishlist'
     | '/data-room/$id'
     | '/listings/$id'
     | '/listings/new'
@@ -520,6 +530,7 @@ export interface FileRouteTypes {
     | '/buyer/login'
     | '/buyer/register'
     | '/buyer/verification'
+    | '/buyer/wishlist'
     | '/data-room/$id'
     | '/listings/$id'
     | '/listings/new'
@@ -569,6 +580,7 @@ export interface FileRouteTypes {
     | '/buyer/login'
     | '/buyer/register'
     | '/buyer/verification'
+    | '/buyer/wishlist'
     | '/data-room/$id'
     | '/listings/$id'
     | '/listings/new'
@@ -611,6 +623,7 @@ export interface RootRouteChildren {
   BuyerLoginRoute: typeof BuyerLoginRoute
   BuyerRegisterRoute: typeof BuyerRegisterRoute
   BuyerVerificationRoute: typeof BuyerVerificationRoute
+  BuyerWishlistRoute: typeof BuyerWishlistRoute
   DataRoomIdRoute: typeof DataRoomIdRoute
   ListingsIdRoute: typeof ListingsIdRoute
   ListingsNewRoute: typeof ListingsNewRoute
@@ -801,6 +814,13 @@ declare module '@tanstack/react-router' {
       path: '/data-room/$id'
       fullPath: '/data-room/$id'
       preLoaderRoute: typeof DataRoomIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buyer/wishlist': {
+      id: '/buyer/wishlist'
+      path: '/buyer/wishlist'
+      fullPath: '/buyer/wishlist'
+      preLoaderRoute: typeof BuyerWishlistRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/buyer/verification': {
@@ -1012,6 +1032,7 @@ const rootRouteChildren: RootRouteChildren = {
   BuyerLoginRoute: BuyerLoginRoute,
   BuyerRegisterRoute: BuyerRegisterRoute,
   BuyerVerificationRoute: BuyerVerificationRoute,
+  BuyerWishlistRoute: BuyerWishlistRoute,
   DataRoomIdRoute: DataRoomIdRoute,
   ListingsIdRoute: ListingsIdRoute,
   ListingsNewRoute: ListingsNewRoute,
