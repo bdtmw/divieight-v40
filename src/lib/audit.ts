@@ -33,6 +33,7 @@ export type AuditAction =
   | "buyer.fcra_adverse_action_issued"
   | "buyer.golden_ticket_issued"
   | "buyer.priority_forfeited"
+  | "buyer.share_reserved"
   | "buyer.data_room_document_viewed"
   | "seller.data_room_document_uploaded"
   | "seller.data_room_document_deleted";

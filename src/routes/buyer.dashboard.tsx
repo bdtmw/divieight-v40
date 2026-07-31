@@ -4,6 +4,9 @@ import { Building2, FileText, Heart, KeyRound, Ticket } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { buyerRedirect } from "@/lib/buyer";
 import { getSellerAccount } from "@/lib/seller";
+import { getMyReservations } from "@/lib/reservations.functions";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { enrollmentDaysRemaining, enrollmentEndDate } from "@/lib/golden-ticket";
 import { cn } from "@/lib/utils";
 
@@ -57,6 +60,11 @@ interface SignedDoc {
 
 function BuyerDashboardPage() {
   const navigate = useNavigate();
+  const fetchMyReservations = useServerFn(getMyReservations);
+  const { data: reservations = [] } = useQuery({
+    queryKey: ["my-reservations"],
+    queryFn: () => fetchMyReservations(),
+  });
   const [account, setAccount] = useState<AccountView | null>(null);
   const [members, setMembers] = useState<Member[]>([]);
   const [docs, setDocs] = useState<SignedDoc[]>([]);
@@ -289,6 +297,65 @@ function BuyerDashboardPage() {
           }
         />
       </div>
+
+      <section className="mt-10">
+        <h2 className="font-display text-lg font-semibold text-foreground">
+          My Reservations
+          <span className="ml-2 text-xs font-normal text-muted-foreground">
+            ({reservations.length})
+          </span>
+        </h2>
+        {reservations.length === 0 ? (
+          <div className="mt-4 rounded-xl border border-border bg-card p-6 text-center text-sm text-muted-foreground">
+            You haven&apos;t reserved a share yet. Explore homes on the marketplace to secure a priority rank.
+            <div className="mt-4">
+              <Link
+                to="/"
+                className="inline-block rounded-md bg-primary px-4 py-2 text-xs font-medium text-primary-foreground"
+              >
+                Browse properties
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <ul className="mt-4 grid gap-3">
+            {reservations.map((r) => (
+              <li
+                key={r.id}
+                className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-card p-4 shadow-sm"
+              >
+                <div>
+                  <Link
+                    to="/properties/$id"
+                    params={{ id: r.property_id }}
+                    className="font-display text-base font-semibold text-foreground hover:underline"
+                  >
+                    {r.address}
+                  </Link>
+                  <p className="text-xs text-muted-foreground">
+                    {r.city}, {r.state} {r.zip}
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="rounded-full bg-accent/15 px-3 py-1 text-xs font-medium text-accent">
+                    {r.shares_reserved} of 8 share{r.shares_reserved === 1 ? "" : "s"} reserved
+                  </span>
+                  <span className="rounded-full border border-border px-2.5 py-0.5 text-[11px] uppercase tracking-wider text-muted-foreground">
+                    {r.listing_status === "system_lock" ? "System Lock" : r.status}
+                  </span>
+                  <Link
+                    to="/properties/$id"
+                    params={{ id: r.property_id }}
+                    className="text-xs font-medium text-foreground underline-offset-4 hover:underline"
+                  >
+                    View home →
+                  </Link>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
 
       <section className="mt-10">
         <h2 className="font-display text-lg font-semibold text-foreground">
