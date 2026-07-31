@@ -10,6 +10,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { enrollmentDaysRemaining, enrollmentEndDate } from "@/lib/golden-ticket";
 import { cn } from "@/lib/utils";
+import { LifestylePerksConsent } from "@/components/LifestylePerksConsent";
 
 export const Route = createFileRoute("/buyer/dashboard")({
   head: () => ({
