@@ -14,6 +14,8 @@ import {
 import { toast } from "sonner";
 import { EightSlicesTracker } from "@/components/EightSlicesTracker";
 import { getMarketplaceProperty } from "@/lib/marketplace.functions";
+import { getPodComposition } from "@/lib/reservations.functions";
+import { PodCompositionPanel } from "@/components/PodCompositionPanel";
 import { getBuyerAccount } from "@/lib/buyer";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
@@ -69,6 +71,12 @@ function PropertyDetailPage() {
   const { data: property, isLoading } = useQuery({
     queryKey: ["marketplace-property", id],
     queryFn: () => fetchProperty({ data: { id } }),
+  });
+
+  const fetchPod = useServerFn(getPodComposition);
+  const { data: composition } = useQuery({
+    queryKey: ["pod-composition", id],
+    queryFn: () => fetchPod({ data: { propertyId: id } }),
   });
 
   const { user } = useAuth();
@@ -291,9 +299,16 @@ function PropertyDetailPage() {
               Every divieight home is divided into eight equal 1/8th shares.
             </p>
             <div className="mt-5">
-              <EightSlicesTracker retainedShares={retained} />
+              <EightSlicesTracker
+                retainedShares={composition?.retainedShares ?? retained}
+                reservedShares={composition?.reservedShares ?? 0}
+              />
             </div>
           </section>
+
+          {composition && composition.reservedShares > 0 ? (
+            <PodCompositionPanel composition={composition} className="mt-6" />
+          ) : null}
 
           {/* Exit disclosure */}
           <section className="mt-6 rounded-xl border border-accent/40 bg-accent/5 p-6">
@@ -385,7 +400,11 @@ function PropertyDetailPage() {
             </p>
 
             <div className="mt-5">
-              <EightSlicesTracker compact retainedShares={retained} />
+              <EightSlicesTracker
+                compact
+                retainedShares={composition?.retainedShares ?? retained}
+                reservedShares={composition?.reservedShares ?? 0}
+              />
             </div>
 
             <Link
