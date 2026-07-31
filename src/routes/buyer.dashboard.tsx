@@ -94,6 +94,7 @@ function BuyerDashboardPage() {
   }
 
   const [account, setAccount] = useState<AccountView | null>(null);
+  const [authUserId, setAuthUserId] = useState<string | null>(null);
   const [members, setMembers] = useState<Member[]>([]);
   const [docs, setDocs] = useState<SignedDoc[]>([]);
   const [loading, setLoading] = useState(true);
