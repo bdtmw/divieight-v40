@@ -26,15 +26,16 @@ export function EightSlicesTracker({
   className,
 }: EightSlicesTrackerProps) {
   const hasOverride = typeof retainedProp === "number";
+  const hasReservedOverride = typeof reservedProp === "number";
   const [retained, setRetained] = useState<number>(retainedProp ?? 0);
   const [reserved, setReserved] = useState<number>(reservedProp ?? 0);
   const [loading, setLoading] = useState<boolean>(!hasOverride && !!propertyId);
   const [error, setError] = useState<string | null>(null);
 
+  // Seller-retained slices: an explicit prop wins, otherwise read the listing.
   useEffect(() => {
     if (hasOverride) {
       setRetained(retainedProp ?? 0);
-      setReserved(reservedProp ?? 0);
       return;
     }
     if (!propertyId) return;
@@ -75,15 +76,41 @@ export function EightSlicesTracker({
           ? Math.max(0, Math.min(7, effectiveRetained))
           : 0;
       setRetained(r);
-      // TODO(buyer-module): read from `reservations` / `share_holdings` when Month 2 lands.
-      setReserved(0);
       setLoading(false);
     })();
 
     return () => {
       cancelled = true;
     };
-  }, [propertyId, hasOverride, retainedProp, reservedProp]);
+  }, [propertyId, hasOverride, retainedProp]);
+
+  // Reserved slices: an explicit prop wins, otherwise count the live pod so the
+  // tracker stays in sync on the seller dashboard and listing detail pages.
+  useEffect(() => {
+    if (hasReservedOverride) {
+      setReserved(reservedProp ?? 0);
+      return;
+    }
+    if (!propertyId) {
+      setReserved(0);
+      return;
+    }
+
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("pod_reservations")
+        .select("shares_reserved")
+        .eq("property_id", propertyId)
+        .eq("status", "reserved");
+      if (cancelled) return;
+      setReserved((data ?? []).reduce((sum, r) => sum + (r.shares_reserved ?? 0), 0));
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [propertyId, hasReservedOverride, reservedProp]);
 
   const safeRetained = Math.max(0, Math.min(TOTAL_SHARES, retained));
   const safeReserved = Math.max(0, Math.min(TOTAL_SHARES - safeRetained, reserved));
