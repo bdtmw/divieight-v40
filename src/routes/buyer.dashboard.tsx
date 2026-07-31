@@ -10,6 +10,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { enrollmentDaysRemaining, enrollmentEndDate } from "@/lib/golden-ticket";
 import { cn } from "@/lib/utils";
+import { LifestylePerksConsent } from "@/components/LifestylePerksConsent";
 
 export const Route = createFileRoute("/buyer/dashboard")({
   head: () => ({
@@ -94,6 +95,7 @@ function BuyerDashboardPage() {
   }
 
   const [account, setAccount] = useState<AccountView | null>(null);
+  const [authUserId, setAuthUserId] = useState<string | null>(null);
   const [members, setMembers] = useState<Member[]>([]);
   const [docs, setDocs] = useState<SignedDoc[]>([]);
   const [loading, setLoading] = useState(true);
@@ -123,6 +125,7 @@ function BuyerDashboardPage() {
         return;
       }
       setAccount(acct as AccountView);
+      setAuthUserId(auth.user.id);
 
       const [{ data: mem }, { data: sd }] = await Promise.all([
         supabase
@@ -290,6 +293,12 @@ function BuyerDashboardPage() {
           </div>
         </div>
       </section>
+
+      {authUserId ? (
+        <LifestylePerksConsent buyerAccountId={account.id} authUserId={authUserId} />
+      ) : null}
+
+
 
       <section className="mt-6 grid gap-4 sm:grid-cols-3">
         <QuickLink

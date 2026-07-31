@@ -12,6 +12,7 @@ import { geocodePlaces } from "@/lib/geocode";
 import { getBuyerAccount } from "@/lib/buyer";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
+import { logAudit } from "@/lib/audit";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/properties/")({
@@ -208,7 +209,17 @@ function MarketplacePage() {
         else next.delete(propertyId);
         return next;
       });
+      return;
     }
+
+    await logAudit({
+      actorId: user.id,
+      actorType: "buyer",
+      actionType: isSaved ? "buyer.wishlist_removed" : "buyer.wishlist_added",
+      entityType: "wishlist",
+      entityId: propertyId,
+      metadata: { buyer_account_id: buyerAccountId, property_id: propertyId },
+    });
   }
 
   function toggleAmenity(a: string) {

@@ -41,6 +41,7 @@ function AuditLogPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [actionFilter, setActionFilter] = useState<string>("all");
+  const [actorFilter, setActorFilter] = useState<string>("all");
   const [running, setRunning] = useState(false);
   const [runResult, setRunResult] = useState<MaintenanceRunResult | null>(null);
   const [runError, setRunError] = useState<string | null>(null);
@@ -79,13 +80,26 @@ function AuditLogPage() {
   }, []);
 
   const actions = useMemo(
-    () => Array.from(new Set(rows.map((r) => r.action_type))).sort(),
+    () =>
+      Array.from(
+        new Set(
+          rows
+            .filter((r) => actorFilter === "all" || r.actor_type === actorFilter)
+            .map((r) => r.action_type),
+        ),
+      ).sort(),
+    [rows, actorFilter],
+  );
+
+  const actorTypes = useMemo(
+    () => Array.from(new Set(rows.map((r) => r.actor_type))).sort(),
     [rows],
   );
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return rows.filter((r) => {
+      if (actorFilter !== "all" && r.actor_type !== actorFilter) return false;
       if (actionFilter !== "all" && r.action_type !== actionFilter) return false;
       if (!q) return true;
       return (
@@ -96,7 +110,8 @@ function AuditLogPage() {
         JSON.stringify(r.metadata ?? {}).toLowerCase().includes(q)
       );
     });
-  }, [rows, search, actionFilter]);
+  }, [rows, search, actionFilter, actorFilter]);
+
 
   return (
     <div>
@@ -109,7 +124,7 @@ function AuditLogPage() {
             Audit log
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            Append-only record of every significant action in the Seller Module.
+            Append-only record of every significant seller and buyer action.
             Rows here cannot be edited or deleted.
           </p>
         </div>
@@ -121,6 +136,21 @@ function AuditLogPage() {
             placeholder="Search actor, entity, metadata…"
             className="h-10 w-72 rounded-md border border-input bg-background px-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
           />
+          <select
+            value={actorFilter}
+            onChange={(e) => {
+              setActorFilter(e.target.value);
+              setActionFilter("all");
+            }}
+            className="h-10 rounded-md border border-input bg-background px-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
+          >
+            <option value="all">All actors</option>
+            {actorTypes.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
           <select
             value={actionFilter}
             onChange={(e) => setActionFilter(e.target.value)}

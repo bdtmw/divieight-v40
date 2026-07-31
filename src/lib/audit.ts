@@ -35,6 +35,10 @@ export type AuditAction =
   | "buyer.priority_forfeited"
   | "buyer.share_reserved"
   | "buyer.reservation_withdrawn"
+  | "buyer.wishlist_added"
+  | "buyer.wishlist_removed"
+  | "buyer.perks_consent_given"
+  | "buyer.perks_consent_declined"
   | "substitution.pipeline_opened"
   | "substitution.pipeline_viewed"
   | "buyer.data_room_document_viewed"
@@ -47,6 +51,7 @@ export type AuditEntity =
   | "payment"
   | "media"
   | "buyer_account"
+  | "wishlist"
   | "property_document";
 
 export async function logAudit(params: {

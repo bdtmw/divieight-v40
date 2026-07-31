@@ -19,6 +19,7 @@ import { PodCompositionPanel } from "@/components/PodCompositionPanel";
 import { getBuyerAccount } from "@/lib/buyer";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
+import { logAudit } from "@/lib/audit";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/properties/$id")({
@@ -154,7 +155,16 @@ function PropertyDetailPage() {
     if (error) {
       setSaved(wasSaved);
       toast.error("Couldn't update your saved homes");
+      return;
     }
+    await logAudit({
+      actorId: user.id,
+      actorType: "buyer",
+      actionType: wasSaved ? "buyer.wishlist_removed" : "buyer.wishlist_added",
+      entityType: "wishlist",
+      entityId: id,
+      metadata: { buyer_account_id: buyerAccountId, property_id: id },
+    });
   }
 
   return (
