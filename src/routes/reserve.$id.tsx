@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { CheckCircle2, Lock, ShieldAlert, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
@@ -45,6 +45,7 @@ function ReservePage() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
+  const queryClient = useQueryClient();
 
   const fetchProperty = useServerFn(getMarketplaceProperty);
   const checkEligibility = useServerFn(checkReservationEligibility);
@@ -108,6 +109,11 @@ function ReservePage() {
     }
     setDone({ systemLocked: result.systemLocked });
     void refetch();
+    // Keep the Eight-Slices Tracker honest on the listing page and marketplace.
+    void queryClient.invalidateQueries({ queryKey: ["pod-composition", id] });
+    void queryClient.invalidateQueries({ queryKey: ["marketplace-property", id] });
+    void queryClient.invalidateQueries({ queryKey: ["marketplace-properties"] });
+    void queryClient.invalidateQueries({ queryKey: ["my-reservations"] });
     toast.success("Priority rank secured", {
       description: "Your 1/8th share is now reserved on this home.",
     });

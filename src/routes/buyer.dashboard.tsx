@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { buyerRedirect } from "@/lib/buyer";
 import { getSellerAccount } from "@/lib/seller";
 import { getMyReservations, withdrawReservation } from "@/lib/reservations.functions";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { enrollmentDaysRemaining, enrollmentEndDate } from "@/lib/golden-ticket";
@@ -64,6 +64,7 @@ function BuyerDashboardPage() {
   const navigate = useNavigate();
   const fetchMyReservations = useServerFn(getMyReservations);
   const withdraw = useServerFn(withdrawReservation);
+  const queryClient = useQueryClient();
   const {
     data: reservations = [],
     refetch: refetchReservations,
@@ -86,6 +87,9 @@ function BuyerDashboardPage() {
       if (res.ok) {
         toast.success("Reservation withdrawn. The slice has been released.");
         await refetchReservations();
+        void queryClient.invalidateQueries({ queryKey: ["pod-composition"] });
+        void queryClient.invalidateQueries({ queryKey: ["marketplace-property"] });
+        void queryClient.invalidateQueries({ queryKey: ["marketplace-properties"] });
       } else {
         toast.error("Couldn't withdraw this reservation. Please try again.");
       }

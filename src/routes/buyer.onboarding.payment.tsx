@@ -217,6 +217,14 @@ function PaymentScreen() {
     if (el.scrollTop + el.clientHeight >= el.scrollHeight - 8) setScrolledEnd(true);
   }
 
+  // On tall screens the agreement can fit without scrolling — the scroll event
+  // would then never fire and the signature block would stay locked forever.
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    if (el.scrollHeight - el.clientHeight <= 8) setScrolledEnd(true);
+  }, [pra]);
+
   async function handleConfirmSign() {
     if (!user || !buyer) return;
     const typed = signedName.trim();
@@ -301,7 +309,7 @@ function PaymentScreen() {
               <div
                 ref={scrollRef}
                 onScroll={handleScroll}
-                className="h-[440px] overflow-y-auto whitespace-pre-wrap px-6 py-5 font-serif text-sm leading-relaxed text-foreground/90"
+                className="h-[320px] overflow-y-auto sm:h-[440px] whitespace-pre-wrap px-6 py-5 font-serif text-sm leading-relaxed text-foreground/90"
               >
                 {pra}
               </div>
