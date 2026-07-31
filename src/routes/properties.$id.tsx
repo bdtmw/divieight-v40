@@ -154,7 +154,16 @@ function PropertyDetailPage() {
     if (error) {
       setSaved(wasSaved);
       toast.error("Couldn't update your saved homes");
+      return;
     }
+    await logAudit({
+      actorId: user.id,
+      actorType: "buyer",
+      actionType: wasSaved ? "buyer.wishlist_removed" : "buyer.wishlist_added",
+      entityType: "wishlist",
+      entityId: id,
+      metadata: { buyer_account_id: buyerAccountId, property_id: id },
+    });
   }
 
   return (
