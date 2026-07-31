@@ -368,6 +368,54 @@ export type Database = {
           },
         ]
       }
+      pod_reservations: {
+        Row: {
+          buyer_account_id: string
+          created_at: string
+          id: string
+          property_id: string
+          reserved_at: string
+          shares_reserved: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          buyer_account_id: string
+          created_at?: string
+          id?: string
+          property_id: string
+          reserved_at?: string
+          shares_reserved?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          buyer_account_id?: string
+          created_at?: string
+          id?: string
+          property_id?: string
+          reserved_at?: string
+          shares_reserved?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pod_reservations_buyer_account_id_fkey"
+            columns: ["buyer_account_id"]
+            isOneToOne: false
+            referencedRelation: "buyer_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pod_reservations_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       properties: {
         Row: {
           address: string
@@ -380,6 +428,8 @@ export type Database = {
           description: string | null
           encumbrances: Json
           exit_type: string | null
+          hard_locked: boolean
+          hard_locked_at: string | null
           has_co_owners: boolean
           id: string
           listing_price: number | null
@@ -406,6 +456,8 @@ export type Database = {
           description?: string | null
           encumbrances?: Json
           exit_type?: string | null
+          hard_locked?: boolean
+          hard_locked_at?: string | null
           has_co_owners?: boolean
           id?: string
           listing_price?: number | null
@@ -432,6 +484,8 @@ export type Database = {
           description?: string | null
           encumbrances?: Json
           exit_type?: string | null
+          hard_locked?: boolean
+          hard_locked_at?: string | null
           has_co_owners?: boolean
           id?: string
           listing_price?: number | null
