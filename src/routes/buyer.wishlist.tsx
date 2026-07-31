@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { getBuyerAccount } from "@/lib/buyer";
 import { logAudit } from "@/lib/audit";
+import { signPropertyPhotos } from "@/lib/media.functions";
+
 
 export const Route = createFileRoute("/buyer/wishlist")({
   head: () => ({
