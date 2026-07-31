@@ -96,11 +96,24 @@ function BuyerWishlistPage() {
             "property_id",
             list.map((r) => r.property_id),
           )
+          .eq("media_type", "photo")
           .order("display_order", { ascending: true });
+        const pathByProperty: Record<string, string> = {};
         for (const m of media ?? []) {
-          if (m.url && !mediaByProperty[m.property_id]) mediaByProperty[m.property_id] = m.url;
+          if (m.url && !pathByProperty[m.property_id]) pathByProperty[m.property_id] = m.url;
+        }
+        const paths = Object.values(pathByProperty);
+        if (paths.length > 0) {
+          const signed = await signPropertyPhotos({ data: { paths } });
+          if (cancelled) return;
+          mediaByProperty = Object.fromEntries(
+            Object.entries(pathByProperty)
+              .map(([pid, path]) => [pid, signed[path]] as const)
+              .filter(([, url]) => Boolean(url)),
+          ) as Record<string, string>;
         }
       }
+
 
       setRows(
         list.map((r) => ({
