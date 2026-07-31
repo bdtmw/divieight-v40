@@ -43,7 +43,7 @@ interface SavedRow {
 function BuyerWishlistPage() {
   const navigate = useNavigate();
   const [rows, setRows] = useState<SavedRow[]>([]);
-  const [accountId, setAccountId] = useState<string | null>(null);
+  const [authUserId, setAuthUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -61,7 +61,7 @@ function BuyerWishlistPage() {
         navigate({ to: "/buyer/register" });
         return;
       }
-      setAccountId(account.id);
+      setAuthUserId(auth.user.id);
 
       const { data } = await supabase
         .from("wishlist")
@@ -132,8 +132,9 @@ function BuyerWishlistPage() {
     }
     setRows((prev) => prev.filter((r) => r.id !== row.id));
     toast.success("Removed from your saved properties.");
-    if (accountId) {
+    if (authUserId) {
       void logAudit({
+        actorId: authUserId,
         actorType: "buyer",
         actionType: "buyer.wishlist_removed",
         entityType: "wishlist",
