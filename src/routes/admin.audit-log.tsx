@@ -80,13 +80,26 @@ function AuditLogPage() {
   }, []);
 
   const actions = useMemo(
-    () => Array.from(new Set(rows.map((r) => r.action_type))).sort(),
+    () =>
+      Array.from(
+        new Set(
+          rows
+            .filter((r) => actorFilter === "all" || r.actor_type === actorFilter)
+            .map((r) => r.action_type),
+        ),
+      ).sort(),
+    [rows, actorFilter],
+  );
+
+  const actorTypes = useMemo(
+    () => Array.from(new Set(rows.map((r) => r.actor_type))).sort(),
     [rows],
   );
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return rows.filter((r) => {
+      if (actorFilter !== "all" && r.actor_type !== actorFilter) return false;
       if (actionFilter !== "all" && r.action_type !== actionFilter) return false;
       if (!q) return true;
       return (
@@ -97,7 +110,8 @@ function AuditLogPage() {
         JSON.stringify(r.metadata ?? {}).toLowerCase().includes(q)
       );
     });
-  }, [rows, search, actionFilter]);
+  }, [rows, search, actionFilter, actorFilter]);
+
 
   return (
     <div>
