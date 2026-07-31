@@ -62,10 +62,37 @@ interface SignedDoc {
 function BuyerDashboardPage() {
   const navigate = useNavigate();
   const fetchMyReservations = useServerFn(getMyReservations);
-  const { data: reservations = [] } = useQuery({
+  const withdraw = useServerFn(withdrawReservation);
+  const {
+    data: reservations = [],
+    refetch: refetchReservations,
+  } = useQuery({
     queryKey: ["my-reservations"],
     queryFn: () => fetchMyReservations(),
   });
+  const [withdrawingId, setWithdrawingId] = useState<string | null>(null);
+
+  async function handleWithdraw(reservationId: string) {
+    if (
+      !window.confirm(
+        "Withdraw this reservation? Your slice is released back to the pod and your hold on this home ends.",
+      )
+    )
+      return;
+    setWithdrawingId(reservationId);
+    try {
+      const res = await withdraw({ data: { reservationId } });
+      if (res.ok) {
+        toast.success("Reservation withdrawn. The slice has been released.");
+        await refetchReservations();
+      } else {
+        toast.error("Couldn't withdraw this reservation. Please try again.");
+      }
+    } finally {
+      setWithdrawingId(null);
+    }
+  }
+
   const [account, setAccount] = useState<AccountView | null>(null);
   const [members, setMembers] = useState<Member[]>([]);
   const [docs, setDocs] = useState<SignedDoc[]>([]);
