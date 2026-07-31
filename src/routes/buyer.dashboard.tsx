@@ -30,7 +30,38 @@ export const Route = createFileRoute("/buyer/dashboard")({
     ],
   }),
   component: BuyerDashboardPage,
+  notFoundComponent: () => <BuyerDashboardFallback />,
+  errorComponent: () => <BuyerDashboardFallback />,
 });
+
+/** Shown when the dashboard can't resolve a buyer account (wrong role, stale link). */
+function BuyerDashboardFallback() {
+  return (
+    <div className="mx-auto max-w-2xl px-4 py-20 text-center sm:px-6">
+      <h1 className="font-display text-2xl font-semibold text-foreground">
+        Buyer dashboard unavailable
+      </h1>
+      <p className="mt-2 text-sm text-muted-foreground">
+        We couldn&apos;t load a buyer account for this session. Sign in with your buyer account, or
+        head to the seller dashboard if that&apos;s the account you use.
+      </p>
+      <div className="mt-6 flex flex-wrap justify-center gap-2">
+        <Link
+          to="/buyer/login"
+          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+        >
+          Buyer sign in
+        </Link>
+        <Link
+          to="/dashboard"
+          className="rounded-md border border-border bg-card px-4 py-2 text-sm font-medium text-foreground"
+        >
+          Seller dashboard
+        </Link>
+      </div>
+    </div>
+  );
+}
 
 interface Member {
   id: string;

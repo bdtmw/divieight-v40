@@ -53,6 +53,19 @@ export const Route = createFileRoute("/properties/$id")({
       </Link>
     </div>
   ),
+  errorComponent: () => (
+    <div className="mx-auto max-w-2xl px-4 py-20 text-center sm:px-6">
+      <h1 className="font-display text-2xl font-semibold text-foreground">
+        This listing didn&apos;t load
+      </h1>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Something went wrong fetching this home. Please try again.
+      </p>
+      <Link to="/properties" className="mt-6 inline-block text-sm font-medium text-accent">
+        Back to all homes →
+      </Link>
+    </div>
+  ),
 });
 
 const USAGE_LABELS: Record<string, string> = {
