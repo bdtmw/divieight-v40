@@ -140,7 +140,7 @@ function GoldenTicketPage() {
           Go to my dashboard
         </Link>
         <Link
-          to="/"
+          to="/properties"
           className="rounded-md border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground hover:bg-secondary"
         >
           Browse properties

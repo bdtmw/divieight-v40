@@ -192,7 +192,7 @@ function BuyerDashboardPage() {
           </div>
         ) : (
           <Link
-            to="/"
+            to="/properties"
             className="shrink-0 rounded-md border border-border bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary"
           >
             Browse properties
@@ -302,7 +302,7 @@ function BuyerDashboardPage() {
 
       <section className="mt-6 grid gap-4 sm:grid-cols-3">
         <QuickLink
-          to="/"
+          to="/properties"
           icon={<Building2 className="h-4 w-4" />}
           title="Browse properties"
           hint="Explore live 1/8th share listings"
@@ -347,7 +347,7 @@ function BuyerDashboardPage() {
             You haven&apos;t reserved a share yet. Explore homes on the marketplace to secure a priority rank.
             <div className="mt-4">
               <Link
-                to="/"
+                to="/properties"
                 className="inline-block rounded-md bg-primary px-4 py-2 text-xs font-medium text-primary-foreground"
               >
                 Browse properties
