@@ -124,7 +124,7 @@ function AuditLogPage() {
             Audit log
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            Append-only record of every significant action in the Seller Module.
+            Append-only record of every significant seller and buyer action.
             Rows here cannot be edited or deleted.
           </p>
         </div>
@@ -136,6 +136,21 @@ function AuditLogPage() {
             placeholder="Search actor, entity, metadata…"
             className="h-10 w-72 rounded-md border border-input bg-background px-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
           />
+          <select
+            value={actorFilter}
+            onChange={(e) => {
+              setActorFilter(e.target.value);
+              setActionFilter("all");
+            }}
+            className="h-10 rounded-md border border-input bg-background px-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
+          >
+            <option value="all">All actors</option>
+            {actorTypes.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
           <select
             value={actionFilter}
             onChange={(e) => setActionFilter(e.target.value)}
