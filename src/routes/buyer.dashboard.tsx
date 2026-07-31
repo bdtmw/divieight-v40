@@ -293,6 +293,12 @@ function BuyerDashboardPage() {
         </div>
       </section>
 
+      {authUserId ? (
+        <LifestylePerksConsent buyerAccountId={account.id} authUserId={authUserId} />
+      ) : null}
+
+
+
       <section className="mt-6 grid gap-4 sm:grid-cols-3">
         <QuickLink
           to="/"
