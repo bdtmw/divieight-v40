@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { getBuyerAccount } from "@/lib/buyer";
 import { logAudit } from "@/lib/audit";
-import { signPropertyPhotos } from "@/lib/media.functions";
+import { getPropertyCoverPhotos } from "@/lib/media.functions";
 
 
 export const Route = createFileRoute("/buyer/wishlist")({
@@ -89,32 +89,13 @@ function BuyerWishlistPage() {
         };
       }>;
 
-      let mediaByProperty: Record<string, string> = {};
-      if (list.length > 0) {
-        const { data: media } = await supabase
-          .from("property_media")
-          .select("property_id, url, display_order")
-          .in(
-            "property_id",
-            list.map((r) => r.property_id),
-          )
-          .eq("media_type", "photo")
-          .order("display_order", { ascending: true });
-        const pathByProperty: Record<string, string> = {};
-        for (const m of media ?? []) {
-          if (m.url && !pathByProperty[m.property_id]) pathByProperty[m.property_id] = m.url;
-        }
-        const paths = Object.values(pathByProperty);
-        if (paths.length > 0) {
-          const signed = await signPropertyPhotos({ data: { paths } });
-          if (cancelled) return;
-          mediaByProperty = Object.fromEntries(
-            Object.entries(pathByProperty)
-              .map(([pid, path]) => [pid, signed[path]] as const)
-              .filter(([, url]) => Boolean(url)),
-          ) as Record<string, string>;
-        }
-      }
+      const mediaByProperty =
+        list.length > 0
+          ? await getPropertyCoverPhotos({
+              data: { propertyIds: list.map((r) => r.property_id) },
+            })
+          : {};
+      if (cancelled) return;
 
 
       setRows(
