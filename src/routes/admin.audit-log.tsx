@@ -41,6 +41,7 @@ function AuditLogPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [actionFilter, setActionFilter] = useState<string>("all");
+  const [actorFilter, setActorFilter] = useState<string>("all");
   const [running, setRunning] = useState(false);
   const [runResult, setRunResult] = useState<MaintenanceRunResult | null>(null);
   const [runError, setRunError] = useState<string | null>(null);
