@@ -91,7 +91,10 @@ function ReservePage() {
 
   const perShare = property.listing_price != null ? property.listing_price / 8 : null;
   const composition = eligibility?.composition ?? null;
-  const blocked = eligibility && !eligibility.ok ? eligibility.reason : null;
+  const blocked =
+    eligibility && !eligibility.ok
+      ? (eligibility.reason as keyof typeof RESERVATION_BLOCK_COPY)
+      : null;
 
   async function confirm() {
     setSubmitting(true);
