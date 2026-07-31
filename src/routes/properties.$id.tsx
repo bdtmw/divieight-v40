@@ -19,6 +19,7 @@ import { PodCompositionPanel } from "@/components/PodCompositionPanel";
 import { getBuyerAccount } from "@/lib/buyer";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
+import { logAudit } from "@/lib/audit";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/properties/$id")({
