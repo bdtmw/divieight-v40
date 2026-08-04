@@ -4,6 +4,8 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { signInWithGoogle } from "@/lib/google-auth";
+import { resolveSignIn } from "@/lib/account-routing";
+
 
 import { logAudit } from "@/lib/audit";
 import { AuthCard, GoogleButton, Divider } from "@/components/AuthCard";
@@ -105,8 +107,15 @@ function BuyerRegisterPage() {
       });
     }
 
+    const outcome = data.user ? await resolveSignIn(data.user, "buyer") : { to: "/buyer/onboarding" };
+    if (outcome.error) {
+      toast.error(outcome.error);
+      navigate({ to: "/buyer/login" });
+      return;
+    }
     toast.success("Buyer account created");
-    navigate({ to: "/buyer/onboarding" });
+    navigate({ to: outcome.to! });
+
   }
 
   async function onGoogle() {
