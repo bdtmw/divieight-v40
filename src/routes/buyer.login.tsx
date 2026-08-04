@@ -3,8 +3,9 @@ import { useState, type FormEvent } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
-import { resolveSignIn, setOAuthRole } from "@/lib/account-routing";
+import { resolveSignIn } from "@/lib/account-routing";
+import { signInWithGoogle } from "@/lib/google-auth";
+
 import { AuthCard, GoogleButton, Divider } from "@/components/AuthCard";
 import { Field } from "@/components/Field";
 
@@ -76,26 +77,10 @@ function BuyerLoginPage() {
   }
 
   async function onGoogle() {
-    setOAuthRole("buyer");
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: `${window.location.origin}/auth/callback`,
-    });
-    if (result.error) {
-      toast.error(result.error.message ?? "Google sign-in failed");
-      return;
-    }
-    if (!result.redirected && "tokens" in result) {
-      const { data } = await supabase.auth.getUser();
-      if (data.user) {
-        const outcome = await resolveSignIn(data.user, "buyer");
-        if (outcome.error) {
-          toast.error(outcome.error);
-          return;
-        }
-        navigate({ to: outcome.to! });
-      }
-    }
+    const { error } = await signInWithGoogle("buyer");
+    if (error) toast.error(error);
   }
+
 
   return (
     <AuthCard
