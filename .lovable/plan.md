@@ -1,24 +1,53 @@
+# Migrate from Lovable Cloud to External Supabase.com Project
+
 ## Goal
-Recolor the site to match the divieight logo: blue primary (from the "divi" wordmark, ~#2AA6E0) with a teal accent `#46ACB4` (replacing the previous gold), on the existing warm off-white canvas.
+Point this Lovable project at your own Supabase.com project so you get the full Supabase dashboard, SQL editor, and direct project ownership, while preserving the existing sellers, buyers, properties, documents, and auth users.
 
-## Scope
-Presentation-only. No component logic, routes, or backend touched.
+## Important warnings
+- Disconnecting Lovable Cloud is **irreversible** and will permanently delete all current cloud data (database, storage, functions). We only do this after the new project is fully migrated and verified.
+- Only a workspace admin can disconnect Cloud. If you are not the admin, you will need one to complete the final step.
+- Some Lovable Cloud-only features (managed email, built-in secrets) may stop working or need manual replacement.
 
-## Changes
+## Plan
 
-**`src/styles.css`** — update design tokens only:
-- `--primary`: logo blue (~`oklch(0.66 0.13 235)`), white `--primary-foreground`. Drives CTAs, nav brand chip, primary buttons.
-- `--accent`: teal `#46ACB4` (~`oklch(0.68 0.07 200)`), dark `--accent-foreground`. Drives hero "1/8th Shares" highlight, share/ownership cues, EightSlicesTracker fills, focus ring.
-- `--ring`: match accent teal.
-- `--secondary` / `--muted`: keep neutral warm tint so blue + teal read cleanly.
-- Dark mode block: mirror the same hues at appropriate lightness (blue primary and teal accent slightly brighter for legibility on dark bg).
-- `--shadow-elegant` already derives from `var(--primary)`, so it recolors automatically.
+### 1. Prepare the external Supabase project
+- Create a new Supabase project at supabase.com in the desired region.
+- Save the project URL, anon/publishable key, service role key, and database password in a secure place.
 
-No other files change — NavBar, landing hero, dashboard cards, `EightSlicesTracker`, `ListingStatusTimeline`, onboarding stepper, and buttons all consume these tokens, so the recolor propagates everywhere.
+### 2. Connect the Supabase Integration in Lovable
+- Use the Lovable Supabase connector to link your external Supabase project to this app.
+- This injects the external Supabase credentials as environment variables so the app can talk to the new project.
 
-## Out of scope
-- The logo image itself (NavBar still uses the text "1/8" chip).
-- Any copy, layout, or structural changes.
+### 3. Export the current Lovable Cloud data
+- Open **Cloud → Advanced → Export data** to get a full database export of the current project.
+- Download the resulting SQL dump.
 
-## Verification
-Reload `/` and `/dashboard`; confirm CTAs are logo blue, hero highlight and share/status accents are teal `#46ACB4`, and contrast still reads clean in both light and dark modes.
+### 4. Re-create schema and migrate data
+- Apply the exported SQL dump to the new Supabase project (via the Supabase SQL editor or `psql`).
+- Verify that tables, RLS policies, triggers, functions, storage buckets, and auth users are present.
+
+### 5. Reconfigure the app environment
+- Update the project's Supabase environment variables to point to the new project URL and keys.
+- Rebind secrets so the server runtime picks up the new service role key.
+
+### 6. Migrate storage files
+- Download files from the existing Lovable Cloud storage buckets (property-media, property-documents, identity-documents, verification-documents).
+- Re-upload them to the matching buckets in the new Supabase project, preserving paths so database references stay valid.
+
+### 7. Verify the migration
+- Run end-to-end checks:
+  - Seller login and dashboard load.
+  - Buyer login, onboarding, and Golden Ticket flow work.
+  - Property marketplace and details pages render.
+  - Virtual Data Room and reservation flows function.
+  - Admin panel and audit log are accessible.
+- Fix any environment-specific issues (keys, bucket permissions, RLS, etc.).
+
+### 8. Disconnect Lovable Cloud
+- Once verified, a workspace admin goes to **Cloud → Advanced → Disconnect**.
+- This removes Lovable Cloud from the project. The app now runs entirely against your external Supabase project.
+
+## Open questions to confirm before starting
+1. Are you the workspace admin, or do you need to involve one for the final Cloud disconnect?
+2. Do you already have a Supabase.com project created, or should the plan include creating one?
+3. Are you comfortable pausing app changes during the migration window to avoid data drift between the old and new databases?
