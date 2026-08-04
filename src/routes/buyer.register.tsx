@@ -4,6 +4,8 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { signInWithGoogle } from "@/lib/google-auth";
+import { resolveSignIn } from "@/lib/account-routing";
+
 
 import { logAudit } from "@/lib/audit";
 import { AuthCard, GoogleButton, Divider } from "@/components/AuthCard";
