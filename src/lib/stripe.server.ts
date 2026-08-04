@@ -15,9 +15,10 @@ export type StripeEnv = "sandbox" | "live";
  */
 export function createStripeClient(_env: StripeEnv): Stripe {
   return new Stripe(getEnv("STRIPE_SECRET_KEY"), {
-    apiVersion: "2025-08-27.basil" as Stripe.LatestApiVersion,
+    apiVersion: "2026-03-25.dahlia",
   });
 }
+
 
 
 export function getStripeErrorMessage(error: unknown): string {
