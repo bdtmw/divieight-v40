@@ -47,8 +47,7 @@ function warningEmail(subject: string, body: string, recipient: string) {
 }
 
 async function sendEmail(recipient: string, subject: string, body: string) {
-  // TODO: replace `onboarding@resend.dev` with a verified sender on the
-  // divieight domain once the Resend domain is verified.
+  const { resendFrom } = await import("@/lib/email-sender");
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     console.warn("[enrollment] RESEND_API_KEY not set — skipping email", { recipient, subject });
@@ -58,13 +57,20 @@ async function sendEmail(recipient: string, subject: string, body: string) {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
     body: JSON.stringify({
-      from: "divieight <onboarding@resend.dev>",
+      from: resendFrom(),
       to: [recipient],
       subject,
       html: warningEmail(subject, body, recipient),
     }),
   });
-  if (!res.ok) console.error("[enrollment] Resend failed", res.status, await res.text());
+  if (!res.ok) {
+    console.error("[enrollment] Resend rejected the send", {
+      status: res.status,
+      recipient,
+      subject,
+      response: await res.text(),
+    });
+  }
 }
 
 /**
