@@ -105,8 +105,15 @@ function BuyerRegisterPage() {
       });
     }
 
+    const outcome = data.user ? await resolveSignIn(data.user, "buyer") : { to: "/buyer/onboarding" };
+    if (outcome.error) {
+      toast.error(outcome.error);
+      navigate({ to: "/buyer/login" });
+      return;
+    }
     toast.success("Buyer account created");
-    navigate({ to: "/buyer/onboarding" });
+    navigate({ to: outcome.to! });
+
   }
 
   async function onGoogle() {
