@@ -44,12 +44,18 @@ export async function resolveSignIn(
   const fullName = (user.user_metadata?.full_name as string) ?? "";
   const phone = (user.user_metadata?.phone as string) ?? null;
 
+  // The sessionStorage hint is lost when the user confirms via an email link in
+  // a new tab, so fall back to the account_type captured at signup.
+  const metaRole = user.user_metadata?.account_type;
+  const effectiveRole: AccountRole | null =
+    role ?? (metaRole === "buyer" || metaRole === "seller" ? metaRole : null);
+
   const [buyer, seller] = await Promise.all([
     getBuyerAccount(user.id),
     getSellerAccount(user.id),
   ]);
 
-  if (role === "buyer") {
+  if (effectiveRole === "buyer") {
     if (!buyer && seller) {
       await supabase.auth.signOut();
       return {
@@ -61,7 +67,7 @@ export async function resolveSignIn(
     return { to: account ? buyerRedirect(account.onboarding_status) : "/buyer/onboarding" };
   }
 
-  if (role === "seller") {
+  if (effectiveRole === "seller") {
     if (!seller && buyer) {
       await supabase.auth.signOut();
       return {
@@ -75,7 +81,9 @@ export async function resolveSignIn(
     return { to: await getPostLoginRedirect(user.id) };
   }
 
-  // No role hint (e.g. email confirmation link) — route by whichever profile exists.
+  // No role hint at all — route by whichever profile exists.
   if (buyer) return { to: buyerRedirect(buyer.onboarding_status) };
-  return { to: await getPostLoginRedirect(user.id) };
+  if (seller) return { to: await getPostLoginRedirect(user.id) };
+  return { to: "/" };
 }
+
