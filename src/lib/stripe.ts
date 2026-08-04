@@ -2,10 +2,13 @@ import { loadStripe, type Stripe } from "@stripe/stripe-js";
 
 type StripeEnv = "sandbox" | "live";
 
-// BYOK Stripe: prefer your own publishable key, fall back to the managed token.
+// BYOK Stripe publishable key (safe to ship in client code).
+const FALLBACK_PUBLISHABLE_KEY =
+  "pk_test_51Sk6tzGYrpmuz5ftEPPuTGl3Wh5oIeu551ifMjIRSvesdJWqTH7ARysZUZaDfbbrYfaEHYgairdsdnDilvjoaUcc00PKMNp7MB";
+
 const clientToken =
   (import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string | undefined) ||
-  (import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN as string | undefined);
+  FALLBACK_PUBLISHABLE_KEY;
 
 function paymentsEnvironment(): StripeEnv {
   if (clientToken?.startsWith("pk_test_")) return "sandbox";

@@ -1,4 +1,4 @@
-const clientToken = import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN as string | undefined;
+const clientToken = (import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string | undefined) ?? "pk_test_51Sk6tzGYrpmuz5ftEPPuTGl3Wh5oIeu551ifMjIRSvesdJWqTH7ARysZUZaDfbbrYfaEHYgairdsdnDilvjoaUcc00PKMNp7MB";
 
 export function PaymentTestModeBanner() {
   if (!clientToken) {
