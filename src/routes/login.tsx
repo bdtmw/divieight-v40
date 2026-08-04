@@ -67,27 +67,10 @@ function LoginPage() {
   }
 
   async function onGoogle() {
-    setOAuthRole("seller");
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: `${window.location.origin}/auth/callback`,
-    });
-    if (result.error) {
-      toast.error(result.error.message ?? "Google sign-in failed");
-      return;
-    }
-    if (!result.redirected && "tokens" in result) {
-      // Popup flow: session already set by the wrapper.
-      const { data } = await supabase.auth.getUser();
-      if (data.user) {
-        const outcome = await resolveSignIn(data.user, "seller");
-        if (outcome.error) {
-          toast.error(outcome.error);
-          return;
-        }
-        navigate({ to: outcome.to! });
-      }
-    }
+    const { error } = await signInWithGoogle("seller");
+    if (error) toast.error(error);
   }
+
 
   return (
     <AuthCard
