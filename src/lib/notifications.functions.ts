@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { resendFrom } from "@/lib/email-sender";
 
 type EmailKind = "identity_submitted" | "listing_live" | "enrollment_fee_paid";
 
