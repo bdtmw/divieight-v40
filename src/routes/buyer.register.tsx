@@ -110,26 +110,10 @@ function BuyerRegisterPage() {
   }
 
   async function onGoogle() {
-    setOAuthRole("buyer");
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: `${window.location.origin}/auth/callback`,
-    });
-    if (result.error) {
-      toast.error(result.error.message ?? "Google sign-in failed");
-      return;
-    }
-    if (!result.redirected && "tokens" in result) {
-      const { data } = await supabase.auth.getUser();
-      if (data.user) {
-        const outcome = await resolveSignIn(data.user, "buyer");
-        if (outcome.error) {
-          toast.error(outcome.error);
-          return;
-        }
-        navigate({ to: outcome.to! });
-      }
-    }
+    const { error } = await signInWithGoogle("buyer");
+    if (error) toast.error(error);
   }
+
 
   return (
     <AuthCard
