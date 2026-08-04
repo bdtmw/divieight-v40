@@ -55,8 +55,6 @@ export const sendNotificationEmail = createServerFn({ method: "POST" })
     const recipient = context.claims?.email as string | undefined;
     if (!recipient) return { sent: false, reason: "no_email" as const };
 
-    // TODO: Add your Resend API key. Get one at https://resend.com/api-keys
-    // then save it as RESEND_API_KEY via the secrets tool.
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) {
       console.warn("[email] RESEND_API_KEY not set — skipping email send", {
@@ -69,8 +67,6 @@ export const sendNotificationEmail = createServerFn({ method: "POST" })
     const subject = SUBJECTS[data.kind];
     const html = renderHtml(subject, BODIES[data.kind], recipient);
 
-    // TODO: replace `onboarding@resend.dev` with a verified sender on your domain
-    // (e.g. notifications@divieight.com) once your Resend domain is verified.
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -78,7 +74,7 @@ export const sendNotificationEmail = createServerFn({ method: "POST" })
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        from: "divieight <onboarding@resend.dev>",
+        from: resendFrom(),
         to: [recipient],
         subject,
         html,
@@ -87,7 +83,12 @@ export const sendNotificationEmail = createServerFn({ method: "POST" })
 
     if (!res.ok) {
       const text = await res.text();
-      console.error("[email] Resend failed", res.status, text);
+      console.error("[email] Resend rejected the send", {
+        status: res.status,
+        kind: data.kind,
+        recipient,
+        response: text,
+      });
       return { sent: false, reason: "provider_error" as const, status: res.status };
     }
     return { sent: true as const };
