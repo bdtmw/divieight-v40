@@ -121,7 +121,7 @@ export const createReservation = createServerFn({ method: "POST" })
 
     // Hard-Lock + System Lock need to bypass seller-scoped RLS on properties.
     try {
-      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { supabaseAdmin } = await import("@/integrations/supabase/admin.server");
       const applyHardLock = !before.hardLocked;
       const applySystemLock = systemLocked && before.listingStatus !== "system_lock";
       if (applyHardLock || applySystemLock) {
@@ -240,7 +240,7 @@ export const withdrawReservation = createServerFn({ method: "POST" })
     // Releasing System Lock needs to bypass seller-scoped RLS on properties.
     let candidateCount = 0;
     try {
-      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { supabaseAdmin } = await import("@/integrations/supabase/admin.server");
       const { data: property } = await supabaseAdmin
         .from("properties")
         .select(

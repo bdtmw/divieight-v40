@@ -73,7 +73,7 @@ export const getFeaturedProperties = createServerFn({ method: "GET" }).handler(
     const paths = Array.from(firstByProp.values());
     if (paths.length > 0) {
       try {
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const { supabaseAdmin } = await import("@/integrations/supabase/admin.server");
         const { data: signed } = await supabaseAdmin.storage
           .from("property-media")
           .createSignedUrls(paths, 60 * 60);

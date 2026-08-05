@@ -2,7 +2,7 @@ import type { SubstitutionCandidate, Vacancy } from "@/lib/substitution";
 import { geoOverlap, isIncompatibleIntent } from "@/lib/substitution";
 
 type AdminClient = Awaited<
-  typeof import("@/integrations/supabase/client.server")
+  typeof import("@/integrations/supabase/admin.server")
 >["supabaseAdmin"];
 
 interface PropertyLite {
