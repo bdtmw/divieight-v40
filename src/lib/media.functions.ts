@@ -10,7 +10,7 @@ export const signPropertyPhotos = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<Record<string, string>> => {
     if (data.paths.length === 0) return {};
     try {
-      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { supabaseAdmin } = await import("@/integrations/supabase/admin.server");
       const { data: signed } = await supabaseAdmin.storage
         .from("property-media")
         .createSignedUrls(data.paths, 60 * 60);
@@ -31,7 +31,7 @@ export const getPropertyCoverPhotos = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<Record<string, string>> => {
     if (data.propertyIds.length === 0) return {};
     try {
-      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { supabaseAdmin } = await import("@/integrations/supabase/admin.server");
       const { data: media, error } = await supabaseAdmin
         .from("property_media")
         .select("property_id, url, display_order")

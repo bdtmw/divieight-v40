@@ -20,7 +20,7 @@ export const getSubstitutionVacancies = createServerFn({ method: "GET" })
     });
     if (!isAdmin) throw new Error("Forbidden");
 
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/integrations/supabase/admin.server");
     const { buildVacancies } = await import("@/lib/substitution.server");
     const vacancies = await buildVacancies(supabaseAdmin);
 

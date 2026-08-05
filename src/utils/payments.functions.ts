@@ -126,7 +126,7 @@ export const confirmEnrollmentPayment = createServerFn({ method: "POST" })
       const paid = session.payment_status === "paid";
       if (!paid) return { paid: false };
 
-      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { supabaseAdmin } = await import("@/integrations/supabase/admin.server");
       await supabaseAdmin
         .from("enrollment_payments")
         .update({ status: "paid" })
@@ -230,7 +230,7 @@ export const confirmBuyerEnrollmentPayment = createServerFn({ method: "POST" })
       }
       if (session.payment_status !== "paid") return { paid: false };
 
-      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { supabaseAdmin } = await import("@/integrations/supabase/admin.server");
 
       await supabaseAdmin
         .from("buyer_enrollment_payments")

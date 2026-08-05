@@ -54,7 +54,7 @@ export const getDataRoom = createServerFn({ method: "GET" })
 
     if (rows.length > 0) {
       try {
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const { supabaseAdmin } = await import("@/integrations/supabase/admin.server");
         const { data: signed } = await supabaseAdmin.storage
           .from("property-documents")
           .createSignedUrls(

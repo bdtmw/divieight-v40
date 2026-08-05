@@ -83,7 +83,7 @@ async function sendEmail(recipient: string, subject: string, body: string) {
  */
 export const runEnrollmentMaintenance = createServerFn({ method: "POST" }).handler(
   async (): Promise<MaintenanceRunResult> => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { supabaseAdmin } = await import("@/integrations/supabase/admin.server");
 
     const { data: accounts, error } = await supabaseAdmin
       .from("buyer_accounts")
