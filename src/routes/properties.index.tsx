@@ -523,7 +523,9 @@ function PropertyCard({
 
         {incompatible ? (
           <p className="mt-3 rounded-md bg-muted px-3 py-2 text-[11px] text-muted-foreground">
-            Doesn't match your stated ownership intent.
+            {p.usage_tag === "short_term_rental"
+              ? "Short-Term Rental Only / No Personal Use"
+              : "Doesn't match your stated ownership intent."}
           </p>
         ) : null}
 
