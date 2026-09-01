@@ -104,6 +104,7 @@ function AgentRegisterPage() {
           license_number: data.licenseNumber,
           license_state: data.licenseState,
           service_area: data.serviceArea,
+        },
       },
     });
     setSubmitting(false);
