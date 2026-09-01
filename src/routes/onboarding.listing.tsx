@@ -266,12 +266,11 @@ function ListingScreen() {
             </div>
 
             <div className="mt-5">
-              <Field
+              <CurrencyInput
                 label="Listing price (total property, USD)"
                 name="listing_price"
-                inputMode="decimal"
-                value={priceStr}
-                onChange={(e) => setPriceStr(e.target.value)}
+                value={priceStr.replace(/[^0-9]/g, "")}
+                onValueChange={setPriceStr}
                 error={errors.listing_price}
                 hint={
                   listingPrice > 0
