@@ -67,7 +67,21 @@ export async function resolveSignIn(
     }
     if (agent) return { to: agentRedirect(agent.onboarding_status) };
 
-    const draft = consumeAgentDraft();
+    // sessionStorage is empty when the confirmation link opens in another
+    // tab/browser, so fall back to the profile captured in user metadata.
+    const meta = user.user_metadata ?? {};
+    const draft =
+      consumeAgentDraft() ??
+      (meta.agent_role
+        ? {
+            fullName: fullName,
+            phone: phone ?? "",
+            role: meta.agent_role as never,
+            licenseNumber: String(meta.license_number ?? ""),
+            licenseState: String(meta.license_state ?? ""),
+            serviceArea: String(meta.service_area ?? ""),
+          }
+        : null);
     if (!draft) {
       return { to: "/agent/register" };
     }
