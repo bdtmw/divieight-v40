@@ -61,9 +61,9 @@ function money(n: number | null | undefined) {
 }
 
 /**
- * A buyer whose stated intent is long-term personal use conflicts with a
- * short-term-rental-only home, and an income-focused buyer conflicts with an
- * owner-occupied-only home.
+ * Compatibility filter: aligning intended use (Personal Use vs. Short-Term
+ * Rental). A Personal Use buyer conflicts with a short-term-rental-only home,
+ * and an income-focused buyer conflicts with an owner-occupied-only home.
  */
 function isIncompatible(intent: string | null, usageTag: string | null): boolean {
   if (!intent || !usageTag) return false;
@@ -399,7 +399,8 @@ function MarketplacePage() {
             </p>
             {buyerIntent ? (
               <p className="text-xs text-muted-foreground">
-                Compatibility filter on — homes that conflict with your stated intent are dimmed.
+                Compatibility filter on — aligning intended use (Personal Use vs. Short-Term
+                Rental); homes that conflict with your stated intent are dimmed.
               </p>
             ) : null}
           </div>
@@ -522,7 +523,9 @@ function PropertyCard({
 
         {incompatible ? (
           <p className="mt-3 rounded-md bg-muted px-3 py-2 text-[11px] text-muted-foreground">
-            Doesn't match your stated ownership intent.
+            {p.usage_tag === "short_term_rental"
+              ? "Short-Term Rental Only / No Personal Use"
+              : "Doesn't match your stated ownership intent."}
           </p>
         ) : null}
 
