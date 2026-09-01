@@ -54,7 +54,7 @@ async function simulateOcrExtraction(_file: File): Promise<ExtractedFields> {
 const INTENTS = [
   {
     value: "long_term",
-    title: "Standard Long-Term Investment",
+    title: "Personal Use (long-term ownership)",
     subtitle: "Personal use",
     body: "You plan to use the home yourself and hold your shares long term.",
   },

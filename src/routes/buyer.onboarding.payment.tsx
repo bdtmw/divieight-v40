@@ -51,7 +51,7 @@ function buildPRA(name: string, buyer: BuyerRow | null) {
   const intent =
     buyer?.intent === "short_term_rental"
       ? "Short-Term Rental (income-focused) use"
-      : "Standard Long-Term Investment (personal) use";
+      : "Personal Use (long-term ownership)";
 
   return `PRIORITY RESERVATION AGREEMENT (PRA)
 Document Version: ${DOCUMENT_VERSION}
