@@ -42,6 +42,9 @@ export interface AgentRow {
   service_area: string;
   broker_id: string | null;
   onboarding_status: string;
+  license_verified: boolean | null;
+  license_verified_at: string | null;
+  arello_pending_since: string | null;
   created_at: string;
 }
 
