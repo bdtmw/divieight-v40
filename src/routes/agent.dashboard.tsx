@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { getAgentProfile, agentRedirect, AGENT_ROLE_LABELS, type AgentRow } from "@/lib/agent";
+import { AgentPendingBanner } from "@/components/AgentPendingBanner";
 
 export const Route = createFileRoute("/agent/dashboard")({
   head: () => ({
@@ -45,6 +46,9 @@ function AgentDashboard() {
 
   return (
     <div className="space-y-8">
+      <AgentPendingBanner agent={agent} onUpdated={setAgent} />
+
+
       <header className="space-y-2">
         <p className="text-xs font-medium uppercase tracking-[0.2em] text-accent">
           {AGENT_ROLE_LABELS[agent.role]}
