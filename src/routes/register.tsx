@@ -150,6 +150,13 @@ function RegisterPage() {
           error={errors.email}
           required
         />
+        {errors.email?.includes("already exists") ? (
+          <p className="-mt-2 text-xs text-muted-foreground">
+            <Link to="/login" className="font-medium text-foreground hover:text-accent">
+              Go to sign in
+            </Link>
+          </p>
+        ) : null}
         <Field
           label="Phone number"
           type="tel"
