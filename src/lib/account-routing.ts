@@ -2,8 +2,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { buyerRedirect, ensureBuyerAccount, getBuyerAccount } from "@/lib/buyer";
 import { ensureSellerAccount, getSellerAccount } from "@/lib/seller";
 import { getPostLoginRedirect } from "@/lib/post-login";
+import { agentRedirect, consumeAgentDraft, createAgentProfile, getAgentProfile } from "@/lib/agent";
 
-export type AccountRole = "buyer" | "seller";
+export type AccountRole = "buyer" | "seller" | "agent";
 
 const ROLE_KEY = "divieight.oauth_role";
 
@@ -20,7 +21,7 @@ export function consumeOAuthRole(): AccountRole | null {
   try {
     const value = sessionStorage.getItem(ROLE_KEY);
     sessionStorage.removeItem(ROLE_KEY);
-    return value === "buyer" || value === "seller" ? value : null;
+    return value === "buyer" || value === "seller" || value === "agent" ? value : null;
   } catch {
     return null;
   }

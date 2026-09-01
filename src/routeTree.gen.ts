@@ -47,6 +47,7 @@ import { Route as BuyerDashboardRouteImport } from './routes/buyer.dashboard'
 import { Route as BuyerAdverseActionRouteImport } from './routes/buyer.adverse-action'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AgentRegisterRouteImport } from './routes/agent.register'
+import { Route as AgentLoginRouteImport } from './routes/agent.login'
 import { Route as AgentDashboardRouteImport } from './routes/agent.dashboard'
 import { Route as AdminSubstitutionsRouteImport } from './routes/admin.substitutions'
 import { Route as AdminSellersRouteImport } from './routes/admin.sellers'
@@ -255,6 +256,11 @@ const AgentRegisterRoute = AgentRegisterRouteImport.update({
   path: '/register',
   getParentRoute: () => AgentRoute,
 } as any)
+const AgentLoginRoute = AgentLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AgentRoute,
+} as any)
 const AgentDashboardRoute = AgentDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -366,6 +372,7 @@ export interface FileRoutesByFullPath {
   '/admin/sellers': typeof AdminSellersRoute
   '/admin/substitutions': typeof AdminSubstitutionsRoute
   '/agent/dashboard': typeof AgentDashboardRoute
+  '/agent/login': typeof AgentLoginRoute
   '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
@@ -420,6 +427,7 @@ export interface FileRoutesByTo {
   '/admin/sellers': typeof AdminSellersRoute
   '/admin/substitutions': typeof AdminSubstitutionsRoute
   '/agent/dashboard': typeof AgentDashboardRoute
+  '/agent/login': typeof AgentLoginRoute
   '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
@@ -478,6 +486,7 @@ export interface FileRoutesById {
   '/admin/sellers': typeof AdminSellersRoute
   '/admin/substitutions': typeof AdminSubstitutionsRoute
   '/agent/dashboard': typeof AgentDashboardRoute
+  '/agent/login': typeof AgentLoginRoute
   '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
@@ -537,6 +546,7 @@ export interface FileRouteTypes {
     | '/admin/sellers'
     | '/admin/substitutions'
     | '/agent/dashboard'
+    | '/agent/login'
     | '/agent/register'
     | '/auth/callback'
     | '/buyer/adverse-action'
@@ -591,6 +601,7 @@ export interface FileRouteTypes {
     | '/admin/sellers'
     | '/admin/substitutions'
     | '/agent/dashboard'
+    | '/agent/login'
     | '/agent/register'
     | '/auth/callback'
     | '/buyer/adverse-action'
@@ -648,6 +659,7 @@ export interface FileRouteTypes {
     | '/admin/sellers'
     | '/admin/substitutions'
     | '/agent/dashboard'
+    | '/agent/login'
     | '/agent/register'
     | '/auth/callback'
     | '/buyer/adverse-action'
@@ -996,6 +1008,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentRegisterRouteImport
       parentRoute: typeof AgentRoute
     }
+    '/agent/login': {
+      id: '/agent/login'
+      path: '/login'
+      fullPath: '/agent/login'
+      preLoaderRoute: typeof AgentLoginRouteImport
+      parentRoute: typeof AgentRoute
+    }
     '/agent/dashboard': {
       id: '/agent/dashboard'
       path: '/dashboard'
@@ -1146,6 +1165,7 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface AgentRouteChildren {
   AgentDashboardRoute: typeof AgentDashboardRoute
+  AgentLoginRoute: typeof AgentLoginRoute
   AgentRegisterRoute: typeof AgentRegisterRoute
   AgentIndexRoute: typeof AgentIndexRoute
   AgentOnboardingLicenseCheckRoute: typeof AgentOnboardingLicenseCheckRoute
@@ -1153,6 +1173,7 @@ interface AgentRouteChildren {
 
 const AgentRouteChildren: AgentRouteChildren = {
   AgentDashboardRoute: AgentDashboardRoute,
+  AgentLoginRoute: AgentLoginRoute,
   AgentRegisterRoute: AgentRegisterRoute,
   AgentIndexRoute: AgentIndexRoute,
   AgentOnboardingLicenseCheckRoute: AgentOnboardingLicenseCheckRoute,
