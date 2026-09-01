@@ -45,6 +45,9 @@ function AgentDashboard() {
 
   return (
     <div className="space-y-8">
+      <AgentPendingBanner agent={agent} onUpdated={setAgent} />
+
+
       <header className="space-y-2">
         <p className="text-xs font-medium uppercase tracking-[0.2em] text-accent">
           {AGENT_ROLE_LABELS[agent.role]}
