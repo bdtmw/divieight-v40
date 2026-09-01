@@ -64,6 +64,7 @@ import { Route as BuyerOnboardingLiquidityRouteImport } from './routes/buyer.onb
 import { Route as BuyerOnboardingLifestyleRouteImport } from './routes/buyer.onboarding.lifestyle'
 import { Route as BuyerOnboardingIdentityRouteImport } from './routes/buyer.onboarding.identity'
 import { Route as ApiPublicEnrollmentMaintenanceRouteImport } from './routes/api.public.enrollment-maintenance'
+import { Route as AgentOnboardingLicenseDetailsRouteImport } from './routes/agent.onboarding.license-details'
 import { Route as AgentOnboardingLicenseCheckRouteImport } from './routes/agent.onboarding.license-check'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -344,6 +345,12 @@ const ApiPublicEnrollmentMaintenanceRoute =
     path: '/api/public/enrollment-maintenance',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AgentOnboardingLicenseDetailsRoute =
+  AgentOnboardingLicenseDetailsRouteImport.update({
+    id: '/onboarding/license-details',
+    path: '/onboarding/license-details',
+    getParentRoute: () => AgentRoute,
+  } as any)
 const AgentOnboardingLicenseCheckRoute =
   AgentOnboardingLicenseCheckRouteImport.update({
     id: '/onboarding/license-check',
@@ -401,6 +408,7 @@ export interface FileRoutesByFullPath {
   '/properties/': typeof PropertiesIndexRoute
   '/reset-password/': typeof ResetPasswordIndexRoute
   '/agent/onboarding/license-check': typeof AgentOnboardingLicenseCheckRoute
+  '/agent/onboarding/license-details': typeof AgentOnboardingLicenseDetailsRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -456,6 +464,7 @@ export interface FileRoutesByTo {
   '/properties': typeof PropertiesIndexRoute
   '/reset-password': typeof ResetPasswordIndexRoute
   '/agent/onboarding/license-check': typeof AgentOnboardingLicenseCheckRoute
+  '/agent/onboarding/license-details': typeof AgentOnboardingLicenseDetailsRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -515,6 +524,7 @@ export interface FileRoutesById {
   '/properties/': typeof PropertiesIndexRoute
   '/reset-password/': typeof ResetPasswordIndexRoute
   '/agent/onboarding/license-check': typeof AgentOnboardingLicenseCheckRoute
+  '/agent/onboarding/license-details': typeof AgentOnboardingLicenseDetailsRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -575,6 +585,7 @@ export interface FileRouteTypes {
     | '/properties/'
     | '/reset-password/'
     | '/agent/onboarding/license-check'
+    | '/agent/onboarding/license-details'
     | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -630,6 +641,7 @@ export interface FileRouteTypes {
     | '/properties'
     | '/reset-password'
     | '/agent/onboarding/license-check'
+    | '/agent/onboarding/license-details'
     | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -688,6 +700,7 @@ export interface FileRouteTypes {
     | '/properties/'
     | '/reset-password/'
     | '/agent/onboarding/license-check'
+    | '/agent/onboarding/license-details'
     | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -1127,6 +1140,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicEnrollmentMaintenanceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/agent/onboarding/license-details': {
+      id: '/agent/onboarding/license-details'
+      path: '/onboarding/license-details'
+      fullPath: '/agent/onboarding/license-details'
+      preLoaderRoute: typeof AgentOnboardingLicenseDetailsRouteImport
+      parentRoute: typeof AgentRoute
+    }
     '/agent/onboarding/license-check': {
       id: '/agent/onboarding/license-check'
       path: '/onboarding/license-check'
@@ -1169,6 +1189,7 @@ interface AgentRouteChildren {
   AgentRegisterRoute: typeof AgentRegisterRoute
   AgentIndexRoute: typeof AgentIndexRoute
   AgentOnboardingLicenseCheckRoute: typeof AgentOnboardingLicenseCheckRoute
+  AgentOnboardingLicenseDetailsRoute: typeof AgentOnboardingLicenseDetailsRoute
 }
 
 const AgentRouteChildren: AgentRouteChildren = {
@@ -1177,6 +1198,7 @@ const AgentRouteChildren: AgentRouteChildren = {
   AgentRegisterRoute: AgentRegisterRoute,
   AgentIndexRoute: AgentIndexRoute,
   AgentOnboardingLicenseCheckRoute: AgentOnboardingLicenseCheckRoute,
+  AgentOnboardingLicenseDetailsRoute: AgentOnboardingLicenseDetailsRoute,
 }
 
 const AgentRouteWithChildren = AgentRoute._addFileChildren(AgentRouteChildren)
