@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { NavBar } from "@/components/NavBar";
 import { Toaster } from "sonner";
 import { SiteFooter } from "@/components/SiteFooter";
+import { supabase } from "@/integrations/supabase/client";
 
 function NotFoundComponent() {
   return (
@@ -136,8 +137,25 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+/**
+ * A recovery link produces a PASSWORD_RECOVERY session, which must NOT be
+ * treated as a normal sign-in. Send those users to the set-new-password form.
+ */
+function usePasswordRecoveryRedirect() {
+  const router = useRouter();
+  useEffect(() => {
+    const { data } = supabase.auth.onAuthStateChange((event) => {
+      if (event !== "PASSWORD_RECOVERY") return;
+      if (window.location.pathname.startsWith("/reset-password/confirm")) return;
+      router.navigate({ to: "/reset-password/confirm" });
+    });
+    return () => data.subscription.unsubscribe();
+  }, [router]);
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  usePasswordRecoveryRedirect();
 
   return (
     <QueryClientProvider client={queryClient}>
