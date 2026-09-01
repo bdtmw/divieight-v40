@@ -13,17 +13,20 @@ export function NavBar() {
   const { user, loading } = useAuth();
   const { isAdmin } = useAdmin();
   const navigate = useNavigate();
-  const [isBuyer, setIsBuyer] = useState<boolean | null>(null);
+  const [portal, setPortal] = useState<"buyer" | "seller" | "agent" | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     if (!user) {
-      setIsBuyer(null);
+      setPortal(null);
       return;
     }
-    getBuyerAccount(user.id).then((account) => {
-      if (!cancelled) setIsBuyer(Boolean(account));
-    });
+    Promise.all([getBuyerAccount(user.id), getAgentProfile(user.id)]).then(
+      ([buyer, agent]) => {
+        if (cancelled) return;
+        setPortal(agent ? "agent" : buyer ? "buyer" : "seller");
+      },
+    );
     return () => {
       cancelled = true;
     };
