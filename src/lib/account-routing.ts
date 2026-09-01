@@ -49,19 +49,47 @@ export async function resolveSignIn(
   // a new tab, so fall back to the account_type captured at signup.
   const metaRole = user.user_metadata?.account_type;
   const effectiveRole: AccountRole | null =
-    role ?? (metaRole === "buyer" || metaRole === "seller" ? metaRole : null);
+    role ??
+    (metaRole === "buyer" || metaRole === "seller" || metaRole === "agent" ? metaRole : null);
 
-  const [buyer, seller] = await Promise.all([
+  const [buyer, seller, agent] = await Promise.all([
     getBuyerAccount(user.id),
     getSellerAccount(user.id),
+    getAgentProfile(user.id),
   ]);
 
-  if (effectiveRole === "buyer") {
-    if (!buyer && seller) {
+  if (effectiveRole === "agent") {
+    if (!agent && (buyer || seller)) {
       await supabase.auth.signOut();
       return {
-        error:
-          "This email is already registered as a seller account. Please sign in as a seller instead.",
+        error: `This email is already registered as a ${buyer ? "buyer" : "seller"} account. Please use a different email for your professional account.`,
+      };
+    }
+    if (agent) return { to: agentRedirect(agent.onboarding_status) };
+
+    const draft = consumeAgentDraft();
+    if (!draft) {
+      return { to: "/agent/register" };
+    }
+    const created = await createAgentProfile({
+      userId: user.id,
+      fullName: draft.fullName || fullName,
+      email,
+      phone: draft.phone || phone,
+      role: draft.role,
+      licenseNumber: draft.licenseNumber,
+      licenseState: draft.licenseState,
+      serviceArea: draft.serviceArea,
+    });
+    if (created.error) return { error: created.error };
+    return { to: agentRedirect(created.agent?.onboarding_status ?? "arello_pending") };
+  }
+
+  if (effectiveRole === "buyer") {
+    if (!buyer && (seller || agent)) {
+      await supabase.auth.signOut();
+      return {
+        error: `This email is already registered as ${seller ? "a seller" : "an agent"} account. Please sign in from that portal instead.`,
       };
     }
     const account = buyer ?? (await ensureBuyerAccount({ userId: user.id, email, phone, fullName }));
@@ -69,11 +97,10 @@ export async function resolveSignIn(
   }
 
   if (effectiveRole === "seller") {
-    if (!seller && buyer) {
+    if (!seller && (buyer || agent)) {
       await supabase.auth.signOut();
       return {
-        error:
-          "This email is already registered as a buyer account. Please sign in as a buyer instead.",
+        error: `This email is already registered as ${buyer ? "a buyer" : "an agent"} account. Please sign in from that portal instead.`,
       };
     }
     if (!seller) {
@@ -83,6 +110,7 @@ export async function resolveSignIn(
   }
 
   // No role hint at all — route by whichever profile exists.
+  if (agent) return { to: agentRedirect(agent.onboarding_status) };
   if (buyer) return { to: buyerRedirect(buyer.onboarding_status) };
   if (seller) return { to: await getPostLoginRedirect(user.id) };
   return { to: "/" };
