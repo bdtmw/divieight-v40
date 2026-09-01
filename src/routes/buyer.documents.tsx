@@ -2,6 +2,10 @@ import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  BLOCK_5_DOCUMENT_TYPE,
+  BLOCK_5_TEXT,
+} from "@/components/Block5AdviceNotice";
 
 export const Route = createFileRoute("/buyer/documents")({
   head: () => ({
@@ -35,6 +39,7 @@ interface SignedDoc {
 const LABELS: Record<string, string> = {
   PRA: "Priority Reservation Agreement",
   HOLD_HARMLESS: "Hold Harmless & Background Check Consent",
+  [BLOCK_5_DOCUMENT_TYPE]: "Independent Professional Advice Acknowledgment",
 };
 
 function BuyerDocumentsPage() {
@@ -120,6 +125,13 @@ function BuyerDocumentsPage() {
             </div>
           ))
         )}
+      </div>
+
+      <div className="mt-6 rounded-xl border border-border bg-card p-6">
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+          Block 5 · Independent professional advice
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-foreground/90">{BLOCK_5_TEXT}</p>
       </div>
 
       <Link

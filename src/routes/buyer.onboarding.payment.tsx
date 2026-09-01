@@ -9,6 +9,11 @@ import { BuyerEnrollmentCheckout } from "@/components/BuyerEnrollmentCheckout";
 import { formatUsd, getStripeEnvironment } from "@/lib/stripe";
 import { confirmBuyerEnrollmentPayment } from "@/utils/payments.functions";
 import { logAudit } from "@/lib/audit";
+import {
+  Block5AdviceNotice,
+  BLOCK_5_DOCUMENT_TYPE,
+  type Block5Member,
+} from "@/components/Block5AdviceNotice";
 
 export const Route = createFileRoute("/buyer/onboarding/payment")({
   validateSearch: (search: Record<string, unknown>): { session_id?: string } => ({
@@ -132,6 +137,10 @@ function PaymentScreen() {
   const [submitting, setSubmitting] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Block 5 — Independent Professional Advice gate (precedes PRA review).
+  const [members, setMembers] = useState<Block5Member[]>([]);
+  const [adviceAccepted, setAdviceAccepted] = useState(false);
+
   useEffect(() => {
     if (loading) return;
     if (!user) {
@@ -156,15 +165,26 @@ function PaymentScreen() {
         setRankStamp(account.priority_rank_timestamp);
       }
 
-      const { data: member } = await supabase
-        .from("account_members")
-        .select("full_name")
-        .eq("buyer_account_id", account.id)
-        .eq("role", "primary")
-        .maybeSingle();
+      const [{ data: roster }, { data: block5 }] = await Promise.all([
+        supabase
+          .from("account_members")
+          .select("id, full_name, role")
+          .eq("buyer_account_id", account.id)
+          .order("created_at", { ascending: true }),
+        supabase
+          .from("signed_documents")
+          .select("id")
+          .eq("buyer_account_id", account.id)
+          .eq("document_type", BLOCK_5_DOCUMENT_TYPE)
+          .limit(1),
+      ]);
       if (cancelled) return;
-      setMemberName(member?.full_name ?? "");
-      setSignedName((member?.full_name ?? "").trim());
+      const list = (roster as Block5Member[]) ?? [];
+      const primary = list.find((m) => m.role === "primary") ?? list[0];
+      setMembers(list);
+      setAdviceAccepted((block5?.length ?? 0) > 0);
+      setMemberName(primary?.full_name ?? "");
+      setSignedName((primary?.full_name ?? "").trim());
       setChecking(false);
     })();
     return () => {
@@ -303,6 +323,13 @@ function PaymentScreen() {
 
         {checking ? (
           <div className="mt-10 h-64 animate-pulse rounded-xl border border-border bg-muted/40" />
+        ) : !adviceAccepted && buyer && user ? (
+          <Block5AdviceNotice
+            buyerAccountId={buyer.id}
+            actorId={user.id}
+            members={members}
+            onAccepted={() => setAdviceAccepted(true)}
+          />
         ) : (
           <>
             <div className="mt-8 overflow-hidden rounded-xl border border-border bg-card shadow-sm">
