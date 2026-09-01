@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { getAgentProfile, agentRedirect, AGENT_ROLE_LABELS, type AgentRow } from "@/lib/agent";
+import { AgentPendingBanner } from "@/components/AgentPendingBanner";
 
 export const Route = createFileRoute("/agent/dashboard")({
   head: () => ({
