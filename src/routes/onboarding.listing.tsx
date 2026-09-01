@@ -194,6 +194,8 @@ function ListingScreen() {
       })
       .eq("id", property.id);
 
+    if (!updateErr) await markListingStep(property.id, "listing_creation");
+
     if (updateErr) {
       setSubmitting(false);
       toast.error(updateErr.message);

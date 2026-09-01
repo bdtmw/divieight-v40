@@ -179,6 +179,8 @@ function PropertyScreen() {
       return;
     }
 
+    await markListingStep(property.id, "property_authority");
+
     const { error: sellerErr } = await supabase
       .from("sellers")
       .update({ onboarding_status: "listing_creation_pending" })
