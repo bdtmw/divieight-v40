@@ -104,6 +104,9 @@ export function agentRedirect(onboardingStatus: string): string {
     case "not_started":
     case "arello_pending":
       return "/agent/onboarding/license-check";
+    // Registry unavailable: the agent keeps moving through onboarding while
+    // the background retry runs; only final activation is blocked.
+    case "arello_pending_retry":
     case "insurance_pending":
       return "/agent/onboarding/insurance";
     case "fincen_pending":
