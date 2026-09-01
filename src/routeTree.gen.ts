@@ -62,6 +62,7 @@ import { Route as BuyerOnboardingLiquidityRouteImport } from './routes/buyer.onb
 import { Route as BuyerOnboardingLifestyleRouteImport } from './routes/buyer.onboarding.lifestyle'
 import { Route as BuyerOnboardingIdentityRouteImport } from './routes/buyer.onboarding.identity'
 import { Route as ApiPublicEnrollmentMaintenanceRouteImport } from './routes/api.public.enrollment-maintenance'
+import { Route as AgentOnboardingLicenseCheckRouteImport } from './routes/agent.onboarding.license-check'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -331,6 +332,12 @@ const ApiPublicEnrollmentMaintenanceRoute =
     path: '/api/public/enrollment-maintenance',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AgentOnboardingLicenseCheckRoute =
+  AgentOnboardingLicenseCheckRouteImport.update({
+    id: '/onboarding/license-check',
+    path: '/onboarding/license-check',
+    getParentRoute: () => AgentRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -379,6 +386,7 @@ export interface FileRoutesByFullPath {
   '/onboarding/': typeof OnboardingIndexRoute
   '/properties/': typeof PropertiesIndexRoute
   '/reset-password/': typeof ResetPasswordIndexRoute
+  '/agent/onboarding/license-check': typeof AgentOnboardingLicenseCheckRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -431,6 +439,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingIndexRoute
   '/properties': typeof PropertiesIndexRoute
   '/reset-password': typeof ResetPasswordIndexRoute
+  '/agent/onboarding/license-check': typeof AgentOnboardingLicenseCheckRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -487,6 +496,7 @@ export interface FileRoutesById {
   '/onboarding/': typeof OnboardingIndexRoute
   '/properties/': typeof PropertiesIndexRoute
   '/reset-password/': typeof ResetPasswordIndexRoute
+  '/agent/onboarding/license-check': typeof AgentOnboardingLicenseCheckRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -544,6 +554,7 @@ export interface FileRouteTypes {
     | '/onboarding/'
     | '/properties/'
     | '/reset-password/'
+    | '/agent/onboarding/license-check'
     | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -596,6 +607,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/properties'
     | '/reset-password'
+    | '/agent/onboarding/license-check'
     | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -651,6 +663,7 @@ export interface FileRouteTypes {
     | '/onboarding/'
     | '/properties/'
     | '/reset-password/'
+    | '/agent/onboarding/license-check'
     | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -1076,6 +1089,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicEnrollmentMaintenanceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/agent/onboarding/license-check': {
+      id: '/agent/onboarding/license-check'
+      path: '/onboarding/license-check'
+      fullPath: '/agent/onboarding/license-check'
+      preLoaderRoute: typeof AgentOnboardingLicenseCheckRouteImport
+      parentRoute: typeof AgentRoute
+    }
   }
 }
 
@@ -1108,11 +1128,13 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 interface AgentRouteChildren {
   AgentDashboardRoute: typeof AgentDashboardRoute
   AgentIndexRoute: typeof AgentIndexRoute
+  AgentOnboardingLicenseCheckRoute: typeof AgentOnboardingLicenseCheckRoute
 }
 
 const AgentRouteChildren: AgentRouteChildren = {
   AgentDashboardRoute: AgentDashboardRoute,
   AgentIndexRoute: AgentIndexRoute,
+  AgentOnboardingLicenseCheckRoute: AgentOnboardingLicenseCheckRoute,
 }
 
 const AgentRouteWithChildren = AgentRoute._addFileChildren(AgentRouteChildren)
