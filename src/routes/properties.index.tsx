@@ -61,9 +61,9 @@ function money(n: number | null | undefined) {
 }
 
 /**
- * A buyer whose stated intent is long-term personal use conflicts with a
- * short-term-rental-only home, and an income-focused buyer conflicts with an
- * owner-occupied-only home.
+ * Compatibility filter: aligning intended use (Personal Use vs. Short-Term
+ * Rental). A Personal Use buyer conflicts with a short-term-rental-only home,
+ * and an income-focused buyer conflicts with an owner-occupied-only home.
  */
 function isIncompatible(intent: string | null, usageTag: string | null): boolean {
   if (!intent || !usageTag) return false;
