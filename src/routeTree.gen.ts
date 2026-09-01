@@ -46,6 +46,7 @@ import { Route as BuyerDocumentsRouteImport } from './routes/buyer.documents'
 import { Route as BuyerDashboardRouteImport } from './routes/buyer.dashboard'
 import { Route as BuyerAdverseActionRouteImport } from './routes/buyer.adverse-action'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
+import { Route as AgentDashboardRouteImport } from './routes/agent.dashboard'
 import { Route as AdminSubstitutionsRouteImport } from './routes/admin.substitutions'
 import { Route as AdminSellersRouteImport } from './routes/admin.sellers'
 import { Route as AdminPropertiesRouteImport } from './routes/admin.properties'
@@ -247,6 +248,11 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
   path: '/auth/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AgentDashboardRoute = AgentDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AgentRoute,
+} as any)
 const AdminSubstitutionsRoute = AdminSubstitutionsRouteImport.update({
   id: '/substitutions',
   path: '/substitutions',
@@ -346,6 +352,7 @@ export interface FileRoutesByFullPath {
   '/admin/properties': typeof AdminPropertiesRoute
   '/admin/sellers': typeof AdminSellersRoute
   '/admin/substitutions': typeof AdminSubstitutionsRoute
+  '/agent/dashboard': typeof AgentDashboardRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
@@ -397,6 +404,7 @@ export interface FileRoutesByTo {
   '/admin/properties': typeof AdminPropertiesRoute
   '/admin/sellers': typeof AdminSellersRoute
   '/admin/substitutions': typeof AdminSubstitutionsRoute
+  '/agent/dashboard': typeof AgentDashboardRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
@@ -452,6 +460,7 @@ export interface FileRoutesById {
   '/admin/properties': typeof AdminPropertiesRoute
   '/admin/sellers': typeof AdminSellersRoute
   '/admin/substitutions': typeof AdminSubstitutionsRoute
+  '/agent/dashboard': typeof AgentDashboardRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
@@ -508,6 +517,7 @@ export interface FileRouteTypes {
     | '/admin/properties'
     | '/admin/sellers'
     | '/admin/substitutions'
+    | '/agent/dashboard'
     | '/auth/callback'
     | '/buyer/adverse-action'
     | '/buyer/dashboard'
@@ -559,6 +569,7 @@ export interface FileRouteTypes {
     | '/admin/properties'
     | '/admin/sellers'
     | '/admin/substitutions'
+    | '/agent/dashboard'
     | '/auth/callback'
     | '/buyer/adverse-action'
     | '/buyer/dashboard'
@@ -613,6 +624,7 @@ export interface FileRouteTypes {
     | '/admin/properties'
     | '/admin/sellers'
     | '/admin/substitutions'
+    | '/agent/dashboard'
     | '/auth/callback'
     | '/buyer/adverse-action'
     | '/buyer/dashboard'
@@ -952,6 +964,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/agent/dashboard': {
+      id: '/agent/dashboard'
+      path: '/dashboard'
+      fullPath: '/agent/dashboard'
+      preLoaderRoute: typeof AgentDashboardRouteImport
+      parentRoute: typeof AgentRoute
+    }
     '/admin/substitutions': {
       id: '/admin/substitutions'
       path: '/substitutions'
@@ -1087,10 +1106,12 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface AgentRouteChildren {
+  AgentDashboardRoute: typeof AgentDashboardRoute
   AgentIndexRoute: typeof AgentIndexRoute
 }
 
 const AgentRouteChildren: AgentRouteChildren = {
+  AgentDashboardRoute: AgentDashboardRoute,
   AgentIndexRoute: AgentIndexRoute,
 }
 
