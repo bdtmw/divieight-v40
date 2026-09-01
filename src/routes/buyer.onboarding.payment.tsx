@@ -331,18 +331,7 @@ function PaymentScreen() {
             onAccepted={() => setAdviceAccepted(true)}
           />
         ) : (
-          <></>
-        )}
-        {!checking && adviceAccepted ? (
-          <></>
-        ) : null}
-        {!checking && adviceAccepted ? (
-          <></>
-        ) : null}
-        {!checking && adviceAccepted ? (
-          <></>
-        ) : null}
-        {!checking && adviceAccepted ? (
+          <>
             <div className="mt-8 overflow-hidden rounded-xl border border-border bg-card shadow-sm">
               <div
                 ref={scrollRef}
