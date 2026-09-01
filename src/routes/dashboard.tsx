@@ -108,6 +108,21 @@ function Dashboard() {
       setSeller((sellerData as SellerInfo) ?? null);
 
       const propRows = (props as Listing[]) ?? [];
+
+      // Resume-step column is optional: ignore it if the column isn't there yet.
+      if (propRows.length > 0) {
+        const { data: steps } = await supabase
+          .from("properties")
+          .select("id, last_completed_step")
+          .eq("seller_id", user.id);
+        const stepById = new Map<string, string | null>();
+        ((steps as { id: string; last_completed_step: string | null }[] | null) ?? []).forEach(
+          (s) => stepById.set(s.id, s.last_completed_step),
+        );
+        propRows.forEach((p) => {
+          p.last_completed_step = stepById.get(p.id) ?? null;
+        });
+      }
       // Fetch primary photo per property (display_order 0 or first)
       if (propRows.length > 0) {
         const ids = propRows.map((p) => p.id);
@@ -338,7 +353,7 @@ function Dashboard() {
                         search={{ property: l.id }}
                         className="inline-flex h-9 items-center rounded-md border border-accent bg-accent/10 px-4 text-sm font-medium text-accent transition-colors hover:bg-accent/20"
                       >
-                        {l.status !== "listed" ? "Continue setup" : "Edit listing"}
+                        {l.status !== "listed" ? "Continue Editing" : "Edit listing"}
                       </Link>
                       <Link
                         to="/listings/$id"
