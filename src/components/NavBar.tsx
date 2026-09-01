@@ -4,6 +4,7 @@ import { UserCircle2, LogOut, LayoutDashboard } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useAdmin } from "@/lib/admin";
 import { getBuyerAccount } from "@/lib/buyer";
+import { getAgentProfile } from "@/lib/agent";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { NotificationsBell } from "./NotificationsBell";
@@ -13,17 +14,20 @@ export function NavBar() {
   const { user, loading } = useAuth();
   const { isAdmin } = useAdmin();
   const navigate = useNavigate();
-  const [isBuyer, setIsBuyer] = useState<boolean | null>(null);
+  const [portal, setPortal] = useState<"buyer" | "seller" | "agent" | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     if (!user) {
-      setIsBuyer(null);
+      setPortal(null);
       return;
     }
-    getBuyerAccount(user.id).then((account) => {
-      if (!cancelled) setIsBuyer(Boolean(account));
-    });
+    Promise.all([getBuyerAccount(user.id), getAgentProfile(user.id)]).then(
+      ([buyer, agent]) => {
+        if (cancelled) return;
+        setPortal(agent ? "agent" : buyer ? "buyer" : "seller");
+      },
+    );
     return () => {
       cancelled = true;
     };
@@ -84,13 +88,23 @@ export function NavBar() {
                   Admin console
                 </Link>
               ) : (
-                isBuyer !== null && (
+                portal !== null && (
                   <Link
-                    to={isBuyer ? "/buyer/dashboard" : "/dashboard"}
+                    to={
+                      portal === "agent"
+                        ? "/agent/dashboard"
+                        : portal === "buyer"
+                          ? "/buyer/dashboard"
+                          : "/dashboard"
+                    }
                     className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground shadow-sm transition-transform hover:-translate-y-0.5"
                   >
                     <LayoutDashboard className="h-4 w-4" />
-                    {isBuyer ? "Buyer dashboard" : "Seller dashboard"}
+                    {portal === "agent"
+                      ? "Professional Portal"
+                      : portal === "buyer"
+                        ? "Buyer dashboard"
+                        : "Seller dashboard"}
                   </Link>
                 )
               )}
