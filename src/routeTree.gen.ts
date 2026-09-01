@@ -64,6 +64,7 @@ import { Route as BuyerOnboardingLiquidityRouteImport } from './routes/buyer.onb
 import { Route as BuyerOnboardingLifestyleRouteImport } from './routes/buyer.onboarding.lifestyle'
 import { Route as BuyerOnboardingIdentityRouteImport } from './routes/buyer.onboarding.identity'
 import { Route as ApiPublicEnrollmentMaintenanceRouteImport } from './routes/api.public.enrollment-maintenance'
+import { Route as ApiPublicArelloRetryRouteImport } from './routes/api.public.arello-retry'
 import { Route as AgentOnboardingLicenseDetailsRouteImport } from './routes/agent.onboarding.license-details'
 import { Route as AgentOnboardingLicenseCheckRouteImport } from './routes/agent.onboarding.license-check'
 
@@ -345,6 +346,11 @@ const ApiPublicEnrollmentMaintenanceRoute =
     path: '/api/public/enrollment-maintenance',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicArelloRetryRoute = ApiPublicArelloRetryRouteImport.update({
+  id: '/api/public/arello-retry',
+  path: '/api/public/arello-retry',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AgentOnboardingLicenseDetailsRoute =
   AgentOnboardingLicenseDetailsRouteImport.update({
     id: '/onboarding/license-details',
@@ -409,6 +415,7 @@ export interface FileRoutesByFullPath {
   '/reset-password/': typeof ResetPasswordIndexRoute
   '/agent/onboarding/license-check': typeof AgentOnboardingLicenseCheckRoute
   '/agent/onboarding/license-details': typeof AgentOnboardingLicenseDetailsRoute
+  '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -465,6 +472,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordIndexRoute
   '/agent/onboarding/license-check': typeof AgentOnboardingLicenseCheckRoute
   '/agent/onboarding/license-details': typeof AgentOnboardingLicenseDetailsRoute
+  '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -525,6 +533,7 @@ export interface FileRoutesById {
   '/reset-password/': typeof ResetPasswordIndexRoute
   '/agent/onboarding/license-check': typeof AgentOnboardingLicenseCheckRoute
   '/agent/onboarding/license-details': typeof AgentOnboardingLicenseDetailsRoute
+  '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -586,6 +595,7 @@ export interface FileRouteTypes {
     | '/reset-password/'
     | '/agent/onboarding/license-check'
     | '/agent/onboarding/license-details'
+    | '/api/public/arello-retry'
     | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -642,6 +652,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/agent/onboarding/license-check'
     | '/agent/onboarding/license-details'
+    | '/api/public/arello-retry'
     | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -701,6 +712,7 @@ export interface FileRouteTypes {
     | '/reset-password/'
     | '/agent/onboarding/license-check'
     | '/agent/onboarding/license-details'
+    | '/api/public/arello-retry'
     | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -744,6 +756,7 @@ export interface RootRouteChildren {
   ReserveIdRoute: typeof ReserveIdRoute
   OnboardingIndexRoute: typeof OnboardingIndexRoute
   PropertiesIndexRoute: typeof PropertiesIndexRoute
+  ApiPublicArelloRetryRoute: typeof ApiPublicArelloRetryRoute
   ApiPublicEnrollmentMaintenanceRoute: typeof ApiPublicEnrollmentMaintenanceRoute
   BuyerOnboardingIdentityRoute: typeof BuyerOnboardingIdentityRoute
   BuyerOnboardingLifestyleRoute: typeof BuyerOnboardingLifestyleRoute
@@ -1140,6 +1153,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicEnrollmentMaintenanceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/arello-retry': {
+      id: '/api/public/arello-retry'
+      path: '/api/public/arello-retry'
+      fullPath: '/api/public/arello-retry'
+      preLoaderRoute: typeof ApiPublicArelloRetryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/agent/onboarding/license-details': {
       id: '/agent/onboarding/license-details'
       path: '/onboarding/license-details'
@@ -1251,6 +1271,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReserveIdRoute: ReserveIdRoute,
   OnboardingIndexRoute: OnboardingIndexRoute,
   PropertiesIndexRoute: PropertiesIndexRoute,
+  ApiPublicArelloRetryRoute: ApiPublicArelloRetryRoute,
   ApiPublicEnrollmentMaintenanceRoute: ApiPublicEnrollmentMaintenanceRoute,
   BuyerOnboardingIdentityRoute: BuyerOnboardingIdentityRoute,
   BuyerOnboardingLifestyleRoute: BuyerOnboardingLifestyleRoute,
