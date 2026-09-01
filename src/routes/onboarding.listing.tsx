@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { OnboardingStepper } from "@/components/OnboardingStepper";
 import { Field } from "@/components/Field";
+import { CurrencyInput } from "@/components/CurrencyInput";
 import { EightSlicesTracker } from "@/components/EightSlicesTracker";
 import { cn } from "@/lib/utils";
 
