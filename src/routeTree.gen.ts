@@ -16,12 +16,14 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as AgentRouteImport } from './routes/agent'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ResetPasswordIndexRouteImport } from './routes/reset-password.index'
 import { Route as PropertiesIndexRouteImport } from './routes/properties.index'
 import { Route as OnboardingIndexRouteImport } from './routes/onboarding.index'
+import { Route as AgentIndexRouteImport } from './routes/agent.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ResetPasswordConfirmRouteImport } from './routes/reset-password.confirm'
 import { Route as ReserveIdRouteImport } from './routes/reserve.$id'
@@ -44,6 +46,9 @@ import { Route as BuyerDocumentsRouteImport } from './routes/buyer.documents'
 import { Route as BuyerDashboardRouteImport } from './routes/buyer.dashboard'
 import { Route as BuyerAdverseActionRouteImport } from './routes/buyer.adverse-action'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
+import { Route as AgentRegisterRouteImport } from './routes/agent.register'
+import { Route as AgentLoginRouteImport } from './routes/agent.login'
+import { Route as AgentDashboardRouteImport } from './routes/agent.dashboard'
 import { Route as AdminSubstitutionsRouteImport } from './routes/admin.substitutions'
 import { Route as AdminSellersRouteImport } from './routes/admin.sellers'
 import { Route as AdminPropertiesRouteImport } from './routes/admin.properties'
@@ -59,6 +64,7 @@ import { Route as BuyerOnboardingLiquidityRouteImport } from './routes/buyer.onb
 import { Route as BuyerOnboardingLifestyleRouteImport } from './routes/buyer.onboarding.lifestyle'
 import { Route as BuyerOnboardingIdentityRouteImport } from './routes/buyer.onboarding.identity'
 import { Route as ApiPublicEnrollmentMaintenanceRouteImport } from './routes/api.public.enrollment-maintenance'
+import { Route as AgentOnboardingLicenseCheckRouteImport } from './routes/agent.onboarding.license-check'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -95,6 +101,11 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AgentRoute = AgentRouteImport.update({
+  id: '/agent',
+  path: '/agent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -124,6 +135,11 @@ const OnboardingIndexRoute = OnboardingIndexRouteImport.update({
   id: '/onboarding/',
   path: '/onboarding/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AgentIndexRoute = AgentIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AgentRoute,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
@@ -235,6 +251,21 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
   path: '/auth/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AgentRegisterRoute = AgentRegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => AgentRoute,
+} as any)
+const AgentLoginRoute = AgentLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AgentRoute,
+} as any)
+const AgentDashboardRoute = AgentDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AgentRoute,
+} as any)
 const AdminSubstitutionsRoute = AdminSubstitutionsRouteImport.update({
   id: '/substitutions',
   path: '/substitutions',
@@ -313,11 +344,18 @@ const ApiPublicEnrollmentMaintenanceRoute =
     path: '/api/public/enrollment-maintenance',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AgentOnboardingLicenseCheckRoute =
+  AgentOnboardingLicenseCheckRouteImport.update({
+    id: '/onboarding/license-check',
+    path: '/onboarding/license-check',
+    getParentRoute: () => AgentRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
+  '/agent': typeof AgentRouteWithChildren
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -333,6 +371,9 @@ export interface FileRoutesByFullPath {
   '/admin/properties': typeof AdminPropertiesRoute
   '/admin/sellers': typeof AdminSellersRoute
   '/admin/substitutions': typeof AdminSubstitutionsRoute
+  '/agent/dashboard': typeof AgentDashboardRoute
+  '/agent/login': typeof AgentLoginRoute
+  '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
@@ -355,9 +396,11 @@ export interface FileRoutesByFullPath {
   '/reserve/$id': typeof ReserveIdRoute
   '/reset-password/confirm': typeof ResetPasswordConfirmRoute
   '/admin/': typeof AdminIndexRoute
+  '/agent/': typeof AgentIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
   '/properties/': typeof PropertiesIndexRoute
   '/reset-password/': typeof ResetPasswordIndexRoute
+  '/agent/onboarding/license-check': typeof AgentOnboardingLicenseCheckRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -383,6 +426,9 @@ export interface FileRoutesByTo {
   '/admin/properties': typeof AdminPropertiesRoute
   '/admin/sellers': typeof AdminSellersRoute
   '/admin/substitutions': typeof AdminSubstitutionsRoute
+  '/agent/dashboard': typeof AgentDashboardRoute
+  '/agent/login': typeof AgentLoginRoute
+  '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
@@ -405,9 +451,11 @@ export interface FileRoutesByTo {
   '/reserve/$id': typeof ReserveIdRoute
   '/reset-password/confirm': typeof ResetPasswordConfirmRoute
   '/admin': typeof AdminIndexRoute
+  '/agent': typeof AgentIndexRoute
   '/onboarding': typeof OnboardingIndexRoute
   '/properties': typeof PropertiesIndexRoute
   '/reset-password': typeof ResetPasswordIndexRoute
+  '/agent/onboarding/license-check': typeof AgentOnboardingLicenseCheckRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -421,6 +469,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
+  '/agent': typeof AgentRouteWithChildren
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -436,6 +485,9 @@ export interface FileRoutesById {
   '/admin/properties': typeof AdminPropertiesRoute
   '/admin/sellers': typeof AdminSellersRoute
   '/admin/substitutions': typeof AdminSubstitutionsRoute
+  '/agent/dashboard': typeof AgentDashboardRoute
+  '/agent/login': typeof AgentLoginRoute
+  '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
@@ -458,9 +510,11 @@ export interface FileRoutesById {
   '/reserve/$id': typeof ReserveIdRoute
   '/reset-password/confirm': typeof ResetPasswordConfirmRoute
   '/admin/': typeof AdminIndexRoute
+  '/agent/': typeof AgentIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
   '/properties/': typeof PropertiesIndexRoute
   '/reset-password/': typeof ResetPasswordIndexRoute
+  '/agent/onboarding/license-check': typeof AgentOnboardingLicenseCheckRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -475,6 +529,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/agent'
     | '/contact'
     | '/dashboard'
     | '/forgot-password'
@@ -490,6 +545,9 @@ export interface FileRouteTypes {
     | '/admin/properties'
     | '/admin/sellers'
     | '/admin/substitutions'
+    | '/agent/dashboard'
+    | '/agent/login'
+    | '/agent/register'
     | '/auth/callback'
     | '/buyer/adverse-action'
     | '/buyer/dashboard'
@@ -512,9 +570,11 @@ export interface FileRouteTypes {
     | '/reserve/$id'
     | '/reset-password/confirm'
     | '/admin/'
+    | '/agent/'
     | '/onboarding/'
     | '/properties/'
     | '/reset-password/'
+    | '/agent/onboarding/license-check'
     | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -540,6 +600,9 @@ export interface FileRouteTypes {
     | '/admin/properties'
     | '/admin/sellers'
     | '/admin/substitutions'
+    | '/agent/dashboard'
+    | '/agent/login'
+    | '/agent/register'
     | '/auth/callback'
     | '/buyer/adverse-action'
     | '/buyer/dashboard'
@@ -562,9 +625,11 @@ export interface FileRouteTypes {
     | '/reserve/$id'
     | '/reset-password/confirm'
     | '/admin'
+    | '/agent'
     | '/onboarding'
     | '/properties'
     | '/reset-password'
+    | '/agent/onboarding/license-check'
     | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -577,6 +642,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/agent'
     | '/contact'
     | '/dashboard'
     | '/forgot-password'
@@ -592,6 +658,9 @@ export interface FileRouteTypes {
     | '/admin/properties'
     | '/admin/sellers'
     | '/admin/substitutions'
+    | '/agent/dashboard'
+    | '/agent/login'
+    | '/agent/register'
     | '/auth/callback'
     | '/buyer/adverse-action'
     | '/buyer/dashboard'
@@ -614,9 +683,11 @@ export interface FileRouteTypes {
     | '/reserve/$id'
     | '/reset-password/confirm'
     | '/admin/'
+    | '/agent/'
     | '/onboarding/'
     | '/properties/'
     | '/reset-password/'
+    | '/agent/onboarding/license-check'
     | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -630,6 +701,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRouteWithChildren
+  AgentRoute: typeof AgentRouteWithChildren
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
@@ -719,6 +791,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/agent': {
+      id: '/agent'
+      path: '/agent'
+      fullPath: '/agent'
+      preLoaderRoute: typeof AgentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin': {
       id: '/admin'
       path: '/admin'
@@ -760,6 +839,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/onboarding/'
       preLoaderRoute: typeof OnboardingIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/agent/': {
+      id: '/agent/'
+      path: '/'
+      fullPath: '/agent/'
+      preLoaderRoute: typeof AgentIndexRouteImport
+      parentRoute: typeof AgentRoute
     }
     '/admin/': {
       id: '/admin/'
@@ -915,6 +1001,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/agent/register': {
+      id: '/agent/register'
+      path: '/register'
+      fullPath: '/agent/register'
+      preLoaderRoute: typeof AgentRegisterRouteImport
+      parentRoute: typeof AgentRoute
+    }
+    '/agent/login': {
+      id: '/agent/login'
+      path: '/login'
+      fullPath: '/agent/login'
+      preLoaderRoute: typeof AgentLoginRouteImport
+      parentRoute: typeof AgentRoute
+    }
+    '/agent/dashboard': {
+      id: '/agent/dashboard'
+      path: '/dashboard'
+      fullPath: '/agent/dashboard'
+      preLoaderRoute: typeof AgentDashboardRouteImport
+      parentRoute: typeof AgentRoute
+    }
     '/admin/substitutions': {
       id: '/admin/substitutions'
       path: '/substitutions'
@@ -1020,6 +1127,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicEnrollmentMaintenanceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/agent/onboarding/license-check': {
+      id: '/agent/onboarding/license-check'
+      path: '/onboarding/license-check'
+      fullPath: '/agent/onboarding/license-check'
+      preLoaderRoute: typeof AgentOnboardingLicenseCheckRouteImport
+      parentRoute: typeof AgentRoute
+    }
   }
 }
 
@@ -1049,6 +1163,24 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface AgentRouteChildren {
+  AgentDashboardRoute: typeof AgentDashboardRoute
+  AgentLoginRoute: typeof AgentLoginRoute
+  AgentRegisterRoute: typeof AgentRegisterRoute
+  AgentIndexRoute: typeof AgentIndexRoute
+  AgentOnboardingLicenseCheckRoute: typeof AgentOnboardingLicenseCheckRoute
+}
+
+const AgentRouteChildren: AgentRouteChildren = {
+  AgentDashboardRoute: AgentDashboardRoute,
+  AgentLoginRoute: AgentLoginRoute,
+  AgentRegisterRoute: AgentRegisterRoute,
+  AgentIndexRoute: AgentIndexRoute,
+  AgentOnboardingLicenseCheckRoute: AgentOnboardingLicenseCheckRoute,
+}
+
+const AgentRouteWithChildren = AgentRoute._addFileChildren(AgentRouteChildren)
+
 interface ResetPasswordRouteChildren {
   ResetPasswordConfirmRoute: typeof ResetPasswordConfirmRoute
   ResetPasswordIndexRoute: typeof ResetPasswordIndexRoute
@@ -1067,6 +1199,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AdminRoute: AdminRouteWithChildren,
+  AgentRoute: AgentRouteWithChildren,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
