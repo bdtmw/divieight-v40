@@ -23,6 +23,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ResetPasswordIndexRouteImport } from './routes/reset-password.index'
 import { Route as PropertiesIndexRouteImport } from './routes/properties.index'
 import { Route as OnboardingIndexRouteImport } from './routes/onboarding.index'
+import { Route as AgentIndexRouteImport } from './routes/agent.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ResetPasswordConfirmRouteImport } from './routes/reset-password.confirm'
 import { Route as ReserveIdRouteImport } from './routes/reserve.$id'
@@ -130,6 +131,11 @@ const OnboardingIndexRoute = OnboardingIndexRouteImport.update({
   id: '/onboarding/',
   path: '/onboarding/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AgentIndexRoute = AgentIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AgentRoute,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
@@ -324,7 +330,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
-  '/agent': typeof AgentRoute
+  '/agent': typeof AgentRouteWithChildren
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -362,6 +368,7 @@ export interface FileRoutesByFullPath {
   '/reserve/$id': typeof ReserveIdRoute
   '/reset-password/confirm': typeof ResetPasswordConfirmRoute
   '/admin/': typeof AdminIndexRoute
+  '/agent/': typeof AgentIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
   '/properties/': typeof PropertiesIndexRoute
   '/reset-password/': typeof ResetPasswordIndexRoute
@@ -376,7 +383,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/agent': typeof AgentRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -413,6 +419,7 @@ export interface FileRoutesByTo {
   '/reserve/$id': typeof ReserveIdRoute
   '/reset-password/confirm': typeof ResetPasswordConfirmRoute
   '/admin': typeof AdminIndexRoute
+  '/agent': typeof AgentIndexRoute
   '/onboarding': typeof OnboardingIndexRoute
   '/properties': typeof PropertiesIndexRoute
   '/reset-password': typeof ResetPasswordIndexRoute
@@ -429,7 +436,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
-  '/agent': typeof AgentRoute
+  '/agent': typeof AgentRouteWithChildren
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -467,6 +474,7 @@ export interface FileRoutesById {
   '/reserve/$id': typeof ReserveIdRoute
   '/reset-password/confirm': typeof ResetPasswordConfirmRoute
   '/admin/': typeof AdminIndexRoute
+  '/agent/': typeof AgentIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
   '/properties/': typeof PropertiesIndexRoute
   '/reset-password/': typeof ResetPasswordIndexRoute
@@ -522,6 +530,7 @@ export interface FileRouteTypes {
     | '/reserve/$id'
     | '/reset-password/confirm'
     | '/admin/'
+    | '/agent/'
     | '/onboarding/'
     | '/properties/'
     | '/reset-password/'
@@ -536,7 +545,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
-    | '/agent'
     | '/contact'
     | '/dashboard'
     | '/forgot-password'
@@ -573,6 +581,7 @@ export interface FileRouteTypes {
     | '/reserve/$id'
     | '/reset-password/confirm'
     | '/admin'
+    | '/agent'
     | '/onboarding'
     | '/properties'
     | '/reset-password'
@@ -626,6 +635,7 @@ export interface FileRouteTypes {
     | '/reserve/$id'
     | '/reset-password/confirm'
     | '/admin/'
+    | '/agent/'
     | '/onboarding/'
     | '/properties/'
     | '/reset-password/'
@@ -642,7 +652,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRouteWithChildren
-  AgentRoute: typeof AgentRoute
+  AgentRoute: typeof AgentRouteWithChildren
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
@@ -780,6 +790,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/onboarding/'
       preLoaderRoute: typeof OnboardingIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/agent/': {
+      id: '/agent/'
+      path: '/'
+      fullPath: '/agent/'
+      preLoaderRoute: typeof AgentIndexRouteImport
+      parentRoute: typeof AgentRoute
     }
     '/admin/': {
       id: '/admin/'
@@ -1069,6 +1086,16 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface AgentRouteChildren {
+  AgentIndexRoute: typeof AgentIndexRoute
+}
+
+const AgentRouteChildren: AgentRouteChildren = {
+  AgentIndexRoute: AgentIndexRoute,
+}
+
+const AgentRouteWithChildren = AgentRoute._addFileChildren(AgentRouteChildren)
+
 interface ResetPasswordRouteChildren {
   ResetPasswordConfirmRoute: typeof ResetPasswordConfirmRoute
   ResetPasswordIndexRoute: typeof ResetPasswordIndexRoute
@@ -1087,7 +1114,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AdminRoute: AdminRouteWithChildren,
-  AgentRoute: AgentRoute,
+  AgentRoute: AgentRouteWithChildren,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
