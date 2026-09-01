@@ -7,6 +7,7 @@ import { OnboardingStepper } from "@/components/OnboardingStepper";
 import { Field } from "@/components/Field";
 import { cn } from "@/lib/utils";
 import { logAudit } from "@/lib/audit";
+import { markListingStep } from "@/lib/listing-progress";
 
 export const Route = createFileRoute("/onboarding/property")({
   ssr: false,

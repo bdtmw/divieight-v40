@@ -7,6 +7,7 @@ import { OnboardingStepper } from "@/components/OnboardingStepper";
 import { cn } from "@/lib/utils";
 import { notifySeller } from "@/lib/notify";
 import { logAudit } from "@/lib/audit";
+import { markListingStep } from "@/lib/listing-progress";
 
 export const Route = createFileRoute("/onboarding/agreement")({
   // Optional ?property=<id> scopes the agreement to one existing listing.

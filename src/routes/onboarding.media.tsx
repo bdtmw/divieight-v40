@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { OnboardingStepper } from "@/components/OnboardingStepper";
 import { cn } from "@/lib/utils";
 import { logAudit } from "@/lib/audit";
+import { markListingStep } from "@/lib/listing-progress";
 
 export const Route = createFileRoute("/onboarding/media")({
   // Optional ?property=<id> scopes this step to one existing listing (edit path).
