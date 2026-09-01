@@ -43,7 +43,11 @@ export type AuditAction =
   | "substitution.pipeline_viewed"
   | "buyer.data_room_document_viewed"
   | "seller.data_room_document_uploaded"
-  | "seller.data_room_document_deleted";
+  | "seller.data_room_document_deleted"
+  | "agent.arello_check_verified"
+  | "agent.arello_check_not_found"
+  | "agent.arello_check_pending"
+  | "agent.arello_retry_verified";
 
 export type AuditEntity =
   | "seller"
@@ -52,20 +56,26 @@ export type AuditEntity =
   | "media"
   | "buyer_account"
   | "wishlist"
-  | "property_document";
+  | "property_document"
+  | "agent";
 
 export async function logAudit(params: {
   actorId: string;
   actionType: AuditAction;
   entityType: AuditEntity;
   entityId?: string | null;
-  actorType?: "seller" | "buyer";
+  actorType?: "seller" | "buyer" | "agent";
   metadata?: Record<string, unknown>;
 }) {
   const { actorId, actionType, entityType, entityId, actorType, metadata } = params;
   const { error } = await supabase.from("audit_log").insert({
     actor_id: actorId,
-    actor_type: actorType ?? (actionType.startsWith("buyer.") ? "buyer" : "seller"),
+    actor_type: actorType ??
+      (actionType.startsWith("buyer.")
+        ? "buyer"
+        : actionType.startsWith("agent.")
+          ? "agent"
+          : "seller"),
     action_type: actionType,
     entity_type: entityType,
     entity_id: entityId ?? null,
