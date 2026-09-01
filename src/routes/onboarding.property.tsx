@@ -203,7 +203,7 @@ function PropertyScreen() {
       },
     });
     toast.success("Property saved.");
-    navigate({ to: "/onboarding/listing" });
+    navigate({ to: "/onboarding/listing", search: { property: undefined } });
   }
 
   return (
