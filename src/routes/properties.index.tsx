@@ -399,7 +399,8 @@ function MarketplacePage() {
             </p>
             {buyerIntent ? (
               <p className="text-xs text-muted-foreground">
-                Compatibility filter on — homes that conflict with your stated intent are dimmed.
+                Compatibility filter on — aligning intended use (Personal Use vs. Short-Term
+                Rental); homes that conflict with your stated intent are dimmed.
               </p>
             ) : null}
           </div>
