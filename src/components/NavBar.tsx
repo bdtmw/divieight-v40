@@ -87,13 +87,23 @@ export function NavBar() {
                   Admin console
                 </Link>
               ) : (
-                isBuyer !== null && (
+                portal !== null && (
                   <Link
-                    to={isBuyer ? "/buyer/dashboard" : "/dashboard"}
+                    to={
+                      portal === "agent"
+                        ? "/agent/dashboard"
+                        : portal === "buyer"
+                          ? "/buyer/dashboard"
+                          : "/dashboard"
+                    }
                     className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground shadow-sm transition-transform hover:-translate-y-0.5"
                   >
                     <LayoutDashboard className="h-4 w-4" />
-                    {isBuyer ? "Buyer dashboard" : "Seller dashboard"}
+                    {portal === "agent"
+                      ? "Professional Portal"
+                      : portal === "buyer"
+                        ? "Buyer dashboard"
+                        : "Seller dashboard"}
                   </Link>
                 )
               )}
