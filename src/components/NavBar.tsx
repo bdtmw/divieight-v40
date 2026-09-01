@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { UserCircle2, LogOut, LayoutDashboard } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
@@ -14,6 +14,7 @@ export function NavBar() {
   const { user, loading } = useAuth();
   const { isAdmin } = useAdmin();
   const navigate = useNavigate();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
   const [portal, setPortal] = useState<"buyer" | "seller" | "agent" | null>(null);
 
   useEffect(() => {
@@ -22,16 +23,35 @@ export function NavBar() {
       setPortal(null);
       return;
     }
+
+    const metadataRole = user.user_metadata?.account_type;
+    if (pathname.startsWith("/agent") || metadataRole === "agent") {
+      setPortal("agent");
+      return;
+    }
+    if (metadataRole === "buyer") {
+      setPortal("buyer");
+      return;
+    }
+
     Promise.all([getBuyerAccount(user.id), getAgentProfile(user.id)]).then(
       ([buyer, agent]) => {
         if (cancelled) return;
-        setPortal(agent ? "agent" : buyer ? "buyer" : "seller");
+        setPortal(
+          agent
+            ? "agent"
+            : buyer
+              ? "buyer"
+              : metadataRole === "seller"
+                ? "seller"
+                : null,
+        );
       },
     );
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [pathname, user]);
 
   async function onSignOut() {
     await supabase.auth.signOut();
