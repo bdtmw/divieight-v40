@@ -9,6 +9,11 @@ import { BuyerEnrollmentCheckout } from "@/components/BuyerEnrollmentCheckout";
 import { formatUsd, getStripeEnvironment } from "@/lib/stripe";
 import { confirmBuyerEnrollmentPayment } from "@/utils/payments.functions";
 import { logAudit } from "@/lib/audit";
+import {
+  Block5AdviceNotice,
+  BLOCK_5_DOCUMENT_TYPE,
+  type Block5Member,
+} from "@/components/Block5AdviceNotice";
 
 export const Route = createFileRoute("/buyer/onboarding/payment")({
   validateSearch: (search: Record<string, unknown>): { session_id?: string } => ({
