@@ -7,6 +7,7 @@ import { OnboardingStepper } from "@/components/OnboardingStepper";
 import { Field } from "@/components/Field";
 import { CurrencyInput } from "@/components/CurrencyInput";
 import { EightSlicesTracker } from "@/components/EightSlicesTracker";
+import { markListingStep } from "@/lib/listing-progress";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/onboarding/listing")({
