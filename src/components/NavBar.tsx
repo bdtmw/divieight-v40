@@ -4,6 +4,7 @@ import { UserCircle2, LogOut, LayoutDashboard } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useAdmin } from "@/lib/admin";
 import { getBuyerAccount } from "@/lib/buyer";
+import { getAgentProfile } from "@/lib/agent";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { NotificationsBell } from "./NotificationsBell";
