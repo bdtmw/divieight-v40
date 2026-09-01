@@ -372,6 +372,8 @@ function MediaScreen() {
         .eq("id", user!.id);
     }
 
+    await markListingStep(propertyId, "media_upload");
+
     setSubmitting(false);
     await logAudit({
       actorId: user!.id,

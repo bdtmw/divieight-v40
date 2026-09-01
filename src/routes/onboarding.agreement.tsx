@@ -204,6 +204,7 @@ function AgreementScreen() {
 
     if (property?.id) {
       await supabase.from("properties").update({ status: "listed" }).eq("id", property.id);
+      await markListingStep(property.id, "agreement");
     }
 
     await notifySeller(user.id, "listing_live");
