@@ -35,7 +35,7 @@ type Listing = {
   retained_shares: number | null;
   primary_photo?: string | null;
   has_media?: boolean;
-
+  last_completed_step?: string | null;
 };
 
 type SellerInfo = {
@@ -56,6 +56,10 @@ function formatPrice(n: number | null) {
 
 /** Where an unfinished draft should pick back up in the onboarding flow. */
 function resumeStepFor(l: Listing) {
+  const tracked = resumeRouteForStep(l.last_completed_step);
+  if (tracked === "/onboarding/listing") return "/onboarding/listing" as const;
+  if (tracked === "/onboarding/media") return "/onboarding/media" as const;
+  if (tracked === "/onboarding/agreement") return "/onboarding/agreement" as const;
   if (!l.listing_price || !l.property_type) return "/onboarding/listing" as const;
   if (!l.has_media) return "/onboarding/media" as const;
   return "/onboarding/agreement" as const;
