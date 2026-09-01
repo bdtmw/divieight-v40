@@ -67,6 +67,7 @@ import { Route as ApiPublicEnrollmentMaintenanceRouteImport } from './routes/api
 import { Route as ApiPublicArelloRetryRouteImport } from './routes/api.public.arello-retry'
 import { Route as AgentOnboardingLicenseDetailsRouteImport } from './routes/agent.onboarding.license-details'
 import { Route as AgentOnboardingLicenseCheckRouteImport } from './routes/agent.onboarding.license-check'
+import { Route as AgentOnboardingInsuranceRouteImport } from './routes/agent.onboarding.insurance'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -363,6 +364,12 @@ const AgentOnboardingLicenseCheckRoute =
     path: '/onboarding/license-check',
     getParentRoute: () => AgentRoute,
   } as any)
+const AgentOnboardingInsuranceRoute =
+  AgentOnboardingInsuranceRouteImport.update({
+    id: '/onboarding/insurance',
+    path: '/onboarding/insurance',
+    getParentRoute: () => AgentRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -413,6 +420,7 @@ export interface FileRoutesByFullPath {
   '/onboarding/': typeof OnboardingIndexRoute
   '/properties/': typeof PropertiesIndexRoute
   '/reset-password/': typeof ResetPasswordIndexRoute
+  '/agent/onboarding/insurance': typeof AgentOnboardingInsuranceRoute
   '/agent/onboarding/license-check': typeof AgentOnboardingLicenseCheckRoute
   '/agent/onboarding/license-details': typeof AgentOnboardingLicenseDetailsRoute
   '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
@@ -470,6 +478,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingIndexRoute
   '/properties': typeof PropertiesIndexRoute
   '/reset-password': typeof ResetPasswordIndexRoute
+  '/agent/onboarding/insurance': typeof AgentOnboardingInsuranceRoute
   '/agent/onboarding/license-check': typeof AgentOnboardingLicenseCheckRoute
   '/agent/onboarding/license-details': typeof AgentOnboardingLicenseDetailsRoute
   '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
@@ -531,6 +540,7 @@ export interface FileRoutesById {
   '/onboarding/': typeof OnboardingIndexRoute
   '/properties/': typeof PropertiesIndexRoute
   '/reset-password/': typeof ResetPasswordIndexRoute
+  '/agent/onboarding/insurance': typeof AgentOnboardingInsuranceRoute
   '/agent/onboarding/license-check': typeof AgentOnboardingLicenseCheckRoute
   '/agent/onboarding/license-details': typeof AgentOnboardingLicenseDetailsRoute
   '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
@@ -593,6 +603,7 @@ export interface FileRouteTypes {
     | '/onboarding/'
     | '/properties/'
     | '/reset-password/'
+    | '/agent/onboarding/insurance'
     | '/agent/onboarding/license-check'
     | '/agent/onboarding/license-details'
     | '/api/public/arello-retry'
@@ -650,6 +661,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/properties'
     | '/reset-password'
+    | '/agent/onboarding/insurance'
     | '/agent/onboarding/license-check'
     | '/agent/onboarding/license-details'
     | '/api/public/arello-retry'
@@ -710,6 +722,7 @@ export interface FileRouteTypes {
     | '/onboarding/'
     | '/properties/'
     | '/reset-password/'
+    | '/agent/onboarding/insurance'
     | '/agent/onboarding/license-check'
     | '/agent/onboarding/license-details'
     | '/api/public/arello-retry'
@@ -1174,6 +1187,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentOnboardingLicenseCheckRouteImport
       parentRoute: typeof AgentRoute
     }
+    '/agent/onboarding/insurance': {
+      id: '/agent/onboarding/insurance'
+      path: '/onboarding/insurance'
+      fullPath: '/agent/onboarding/insurance'
+      preLoaderRoute: typeof AgentOnboardingInsuranceRouteImport
+      parentRoute: typeof AgentRoute
+    }
   }
 }
 
@@ -1208,6 +1228,7 @@ interface AgentRouteChildren {
   AgentLoginRoute: typeof AgentLoginRoute
   AgentRegisterRoute: typeof AgentRegisterRoute
   AgentIndexRoute: typeof AgentIndexRoute
+  AgentOnboardingInsuranceRoute: typeof AgentOnboardingInsuranceRoute
   AgentOnboardingLicenseCheckRoute: typeof AgentOnboardingLicenseCheckRoute
   AgentOnboardingLicenseDetailsRoute: typeof AgentOnboardingLicenseDetailsRoute
 }
@@ -1217,6 +1238,7 @@ const AgentRouteChildren: AgentRouteChildren = {
   AgentLoginRoute: AgentLoginRoute,
   AgentRegisterRoute: AgentRegisterRoute,
   AgentIndexRoute: AgentIndexRoute,
+  AgentOnboardingInsuranceRoute: AgentOnboardingInsuranceRoute,
   AgentOnboardingLicenseCheckRoute: AgentOnboardingLicenseCheckRoute,
   AgentOnboardingLicenseDetailsRoute: AgentOnboardingLicenseDetailsRoute,
 }
