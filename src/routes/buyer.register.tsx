@@ -8,6 +8,7 @@ import { resolveSignIn } from "@/lib/account-routing";
 
 
 import { logAudit } from "@/lib/audit";
+import { mapSignupError, isExistingUserSignup } from "@/lib/signup-errors";
 import { AuthCard, GoogleButton, Divider } from "@/components/AuthCard";
 import { Field } from "@/components/Field";
 
@@ -87,7 +88,22 @@ function BuyerRegisterPage() {
     setSubmitting(false);
 
     if (error) {
-      toast.error(error.message);
+      console.error("Buyer signUp failed", error);
+      const mapped = mapSignupError(error);
+      if (mapped.field === "form") {
+        toast.error(mapped.message);
+      } else {
+        setErrors({ [mapped.field]: mapped.message });
+        toast.error(mapped.message);
+      }
+      return;
+    }
+
+    // Supabase may return a masked success when the email is already taken.
+    if (isExistingUserSignup(data.user)) {
+      const msg = "An account with this email already exists. Try logging in instead.";
+      setErrors({ email: msg });
+      toast.error(msg);
       return;
     }
 
@@ -171,6 +187,13 @@ function BuyerRegisterPage() {
           error={errors.email}
           required
         />
+        {errors.email?.includes("already exists") ? (
+          <p className="-mt-2 text-xs text-muted-foreground">
+            <Link to="/buyer/login" className="font-medium text-foreground hover:text-accent">
+              Go to sign in
+            </Link>
+          </p>
+        ) : null}
         <Field
           label="Phone number"
           type="tel"

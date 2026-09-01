@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { BuyerOnboardingStepper } from "@/components/BuyerOnboardingStepper";
 import { Field } from "@/components/Field";
+import { CurrencyInput } from "@/components/CurrencyInput";
 import { cn } from "@/lib/utils";
 import { logAudit } from "@/lib/audit";
 
@@ -433,14 +434,13 @@ function BuyerIdentityScreen() {
         </p>
 
         <div className="mt-5 grid gap-5">
-          <Field
+          <CurrencyInput
             label="What is your target budget?"
             name="target_budget"
-            inputMode="decimal"
-            value={budget}
-            onChange={(e) => setBudget(e.target.value)}
+            value={budget.replace(/[^0-9]/g, "")}
+            onValueChange={setBudget}
             error={errors.budget}
-            placeholder="$250,000"
+            placeholder="250,000"
             hint="Total amount you're prepared to invest in shares."
           />
 

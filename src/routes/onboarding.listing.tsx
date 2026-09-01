@@ -5,7 +5,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { OnboardingStepper } from "@/components/OnboardingStepper";
 import { Field } from "@/components/Field";
+import { CurrencyInput } from "@/components/CurrencyInput";
 import { EightSlicesTracker } from "@/components/EightSlicesTracker";
+import { markListingStep } from "@/lib/listing-progress";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/onboarding/listing")({
@@ -193,6 +195,8 @@ function ListingScreen() {
       })
       .eq("id", property.id);
 
+    if (!updateErr) await markListingStep(property.id, "listing_creation");
+
     if (updateErr) {
       setSubmitting(false);
       toast.error(updateErr.message);
@@ -266,12 +270,11 @@ function ListingScreen() {
             </div>
 
             <div className="mt-5">
-              <Field
+              <CurrencyInput
                 label="Listing price (total property, USD)"
                 name="listing_price"
-                inputMode="decimal"
-                value={priceStr}
-                onChange={(e) => setPriceStr(e.target.value)}
+                value={priceStr.replace(/[^0-9]/g, "")}
+                onValueChange={setPriceStr}
                 error={errors.listing_price}
                 hint={
                   listingPrice > 0

@@ -19,9 +19,11 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ResetPasswordIndexRouteImport } from './routes/reset-password.index'
 import { Route as PropertiesIndexRouteImport } from './routes/properties.index'
 import { Route as OnboardingIndexRouteImport } from './routes/onboarding.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as ResetPasswordConfirmRouteImport } from './routes/reset-password.confirm'
 import { Route as ReserveIdRouteImport } from './routes/reserve.$id'
 import { Route as PropertiesIdRouteImport } from './routes/properties.$id'
 import { Route as OnboardingPropertyRouteImport } from './routes/onboarding.property'
@@ -108,6 +110,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordIndexRoute = ResetPasswordIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ResetPasswordRoute,
+} as any)
 const PropertiesIndexRoute = PropertiesIndexRouteImport.update({
   id: '/properties/',
   path: '/properties/',
@@ -122,6 +129,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const ResetPasswordConfirmRoute = ResetPasswordConfirmRouteImport.update({
+  id: '/confirm',
+  path: '/confirm',
+  getParentRoute: () => ResetPasswordRoute,
 } as any)
 const ReserveIdRoute = ReserveIdRouteImport.update({
   id: '/reserve/$id',
@@ -312,7 +324,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
   '/register': typeof RegisterRoute
-  '/reset-password': typeof ResetPasswordRoute
+  '/reset-password': typeof ResetPasswordRouteWithChildren
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/admin/buyers': typeof AdminBuyersRoute
   '/admin/contacts': typeof AdminContactsRoute
@@ -341,9 +353,11 @@ export interface FileRoutesByFullPath {
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/properties/$id': typeof PropertiesIdRoute
   '/reserve/$id': typeof ReserveIdRoute
+  '/reset-password/confirm': typeof ResetPasswordConfirmRoute
   '/admin/': typeof AdminIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
   '/properties/': typeof PropertiesIndexRoute
+  '/reset-password/': typeof ResetPasswordIndexRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -361,7 +375,6 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
   '/register': typeof RegisterRoute
-  '/reset-password': typeof ResetPasswordRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/admin/buyers': typeof AdminBuyersRoute
   '/admin/contacts': typeof AdminContactsRoute
@@ -390,9 +403,11 @@ export interface FileRoutesByTo {
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/properties/$id': typeof PropertiesIdRoute
   '/reserve/$id': typeof ReserveIdRoute
+  '/reset-password/confirm': typeof ResetPasswordConfirmRoute
   '/admin': typeof AdminIndexRoute
   '/onboarding': typeof OnboardingIndexRoute
   '/properties': typeof PropertiesIndexRoute
+  '/reset-password': typeof ResetPasswordIndexRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -412,7 +427,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
   '/register': typeof RegisterRoute
-  '/reset-password': typeof ResetPasswordRoute
+  '/reset-password': typeof ResetPasswordRouteWithChildren
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/admin/buyers': typeof AdminBuyersRoute
   '/admin/contacts': typeof AdminContactsRoute
@@ -441,9 +456,11 @@ export interface FileRoutesById {
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/properties/$id': typeof PropertiesIdRoute
   '/reserve/$id': typeof ReserveIdRoute
+  '/reset-password/confirm': typeof ResetPasswordConfirmRoute
   '/admin/': typeof AdminIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
   '/properties/': typeof PropertiesIndexRoute
+  '/reset-password/': typeof ResetPasswordIndexRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -493,9 +510,11 @@ export interface FileRouteTypes {
     | '/onboarding/property'
     | '/properties/$id'
     | '/reserve/$id'
+    | '/reset-password/confirm'
     | '/admin/'
     | '/onboarding/'
     | '/properties/'
+    | '/reset-password/'
     | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -513,7 +532,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/notifications'
     | '/register'
-    | '/reset-password'
     | '/admin/audit-log'
     | '/admin/buyers'
     | '/admin/contacts'
@@ -542,9 +560,11 @@ export interface FileRouteTypes {
     | '/onboarding/property'
     | '/properties/$id'
     | '/reserve/$id'
+    | '/reset-password/confirm'
     | '/admin'
     | '/onboarding'
     | '/properties'
+    | '/reset-password'
     | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -592,9 +612,11 @@ export interface FileRouteTypes {
     | '/onboarding/property'
     | '/properties/$id'
     | '/reserve/$id'
+    | '/reset-password/confirm'
     | '/admin/'
     | '/onboarding/'
     | '/properties/'
+    | '/reset-password/'
     | '/api/public/enrollment-maintenance'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -614,7 +636,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   NotificationsRoute: typeof NotificationsRoute
   RegisterRoute: typeof RegisterRoute
-  ResetPasswordRoute: typeof ResetPasswordRoute
+  ResetPasswordRoute: typeof ResetPasswordRouteWithChildren
   AuthCallbackRoute: typeof AuthCallbackRoute
   BuyerAdverseActionRoute: typeof BuyerAdverseActionRoute
   BuyerDashboardRoute: typeof BuyerDashboardRoute
@@ -718,6 +740,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password/': {
+      id: '/reset-password/'
+      path: '/'
+      fullPath: '/reset-password/'
+      preLoaderRoute: typeof ResetPasswordIndexRouteImport
+      parentRoute: typeof ResetPasswordRoute
+    }
     '/properties/': {
       id: '/properties/'
       path: '/properties'
@@ -738,6 +767,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/reset-password/confirm': {
+      id: '/reset-password/confirm'
+      path: '/confirm'
+      fullPath: '/reset-password/confirm'
+      preLoaderRoute: typeof ResetPasswordConfirmRouteImport
+      parentRoute: typeof ResetPasswordRoute
     }
     '/reserve/$id': {
       id: '/reserve/$id'
@@ -1013,6 +1049,20 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface ResetPasswordRouteChildren {
+  ResetPasswordConfirmRoute: typeof ResetPasswordConfirmRoute
+  ResetPasswordIndexRoute: typeof ResetPasswordIndexRoute
+}
+
+const ResetPasswordRouteChildren: ResetPasswordRouteChildren = {
+  ResetPasswordConfirmRoute: ResetPasswordConfirmRoute,
+  ResetPasswordIndexRoute: ResetPasswordIndexRoute,
+}
+
+const ResetPasswordRouteWithChildren = ResetPasswordRoute._addFileChildren(
+  ResetPasswordRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
@@ -1023,7 +1073,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   NotificationsRoute: NotificationsRoute,
   RegisterRoute: RegisterRoute,
-  ResetPasswordRoute: ResetPasswordRoute,
+  ResetPasswordRoute: ResetPasswordRouteWithChildren,
   AuthCallbackRoute: AuthCallbackRoute,
   BuyerAdverseActionRoute: BuyerAdverseActionRoute,
   BuyerDashboardRoute: BuyerDashboardRoute,
