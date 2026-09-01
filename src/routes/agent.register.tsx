@@ -98,7 +98,12 @@ function AgentRegisterPage() {
           account_type: "agent",
           full_name: data.fullName,
           phone: data.phone,
-        },
+          // Email confirmation often opens in a new tab/browser where the
+          // sessionStorage draft is gone, so carry the profile in metadata.
+          agent_role: data.role,
+          license_number: data.licenseNumber,
+          license_state: data.licenseState,
+          service_area: data.serviceArea,
       },
     });
     setSubmitting(false);
