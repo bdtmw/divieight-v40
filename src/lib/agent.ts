@@ -45,6 +45,13 @@ export interface AgentRow {
   license_verified: boolean | null;
   license_verified_at: string | null;
   arello_pending_since: string | null;
+  eo_insurance_url: string | null;
+  eo_insurance_uploaded_at: string | null;
+  eo_broker_affirmed: boolean | null;
+  eo_broker_affirmed_at: string | null;
+  nar_cert_signed_at: string | null;
+  nar_cert_expires_at: string | null;
+  nar_cert_lapsed: boolean | null;
   created_at: string;
 }
 
@@ -109,8 +116,9 @@ export function agentRedirect(onboardingStatus: string): string {
     case "arello_pending_retry":
     case "insurance_pending":
       return "/agent/onboarding/insurance";
+    case "compliance_pending":
     case "fincen_pending":
-      return "/agent/onboarding/fincen";
+      return "/agent/onboarding/compliance";
     case "broker_link_pending":
       return "/agent/onboarding/broker";
     default:

@@ -47,7 +47,11 @@ export type AuditAction =
   | "agent.arello_check_verified"
   | "agent.arello_check_not_found"
   | "agent.arello_check_pending"
-  | "agent.arello_retry_verified";
+  | "agent.arello_retry_verified"
+  | "agent.eo_insurance_submitted"
+  | "agent.nar_cert_signed"
+  | "agent.nar_cert_lapsed"
+  | "agent.nar_cert_recertified";
 
 export type AuditEntity =
   | "seller"
