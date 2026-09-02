@@ -49,6 +49,7 @@ import { Route as BuyerDashboardRouteImport } from './routes/buyer.dashboard'
 import { Route as BuyerAdverseActionRouteImport } from './routes/buyer.adverse-action'
 import { Route as BrokerRegisterRouteImport } from './routes/broker.register'
 import { Route as BrokerLoginRouteImport } from './routes/broker.login'
+import { Route as BrokerDashboardRouteImport } from './routes/broker.dashboard'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AgentRegisterRouteImport } from './routes/agent.register'
 import { Route as AgentLoginRouteImport } from './routes/agent.login'
@@ -280,6 +281,11 @@ const BrokerLoginRoute = BrokerLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => BrokerRoute,
 } as any)
+const BrokerDashboardRoute = BrokerDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => BrokerRoute,
+} as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/auth/callback',
   path: '/auth/callback',
@@ -466,6 +472,7 @@ export interface FileRoutesByFullPath {
   '/agent/login': typeof AgentLoginRoute
   '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/broker/dashboard': typeof BrokerDashboardRoute
   '/broker/login': typeof BrokerLoginRoute
   '/broker/register': typeof BrokerRegisterRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
@@ -534,6 +541,7 @@ export interface FileRoutesByTo {
   '/agent/login': typeof AgentLoginRoute
   '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/broker/dashboard': typeof BrokerDashboardRoute
   '/broker/login': typeof BrokerLoginRoute
   '/broker/register': typeof BrokerRegisterRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
@@ -607,6 +615,7 @@ export interface FileRoutesById {
   '/agent/login': typeof AgentLoginRoute
   '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/broker/dashboard': typeof BrokerDashboardRoute
   '/broker/login': typeof BrokerLoginRoute
   '/broker/register': typeof BrokerRegisterRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
@@ -681,6 +690,7 @@ export interface FileRouteTypes {
     | '/agent/login'
     | '/agent/register'
     | '/auth/callback'
+    | '/broker/dashboard'
     | '/broker/login'
     | '/broker/register'
     | '/buyer/adverse-action'
@@ -749,6 +759,7 @@ export interface FileRouteTypes {
     | '/agent/login'
     | '/agent/register'
     | '/auth/callback'
+    | '/broker/dashboard'
     | '/broker/login'
     | '/broker/register'
     | '/buyer/adverse-action'
@@ -821,6 +832,7 @@ export interface FileRouteTypes {
     | '/agent/login'
     | '/agent/register'
     | '/auth/callback'
+    | '/broker/dashboard'
     | '/broker/login'
     | '/broker/register'
     | '/buyer/adverse-action'
@@ -1197,6 +1209,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BrokerLoginRouteImport
       parentRoute: typeof BrokerRoute
     }
+    '/broker/dashboard': {
+      id: '/broker/dashboard'
+      path: '/dashboard'
+      fullPath: '/broker/dashboard'
+      preLoaderRoute: typeof BrokerDashboardRouteImport
+      parentRoute: typeof BrokerRoute
+    }
     '/auth/callback': {
       id: '/auth/callback'
       path: '/auth/callback'
@@ -1463,6 +1482,7 @@ const AgentRouteChildren: AgentRouteChildren = {
 const AgentRouteWithChildren = AgentRoute._addFileChildren(AgentRouteChildren)
 
 interface BrokerRouteChildren {
+  BrokerDashboardRoute: typeof BrokerDashboardRoute
   BrokerLoginRoute: typeof BrokerLoginRoute
   BrokerRegisterRoute: typeof BrokerRegisterRoute
   BrokerIndexRoute: typeof BrokerIndexRoute
@@ -1473,6 +1493,7 @@ interface BrokerRouteChildren {
 }
 
 const BrokerRouteChildren: BrokerRouteChildren = {
+  BrokerDashboardRoute: BrokerDashboardRoute,
   BrokerLoginRoute: BrokerLoginRoute,
   BrokerRegisterRoute: BrokerRegisterRoute,
   BrokerIndexRoute: BrokerIndexRoute,
