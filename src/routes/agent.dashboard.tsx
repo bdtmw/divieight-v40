@@ -109,6 +109,45 @@ function AgentDashboard() {
         </section>
       )}
 
+      <section className="rounded-xl border border-border bg-card p-6">
+        <div className="flex items-center gap-3">
+          <Building2 className="h-5 w-5 text-accent" />
+          <h2 className="text-lg font-semibold text-foreground">Broker of Record</h2>
+        </div>
+        {agent.broker_id ? (
+          <>
+            <p className="mt-2 text-sm font-medium text-foreground [overflow-wrap:anywhere]">
+              {broker?.brokerage_name ?? "Linked brokerage"}
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Standing: {agent.relationship_status ?? "active"}
+              {agent.relationship_verified_at
+                ? ` · verified ${new Date(agent.relationship_verified_at).toLocaleDateString()}`
+                : ""}
+            </p>
+            <Link
+              to="/agent/broker-relationship"
+              className="mt-4 inline-flex h-9 items-center rounded-md border border-border px-4 text-xs font-semibold text-foreground"
+            >
+              Manage relationship
+            </Link>
+          </>
+        ) : (
+          <>
+            <p className="mt-2 text-sm text-muted-foreground">
+              No Broker of Record is linked to your profile yet.
+            </p>
+            <Link
+              to="/agent/onboarding/broker"
+              className="mt-4 inline-flex h-9 items-center rounded-md border border-border px-4 text-xs font-semibold text-foreground"
+            >
+              Link a broker
+            </Link>
+          </>
+        )}
+      </section>
+
+
       <section className="rounded-xl border border-dashed border-border p-6 text-sm text-muted-foreground">
         <div className="flex flex-wrap items-center gap-3">
           <span>In-flight transactions</span>
