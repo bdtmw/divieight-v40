@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { logAudit } from "@/lib/audit";
 import { notifyBuyer } from "@/lib/notify";
+import { tetherResidentAgent } from "@/lib/tethering.functions";
 
 /** Enrollment period covered by the Digital Key. */
 export const ENROLLMENT_DAYS = 365;
@@ -114,6 +115,13 @@ export async function issueGoldenTicketIfEligible(params: {
     metadata: { issued_at: now },
   });
   await notifyBuyer(authUserId, "golden_ticket_issued");
+
+  // Resident Agent Selection Logic runs immediately after issuance.
+  try {
+    await tetherResidentAgent({ data: { buyerAccountId } });
+  } catch (e) {
+    console.error("[golden-ticket] resident agent tethering failed", e);
+  }
 
   return { ...status, issued: true, issuedNow: true, issuedAt: now };
 }
