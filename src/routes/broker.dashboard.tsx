@@ -31,6 +31,7 @@ interface LinkedAgent {
   full_name: string;
   role: string;
   onboarding_status: string;
+  relationship_status: string | null;
 }
 
 function BrokerDashboard() {
@@ -47,7 +48,7 @@ function BrokerDashboard() {
       const db = supabase as unknown as { from: (t: string) => any };
       const { data } = await db
         .from("agents")
-        .select("id, full_name, role, onboarding_status")
+        .select("id, full_name, role, onboarding_status, relationship_status")
         .eq("broker_id", row.id);
       if (!cancelled) setAgents((data as LinkedAgent[]) ?? []);
     });
