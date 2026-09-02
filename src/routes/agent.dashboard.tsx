@@ -50,6 +50,7 @@ function AgentDashboard() {
     <div className="space-y-8">
       <AgentPendingBanner agent={agent} onUpdated={setAgent} />
       <AgentCertLapsedBanner agent={agent} onUpdated={setAgent} />
+      <AgentBrokerLapsedBanner status={agent.relationship_status} />
 
 
 
