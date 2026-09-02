@@ -57,7 +57,7 @@ function BrokerCompliancePage() {
       <ComplianceAckForm
         entityType="broker"
         entity={broker}
-        submitLabel="Continue to banking &amp; tax"
+        submitLabel="Continue to banking & tax"
         onDone={() => navigate({ to: "/broker/onboarding/banking" })}
       />
     </div>
