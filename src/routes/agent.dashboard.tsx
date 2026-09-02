@@ -7,7 +7,7 @@ import { AgentPendingBanner } from "@/components/AgentPendingBanner";
 import { AgentCertLapsedBanner } from "@/components/AgentCertLapsedBanner";
 import { AgentBrokerLapsedBanner } from "@/components/AgentBrokerLapsedBanner";
 import { getBrokerById, type BrokerRow } from "@/lib/broker";
-import { Building2, PauseCircle } from "lucide-react";
+import { Building2, PauseCircle, Share2 } from "lucide-react";
 
 export const Route = createFileRoute("/agent/dashboard")({
   head: () => ({
@@ -147,6 +147,23 @@ function AgentDashboard() {
         )}
       </section>
 
+
+      <section className="rounded-xl border border-border bg-card p-6">
+        <div className="flex items-center gap-3">
+          <Share2 className="h-5 w-5 text-accent" />
+          <h2 className="text-lg font-semibold text-foreground">Referral links & QR codes</h2>
+        </div>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Generate shareable links and QR codes, then track clicks and how many buyers registered
+          carrying your Lead Attribution Tag.
+        </p>
+        <Link
+          to="/agent/attribution"
+          className="mt-4 inline-flex h-9 items-center rounded-md border border-border px-4 text-xs font-semibold text-foreground"
+        >
+          Manage attribution
+        </Link>
+      </section>
 
       <section className="rounded-xl border border-dashed border-border p-6 text-sm text-muted-foreground">
         <div className="flex flex-wrap items-center gap-3">
