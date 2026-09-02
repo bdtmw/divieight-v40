@@ -46,6 +46,18 @@ export async function getBrokerProfile(userId: string): Promise<BrokerRow | null
   return (data as BrokerRow) ?? null;
 }
 
+/** A single brokerage by id (used to show an agent their Broker of Record). */
+export async function getBrokerById(brokerId: string): Promise<BrokerRow | null> {
+  const { data, error } = await db
+    .from("brokers")
+    .select("*")
+    .eq("id", brokerId)
+    .maybeSingle();
+  if (error) return null;
+  return (data as BrokerRow) ?? null;
+}
+
+
 /** Brokers available for an agent to link to, filtered by a search term. */
 export async function searchBrokers(term: string): Promise<BrokerRow[]> {
   let query = db
