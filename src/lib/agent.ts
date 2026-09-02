@@ -52,6 +52,11 @@ export interface AgentRow {
   nar_cert_signed_at: string | null;
   nar_cert_expires_at: string | null;
   nar_cert_lapsed: boolean | null;
+  /** Standing with the linked Broker of Record. */
+  relationship_status: "active" | "lapsed" | "transferred" | null;
+  relationship_verified_at: string | null;
+  /** Read by Month 4's transaction engine to hold in-flight transactions. */
+  transactions_held: boolean | null;
   created_at: string;
 }
 
