@@ -350,6 +350,30 @@ export const listDesignationRequests = createServerFn({ method: "POST" })
     const db = await admin();
     const agent = await agentFor(db, context.userId);
     if (!agent) return [];
+
+    // A buyer may have invited this agent by email before they joined —
+    // claim any pending invitation now that the profile exists.
+    if (agent.email) {
+      const { data: invites } = await db
+        .from("agent_invitations")
+        .select("id, invited_by_buyer_account_id")
+        .eq("invited_email", agent.email.trim().toLowerCase())
+        .eq("status", "pending");
+      for (const inv of invites ?? []) {
+        await db
+          .from("agent_invitations")
+          .update({ status: "accepted", accepted_agent_id: agent.id, accepted_at: new Date().toISOString() })
+          .eq("id", inv.id);
+        if (inv.invited_by_buyer_account_id) {
+          await db
+            .from("buyer_accounts")
+            .update({ designated_agent_id: agent.id, designated_agent_name: agent.full_name })
+            .eq("id", inv.invited_by_buyer_account_id)
+            .eq("tether_status", "awaiting_designation");
+        }
+      }
+    }
+
     const { data: rows } = await db
       .from("buyer_accounts")
       .select("id, email, primary_target_market, designated_at, designation_deadline_at")
