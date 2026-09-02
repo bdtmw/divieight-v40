@@ -8,6 +8,7 @@ import {
   Mail,
   CreditCard,
   Users2,
+  Briefcase,
   ScrollText,
   LogOut,
 } from "lucide-react";
@@ -33,6 +34,7 @@ const NAV = [
   { to: "/admin/sellers", label: "Sellers", icon: Users },
   { to: "/admin/buyers", label: "Buyers", icon: ShieldCheck },
   { to: "/admin/properties", label: "Properties", icon: Home },
+  { to: "/admin/brokers", label: "Brokers", icon: Briefcase },
   { to: "/admin/payments", label: "Payments", icon: CreditCard },
   { to: "/admin/contacts", label: "Contact inbox", icon: Mail },
   { to: "/admin/substitutions", label: "Substitutions", icon: Users2 },
