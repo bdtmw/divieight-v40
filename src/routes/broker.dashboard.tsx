@@ -59,8 +59,21 @@ function BrokerDashboard() {
 
   const isActive = broker?.onboarding_status === "active";
 
+  const lapsedAgents = agents.filter(
+    (a) => a.relationship_status && a.relationship_status !== "active",
+  );
+
   return (
     <div className="space-y-8">
+      {lapsedAgents.map((a) => (
+        <AgentBrokerLapsedBanner
+          key={a.id}
+          status={a.relationship_status}
+          agentName={a.full_name}
+          actionable={false}
+        />
+      ))}
+
       <header className="space-y-2">
         <h1 className="font-display text-3xl font-semibold text-foreground">
           {broker?.brokerage_name ?? "Broker of Record"}
