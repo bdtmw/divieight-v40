@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getBrokerProfile, type BrokerRow } from "@/lib/broker";
 import { CredentialStepper } from "@/components/credentialing/CredentialStepper";
 import { AgentBrokerLapsedBanner } from "@/components/AgentBrokerLapsedBanner";
+import { TaxFormGateBanner } from "@/components/TaxFormGateBanner";
 
 export const Route = createFileRoute("/broker/dashboard")({
   head: () => ({
@@ -66,6 +67,8 @@ function BrokerDashboard() {
 
   return (
     <div className="space-y-8">
+      {broker && !broker.tax_form_verified ? <TaxFormGateBanner /> : null}
+
       {lapsedAgents.map((a) => (
         <AgentBrokerLapsedBanner
           key={a.id}
@@ -105,7 +108,15 @@ function BrokerDashboard() {
             broker?.bank_account_last4 ? `•••• ${broker.bank_account_last4}` : "Not provided"
           }
         />
-        <Card icon={FileText} label="Tax form" value={broker?.w9_or_w8_type ?? "Not provided"} />
+        <Card
+          icon={FileText}
+          label="Tax form"
+          value={
+            broker?.tax_form_verified
+              ? (broker?.w9_or_w8_type ?? "On file")
+              : "Payout blocked"
+          }
+        />
       </div>
 
       <section className="rounded-xl border border-border bg-card p-6">

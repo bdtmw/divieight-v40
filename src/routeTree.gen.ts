@@ -62,6 +62,7 @@ import { Route as AdminPaymentsRouteImport } from './routes/admin.payments'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminContactsRouteImport } from './routes/admin.contacts'
 import { Route as AdminBuyersRouteImport } from './routes/admin.buyers'
+import { Route as AdminBrokersRouteImport } from './routes/admin.brokers'
 import { Route as AdminAuditLogRouteImport } from './routes/admin.audit-log'
 import { Route as BuyerOnboardingIndexRouteImport } from './routes/buyer.onboarding.index'
 import { Route as BuyerOnboardingVettingRouteImport } from './routes/buyer.onboarding.vetting'
@@ -348,6 +349,11 @@ const AdminBuyersRoute = AdminBuyersRouteImport.update({
   path: '/buyers',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminBrokersRoute = AdminBrokersRouteImport.update({
+  id: '/brokers',
+  path: '/brokers',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAuditLogRoute = AdminAuditLogRouteImport.update({
   id: '/audit-log',
   path: '/audit-log',
@@ -474,6 +480,7 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRouteWithChildren
   '/admin/audit-log': typeof AdminAuditLogRoute
+  '/admin/brokers': typeof AdminBrokersRoute
   '/admin/buyers': typeof AdminBuyersRoute
   '/admin/contacts': typeof AdminContactsRoute
   '/admin/login': typeof AdminLoginRoute
@@ -545,6 +552,7 @@ export interface FileRoutesByTo {
   '/notifications': typeof NotificationsRoute
   '/register': typeof RegisterRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
+  '/admin/brokers': typeof AdminBrokersRoute
   '/admin/buyers': typeof AdminBuyersRoute
   '/admin/contacts': typeof AdminContactsRoute
   '/admin/login': typeof AdminLoginRoute
@@ -621,6 +629,7 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRouteWithChildren
   '/admin/audit-log': typeof AdminAuditLogRoute
+  '/admin/brokers': typeof AdminBrokersRoute
   '/admin/buyers': typeof AdminBuyersRoute
   '/admin/contacts': typeof AdminContactsRoute
   '/admin/login': typeof AdminLoginRoute
@@ -698,6 +707,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-password'
     | '/admin/audit-log'
+    | '/admin/brokers'
     | '/admin/buyers'
     | '/admin/contacts'
     | '/admin/login'
@@ -769,6 +779,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/register'
     | '/admin/audit-log'
+    | '/admin/brokers'
     | '/admin/buyers'
     | '/admin/contacts'
     | '/admin/login'
@@ -844,6 +855,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/reset-password'
     | '/admin/audit-log'
+    | '/admin/brokers'
     | '/admin/buyers'
     | '/admin/contacts'
     | '/admin/login'
@@ -1326,6 +1338,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBuyersRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/brokers': {
+      id: '/admin/brokers'
+      path: '/brokers'
+      fullPath: '/admin/brokers'
+      preLoaderRoute: typeof AdminBrokersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/audit-log': {
       id: '/admin/audit-log'
       path: '/audit-log'
@@ -1471,6 +1490,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAuditLogRoute: typeof AdminAuditLogRoute
+  AdminBrokersRoute: typeof AdminBrokersRoute
   AdminBuyersRoute: typeof AdminBuyersRoute
   AdminContactsRoute: typeof AdminContactsRoute
   AdminLoginRoute: typeof AdminLoginRoute
@@ -1483,6 +1503,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAuditLogRoute: AdminAuditLogRoute,
+  AdminBrokersRoute: AdminBrokersRoute,
   AdminBuyersRoute: AdminBuyersRoute,
   AdminContactsRoute: AdminContactsRoute,
   AdminLoginRoute: AdminLoginRoute,
