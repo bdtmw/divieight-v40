@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -156,16 +157,19 @@ function usePasswordRecoveryRedirect() {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   usePasswordRecoveryRedirect();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  // Agent/Broker portals render their own header + footer.
+  const isPortal = pathname.startsWith("/agent") || pathname.startsWith("/broker");
 
   return (
     <QueryClientProvider client={queryClient}>
       <div className="flex min-h-screen flex-col bg-background">
-        <NavBar />
+        {!isPortal && <NavBar />}
         <main className="flex-1">
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
         </main>
-        <SiteFooter />
+        {!isPortal && <SiteFooter />}
       </div>
       <Toaster position="top-right" richColors closeButton />
     </QueryClientProvider>
