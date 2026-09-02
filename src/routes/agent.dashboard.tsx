@@ -31,6 +31,7 @@ export const Route = createFileRoute("/agent/dashboard")({
 function AgentDashboard() {
   const { user } = useAuth();
   const [agent, setAgent] = useState<AgentRow | null>(null);
+  const [broker, setBroker] = useState<BrokerRow | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -43,9 +44,25 @@ function AgentDashboard() {
     };
   }, [user]);
 
+  useEffect(() => {
+    if (!agent?.broker_id) {
+      setBroker(null);
+      return;
+    }
+    let cancelled = false;
+    getBrokerById(agent.broker_id).then((row) => {
+      if (!cancelled) setBroker(row);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [agent?.broker_id]);
+
   if (!agent) return <p className="text-sm text-muted-foreground">Loading your profile…</p>;
 
-  const onboardingComplete = agent.onboarding_status === "complete";
+  const onboardingComplete =
+    agent.onboarding_status === "complete" || agent.onboarding_status === "active";
+
 
   return (
     <div className="space-y-8">
