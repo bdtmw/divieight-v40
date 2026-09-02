@@ -62,7 +62,8 @@ export type AuditAction =
   | "broker.onboarding_completed"
   | "agent.attribution_token_created"
   | "agent.attribution_token_clicked"
-  | "buyer.referral_tagged";
+  | "buyer.referral_tagged"
+  | "buyer.resident_agent_tethered";
 
 export type AuditEntity =
   | "seller"
