@@ -4,6 +4,8 @@ import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { getAgentProfile, agentRedirect, AGENT_ROLE_LABELS, type AgentRow } from "@/lib/agent";
 import { AgentPendingBanner } from "@/components/AgentPendingBanner";
+import { AgentCertLapsedBanner } from "@/components/AgentCertLapsedBanner";
+import { PauseCircle } from "lucide-react";
 
 export const Route = createFileRoute("/agent/dashboard")({
   head: () => ({
@@ -47,6 +49,8 @@ function AgentDashboard() {
   return (
     <div className="space-y-8">
       <AgentPendingBanner agent={agent} onUpdated={setAgent} />
+      <AgentCertLapsedBanner agent={agent} onUpdated={setAgent} />
+
 
 
       <header className="space-y-2">
@@ -86,8 +90,18 @@ function AgentDashboard() {
       )}
 
       <section className="rounded-xl border border-dashed border-border p-6 text-sm text-muted-foreground">
-        Pod assignments, tethered buyers, and closing coordination tools arrive in the next
-        release.
+        <div className="flex flex-wrap items-center gap-3">
+          <span>In-flight transactions</span>
+          {agent.nar_cert_lapsed ? (
+            <span className="inline-flex items-center gap-1 rounded-full border border-destructive/50 bg-destructive/10 px-3 py-1 text-xs font-semibold text-destructive">
+              <PauseCircle className="h-3.5 w-3.5" /> Hold — certification lapsed
+            </span>
+          ) : null}
+        </div>
+        <p className="mt-2">
+          Pod assignments, tethered buyers, and closing coordination tools arrive in the next
+          release.
+        </p>
       </section>
     </div>
   );
