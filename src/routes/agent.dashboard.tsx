@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { getAgentProfile, agentRedirect, AGENT_ROLE_LABELS, type AgentRow } from "@/lib/agent";
 import { AgentPendingBanner } from "@/components/AgentPendingBanner";
 import { AgentCertLapsedBanner } from "@/components/AgentCertLapsedBanner";
+import { AgentBrokerLapsedBanner } from "@/components/AgentBrokerLapsedBanner";
 import { PauseCircle } from "lucide-react";
 
 export const Route = createFileRoute("/agent/dashboard")({
