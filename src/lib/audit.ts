@@ -51,7 +51,9 @@ export type AuditAction =
   | "agent.eo_insurance_submitted"
   | "agent.nar_cert_signed"
   | "agent.nar_cert_lapsed"
-  | "agent.nar_cert_recertified";
+  | "agent.nar_cert_recertified"
+  | "agent.fincen_acknowledged"
+  | "agent.ethics_acknowledged";
 
 export type AuditEntity =
   | "seller"
