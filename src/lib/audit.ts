@@ -73,7 +73,8 @@ export type AuditEntity =
   | "wishlist"
   | "property_document"
   | "agent"
-  | "broker";
+  | "broker"
+  | "attribution_token";
 
 export async function logAudit(params: {
   actorId: string;
