@@ -32,6 +32,8 @@ export interface BrokerRow extends CredentialEntity {
   w9_or_w8_url: string | null;
   w9_or_w8_type: TaxFormType | null;
   w9_or_w8_uploaded_at: string | null;
+  tax_form_verified: boolean | null;
+  tax_form_verified_at: string | null;
   invited_by_agent_id: string | null;
   created_at: string;
 }
@@ -185,6 +187,9 @@ export async function submitBankingDetails(
   if (input.taxFormPath) {
     patch.w9_or_w8_url = input.taxFormPath;
     patch.w9_or_w8_uploaded_at = now;
+    // Month 3: "reviewed" = on file. Clears the commission payout gate.
+    patch.tax_form_verified = true;
+    patch.tax_form_verified_at = now;
   }
 
   const { error } = await db.from("brokers").update(patch).eq("id", input.brokerId);
