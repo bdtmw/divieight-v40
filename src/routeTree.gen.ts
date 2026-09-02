@@ -63,6 +63,7 @@ import { Route as BuyerOnboardingPaymentRouteImport } from './routes/buyer.onboa
 import { Route as BuyerOnboardingLiquidityRouteImport } from './routes/buyer.onboarding.liquidity'
 import { Route as BuyerOnboardingLifestyleRouteImport } from './routes/buyer.onboarding.lifestyle'
 import { Route as BuyerOnboardingIdentityRouteImport } from './routes/buyer.onboarding.identity'
+import { Route as ApiPublicNarCertSweepRouteImport } from './routes/api.public.nar-cert-sweep'
 import { Route as ApiPublicEnrollmentMaintenanceRouteImport } from './routes/api.public.enrollment-maintenance'
 import { Route as ApiPublicArelloRetryRouteImport } from './routes/api.public.arello-retry'
 import { Route as AgentOnboardingLicenseDetailsRouteImport } from './routes/agent.onboarding.license-details'
@@ -341,6 +342,11 @@ const BuyerOnboardingIdentityRoute = BuyerOnboardingIdentityRouteImport.update({
   path: '/buyer/onboarding/identity',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicNarCertSweepRoute = ApiPublicNarCertSweepRouteImport.update({
+  id: '/api/public/nar-cert-sweep',
+  path: '/api/public/nar-cert-sweep',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicEnrollmentMaintenanceRoute =
   ApiPublicEnrollmentMaintenanceRouteImport.update({
     id: '/api/public/enrollment-maintenance',
@@ -425,6 +431,7 @@ export interface FileRoutesByFullPath {
   '/agent/onboarding/license-details': typeof AgentOnboardingLicenseDetailsRoute
   '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
+  '/api/public/nar-cert-sweep': typeof ApiPublicNarCertSweepRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
   '/buyer/onboarding/liquidity': typeof BuyerOnboardingLiquidityRoute
@@ -483,6 +490,7 @@ export interface FileRoutesByTo {
   '/agent/onboarding/license-details': typeof AgentOnboardingLicenseDetailsRoute
   '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
+  '/api/public/nar-cert-sweep': typeof ApiPublicNarCertSweepRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
   '/buyer/onboarding/liquidity': typeof BuyerOnboardingLiquidityRoute
@@ -545,6 +553,7 @@ export interface FileRoutesById {
   '/agent/onboarding/license-details': typeof AgentOnboardingLicenseDetailsRoute
   '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
+  '/api/public/nar-cert-sweep': typeof ApiPublicNarCertSweepRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
   '/buyer/onboarding/liquidity': typeof BuyerOnboardingLiquidityRoute
@@ -608,6 +617,7 @@ export interface FileRouteTypes {
     | '/agent/onboarding/license-details'
     | '/api/public/arello-retry'
     | '/api/public/enrollment-maintenance'
+    | '/api/public/nar-cert-sweep'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
     | '/buyer/onboarding/liquidity'
@@ -666,6 +676,7 @@ export interface FileRouteTypes {
     | '/agent/onboarding/license-details'
     | '/api/public/arello-retry'
     | '/api/public/enrollment-maintenance'
+    | '/api/public/nar-cert-sweep'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
     | '/buyer/onboarding/liquidity'
@@ -727,6 +738,7 @@ export interface FileRouteTypes {
     | '/agent/onboarding/license-details'
     | '/api/public/arello-retry'
     | '/api/public/enrollment-maintenance'
+    | '/api/public/nar-cert-sweep'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
     | '/buyer/onboarding/liquidity'
@@ -771,6 +783,7 @@ export interface RootRouteChildren {
   PropertiesIndexRoute: typeof PropertiesIndexRoute
   ApiPublicArelloRetryRoute: typeof ApiPublicArelloRetryRoute
   ApiPublicEnrollmentMaintenanceRoute: typeof ApiPublicEnrollmentMaintenanceRoute
+  ApiPublicNarCertSweepRoute: typeof ApiPublicNarCertSweepRoute
   BuyerOnboardingIdentityRoute: typeof BuyerOnboardingIdentityRoute
   BuyerOnboardingLifestyleRoute: typeof BuyerOnboardingLifestyleRoute
   BuyerOnboardingLiquidityRoute: typeof BuyerOnboardingLiquidityRoute
@@ -1159,6 +1172,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyerOnboardingIdentityRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/nar-cert-sweep': {
+      id: '/api/public/nar-cert-sweep'
+      path: '/api/public/nar-cert-sweep'
+      fullPath: '/api/public/nar-cert-sweep'
+      preLoaderRoute: typeof ApiPublicNarCertSweepRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/enrollment-maintenance': {
       id: '/api/public/enrollment-maintenance'
       path: '/api/public/enrollment-maintenance'
@@ -1295,6 +1315,7 @@ const rootRouteChildren: RootRouteChildren = {
   PropertiesIndexRoute: PropertiesIndexRoute,
   ApiPublicArelloRetryRoute: ApiPublicArelloRetryRoute,
   ApiPublicEnrollmentMaintenanceRoute: ApiPublicEnrollmentMaintenanceRoute,
+  ApiPublicNarCertSweepRoute: ApiPublicNarCertSweepRoute,
   BuyerOnboardingIdentityRoute: BuyerOnboardingIdentityRoute,
   BuyerOnboardingLifestyleRoute: BuyerOnboardingLifestyleRoute,
   BuyerOnboardingLiquidityRoute: BuyerOnboardingLiquidityRoute,
