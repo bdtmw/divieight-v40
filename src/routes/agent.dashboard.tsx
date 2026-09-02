@@ -99,6 +99,11 @@ function AgentDashboard() {
               <PauseCircle className="h-3.5 w-3.5" /> Hold — certification lapsed
             </span>
           ) : null}
+          {agent.transactions_held ? (
+            <span className="inline-flex items-center gap-1 rounded-full border border-destructive/50 bg-destructive/10 px-3 py-1 text-xs font-semibold text-destructive">
+              <PauseCircle className="h-3.5 w-3.5" /> Hold — broker relationship
+            </span>
+          ) : null}
         </div>
         <p className="mt-2">
           Pod assignments, tethered buyers, and closing coordination tools arrive in the next
