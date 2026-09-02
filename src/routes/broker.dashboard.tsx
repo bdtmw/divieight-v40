@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { getBrokerProfile, type BrokerRow } from "@/lib/broker";
 import { CredentialStepper } from "@/components/credentialing/CredentialStepper";
+import { AgentBrokerLapsedBanner } from "@/components/AgentBrokerLapsedBanner";
 
 export const Route = createFileRoute("/broker/dashboard")({
   head: () => ({
