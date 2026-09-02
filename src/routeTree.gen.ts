@@ -78,6 +78,7 @@ import { Route as BrokerOnboardingComplianceRouteImport } from './routes/broker.
 import { Route as BrokerOnboardingBankingRouteImport } from './routes/broker.onboarding.banking'
 import { Route as ApiPublicNarCertSweepRouteImport } from './routes/api.public.nar-cert-sweep'
 import { Route as ApiPublicEnrollmentMaintenanceRouteImport } from './routes/api.public.enrollment-maintenance'
+import { Route as ApiPublicDesignationSweepRouteImport } from './routes/api.public.designation-sweep'
 import { Route as ApiPublicBrokerRelationshipSweepRouteImport } from './routes/api.public.broker-relationship-sweep'
 import { Route as ApiPublicArelloRetryRouteImport } from './routes/api.public.arello-retry'
 import { Route as AgentOnboardingLicenseDetailsRouteImport } from './routes/agent.onboarding.license-details'
@@ -437,6 +438,12 @@ const ApiPublicEnrollmentMaintenanceRoute =
     path: '/api/public/enrollment-maintenance',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicDesignationSweepRoute =
+  ApiPublicDesignationSweepRouteImport.update({
+    id: '/api/public/designation-sweep',
+    path: '/api/public/designation-sweep',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicBrokerRelationshipSweepRoute =
   ApiPublicBrokerRelationshipSweepRouteImport.update({
     id: '/api/public/broker-relationship-sweep',
@@ -543,6 +550,7 @@ export interface FileRoutesByFullPath {
   '/agent/onboarding/license-details': typeof AgentOnboardingLicenseDetailsRoute
   '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
   '/api/public/broker-relationship-sweep': typeof ApiPublicBrokerRelationshipSweepRoute
+  '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/api/public/nar-cert-sweep': typeof ApiPublicNarCertSweepRoute
   '/broker/onboarding/banking': typeof BrokerOnboardingBankingRoute
@@ -617,6 +625,7 @@ export interface FileRoutesByTo {
   '/agent/onboarding/license-details': typeof AgentOnboardingLicenseDetailsRoute
   '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
   '/api/public/broker-relationship-sweep': typeof ApiPublicBrokerRelationshipSweepRoute
+  '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/api/public/nar-cert-sweep': typeof ApiPublicNarCertSweepRoute
   '/broker/onboarding/banking': typeof BrokerOnboardingBankingRoute
@@ -696,6 +705,7 @@ export interface FileRoutesById {
   '/agent/onboarding/license-details': typeof AgentOnboardingLicenseDetailsRoute
   '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
   '/api/public/broker-relationship-sweep': typeof ApiPublicBrokerRelationshipSweepRoute
+  '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/api/public/nar-cert-sweep': typeof ApiPublicNarCertSweepRoute
   '/broker/onboarding/banking': typeof BrokerOnboardingBankingRoute
@@ -776,6 +786,7 @@ export interface FileRouteTypes {
     | '/agent/onboarding/license-details'
     | '/api/public/arello-retry'
     | '/api/public/broker-relationship-sweep'
+    | '/api/public/designation-sweep'
     | '/api/public/enrollment-maintenance'
     | '/api/public/nar-cert-sweep'
     | '/broker/onboarding/banking'
@@ -850,6 +861,7 @@ export interface FileRouteTypes {
     | '/agent/onboarding/license-details'
     | '/api/public/arello-retry'
     | '/api/public/broker-relationship-sweep'
+    | '/api/public/designation-sweep'
     | '/api/public/enrollment-maintenance'
     | '/api/public/nar-cert-sweep'
     | '/broker/onboarding/banking'
@@ -928,6 +940,7 @@ export interface FileRouteTypes {
     | '/agent/onboarding/license-details'
     | '/api/public/arello-retry'
     | '/api/public/broker-relationship-sweep'
+    | '/api/public/designation-sweep'
     | '/api/public/enrollment-maintenance'
     | '/api/public/nar-cert-sweep'
     | '/broker/onboarding/banking'
@@ -980,6 +993,7 @@ export interface RootRouteChildren {
   PropertiesIndexRoute: typeof PropertiesIndexRoute
   ApiPublicArelloRetryRoute: typeof ApiPublicArelloRetryRoute
   ApiPublicBrokerRelationshipSweepRoute: typeof ApiPublicBrokerRelationshipSweepRoute
+  ApiPublicDesignationSweepRoute: typeof ApiPublicDesignationSweepRoute
   ApiPublicEnrollmentMaintenanceRoute: typeof ApiPublicEnrollmentMaintenanceRoute
   ApiPublicNarCertSweepRoute: typeof ApiPublicNarCertSweepRoute
   BuyerOnboardingIdentityRoute: typeof BuyerOnboardingIdentityRoute
@@ -1475,6 +1489,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicEnrollmentMaintenanceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/designation-sweep': {
+      id: '/api/public/designation-sweep'
+      path: '/api/public/designation-sweep'
+      fullPath: '/api/public/designation-sweep'
+      preLoaderRoute: typeof ApiPublicDesignationSweepRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/broker-relationship-sweep': {
       id: '/api/public/broker-relationship-sweep'
       path: '/api/public/broker-relationship-sweep'
@@ -1662,6 +1683,7 @@ const rootRouteChildren: RootRouteChildren = {
   PropertiesIndexRoute: PropertiesIndexRoute,
   ApiPublicArelloRetryRoute: ApiPublicArelloRetryRoute,
   ApiPublicBrokerRelationshipSweepRoute: ApiPublicBrokerRelationshipSweepRoute,
+  ApiPublicDesignationSweepRoute: ApiPublicDesignationSweepRoute,
   ApiPublicEnrollmentMaintenanceRoute: ApiPublicEnrollmentMaintenanceRoute,
   ApiPublicNarCertSweepRoute: ApiPublicNarCertSweepRoute,
   BuyerOnboardingIdentityRoute: BuyerOnboardingIdentityRoute,
