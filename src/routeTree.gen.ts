@@ -29,6 +29,7 @@ import { Route as AgentIndexRouteImport } from './routes/agent.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ResetPasswordConfirmRouteImport } from './routes/reset-password.confirm'
 import { Route as ReserveIdRouteImport } from './routes/reserve.$id'
+import { Route as RTokenRouteImport } from './routes/r.$token'
 import { Route as PropertiesIdRouteImport } from './routes/properties.$id'
 import { Route as OnboardingPropertyRouteImport } from './routes/onboarding.property'
 import { Route as OnboardingMediaRouteImport } from './routes/onboarding.media'
@@ -182,6 +183,11 @@ const ResetPasswordConfirmRoute = ResetPasswordConfirmRouteImport.update({
 const ReserveIdRoute = ReserveIdRouteImport.update({
   id: '/reserve/$id',
   path: '/reserve/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RTokenRoute = RTokenRouteImport.update({
+  id: '/r/$token',
+  path: '/r/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PropertiesIdRoute = PropertiesIdRouteImport.update({
@@ -514,6 +520,7 @@ export interface FileRoutesByFullPath {
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/properties/$id': typeof PropertiesIdRoute
+  '/r/$token': typeof RTokenRoute
   '/reserve/$id': typeof ReserveIdRoute
   '/reset-password/confirm': typeof ResetPasswordConfirmRoute
   '/admin/': typeof AdminIndexRoute
@@ -586,6 +593,7 @@ export interface FileRoutesByTo {
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/properties/$id': typeof PropertiesIdRoute
+  '/r/$token': typeof RTokenRoute
   '/reserve/$id': typeof ReserveIdRoute
   '/reset-password/confirm': typeof ResetPasswordConfirmRoute
   '/admin': typeof AdminIndexRoute
@@ -663,6 +671,7 @@ export interface FileRoutesById {
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/properties/$id': typeof PropertiesIdRoute
+  '/r/$token': typeof RTokenRoute
   '/reserve/$id': typeof ReserveIdRoute
   '/reset-password/confirm': typeof ResetPasswordConfirmRoute
   '/admin/': typeof AdminIndexRoute
@@ -741,6 +750,7 @@ export interface FileRouteTypes {
     | '/onboarding/media'
     | '/onboarding/property'
     | '/properties/$id'
+    | '/r/$token'
     | '/reserve/$id'
     | '/reset-password/confirm'
     | '/admin/'
@@ -813,6 +823,7 @@ export interface FileRouteTypes {
     | '/onboarding/media'
     | '/onboarding/property'
     | '/properties/$id'
+    | '/r/$token'
     | '/reserve/$id'
     | '/reset-password/confirm'
     | '/admin'
@@ -889,6 +900,7 @@ export interface FileRouteTypes {
     | '/onboarding/media'
     | '/onboarding/property'
     | '/properties/$id'
+    | '/r/$token'
     | '/reserve/$id'
     | '/reset-password/confirm'
     | '/admin/'
@@ -950,6 +962,7 @@ export interface RootRouteChildren {
   OnboardingMediaRoute: typeof OnboardingMediaRoute
   OnboardingPropertyRoute: typeof OnboardingPropertyRoute
   PropertiesIdRoute: typeof PropertiesIdRoute
+  RTokenRoute: typeof RTokenRoute
   ReserveIdRoute: typeof ReserveIdRoute
   OnboardingIndexRoute: typeof OnboardingIndexRoute
   PropertiesIndexRoute: typeof PropertiesIndexRoute
@@ -1105,6 +1118,13 @@ declare module '@tanstack/react-router' {
       path: '/reserve/$id'
       fullPath: '/reserve/$id'
       preLoaderRoute: typeof ReserveIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/r/$token': {
+      id: '/r/$token'
+      path: '/r/$token'
+      fullPath: '/r/$token'
+      preLoaderRoute: typeof RTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/properties/$id': {
@@ -1615,6 +1635,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingMediaRoute: OnboardingMediaRoute,
   OnboardingPropertyRoute: OnboardingPropertyRoute,
   PropertiesIdRoute: PropertiesIdRoute,
+  RTokenRoute: RTokenRoute,
   ReserveIdRoute: ReserveIdRoute,
   OnboardingIndexRoute: OnboardingIndexRoute,
   PropertiesIndexRoute: PropertiesIndexRoute,
