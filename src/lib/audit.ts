@@ -63,7 +63,14 @@ export type AuditAction =
   | "agent.attribution_token_created"
   | "agent.attribution_token_clicked"
   | "buyer.referral_tagged"
-  | "buyer.resident_agent_tethered";
+  | "buyer.resident_agent_tethered"
+  | "buyer.agent_designated"
+  | "buyer.agent_designation_resent"
+  | "buyer.agent_designation_expired"
+  | "agent.designation_accepted"
+  | "agent.designation_declined"
+  | "agent.tether_accepted"
+  | "agent.refer_only_elected";
 
 export type AuditEntity =
   | "seller"

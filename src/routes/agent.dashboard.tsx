@@ -6,6 +6,7 @@ import { getAgentProfile, agentRedirect, AGENT_ROLE_LABELS, type AgentRow } from
 import { AgentPendingBanner } from "@/components/AgentPendingBanner";
 import { AgentCertLapsedBanner } from "@/components/AgentCertLapsedBanner";
 import { AgentBrokerLapsedBanner } from "@/components/AgentBrokerLapsedBanner";
+import { AgentActionItems } from "@/components/AgentActionItems";
 import { getBrokerById, type BrokerRow } from "@/lib/broker";
 import { Building2, PauseCircle, Share2 } from "lucide-react";
 
@@ -70,6 +71,8 @@ function AgentDashboard() {
       <AgentPendingBanner agent={agent} onUpdated={setAgent} />
       <AgentCertLapsedBanner agent={agent} onUpdated={setAgent} />
       <AgentBrokerLapsedBanner status={agent.relationship_status} />
+
+      <AgentActionItems />
 
 
 

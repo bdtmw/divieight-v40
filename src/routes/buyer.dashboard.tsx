@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Building2, FileText, Heart, KeyRound, Ticket } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { DesignateAgentCard } from "@/components/DesignateAgentCard";
 import { buyerRedirect } from "@/lib/buyer";
 import { getSellerAccount } from "@/lib/seller";
 import { getMyReservations, withdrawReservation } from "@/lib/reservations.functions";
@@ -295,6 +296,8 @@ function BuyerDashboardPage() {
           </Link>
         </div>
       ) : null}
+
+      {account.golden_ticket_issued ? <DesignateAgentCard buyerAccountId={account.id} /> : null}
 
       <section className="mt-8 rounded-xl border border-border bg-card p-5">
         <div className="flex items-start gap-3">
