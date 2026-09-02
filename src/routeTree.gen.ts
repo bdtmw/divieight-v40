@@ -70,6 +70,7 @@ import { Route as BuyerOnboardingIdentityRouteImport } from './routes/buyer.onbo
 import { Route as BrokerOnboardingLicenseCheckRouteImport } from './routes/broker.onboarding.license-check'
 import { Route as BrokerOnboardingInsuranceRouteImport } from './routes/broker.onboarding.insurance'
 import { Route as BrokerOnboardingComplianceRouteImport } from './routes/broker.onboarding.compliance'
+import { Route as BrokerOnboardingBankingRouteImport } from './routes/broker.onboarding.banking'
 import { Route as ApiPublicNarCertSweepRouteImport } from './routes/api.public.nar-cert-sweep'
 import { Route as ApiPublicEnrollmentMaintenanceRouteImport } from './routes/api.public.enrollment-maintenance'
 import { Route as ApiPublicArelloRetryRouteImport } from './routes/api.public.arello-retry'
@@ -389,6 +390,11 @@ const BrokerOnboardingComplianceRoute =
     path: '/onboarding/compliance',
     getParentRoute: () => BrokerRoute,
   } as any)
+const BrokerOnboardingBankingRoute = BrokerOnboardingBankingRouteImport.update({
+  id: '/onboarding/banking',
+  path: '/onboarding/banking',
+  getParentRoute: () => BrokerRoute,
+} as any)
 const ApiPublicNarCertSweepRoute = ApiPublicNarCertSweepRouteImport.update({
   id: '/api/public/nar-cert-sweep',
   path: '/api/public/nar-cert-sweep',
@@ -496,6 +502,7 @@ export interface FileRoutesByFullPath {
   '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/api/public/nar-cert-sweep': typeof ApiPublicNarCertSweepRoute
+  '/broker/onboarding/banking': typeof BrokerOnboardingBankingRoute
   '/broker/onboarding/compliance': typeof BrokerOnboardingComplianceRoute
   '/broker/onboarding/insurance': typeof BrokerOnboardingInsuranceRoute
   '/broker/onboarding/license-check': typeof BrokerOnboardingLicenseCheckRoute
@@ -563,6 +570,7 @@ export interface FileRoutesByTo {
   '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/api/public/nar-cert-sweep': typeof ApiPublicNarCertSweepRoute
+  '/broker/onboarding/banking': typeof BrokerOnboardingBankingRoute
   '/broker/onboarding/compliance': typeof BrokerOnboardingComplianceRoute
   '/broker/onboarding/insurance': typeof BrokerOnboardingInsuranceRoute
   '/broker/onboarding/license-check': typeof BrokerOnboardingLicenseCheckRoute
@@ -635,6 +643,7 @@ export interface FileRoutesById {
   '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/api/public/nar-cert-sweep': typeof ApiPublicNarCertSweepRoute
+  '/broker/onboarding/banking': typeof BrokerOnboardingBankingRoute
   '/broker/onboarding/compliance': typeof BrokerOnboardingComplianceRoute
   '/broker/onboarding/insurance': typeof BrokerOnboardingInsuranceRoute
   '/broker/onboarding/license-check': typeof BrokerOnboardingLicenseCheckRoute
@@ -708,6 +717,7 @@ export interface FileRouteTypes {
     | '/api/public/arello-retry'
     | '/api/public/enrollment-maintenance'
     | '/api/public/nar-cert-sweep'
+    | '/broker/onboarding/banking'
     | '/broker/onboarding/compliance'
     | '/broker/onboarding/insurance'
     | '/broker/onboarding/license-check'
@@ -775,6 +785,7 @@ export interface FileRouteTypes {
     | '/api/public/arello-retry'
     | '/api/public/enrollment-maintenance'
     | '/api/public/nar-cert-sweep'
+    | '/broker/onboarding/banking'
     | '/broker/onboarding/compliance'
     | '/broker/onboarding/insurance'
     | '/broker/onboarding/license-check'
@@ -846,6 +857,7 @@ export interface FileRouteTypes {
     | '/api/public/arello-retry'
     | '/api/public/enrollment-maintenance'
     | '/api/public/nar-cert-sweep'
+    | '/broker/onboarding/banking'
     | '/broker/onboarding/compliance'
     | '/broker/onboarding/insurance'
     | '/broker/onboarding/license-check'
@@ -1332,6 +1344,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BrokerOnboardingComplianceRouteImport
       parentRoute: typeof BrokerRoute
     }
+    '/broker/onboarding/banking': {
+      id: '/broker/onboarding/banking'
+      path: '/onboarding/banking'
+      fullPath: '/broker/onboarding/banking'
+      preLoaderRoute: typeof BrokerOnboardingBankingRouteImport
+      parentRoute: typeof BrokerRoute
+    }
     '/api/public/nar-cert-sweep': {
       id: '/api/public/nar-cert-sweep'
       path: '/api/public/nar-cert-sweep'
@@ -1447,6 +1466,7 @@ interface BrokerRouteChildren {
   BrokerLoginRoute: typeof BrokerLoginRoute
   BrokerRegisterRoute: typeof BrokerRegisterRoute
   BrokerIndexRoute: typeof BrokerIndexRoute
+  BrokerOnboardingBankingRoute: typeof BrokerOnboardingBankingRoute
   BrokerOnboardingComplianceRoute: typeof BrokerOnboardingComplianceRoute
   BrokerOnboardingInsuranceRoute: typeof BrokerOnboardingInsuranceRoute
   BrokerOnboardingLicenseCheckRoute: typeof BrokerOnboardingLicenseCheckRoute
@@ -1456,6 +1476,7 @@ const BrokerRouteChildren: BrokerRouteChildren = {
   BrokerLoginRoute: BrokerLoginRoute,
   BrokerRegisterRoute: BrokerRegisterRoute,
   BrokerIndexRoute: BrokerIndexRoute,
+  BrokerOnboardingBankingRoute: BrokerOnboardingBankingRoute,
   BrokerOnboardingComplianceRoute: BrokerOnboardingComplianceRoute,
   BrokerOnboardingInsuranceRoute: BrokerOnboardingInsuranceRoute,
   BrokerOnboardingLicenseCheckRoute: BrokerOnboardingLicenseCheckRoute,
