@@ -155,6 +155,12 @@ export function NavBar() {
                 Seller sign in
               </Link>
               <Link
+                to="/agent/login"
+                className="hidden text-sm font-medium text-muted-foreground transition-colors hover:text-foreground sm:inline-flex"
+              >
+                Agent sign in
+              </Link>
+              <Link
                 to="/buyer/register"
                 className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground shadow-sm transition-transform hover:-translate-y-0.5"
               >
