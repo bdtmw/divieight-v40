@@ -82,7 +82,7 @@ function BrokerLoginPage() {
       footer={
         <>
           Need an account?{" "}
-          <Link to="/broker/register" className="font-medium text-foreground hover:text-accent">
+          <Link to="/broker/register" search={{ invite: undefined }} className="font-medium text-foreground hover:text-accent">
             Register your brokerage
           </Link>
         </>

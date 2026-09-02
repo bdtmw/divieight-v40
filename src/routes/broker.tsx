@@ -70,7 +70,7 @@ function BrokerPortalLayout() {
     }
     if (!broker) {
       toast.error("This area is for Brokers of Record on the divieight platform.");
-      navigate({ to: "/broker/register", replace: true });
+      navigate({ to: "/broker/register", search: { invite: undefined }, replace: true });
     }
   }, [isPublic, loading, checking, user, broker, navigate]);
 

@@ -36,8 +36,9 @@ function BrokerIndex() {
     getBrokerProfile(user.id).then((row) => {
       navigate({
         to: row ? brokerRedirect(row.onboarding_status) : "/broker/register",
+        search: { invite: undefined },
         replace: true,
-      });
+      } as never);
     });
   }, [user, loading, navigate]);
 
