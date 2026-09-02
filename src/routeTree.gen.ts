@@ -56,6 +56,7 @@ import { Route as AgentRegisterRouteImport } from './routes/agent.register'
 import { Route as AgentLoginRouteImport } from './routes/agent.login'
 import { Route as AgentDashboardRouteImport } from './routes/agent.dashboard'
 import { Route as AgentBrokerRelationshipRouteImport } from './routes/agent.broker-relationship'
+import { Route as AgentAttributionRouteImport } from './routes/agent.attribution'
 import { Route as AdminSubstitutionsRouteImport } from './routes/admin.substitutions'
 import { Route as AdminSellersRouteImport } from './routes/admin.sellers'
 import { Route as AdminPropertiesRouteImport } from './routes/admin.properties'
@@ -320,6 +321,11 @@ const AgentBrokerRelationshipRoute = AgentBrokerRelationshipRouteImport.update({
   path: '/broker-relationship',
   getParentRoute: () => AgentRoute,
 } as any)
+const AgentAttributionRoute = AgentAttributionRouteImport.update({
+  id: '/attribution',
+  path: '/attribution',
+  getParentRoute: () => AgentRoute,
+} as any)
 const AdminSubstitutionsRoute = AdminSubstitutionsRouteImport.update({
   id: '/substitutions',
   path: '/substitutions',
@@ -494,6 +500,7 @@ export interface FileRoutesByFullPath {
   '/admin/properties': typeof AdminPropertiesRoute
   '/admin/sellers': typeof AdminSellersRoute
   '/admin/substitutions': typeof AdminSubstitutionsRoute
+  '/agent/attribution': typeof AgentAttributionRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/login': typeof AgentLoginRoute
@@ -567,6 +574,7 @@ export interface FileRoutesByTo {
   '/admin/properties': typeof AdminPropertiesRoute
   '/admin/sellers': typeof AdminSellersRoute
   '/admin/substitutions': typeof AdminSubstitutionsRoute
+  '/agent/attribution': typeof AgentAttributionRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/login': typeof AgentLoginRoute
@@ -645,6 +653,7 @@ export interface FileRoutesById {
   '/admin/properties': typeof AdminPropertiesRoute
   '/admin/sellers': typeof AdminSellersRoute
   '/admin/substitutions': typeof AdminSubstitutionsRoute
+  '/agent/attribution': typeof AgentAttributionRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/login': typeof AgentLoginRoute
@@ -724,6 +733,7 @@ export interface FileRouteTypes {
     | '/admin/properties'
     | '/admin/sellers'
     | '/admin/substitutions'
+    | '/agent/attribution'
     | '/agent/broker-relationship'
     | '/agent/dashboard'
     | '/agent/login'
@@ -797,6 +807,7 @@ export interface FileRouteTypes {
     | '/admin/properties'
     | '/admin/sellers'
     | '/admin/substitutions'
+    | '/agent/attribution'
     | '/agent/broker-relationship'
     | '/agent/dashboard'
     | '/agent/login'
@@ -874,6 +885,7 @@ export interface FileRouteTypes {
     | '/admin/properties'
     | '/admin/sellers'
     | '/admin/substitutions'
+    | '/agent/attribution'
     | '/agent/broker-relationship'
     | '/agent/dashboard'
     | '/agent/login'
@@ -1309,6 +1321,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentBrokerRelationshipRouteImport
       parentRoute: typeof AgentRoute
     }
+    '/agent/attribution': {
+      id: '/agent/attribution'
+      path: '/attribution'
+      fullPath: '/agent/attribution'
+      preLoaderRoute: typeof AgentAttributionRouteImport
+      parentRoute: typeof AgentRoute
+    }
     '/admin/substitutions': {
       id: '/admin/substitutions'
       path: '/substitutions'
@@ -1537,6 +1556,7 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface AgentRouteChildren {
+  AgentAttributionRoute: typeof AgentAttributionRoute
   AgentBrokerRelationshipRoute: typeof AgentBrokerRelationshipRoute
   AgentDashboardRoute: typeof AgentDashboardRoute
   AgentLoginRoute: typeof AgentLoginRoute
@@ -1550,6 +1570,7 @@ interface AgentRouteChildren {
 }
 
 const AgentRouteChildren: AgentRouteChildren = {
+  AgentAttributionRoute: AgentAttributionRoute,
   AgentBrokerRelationshipRoute: AgentBrokerRelationshipRoute,
   AgentDashboardRoute: AgentDashboardRoute,
   AgentLoginRoute: AgentLoginRoute,

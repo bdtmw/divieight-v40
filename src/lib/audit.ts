@@ -59,7 +59,10 @@ export type AuditAction =
   | "broker.invitation_sent"
   | "broker.linked"
   | "broker.banking_saved"
-  | "broker.onboarding_completed";
+  | "broker.onboarding_completed"
+  | "agent.attribution_token_created"
+  | "agent.attribution_token_clicked"
+  | "buyer.referral_tagged";
 
 export type AuditEntity =
   | "seller"
