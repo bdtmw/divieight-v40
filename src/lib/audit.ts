@@ -54,6 +54,8 @@ export type AuditAction =
   | "agent.nar_cert_recertified"
   | "agent.fincen_acknowledged"
   | "agent.ethics_acknowledged"
+  | "agent.broker_relationship_lapsed"
+  | "agent.broker_relationship_verified"
   | "broker.invitation_sent"
   | "broker.linked"
   | "broker.banking_saved"

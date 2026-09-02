@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { getAgentProfile, agentRedirect, AGENT_ROLE_LABELS, type AgentRow } from "@/lib/agent";
 import { AgentPendingBanner } from "@/components/AgentPendingBanner";
 import { AgentCertLapsedBanner } from "@/components/AgentCertLapsedBanner";
+import { AgentBrokerLapsedBanner } from "@/components/AgentBrokerLapsedBanner";
 import { PauseCircle } from "lucide-react";
 
 export const Route = createFileRoute("/agent/dashboard")({
@@ -50,6 +51,7 @@ function AgentDashboard() {
     <div className="space-y-8">
       <AgentPendingBanner agent={agent} onUpdated={setAgent} />
       <AgentCertLapsedBanner agent={agent} onUpdated={setAgent} />
+      <AgentBrokerLapsedBanner status={agent.relationship_status} />
 
 
 
@@ -95,6 +97,11 @@ function AgentDashboard() {
           {agent.nar_cert_lapsed ? (
             <span className="inline-flex items-center gap-1 rounded-full border border-destructive/50 bg-destructive/10 px-3 py-1 text-xs font-semibold text-destructive">
               <PauseCircle className="h-3.5 w-3.5" /> Hold — certification lapsed
+            </span>
+          ) : null}
+          {agent.transactions_held ? (
+            <span className="inline-flex items-center gap-1 rounded-full border border-destructive/50 bg-destructive/10 px-3 py-1 text-xs font-semibold text-destructive">
+              <PauseCircle className="h-3.5 w-3.5" /> Hold — broker relationship
             </span>
           ) : null}
         </div>

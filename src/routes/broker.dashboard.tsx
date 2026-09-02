@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { getBrokerProfile, type BrokerRow } from "@/lib/broker";
 import { CredentialStepper } from "@/components/credentialing/CredentialStepper";
+import { AgentBrokerLapsedBanner } from "@/components/AgentBrokerLapsedBanner";
 
 export const Route = createFileRoute("/broker/dashboard")({
   head: () => ({
@@ -31,6 +32,7 @@ interface LinkedAgent {
   full_name: string;
   role: string;
   onboarding_status: string;
+  relationship_status: string | null;
 }
 
 function BrokerDashboard() {
@@ -47,7 +49,7 @@ function BrokerDashboard() {
       const db = supabase as unknown as { from: (t: string) => any };
       const { data } = await db
         .from("agents")
-        .select("id, full_name, role, onboarding_status")
+        .select("id, full_name, role, onboarding_status, relationship_status")
         .eq("broker_id", row.id);
       if (!cancelled) setAgents((data as LinkedAgent[]) ?? []);
     });
@@ -58,8 +60,21 @@ function BrokerDashboard() {
 
   const isActive = broker?.onboarding_status === "active";
 
+  const lapsedAgents = agents.filter(
+    (a) => a.relationship_status && a.relationship_status !== "active",
+  );
+
   return (
     <div className="space-y-8">
+      {lapsedAgents.map((a) => (
+        <AgentBrokerLapsedBanner
+          key={a.id}
+          status={a.relationship_status}
+          agentName={a.full_name}
+          actionable={false}
+        />
+      ))}
+
       <header className="space-y-2">
         <h1 className="font-display text-3xl font-semibold text-foreground">
           {broker?.brokerage_name ?? "Broker of Record"}

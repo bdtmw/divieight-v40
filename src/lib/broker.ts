@@ -275,7 +275,13 @@ export async function linkAgentToBroker(
 ): Promise<{ error?: string }> {
   const { error } = await db
     .from("agents")
-    .update({ broker_id: brokerId, onboarding_status: "active" })
+    .update({
+      broker_id: brokerId,
+      onboarding_status: "active",
+      relationship_status: "active",
+      relationship_verified_at: new Date().toISOString(),
+      transactions_held: false,
+    })
     .eq("id", agentId);
   if (error) return { error: error.message };
   return {};
