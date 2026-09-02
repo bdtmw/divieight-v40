@@ -71,6 +71,8 @@ function AgentDashboard() {
       <AgentCertLapsedBanner agent={agent} onUpdated={setAgent} />
       <AgentBrokerLapsedBanner status={agent.relationship_status} />
 
+      <AgentActionItems />
+
 
 
       <header className="space-y-2">
