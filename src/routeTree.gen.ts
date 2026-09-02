@@ -29,6 +29,7 @@ import { Route as AgentIndexRouteImport } from './routes/agent.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ResetPasswordConfirmRouteImport } from './routes/reset-password.confirm'
 import { Route as ReserveIdRouteImport } from './routes/reserve.$id'
+import { Route as RTokenRouteImport } from './routes/r.$token'
 import { Route as PropertiesIdRouteImport } from './routes/properties.$id'
 import { Route as OnboardingPropertyRouteImport } from './routes/onboarding.property'
 import { Route as OnboardingMediaRouteImport } from './routes/onboarding.media'
@@ -55,6 +56,7 @@ import { Route as AgentRegisterRouteImport } from './routes/agent.register'
 import { Route as AgentLoginRouteImport } from './routes/agent.login'
 import { Route as AgentDashboardRouteImport } from './routes/agent.dashboard'
 import { Route as AgentBrokerRelationshipRouteImport } from './routes/agent.broker-relationship'
+import { Route as AgentAttributionRouteImport } from './routes/agent.attribution'
 import { Route as AdminSubstitutionsRouteImport } from './routes/admin.substitutions'
 import { Route as AdminSellersRouteImport } from './routes/admin.sellers'
 import { Route as AdminPropertiesRouteImport } from './routes/admin.properties'
@@ -182,6 +184,11 @@ const ResetPasswordConfirmRoute = ResetPasswordConfirmRouteImport.update({
 const ReserveIdRoute = ReserveIdRouteImport.update({
   id: '/reserve/$id',
   path: '/reserve/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RTokenRoute = RTokenRouteImport.update({
+  id: '/r/$token',
+  path: '/r/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PropertiesIdRoute = PropertiesIdRouteImport.update({
@@ -312,6 +319,11 @@ const AgentDashboardRoute = AgentDashboardRouteImport.update({
 const AgentBrokerRelationshipRoute = AgentBrokerRelationshipRouteImport.update({
   id: '/broker-relationship',
   path: '/broker-relationship',
+  getParentRoute: () => AgentRoute,
+} as any)
+const AgentAttributionRoute = AgentAttributionRouteImport.update({
+  id: '/attribution',
+  path: '/attribution',
   getParentRoute: () => AgentRoute,
 } as any)
 const AdminSubstitutionsRoute = AdminSubstitutionsRouteImport.update({
@@ -488,6 +500,7 @@ export interface FileRoutesByFullPath {
   '/admin/properties': typeof AdminPropertiesRoute
   '/admin/sellers': typeof AdminSellersRoute
   '/admin/substitutions': typeof AdminSubstitutionsRoute
+  '/agent/attribution': typeof AgentAttributionRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/login': typeof AgentLoginRoute
@@ -514,6 +527,7 @@ export interface FileRoutesByFullPath {
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/properties/$id': typeof PropertiesIdRoute
+  '/r/$token': typeof RTokenRoute
   '/reserve/$id': typeof ReserveIdRoute
   '/reset-password/confirm': typeof ResetPasswordConfirmRoute
   '/admin/': typeof AdminIndexRoute
@@ -560,6 +574,7 @@ export interface FileRoutesByTo {
   '/admin/properties': typeof AdminPropertiesRoute
   '/admin/sellers': typeof AdminSellersRoute
   '/admin/substitutions': typeof AdminSubstitutionsRoute
+  '/agent/attribution': typeof AgentAttributionRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/login': typeof AgentLoginRoute
@@ -586,6 +601,7 @@ export interface FileRoutesByTo {
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/properties/$id': typeof PropertiesIdRoute
+  '/r/$token': typeof RTokenRoute
   '/reserve/$id': typeof ReserveIdRoute
   '/reset-password/confirm': typeof ResetPasswordConfirmRoute
   '/admin': typeof AdminIndexRoute
@@ -637,6 +653,7 @@ export interface FileRoutesById {
   '/admin/properties': typeof AdminPropertiesRoute
   '/admin/sellers': typeof AdminSellersRoute
   '/admin/substitutions': typeof AdminSubstitutionsRoute
+  '/agent/attribution': typeof AgentAttributionRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/login': typeof AgentLoginRoute
@@ -663,6 +680,7 @@ export interface FileRoutesById {
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/properties/$id': typeof PropertiesIdRoute
+  '/r/$token': typeof RTokenRoute
   '/reserve/$id': typeof ReserveIdRoute
   '/reset-password/confirm': typeof ResetPasswordConfirmRoute
   '/admin/': typeof AdminIndexRoute
@@ -715,6 +733,7 @@ export interface FileRouteTypes {
     | '/admin/properties'
     | '/admin/sellers'
     | '/admin/substitutions'
+    | '/agent/attribution'
     | '/agent/broker-relationship'
     | '/agent/dashboard'
     | '/agent/login'
@@ -741,6 +760,7 @@ export interface FileRouteTypes {
     | '/onboarding/media'
     | '/onboarding/property'
     | '/properties/$id'
+    | '/r/$token'
     | '/reserve/$id'
     | '/reset-password/confirm'
     | '/admin/'
@@ -787,6 +807,7 @@ export interface FileRouteTypes {
     | '/admin/properties'
     | '/admin/sellers'
     | '/admin/substitutions'
+    | '/agent/attribution'
     | '/agent/broker-relationship'
     | '/agent/dashboard'
     | '/agent/login'
@@ -813,6 +834,7 @@ export interface FileRouteTypes {
     | '/onboarding/media'
     | '/onboarding/property'
     | '/properties/$id'
+    | '/r/$token'
     | '/reserve/$id'
     | '/reset-password/confirm'
     | '/admin'
@@ -863,6 +885,7 @@ export interface FileRouteTypes {
     | '/admin/properties'
     | '/admin/sellers'
     | '/admin/substitutions'
+    | '/agent/attribution'
     | '/agent/broker-relationship'
     | '/agent/dashboard'
     | '/agent/login'
@@ -889,6 +912,7 @@ export interface FileRouteTypes {
     | '/onboarding/media'
     | '/onboarding/property'
     | '/properties/$id'
+    | '/r/$token'
     | '/reserve/$id'
     | '/reset-password/confirm'
     | '/admin/'
@@ -950,6 +974,7 @@ export interface RootRouteChildren {
   OnboardingMediaRoute: typeof OnboardingMediaRoute
   OnboardingPropertyRoute: typeof OnboardingPropertyRoute
   PropertiesIdRoute: typeof PropertiesIdRoute
+  RTokenRoute: typeof RTokenRoute
   ReserveIdRoute: typeof ReserveIdRoute
   OnboardingIndexRoute: typeof OnboardingIndexRoute
   PropertiesIndexRoute: typeof PropertiesIndexRoute
@@ -1105,6 +1130,13 @@ declare module '@tanstack/react-router' {
       path: '/reserve/$id'
       fullPath: '/reserve/$id'
       preLoaderRoute: typeof ReserveIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/r/$token': {
+      id: '/r/$token'
+      path: '/r/$token'
+      fullPath: '/r/$token'
+      preLoaderRoute: typeof RTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/properties/$id': {
@@ -1287,6 +1319,13 @@ declare module '@tanstack/react-router' {
       path: '/broker-relationship'
       fullPath: '/agent/broker-relationship'
       preLoaderRoute: typeof AgentBrokerRelationshipRouteImport
+      parentRoute: typeof AgentRoute
+    }
+    '/agent/attribution': {
+      id: '/agent/attribution'
+      path: '/attribution'
+      fullPath: '/agent/attribution'
+      preLoaderRoute: typeof AgentAttributionRouteImport
       parentRoute: typeof AgentRoute
     }
     '/admin/substitutions': {
@@ -1517,6 +1556,7 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface AgentRouteChildren {
+  AgentAttributionRoute: typeof AgentAttributionRoute
   AgentBrokerRelationshipRoute: typeof AgentBrokerRelationshipRoute
   AgentDashboardRoute: typeof AgentDashboardRoute
   AgentLoginRoute: typeof AgentLoginRoute
@@ -1530,6 +1570,7 @@ interface AgentRouteChildren {
 }
 
 const AgentRouteChildren: AgentRouteChildren = {
+  AgentAttributionRoute: AgentAttributionRoute,
   AgentBrokerRelationshipRoute: AgentBrokerRelationshipRoute,
   AgentDashboardRoute: AgentDashboardRoute,
   AgentLoginRoute: AgentLoginRoute,
@@ -1615,6 +1656,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingMediaRoute: OnboardingMediaRoute,
   OnboardingPropertyRoute: OnboardingPropertyRoute,
   PropertiesIdRoute: PropertiesIdRoute,
+  RTokenRoute: RTokenRoute,
   ReserveIdRoute: ReserveIdRoute,
   OnboardingIndexRoute: OnboardingIndexRoute,
   PropertiesIndexRoute: PropertiesIndexRoute,

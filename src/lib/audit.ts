@@ -59,7 +59,10 @@ export type AuditAction =
   | "broker.invitation_sent"
   | "broker.linked"
   | "broker.banking_saved"
-  | "broker.onboarding_completed";
+  | "broker.onboarding_completed"
+  | "agent.attribution_token_created"
+  | "agent.attribution_token_clicked"
+  | "buyer.referral_tagged";
 
 export type AuditEntity =
   | "seller"
@@ -70,7 +73,8 @@ export type AuditEntity =
   | "wishlist"
   | "property_document"
   | "agent"
-  | "broker";
+  | "broker"
+  | "attribution_token";
 
 export async function logAudit(params: {
   actorId: string;
