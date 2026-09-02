@@ -53,7 +53,11 @@ export type AuditAction =
   | "agent.nar_cert_lapsed"
   | "agent.nar_cert_recertified"
   | "agent.fincen_acknowledged"
-  | "agent.ethics_acknowledged";
+  | "agent.ethics_acknowledged"
+  | "broker.invitation_sent"
+  | "broker.linked"
+  | "broker.banking_saved"
+  | "broker.onboarding_completed";
 
 export type AuditEntity =
   | "seller"
@@ -63,7 +67,8 @@ export type AuditEntity =
   | "buyer_account"
   | "wishlist"
   | "property_document"
-  | "agent";
+  | "agent"
+  | "broker";
 
 export async function logAudit(params: {
   actorId: string;
@@ -79,7 +84,7 @@ export async function logAudit(params: {
     actor_type: actorType ??
       (actionType.startsWith("buyer.")
         ? "buyer"
-        : actionType.startsWith("agent.")
+        : actionType.startsWith("agent.") || actionType.startsWith("broker.")
           ? "agent"
           : "seller"),
     action_type: actionType,

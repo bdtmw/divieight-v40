@@ -3,8 +3,9 @@ import { buyerRedirect, ensureBuyerAccount, getBuyerAccount } from "@/lib/buyer"
 import { ensureSellerAccount, getSellerAccount } from "@/lib/seller";
 import { getPostLoginRedirect } from "@/lib/post-login";
 import { agentRedirect, consumeAgentDraft, createAgentProfile, getAgentProfile } from "@/lib/agent";
+import { brokerRedirect, createBrokerProfile, getBrokerProfile } from "@/lib/broker";
 
-export type AccountRole = "buyer" | "seller" | "agent";
+export type AccountRole = "buyer" | "seller" | "agent" | "broker";
 
 const ROLE_KEY = "divieight.oauth_role";
 
@@ -21,7 +22,9 @@ export function consumeOAuthRole(): AccountRole | null {
   try {
     const value = sessionStorage.getItem(ROLE_KEY);
     sessionStorage.removeItem(ROLE_KEY);
-    return value === "buyer" || value === "seller" || value === "agent" ? value : null;
+    return value === "buyer" || value === "seller" || value === "agent" || value === "broker"
+      ? value
+      : null;
   } catch {
     return null;
   }
@@ -50,13 +53,45 @@ export async function resolveSignIn(
   const metaRole = user.user_metadata?.account_type;
   const effectiveRole: AccountRole | null =
     role ??
-    (metaRole === "buyer" || metaRole === "seller" || metaRole === "agent" ? metaRole : null);
+    (metaRole === "buyer" ||
+    metaRole === "seller" ||
+    metaRole === "agent" ||
+    metaRole === "broker"
+      ? metaRole
+      : null);
 
-  const [buyer, seller, agent] = await Promise.all([
+  const [buyer, seller, agent, broker] = await Promise.all([
     getBuyerAccount(user.id),
     getSellerAccount(user.id),
     getAgentProfile(user.id),
+    getBrokerProfile(user.id),
   ]);
+
+  if (effectiveRole === "broker") {
+    if (!broker && (buyer || seller || agent)) {
+      await supabase.auth.signOut();
+      return {
+        error:
+          "This email is already registered on another divieight portal. Please use a different email for your Broker of Record account.",
+      };
+    }
+    if (broker) return { to: brokerRedirect(broker.onboarding_status) };
+
+    const meta = user.user_metadata ?? {};
+    if (!meta.brokerage_name) return { to: "/broker/register" };
+    const created = await createBrokerProfile({
+      userId: user.id,
+      brokerageName: String(meta.brokerage_name),
+      contactName: fullName || String(meta.contact_name ?? ""),
+      email,
+      phone,
+      licenseNumber: String(meta.license_number ?? ""),
+      licenseState: String(meta.license_state ?? ""),
+      invitedByAgentId: (meta.invited_by_agent_id as string) ?? null,
+    });
+    if (created.error) return { error: created.error };
+    return { to: brokerRedirect(created.broker?.onboarding_status ?? "arello_pending") };
+  }
 
   if (effectiveRole === "agent") {
     if (!agent && (buyer || seller)) {
@@ -124,6 +159,7 @@ export async function resolveSignIn(
   }
 
   // No role hint at all — route by whichever profile exists.
+  if (broker) return { to: brokerRedirect(broker.onboarding_status) };
   if (agent) return { to: agentRedirect(agent.onboarding_status) };
   if (buyer) return { to: buyerRedirect(buyer.onboarding_status) };
   if (seller) return { to: await getPostLoginRedirect(user.id) };

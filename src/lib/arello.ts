@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { ENTITY_CONFIG, type EntityType } from "@/lib/credentialing";
 
 /**
  * ARELLO / SourceRE real-time license verification.
@@ -106,37 +107,38 @@ export async function pingArello(
   };
 }
 
-/** Persist a verified result and advance onboarding. */
-export async function markLicenseVerified(agentId: string) {
+/** Persist a verified result and advance onboarding (agent or broker). */
+export async function markLicenseVerified(entityId: string, entityType: EntityType = "agent") {
+  const cfg = ENTITY_CONFIG[entityType];
   const now = new Date().toISOString();
   await db
-    .from("agents")
+    .from(cfg.table)
     .update({
       license_verified: true,
       license_verified_at: now,
       arello_pending_since: null,
-      onboarding_status: "insurance_pending",
+      onboarding_status: cfg.next.afterLicense,
     })
-    .eq("id", agentId);
+    .eq("id", entityId);
 }
 
 /** Persist the 24-hour pending fallback state (registry unavailable). */
-export async function markLicensePending(agentId: string) {
+export async function markLicensePending(entityId: string, entityType: EntityType = "agent") {
   await db
-    .from("agents")
+    .from(ENTITY_CONFIG[entityType].table)
     .update({
       onboarding_status: "arello_pending_retry",
       arello_pending_since: new Date().toISOString(),
     })
-    .eq("id", agentId);
+    .eq("id", entityId);
 }
 
-/** Persist a no-match result so the agent must correct their details. */
-export async function markLicenseNotFound(agentId: string) {
+/** Persist a no-match result so the professional must correct their details. */
+export async function markLicenseNotFound(entityId: string, entityType: EntityType = "agent") {
   await db
-    .from("agents")
+    .from(ENTITY_CONFIG[entityType].table)
     .update({ license_verified: false, onboarding_status: "arello_pending" })
-    .eq("id", agentId);
+    .eq("id", entityId);
 }
 
 export const PENDING_WINDOW_HOURS = 24;

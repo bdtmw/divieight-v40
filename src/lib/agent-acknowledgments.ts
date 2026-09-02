@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { ENTITY_CONFIG, type EntityType } from "@/lib/credentialing";
 
 /**
  * Agent onboarding step 3 — FinCEN/AML acknowledgment plus the three
@@ -46,12 +47,14 @@ export interface AgentAcknowledgmentRow {
 
 /** All acknowledgment rows recorded for an agent. */
 export async function getAgentAcknowledgments(
-  agentId: string,
+  entityId: string,
+  entityType: EntityType = "agent",
 ): Promise<AgentAcknowledgmentRow[]> {
+  const cfg = ENTITY_CONFIG[entityType];
   const { data, error } = await db
-    .from("agent_acknowledgments")
+    .from(cfg.ackTable)
     .select("*")
-    .eq("agent_id", agentId);
+    .eq(cfg.ackForeignKey, entityId);
   if (error) return [];
   return (data as AgentAcknowledgmentRow[]) ?? [];
 }
@@ -68,12 +71,14 @@ export function hasAllAcknowledgments(rows: AgentAcknowledgmentRow[]): boolean {
  * agent on to broker linking.
  */
 export async function submitComplianceAcknowledgments(
-  agentId: string,
+  entityId: string,
+  entityType: EntityType = "agent",
 ): Promise<{ error?: string; acceptedAt?: string }> {
+  const cfg = ENTITY_CONFIG[entityType];
   const now = new Date().toISOString();
 
   const rows = ACKNOWLEDGMENT_TYPES.map((type) => ({
-    agent_id: agentId,
+    [cfg.ackForeignKey]: entityId,
     acknowledgment_type: type,
     accepted: true,
     accepted_at: now,
@@ -81,14 +86,14 @@ export async function submitComplianceAcknowledgments(
   }));
 
   const { error } = await db
-    .from("agent_acknowledgments")
-    .upsert(rows, { onConflict: "agent_id,acknowledgment_type" });
+    .from(cfg.ackTable)
+    .upsert(rows, { onConflict: `${cfg.ackForeignKey},acknowledgment_type` });
   if (error) return { error: error.message };
 
-  const patch: Record<string, unknown> = { onboarding_status: "broker_link_pending" };
+  const patch: Record<string, unknown> = { onboarding_status: cfg.next.afterCompliance };
   for (const type of ACKNOWLEDGMENT_TYPES) patch[AGENT_TIMESTAMP_COLUMN[type]] = now;
 
-  const { error: agentError } = await db.from("agents").update(patch).eq("id", agentId);
+  const { error: agentError } = await db.from(cfg.table).update(patch).eq("id", entityId);
   if (agentError) return { error: agentError.message };
 
   return { acceptedAt: now };
