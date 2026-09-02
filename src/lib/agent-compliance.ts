@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { ENTITY_CONFIG, type EntityType } from "@/lib/credentialing";
 
 /**
  * Agent onboarding step 2 — E&O insurance proof and NAR August 2024
@@ -44,7 +45,9 @@ export async function uploadEoInsurance(
 }
 
 export interface InsuranceSubmission {
-  agentId: string;
+  /** Agent or broker row id. */
+  entityId: string;
+  entityType?: EntityType;
   /** Storage path of the uploaded certificate, when a file was provided. */
   eoInsurancePath?: string | null;
   /** True when the broker affirms coverage instead of a file upload. */
@@ -63,7 +66,7 @@ export async function submitInsuranceAndCertification(
     nar_cert_signed_at: now,
     nar_cert_expires_at: narCertExpiry(now),
     nar_cert_lapsed: false,
-    onboarding_status: "compliance_pending",
+    onboarding_status: ENTITY_CONFIG[input.entityType ?? "agent"].next.afterInsurance,
   };
 
   if (input.brokerAffirmed) {
@@ -76,22 +79,26 @@ export async function submitInsuranceAndCertification(
     patch.eo_broker_affirmed_at = null;
   }
 
-  const { error } = await db.from("agents").update(patch).eq("id", input.agentId);
+  const cfg = ENTITY_CONFIG[input.entityType ?? "agent"];
+  const { error } = await db.from(cfg.table).update(patch).eq("id", input.entityId);
   if (error) return { error: error.message };
   return {};
 }
 
 /** Re-sign the certification after a lapse. */
-export async function recertifyNar(agentId: string): Promise<{ error?: string }> {
+export async function recertifyNar(
+  entityId: string,
+  entityType: EntityType = "agent",
+): Promise<{ error?: string }> {
   const now = new Date().toISOString();
   const { error } = await db
-    .from("agents")
+    .from(ENTITY_CONFIG[entityType].table)
     .update({
       nar_cert_signed_at: now,
       nar_cert_expires_at: narCertExpiry(now),
       nar_cert_lapsed: false,
     })
-    .eq("id", agentId);
+    .eq("id", entityId);
   if (error) return { error: error.message };
   return {};
 }

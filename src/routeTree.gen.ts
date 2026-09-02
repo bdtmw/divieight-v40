@@ -16,6 +16,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as BrokerRouteImport } from './routes/broker'
 import { Route as AgentRouteImport } from './routes/agent'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
@@ -23,6 +24,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ResetPasswordIndexRouteImport } from './routes/reset-password.index'
 import { Route as PropertiesIndexRouteImport } from './routes/properties.index'
 import { Route as OnboardingIndexRouteImport } from './routes/onboarding.index'
+import { Route as BrokerIndexRouteImport } from './routes/broker.index'
 import { Route as AgentIndexRouteImport } from './routes/agent.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ResetPasswordConfirmRouteImport } from './routes/reset-password.confirm'
@@ -45,6 +47,9 @@ import { Route as BuyerGoldenTicketRouteImport } from './routes/buyer.golden-tic
 import { Route as BuyerDocumentsRouteImport } from './routes/buyer.documents'
 import { Route as BuyerDashboardRouteImport } from './routes/buyer.dashboard'
 import { Route as BuyerAdverseActionRouteImport } from './routes/buyer.adverse-action'
+import { Route as BrokerRegisterRouteImport } from './routes/broker.register'
+import { Route as BrokerLoginRouteImport } from './routes/broker.login'
+import { Route as BrokerDashboardRouteImport } from './routes/broker.dashboard'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AgentRegisterRouteImport } from './routes/agent.register'
 import { Route as AgentLoginRouteImport } from './routes/agent.login'
@@ -63,6 +68,10 @@ import { Route as BuyerOnboardingPaymentRouteImport } from './routes/buyer.onboa
 import { Route as BuyerOnboardingLiquidityRouteImport } from './routes/buyer.onboarding.liquidity'
 import { Route as BuyerOnboardingLifestyleRouteImport } from './routes/buyer.onboarding.lifestyle'
 import { Route as BuyerOnboardingIdentityRouteImport } from './routes/buyer.onboarding.identity'
+import { Route as BrokerOnboardingLicenseCheckRouteImport } from './routes/broker.onboarding.license-check'
+import { Route as BrokerOnboardingInsuranceRouteImport } from './routes/broker.onboarding.insurance'
+import { Route as BrokerOnboardingComplianceRouteImport } from './routes/broker.onboarding.compliance'
+import { Route as BrokerOnboardingBankingRouteImport } from './routes/broker.onboarding.banking'
 import { Route as ApiPublicNarCertSweepRouteImport } from './routes/api.public.nar-cert-sweep'
 import { Route as ApiPublicEnrollmentMaintenanceRouteImport } from './routes/api.public.enrollment-maintenance'
 import { Route as ApiPublicArelloRetryRouteImport } from './routes/api.public.arello-retry'
@@ -107,6 +116,11 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BrokerRoute = BrokerRouteImport.update({
+  id: '/broker',
+  path: '/broker',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AgentRoute = AgentRouteImport.update({
   id: '/agent',
   path: '/agent',
@@ -141,6 +155,11 @@ const OnboardingIndexRoute = OnboardingIndexRouteImport.update({
   id: '/onboarding/',
   path: '/onboarding/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const BrokerIndexRoute = BrokerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BrokerRoute,
 } as any)
 const AgentIndexRoute = AgentIndexRouteImport.update({
   id: '/',
@@ -252,6 +271,21 @@ const BuyerAdverseActionRoute = BuyerAdverseActionRouteImport.update({
   path: '/buyer/adverse-action',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BrokerRegisterRoute = BrokerRegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => BrokerRoute,
+} as any)
+const BrokerLoginRoute = BrokerLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => BrokerRoute,
+} as any)
+const BrokerDashboardRoute = BrokerDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => BrokerRoute,
+} as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/auth/callback',
   path: '/auth/callback',
@@ -344,6 +378,29 @@ const BuyerOnboardingIdentityRoute = BuyerOnboardingIdentityRouteImport.update({
   path: '/buyer/onboarding/identity',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BrokerOnboardingLicenseCheckRoute =
+  BrokerOnboardingLicenseCheckRouteImport.update({
+    id: '/onboarding/license-check',
+    path: '/onboarding/license-check',
+    getParentRoute: () => BrokerRoute,
+  } as any)
+const BrokerOnboardingInsuranceRoute =
+  BrokerOnboardingInsuranceRouteImport.update({
+    id: '/onboarding/insurance',
+    path: '/onboarding/insurance',
+    getParentRoute: () => BrokerRoute,
+  } as any)
+const BrokerOnboardingComplianceRoute =
+  BrokerOnboardingComplianceRouteImport.update({
+    id: '/onboarding/compliance',
+    path: '/onboarding/compliance',
+    getParentRoute: () => BrokerRoute,
+  } as any)
+const BrokerOnboardingBankingRoute = BrokerOnboardingBankingRouteImport.update({
+  id: '/onboarding/banking',
+  path: '/onboarding/banking',
+  getParentRoute: () => BrokerRoute,
+} as any)
 const ApiPublicNarCertSweepRoute = ApiPublicNarCertSweepRouteImport.update({
   id: '/api/public/nar-cert-sweep',
   path: '/api/public/nar-cert-sweep',
@@ -395,6 +452,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
   '/agent': typeof AgentRouteWithChildren
+  '/broker': typeof BrokerRouteWithChildren
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -414,6 +472,9 @@ export interface FileRoutesByFullPath {
   '/agent/login': typeof AgentLoginRoute
   '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/broker/dashboard': typeof BrokerDashboardRoute
+  '/broker/login': typeof BrokerLoginRoute
+  '/broker/register': typeof BrokerRegisterRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/documents': typeof BuyerDocumentsRoute
@@ -436,6 +497,7 @@ export interface FileRoutesByFullPath {
   '/reset-password/confirm': typeof ResetPasswordConfirmRoute
   '/admin/': typeof AdminIndexRoute
   '/agent/': typeof AgentIndexRoute
+  '/broker/': typeof BrokerIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
   '/properties/': typeof PropertiesIndexRoute
   '/reset-password/': typeof ResetPasswordIndexRoute
@@ -447,6 +509,10 @@ export interface FileRoutesByFullPath {
   '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/api/public/nar-cert-sweep': typeof ApiPublicNarCertSweepRoute
+  '/broker/onboarding/banking': typeof BrokerOnboardingBankingRoute
+  '/broker/onboarding/compliance': typeof BrokerOnboardingComplianceRoute
+  '/broker/onboarding/insurance': typeof BrokerOnboardingInsuranceRoute
+  '/broker/onboarding/license-check': typeof BrokerOnboardingLicenseCheckRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
   '/buyer/onboarding/liquidity': typeof BuyerOnboardingLiquidityRoute
@@ -475,6 +541,9 @@ export interface FileRoutesByTo {
   '/agent/login': typeof AgentLoginRoute
   '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/broker/dashboard': typeof BrokerDashboardRoute
+  '/broker/login': typeof BrokerLoginRoute
+  '/broker/register': typeof BrokerRegisterRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/documents': typeof BuyerDocumentsRoute
@@ -497,6 +566,7 @@ export interface FileRoutesByTo {
   '/reset-password/confirm': typeof ResetPasswordConfirmRoute
   '/admin': typeof AdminIndexRoute
   '/agent': typeof AgentIndexRoute
+  '/broker': typeof BrokerIndexRoute
   '/onboarding': typeof OnboardingIndexRoute
   '/properties': typeof PropertiesIndexRoute
   '/reset-password': typeof ResetPasswordIndexRoute
@@ -508,6 +578,10 @@ export interface FileRoutesByTo {
   '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/api/public/nar-cert-sweep': typeof ApiPublicNarCertSweepRoute
+  '/broker/onboarding/banking': typeof BrokerOnboardingBankingRoute
+  '/broker/onboarding/compliance': typeof BrokerOnboardingComplianceRoute
+  '/broker/onboarding/insurance': typeof BrokerOnboardingInsuranceRoute
+  '/broker/onboarding/license-check': typeof BrokerOnboardingLicenseCheckRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
   '/buyer/onboarding/liquidity': typeof BuyerOnboardingLiquidityRoute
@@ -521,6 +595,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
   '/agent': typeof AgentRouteWithChildren
+  '/broker': typeof BrokerRouteWithChildren
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -540,6 +615,9 @@ export interface FileRoutesById {
   '/agent/login': typeof AgentLoginRoute
   '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/broker/dashboard': typeof BrokerDashboardRoute
+  '/broker/login': typeof BrokerLoginRoute
+  '/broker/register': typeof BrokerRegisterRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/documents': typeof BuyerDocumentsRoute
@@ -562,6 +640,7 @@ export interface FileRoutesById {
   '/reset-password/confirm': typeof ResetPasswordConfirmRoute
   '/admin/': typeof AdminIndexRoute
   '/agent/': typeof AgentIndexRoute
+  '/broker/': typeof BrokerIndexRoute
   '/onboarding/': typeof OnboardingIndexRoute
   '/properties/': typeof PropertiesIndexRoute
   '/reset-password/': typeof ResetPasswordIndexRoute
@@ -573,6 +652,10 @@ export interface FileRoutesById {
   '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/api/public/nar-cert-sweep': typeof ApiPublicNarCertSweepRoute
+  '/broker/onboarding/banking': typeof BrokerOnboardingBankingRoute
+  '/broker/onboarding/compliance': typeof BrokerOnboardingComplianceRoute
+  '/broker/onboarding/insurance': typeof BrokerOnboardingInsuranceRoute
+  '/broker/onboarding/license-check': typeof BrokerOnboardingLicenseCheckRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
   '/buyer/onboarding/liquidity': typeof BuyerOnboardingLiquidityRoute
@@ -587,6 +670,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/agent'
+    | '/broker'
     | '/contact'
     | '/dashboard'
     | '/forgot-password'
@@ -606,6 +690,9 @@ export interface FileRouteTypes {
     | '/agent/login'
     | '/agent/register'
     | '/auth/callback'
+    | '/broker/dashboard'
+    | '/broker/login'
+    | '/broker/register'
     | '/buyer/adverse-action'
     | '/buyer/dashboard'
     | '/buyer/documents'
@@ -628,6 +715,7 @@ export interface FileRouteTypes {
     | '/reset-password/confirm'
     | '/admin/'
     | '/agent/'
+    | '/broker/'
     | '/onboarding/'
     | '/properties/'
     | '/reset-password/'
@@ -639,6 +727,10 @@ export interface FileRouteTypes {
     | '/api/public/arello-retry'
     | '/api/public/enrollment-maintenance'
     | '/api/public/nar-cert-sweep'
+    | '/broker/onboarding/banking'
+    | '/broker/onboarding/compliance'
+    | '/broker/onboarding/insurance'
+    | '/broker/onboarding/license-check'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
     | '/buyer/onboarding/liquidity'
@@ -667,6 +759,9 @@ export interface FileRouteTypes {
     | '/agent/login'
     | '/agent/register'
     | '/auth/callback'
+    | '/broker/dashboard'
+    | '/broker/login'
+    | '/broker/register'
     | '/buyer/adverse-action'
     | '/buyer/dashboard'
     | '/buyer/documents'
@@ -689,6 +784,7 @@ export interface FileRouteTypes {
     | '/reset-password/confirm'
     | '/admin'
     | '/agent'
+    | '/broker'
     | '/onboarding'
     | '/properties'
     | '/reset-password'
@@ -700,6 +796,10 @@ export interface FileRouteTypes {
     | '/api/public/arello-retry'
     | '/api/public/enrollment-maintenance'
     | '/api/public/nar-cert-sweep'
+    | '/broker/onboarding/banking'
+    | '/broker/onboarding/compliance'
+    | '/broker/onboarding/insurance'
+    | '/broker/onboarding/license-check'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
     | '/buyer/onboarding/liquidity'
@@ -712,6 +812,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/agent'
+    | '/broker'
     | '/contact'
     | '/dashboard'
     | '/forgot-password'
@@ -731,6 +832,9 @@ export interface FileRouteTypes {
     | '/agent/login'
     | '/agent/register'
     | '/auth/callback'
+    | '/broker/dashboard'
+    | '/broker/login'
+    | '/broker/register'
     | '/buyer/adverse-action'
     | '/buyer/dashboard'
     | '/buyer/documents'
@@ -753,6 +857,7 @@ export interface FileRouteTypes {
     | '/reset-password/confirm'
     | '/admin/'
     | '/agent/'
+    | '/broker/'
     | '/onboarding/'
     | '/properties/'
     | '/reset-password/'
@@ -764,6 +869,10 @@ export interface FileRouteTypes {
     | '/api/public/arello-retry'
     | '/api/public/enrollment-maintenance'
     | '/api/public/nar-cert-sweep'
+    | '/broker/onboarding/banking'
+    | '/broker/onboarding/compliance'
+    | '/broker/onboarding/insurance'
+    | '/broker/onboarding/license-check'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
     | '/buyer/onboarding/liquidity'
@@ -777,6 +886,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRouteWithChildren
   AgentRoute: typeof AgentRouteWithChildren
+  BrokerRoute: typeof BrokerRouteWithChildren
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
@@ -868,6 +978,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/broker': {
+      id: '/broker'
+      path: '/broker'
+      fullPath: '/broker'
+      preLoaderRoute: typeof BrokerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/agent': {
       id: '/agent'
       path: '/agent'
@@ -916,6 +1033,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/onboarding/'
       preLoaderRoute: typeof OnboardingIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/broker/': {
+      id: '/broker/'
+      path: '/'
+      fullPath: '/broker/'
+      preLoaderRoute: typeof BrokerIndexRouteImport
+      parentRoute: typeof BrokerRoute
     }
     '/agent/': {
       id: '/agent/'
@@ -1071,6 +1195,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyerAdverseActionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/broker/register': {
+      id: '/broker/register'
+      path: '/register'
+      fullPath: '/broker/register'
+      preLoaderRoute: typeof BrokerRegisterRouteImport
+      parentRoute: typeof BrokerRoute
+    }
+    '/broker/login': {
+      id: '/broker/login'
+      path: '/login'
+      fullPath: '/broker/login'
+      preLoaderRoute: typeof BrokerLoginRouteImport
+      parentRoute: typeof BrokerRoute
+    }
+    '/broker/dashboard': {
+      id: '/broker/dashboard'
+      path: '/dashboard'
+      fullPath: '/broker/dashboard'
+      preLoaderRoute: typeof BrokerDashboardRouteImport
+      parentRoute: typeof BrokerRoute
+    }
     '/auth/callback': {
       id: '/auth/callback'
       path: '/auth/callback'
@@ -1197,6 +1342,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyerOnboardingIdentityRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/broker/onboarding/license-check': {
+      id: '/broker/onboarding/license-check'
+      path: '/onboarding/license-check'
+      fullPath: '/broker/onboarding/license-check'
+      preLoaderRoute: typeof BrokerOnboardingLicenseCheckRouteImport
+      parentRoute: typeof BrokerRoute
+    }
+    '/broker/onboarding/insurance': {
+      id: '/broker/onboarding/insurance'
+      path: '/onboarding/insurance'
+      fullPath: '/broker/onboarding/insurance'
+      preLoaderRoute: typeof BrokerOnboardingInsuranceRouteImport
+      parentRoute: typeof BrokerRoute
+    }
+    '/broker/onboarding/compliance': {
+      id: '/broker/onboarding/compliance'
+      path: '/onboarding/compliance'
+      fullPath: '/broker/onboarding/compliance'
+      preLoaderRoute: typeof BrokerOnboardingComplianceRouteImport
+      parentRoute: typeof BrokerRoute
+    }
+    '/broker/onboarding/banking': {
+      id: '/broker/onboarding/banking'
+      path: '/onboarding/banking'
+      fullPath: '/broker/onboarding/banking'
+      preLoaderRoute: typeof BrokerOnboardingBankingRouteImport
+      parentRoute: typeof BrokerRoute
+    }
     '/api/public/nar-cert-sweep': {
       id: '/api/public/nar-cert-sweep'
       path: '/api/public/nar-cert-sweep'
@@ -1308,6 +1481,31 @@ const AgentRouteChildren: AgentRouteChildren = {
 
 const AgentRouteWithChildren = AgentRoute._addFileChildren(AgentRouteChildren)
 
+interface BrokerRouteChildren {
+  BrokerDashboardRoute: typeof BrokerDashboardRoute
+  BrokerLoginRoute: typeof BrokerLoginRoute
+  BrokerRegisterRoute: typeof BrokerRegisterRoute
+  BrokerIndexRoute: typeof BrokerIndexRoute
+  BrokerOnboardingBankingRoute: typeof BrokerOnboardingBankingRoute
+  BrokerOnboardingComplianceRoute: typeof BrokerOnboardingComplianceRoute
+  BrokerOnboardingInsuranceRoute: typeof BrokerOnboardingInsuranceRoute
+  BrokerOnboardingLicenseCheckRoute: typeof BrokerOnboardingLicenseCheckRoute
+}
+
+const BrokerRouteChildren: BrokerRouteChildren = {
+  BrokerDashboardRoute: BrokerDashboardRoute,
+  BrokerLoginRoute: BrokerLoginRoute,
+  BrokerRegisterRoute: BrokerRegisterRoute,
+  BrokerIndexRoute: BrokerIndexRoute,
+  BrokerOnboardingBankingRoute: BrokerOnboardingBankingRoute,
+  BrokerOnboardingComplianceRoute: BrokerOnboardingComplianceRoute,
+  BrokerOnboardingInsuranceRoute: BrokerOnboardingInsuranceRoute,
+  BrokerOnboardingLicenseCheckRoute: BrokerOnboardingLicenseCheckRoute,
+}
+
+const BrokerRouteWithChildren =
+  BrokerRoute._addFileChildren(BrokerRouteChildren)
+
 interface ResetPasswordRouteChildren {
   ResetPasswordConfirmRoute: typeof ResetPasswordConfirmRoute
   ResetPasswordIndexRoute: typeof ResetPasswordIndexRoute
@@ -1327,6 +1525,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AdminRoute: AdminRouteWithChildren,
   AgentRoute: AgentRouteWithChildren,
+  BrokerRoute: BrokerRouteWithChildren,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
