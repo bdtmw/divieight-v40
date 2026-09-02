@@ -1,0 +1,97 @@
+import { supabase } from "@/integrations/supabase/client";
+
+/**
+ * Agent onboarding step 2 — E&O insurance proof and NAR August 2024
+ * settlement certification (plus its one-year re-certification clock).
+ */
+
+const db = supabase as unknown as { from: (table: string) => any };
+
+export const AGENT_DOCS_BUCKET = "agent-documents";
+
+export const NAR_CERT_TEXT =
+  "I certify that I am in compliance with written buyer agreement rules as promulgated by the National Association of Realtors August 2024 litigation settlement.";
+
+/** Certification is valid for one year from signature. */
+export function narCertExpiry(signedAt: Date | string): string {
+  const d = new Date(signedAt);
+  d.setFullYear(d.getFullYear() + 1);
+  return d.toISOString();
+}
+
+export function isNarCertExpired(expiresAt: string | null): boolean {
+  if (!expiresAt) return false;
+  return new Date(expiresAt).getTime() <= Date.now();
+}
+
+export function daysUntilExpiry(expiresAt: string | null): number | null {
+  if (!expiresAt) return null;
+  return Math.ceil((new Date(expiresAt).getTime() - Date.now()) / 86_400_000);
+}
+
+/** Upload an E&O certificate (PDF or image) to the private agent bucket. */
+export async function uploadEoInsurance(
+  authUserId: string,
+  file: File,
+): Promise<{ path?: string; error?: string }> {
+  const ext = file.name.split(".").pop()?.toLowerCase() ?? "pdf";
+  const path = `${authUserId}/eo-insurance-${Date.now()}.${ext}`;
+  const { error } = await supabase.storage
+    .from(AGENT_DOCS_BUCKET)
+    .upload(path, file, { upsert: true, contentType: file.type || undefined });
+  if (error) return { error: error.message };
+  return { path };
+}
+
+export interface InsuranceSubmission {
+  agentId: string;
+  /** Storage path of the uploaded certificate, when a file was provided. */
+  eoInsurancePath?: string | null;
+  /** True when the broker affirms coverage instead of a file upload. */
+  brokerAffirmed: boolean;
+}
+
+/**
+ * Persist E&O proof (file URL or broker affirmation + timestamp), stamp the
+ * NAR certification, set its one-year expiry, and advance onboarding.
+ */
+export async function submitInsuranceAndCertification(
+  input: InsuranceSubmission,
+): Promise<{ error?: string }> {
+  const now = new Date().toISOString();
+  const patch: Record<string, unknown> = {
+    nar_cert_signed_at: now,
+    nar_cert_expires_at: narCertExpiry(now),
+    nar_cert_lapsed: false,
+    onboarding_status: "compliance_pending",
+  };
+
+  if (input.brokerAffirmed) {
+    patch.eo_broker_affirmed = true;
+    patch.eo_broker_affirmed_at = now;
+  } else {
+    patch.eo_insurance_url = input.eoInsurancePath ?? null;
+    patch.eo_insurance_uploaded_at = now;
+    patch.eo_broker_affirmed = false;
+    patch.eo_broker_affirmed_at = null;
+  }
+
+  const { error } = await db.from("agents").update(patch).eq("id", input.agentId);
+  if (error) return { error: error.message };
+  return {};
+}
+
+/** Re-sign the certification after a lapse. */
+export async function recertifyNar(agentId: string): Promise<{ error?: string }> {
+  const now = new Date().toISOString();
+  const { error } = await db
+    .from("agents")
+    .update({
+      nar_cert_signed_at: now,
+      nar_cert_expires_at: narCertExpiry(now),
+      nar_cert_lapsed: false,
+    })
+    .eq("id", agentId);
+  if (error) return { error: error.message };
+  return {};
+}
