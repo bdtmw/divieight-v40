@@ -415,7 +415,7 @@ export const listMyListingProperties = createServerFn({ method: "GET" })
     let query = db
       .from("properties")
       .select(
-        "id, address, city, state, zip, status, listing_status, listing_price, exit_type, retained_shares, content_approval_status, compliance_status, seller_id, listing_agent_id",
+        "id, address, city, state, zip, status, listing_status, listing_price, content_approval_status, compliance_status, seller_id, listing_agent_id",
       )
       .not("listing_agent_id", "is", null)
       .order("created_at", { ascending: false });
@@ -427,7 +427,11 @@ export const listMyListingProperties = createServerFn({ method: "GET" })
     const ids = rows.map((r) => r.id);
     const [{ data: sellers }, { data: reservations }, { data: pods }, { data: pending }] =
       await Promise.all([
-        db.from("sellers").select("id, full_name").in("id", rows.map((r) => r.seller_id)),
+        // Exit type / retention election live on the seller record.
+        db
+          .from("sellers")
+          .select("id, full_name, exit_type, retained_shares")
+          .in("id", rows.map((r) => r.seller_id)),
         db.from("pod_reservations").select("property_id, shares_reserved, status").in("property_id", ids),
         db.from("pods").select("property_id, status, hla_status, closing_hold_active").in("property_id", ids),
         db
@@ -437,7 +441,7 @@ export const listMyListingProperties = createServerFn({ method: "GET" })
           .eq("disposition", "pending"),
       ]);
 
-    const sellerName = new Map(((sellers ?? []) as any[]).map((s) => [s.id, s.full_name]));
+    const sellerById = new Map(((sellers ?? []) as any[]).map((s) => [s.id, s]));
     const reserved = new Map<string, number>();
     ((reservations ?? []) as any[])
       .filter((r) => r.status === "reserved")
@@ -459,11 +463,11 @@ export const listMyListingProperties = createServerFn({ method: "GET" })
       status: r.status,
       listing_status: r.listing_status ?? "forming",
       listing_price: r.listing_price,
-      exit_type: r.exit_type,
-      retained_shares: r.retained_shares,
+      exit_type: sellerById.get(r.seller_id)?.exit_type ?? null,
+      retained_shares: sellerById.get(r.seller_id)?.retained_shares ?? null,
       content_approval_status: r.content_approval_status ?? "not_submitted",
       compliance_status: r.compliance_status ?? "not_started",
-      seller_name: sellerName.get(r.seller_id) ?? null,
+      seller_name: sellerById.get(r.seller_id)?.full_name ?? null,
       reserved_shares: reserved.get(r.id) ?? 0,
       pending_items: pendingCount.get(r.id) ?? 0,
       pod_status: podByProp.get(r.id)?.status ?? null,
