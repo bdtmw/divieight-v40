@@ -35,6 +35,7 @@ const NAV = [
   { to: "/admin/sellers", label: "Sellers", icon: Users },
   { to: "/admin/buyers", label: "Buyers", icon: ShieldCheck },
   { to: "/admin/properties", label: "Properties", icon: Home },
+  { to: "/admin/agents", label: "Agents", icon: Users2 },
   { to: "/admin/brokers", label: "Brokers", icon: Briefcase },
   { to: "/admin/payments", label: "Payments", icon: CreditCard },
   { to: "/admin/contacts", label: "Contact inbox", icon: Mail },
