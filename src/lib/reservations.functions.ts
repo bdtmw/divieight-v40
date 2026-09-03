@@ -392,7 +392,7 @@ export const getMyPodDetails = createServerFn({ method: "GET" })
       .eq("status", "reserved")
       .order("reserved_at", { ascending: true });
 
-    const members = (reservations ?? []).map((r, i) => ({
+    const members = (reservations ?? []).map((r: any, i: number) => ({
       label: r.buyer_account_id === buyer.id ? "You" : `Member ${i + 1}`,
       shares: r.shares_reserved ?? 1,
       reservedAt: r.reserved_at ?? null,
@@ -434,10 +434,10 @@ export const getMyPodDetails = createServerFn({ method: "GET" })
           propertyId: property.id,
           totalShares: 8,
           retainedShares: retained,
-          reservedShares: members.reduce((s, m) => s + m.shares, 0),
+          reservedShares: members.reduce((s: number, m: { shares: number }) => s + m.shares, 0),
           availableShares: Math.max(
             0,
-            8 - retained - members.reduce((s, m) => s + m.shares, 0),
+            8 - retained - members.reduce((s: number, m: { shares: number }) => s + m.shares, 0),
           ),
           hardLocked: false,
           listingStatus: property.listing_status,
