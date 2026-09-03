@@ -541,10 +541,11 @@ export const getBriefcase = createServerFn({ method: "POST" })
   .handler(async ({ data, context }): Promise<Briefcase | { error: string }> => {
     const db = await admin();
     const agent = await agentFor(db, context.userId);
-    if (!agent) return { error: "Agent profile not found." };
+    const isManager = await requireAdmin(context.supabase, context.userId);
+    if (!agent && !isManager) return { error: "Agent profile not found." };
     const { data: pod } = await db.from("pods").select("*").eq("id", data.podId).maybeSingle();
     if (!pod) return { error: "Pod not found." };
-    if (pod.hla_status !== "accepted" || pod.heavy_lifting_agent_id !== agent.id) {
+    if (!isManager && (pod.hla_status !== "accepted" || pod.heavy_lifting_agent_id !== agent!.id)) {
       return { error: "The Master Briefcase unlocks once you accept the Heavy Lifting role." };
     }
 
