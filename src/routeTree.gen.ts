@@ -65,6 +65,7 @@ import { Route as AdminSellersRouteImport } from './routes/admin.sellers'
 import { Route as AdminPropertiesRouteImport } from './routes/admin.properties'
 import { Route as AdminPaymentsRouteImport } from './routes/admin.payments'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminListingComplianceRouteImport } from './routes/admin.listing-compliance'
 import { Route as AdminContactsRouteImport } from './routes/admin.contacts'
 import { Route as AdminBuyersRouteImport } from './routes/admin.buyers'
 import { Route as AdminBrokersRouteImport } from './routes/admin.brokers'
@@ -379,6 +380,11 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminListingComplianceRoute = AdminListingComplianceRouteImport.update({
+  id: '/listing-compliance',
+  path: '/listing-compliance',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminContactsRoute = AdminContactsRouteImport.update({
   id: '/contacts',
   path: '/contacts',
@@ -576,6 +582,7 @@ export interface FileRoutesByFullPath {
   '/admin/brokers': typeof AdminBrokersRoute
   '/admin/buyers': typeof AdminBuyersRoute
   '/admin/contacts': typeof AdminContactsRoute
+  '/admin/listing-compliance': typeof AdminListingComplianceRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/properties': typeof AdminPropertiesRoute
@@ -663,6 +670,7 @@ export interface FileRoutesByTo {
   '/admin/brokers': typeof AdminBrokersRoute
   '/admin/buyers': typeof AdminBuyersRoute
   '/admin/contacts': typeof AdminContactsRoute
+  '/admin/listing-compliance': typeof AdminListingComplianceRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/properties': typeof AdminPropertiesRoute
@@ -755,6 +763,7 @@ export interface FileRoutesById {
   '/admin/brokers': typeof AdminBrokersRoute
   '/admin/buyers': typeof AdminBuyersRoute
   '/admin/contacts': typeof AdminContactsRoute
+  '/admin/listing-compliance': typeof AdminListingComplianceRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/properties': typeof AdminPropertiesRoute
@@ -848,6 +857,7 @@ export interface FileRouteTypes {
     | '/admin/brokers'
     | '/admin/buyers'
     | '/admin/contacts'
+    | '/admin/listing-compliance'
     | '/admin/login'
     | '/admin/payments'
     | '/admin/properties'
@@ -935,6 +945,7 @@ export interface FileRouteTypes {
     | '/admin/brokers'
     | '/admin/buyers'
     | '/admin/contacts'
+    | '/admin/listing-compliance'
     | '/admin/login'
     | '/admin/payments'
     | '/admin/properties'
@@ -1026,6 +1037,7 @@ export interface FileRouteTypes {
     | '/admin/brokers'
     | '/admin/buyers'
     | '/admin/contacts'
+    | '/admin/listing-compliance'
     | '/admin/login'
     | '/admin/payments'
     | '/admin/properties'
@@ -1546,6 +1558,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/listing-compliance': {
+      id: '/admin/listing-compliance'
+      path: '/listing-compliance'
+      fullPath: '/admin/listing-compliance'
+      preLoaderRoute: typeof AdminListingComplianceRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/contacts': {
       id: '/admin/contacts'
       path: '/contacts'
@@ -1785,6 +1804,7 @@ interface AdminRouteChildren {
   AdminBrokersRoute: typeof AdminBrokersRoute
   AdminBuyersRoute: typeof AdminBuyersRoute
   AdminContactsRoute: typeof AdminContactsRoute
+  AdminListingComplianceRoute: typeof AdminListingComplianceRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminPaymentsRoute: typeof AdminPaymentsRoute
   AdminPropertiesRoute: typeof AdminPropertiesRoute
@@ -1801,6 +1821,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminBrokersRoute: AdminBrokersRoute,
   AdminBuyersRoute: AdminBuyersRoute,
   AdminContactsRoute: AdminContactsRoute,
+  AdminListingComplianceRoute: AdminListingComplianceRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminPaymentsRoute: AdminPaymentsRoute,
   AdminPropertiesRoute: AdminPropertiesRoute,
