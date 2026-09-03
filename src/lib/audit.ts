@@ -86,7 +86,9 @@ export type AuditEntity =
   | "property_document"
   | "agent"
   | "broker"
+  | "referral_agreement"
   | "attribution_token";
+
 
 export async function logAudit(params: {
   actorId: string;
