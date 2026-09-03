@@ -4,7 +4,7 @@ import { BadgeCheck, FileSignature, LayoutDashboard, ListChecks, LogOut, Share2 
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { getAgentProfile, type AgentRow, AGENT_ROLE_LABELS } from "@/lib/agent";
+import { getAgentProfile, agentRedirect, type AgentRow, AGENT_ROLE_LABELS } from "@/lib/agent";
 
 export const Route = createFileRoute("/agent")({
   head: () => ({
@@ -27,12 +27,16 @@ export const Route = createFileRoute("/agent")({
   component: AgentPortalLayout,
 });
 
-const NAV = [
+const BASE_NAV = [
   { to: "/agent/dashboard", label: "Overview", icon: LayoutDashboard },
   { to: "/agent/attribution", label: "Referral links", icon: Share2 },
   { to: "/agent/documents", label: "Agreements", icon: FileSignature },
-  { to: "/agent/onboarding/license-check", label: "Onboarding", icon: ListChecks },
 ] as const;
+
+const ONBOARDING_NAV = {
+  label: "Onboarding",
+  icon: ListChecks,
+} as const;
 
 
 const PUBLIC_PREFIXES = ["/agent/register", "/agent/login"];
@@ -95,6 +99,9 @@ function AgentPortalLayout() {
 
   if (!user || !agent) return null;
 
+  const onboardingComplete =
+    agent.onboarding_status === "complete" || agent.onboarding_status === "active";
+
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-40 border-b border-border bg-card">
@@ -107,7 +114,7 @@ function AgentPortalLayout() {
           </Link>
 
           <nav className="hidden items-center gap-6 md:flex">
-            {NAV.map(({ to, label, icon: Icon }) => (
+            {BASE_NAV.map(({ to, label, icon: Icon }) => (
               <Link
                 key={to}
                 to={to}
@@ -118,6 +125,17 @@ function AgentPortalLayout() {
                 {label}
               </Link>
             ))}
+            {/* Onboarding tab disappears once credentialing is complete. */}
+            {onboardingComplete ? null : (
+              <Link
+                to={agentRedirect(agent.onboarding_status)}
+                className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                activeProps={{ className: "text-foreground" }}
+              >
+                <ONBOARDING_NAV.icon className="h-4 w-4" />
+                {ONBOARDING_NAV.label}
+              </Link>
+            )}
           </nav>
 
           <div className="flex items-center gap-3">

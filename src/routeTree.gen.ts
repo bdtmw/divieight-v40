@@ -69,6 +69,7 @@ import { Route as AdminAuditLogRouteImport } from './routes/admin.audit-log'
 import { Route as BuyerOnboardingIndexRouteImport } from './routes/buyer.onboarding.index'
 import { Route as AgentDocumentsIndexRouteImport } from './routes/agent.documents.index'
 import { Route as AdminPodsIndexRouteImport } from './routes/admin.pods.index'
+import { Route as BuyerPodsIdRouteImport } from './routes/buyer.pods.$id'
 import { Route as BuyerOnboardingVettingRouteImport } from './routes/buyer.onboarding.vetting'
 import { Route as BuyerOnboardingPaymentRouteImport } from './routes/buyer.onboarding.payment'
 import { Route as BuyerOnboardingLiquidityRouteImport } from './routes/buyer.onboarding.liquidity'
@@ -394,6 +395,11 @@ const AdminPodsIndexRoute = AdminPodsIndexRouteImport.update({
   path: '/pods/',
   getParentRoute: () => AdminRoute,
 } as any)
+const BuyerPodsIdRoute = BuyerPodsIdRouteImport.update({
+  id: '/buyer/pods/$id',
+  path: '/buyer/pods/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BuyerOnboardingVettingRoute = BuyerOnboardingVettingRouteImport.update({
   id: '/buyer/onboarding/vetting',
   path: '/buyer/onboarding/vetting',
@@ -608,6 +614,7 @@ export interface FileRoutesByFullPath {
   '/buyer/onboarding/liquidity': typeof BuyerOnboardingLiquidityRoute
   '/buyer/onboarding/payment': typeof BuyerOnboardingPaymentRoute
   '/buyer/onboarding/vetting': typeof BuyerOnboardingVettingRoute
+  '/buyer/pods/$id': typeof BuyerPodsIdRoute
   '/admin/pods/': typeof AdminPodsIndexRoute
   '/agent/documents/': typeof AgentDocumentsIndexRoute
   '/buyer/onboarding/': typeof BuyerOnboardingIndexRoute
@@ -690,6 +697,7 @@ export interface FileRoutesByTo {
   '/buyer/onboarding/liquidity': typeof BuyerOnboardingLiquidityRoute
   '/buyer/onboarding/payment': typeof BuyerOnboardingPaymentRoute
   '/buyer/onboarding/vetting': typeof BuyerOnboardingVettingRoute
+  '/buyer/pods/$id': typeof BuyerPodsIdRoute
   '/admin/pods': typeof AdminPodsIndexRoute
   '/agent/documents': typeof AgentDocumentsIndexRoute
   '/buyer/onboarding': typeof BuyerOnboardingIndexRoute
@@ -777,6 +785,7 @@ export interface FileRoutesById {
   '/buyer/onboarding/liquidity': typeof BuyerOnboardingLiquidityRoute
   '/buyer/onboarding/payment': typeof BuyerOnboardingPaymentRoute
   '/buyer/onboarding/vetting': typeof BuyerOnboardingVettingRoute
+  '/buyer/pods/$id': typeof BuyerPodsIdRoute
   '/admin/pods/': typeof AdminPodsIndexRoute
   '/agent/documents/': typeof AgentDocumentsIndexRoute
   '/buyer/onboarding/': typeof BuyerOnboardingIndexRoute
@@ -865,6 +874,7 @@ export interface FileRouteTypes {
     | '/buyer/onboarding/liquidity'
     | '/buyer/onboarding/payment'
     | '/buyer/onboarding/vetting'
+    | '/buyer/pods/$id'
     | '/admin/pods/'
     | '/agent/documents/'
     | '/buyer/onboarding/'
@@ -947,6 +957,7 @@ export interface FileRouteTypes {
     | '/buyer/onboarding/liquidity'
     | '/buyer/onboarding/payment'
     | '/buyer/onboarding/vetting'
+    | '/buyer/pods/$id'
     | '/admin/pods'
     | '/agent/documents'
     | '/buyer/onboarding'
@@ -1033,6 +1044,7 @@ export interface FileRouteTypes {
     | '/buyer/onboarding/liquidity'
     | '/buyer/onboarding/payment'
     | '/buyer/onboarding/vetting'
+    | '/buyer/pods/$id'
     | '/admin/pods/'
     | '/agent/documents/'
     | '/buyer/onboarding/'
@@ -1088,6 +1100,7 @@ export interface RootRouteChildren {
   BuyerOnboardingLiquidityRoute: typeof BuyerOnboardingLiquidityRoute
   BuyerOnboardingPaymentRoute: typeof BuyerOnboardingPaymentRoute
   BuyerOnboardingVettingRoute: typeof BuyerOnboardingVettingRoute
+  BuyerPodsIdRoute: typeof BuyerPodsIdRoute
   BuyerOnboardingIndexRoute: typeof BuyerOnboardingIndexRoute
 }
 
@@ -1513,6 +1526,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPodsIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/buyer/pods/$id': {
+      id: '/buyer/pods/$id'
+      path: '/buyer/pods/$id'
+      fullPath: '/buyer/pods/$id'
+      preLoaderRoute: typeof BuyerPodsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/buyer/onboarding/vetting': {
       id: '/buyer/onboarding/vetting'
       path: '/buyer/onboarding/vetting'
@@ -1840,6 +1860,7 @@ const rootRouteChildren: RootRouteChildren = {
   BuyerOnboardingLiquidityRoute: BuyerOnboardingLiquidityRoute,
   BuyerOnboardingPaymentRoute: BuyerOnboardingPaymentRoute,
   BuyerOnboardingVettingRoute: BuyerOnboardingVettingRoute,
+  BuyerPodsIdRoute: BuyerPodsIdRoute,
   BuyerOnboardingIndexRoute: BuyerOnboardingIndexRoute,
 }
 export const routeTree = rootRouteImport

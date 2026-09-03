@@ -7,6 +7,13 @@ import { Briefcase as BriefcaseIcon } from "lucide-react";
 import { getBriefcase, postBriefcaseMessage } from "@/lib/hla.functions";
 
 /** Master Briefcase — unlocked only after the agent formally accepts. */
+/**
+ * Master Briefcase — internal coordination channel between the Heavy Lifting
+ * Agent and the Manager (divieight, LLC). Per the FSB spec the HLA does not
+ * communicate directly with the eight individual buyers, so this thread is
+ * deliberately NOT surfaced to buyers (buyers get pod transparency through
+ * /buyer/pods/$id: share fill, listing stage, and notifications).
+ */
 export const Route = createFileRoute("/agent/pods/$id/briefcase")({
   head: () => ({
     meta: [
