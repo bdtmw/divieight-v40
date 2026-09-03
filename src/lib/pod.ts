@@ -72,3 +72,25 @@ export const RESERVATION_BLOCK_COPY: Record<
     body: "Your reservation on this property is active — see it under My Reservations on your dashboard.",
   },
 };
+
+/** Buyer-facing pod detail view. Other members stay de-identified. */
+export interface BuyerPodDetails {
+  propertyId: string;
+  address: string;
+  city: string;
+  state: string;
+  zip: string;
+  listingPrice: number | null;
+  propertyType: string | null;
+  photoUrl: string | null;
+  composition: PodComposition;
+  myShares: number;
+  myStatus: string;
+  myReservedAt: string | null;
+  priorityRank: number | null;
+  priorityRankTimestamp: string | null;
+  members: { label: string; shares: number; reservedAt: string | null; isMine: boolean }[];
+  tetheredAgentName: string | null;
+  heavyLiftingAgentName: string | null;
+  hlaStatus: string | null;
+}
