@@ -94,6 +94,7 @@ import { Route as AgentDocumentsIdRouteImport } from './routes/agent.documents.$
 import { Route as AgentPodsIdHlaInvitationRouteImport } from './routes/agent.pods.$id.hla-invitation'
 import { Route as AgentPodsIdBriefcaseRouteImport } from './routes/agent.pods.$id.briefcase'
 import { Route as AdminPodsIdSelectHeavyLifterRouteImport } from './routes/admin.pods.$id.select-heavy-lifter'
+import { Route as AdminPodsIdBriefcaseRouteImport } from './routes/admin.pods.$id.briefcase'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -534,6 +535,11 @@ const AdminPodsIdSelectHeavyLifterRoute =
     path: '/pods/$id/select-heavy-lifter',
     getParentRoute: () => AdminRoute,
   } as any)
+const AdminPodsIdBriefcaseRoute = AdminPodsIdBriefcaseRouteImport.update({
+  id: '/pods/$id/briefcase',
+  path: '/pods/$id/briefcase',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -618,6 +624,7 @@ export interface FileRoutesByFullPath {
   '/admin/pods/': typeof AdminPodsIndexRoute
   '/agent/documents/': typeof AgentDocumentsIndexRoute
   '/buyer/onboarding/': typeof BuyerOnboardingIndexRoute
+  '/admin/pods/$id/briefcase': typeof AdminPodsIdBriefcaseRoute
   '/admin/pods/$id/select-heavy-lifter': typeof AdminPodsIdSelectHeavyLifterRoute
   '/agent/pods/$id/briefcase': typeof AgentPodsIdBriefcaseRoute
   '/agent/pods/$id/hla-invitation': typeof AgentPodsIdHlaInvitationRoute
@@ -701,6 +708,7 @@ export interface FileRoutesByTo {
   '/admin/pods': typeof AdminPodsIndexRoute
   '/agent/documents': typeof AgentDocumentsIndexRoute
   '/buyer/onboarding': typeof BuyerOnboardingIndexRoute
+  '/admin/pods/$id/briefcase': typeof AdminPodsIdBriefcaseRoute
   '/admin/pods/$id/select-heavy-lifter': typeof AdminPodsIdSelectHeavyLifterRoute
   '/agent/pods/$id/briefcase': typeof AgentPodsIdBriefcaseRoute
   '/agent/pods/$id/hla-invitation': typeof AgentPodsIdHlaInvitationRoute
@@ -789,6 +797,7 @@ export interface FileRoutesById {
   '/admin/pods/': typeof AdminPodsIndexRoute
   '/agent/documents/': typeof AgentDocumentsIndexRoute
   '/buyer/onboarding/': typeof BuyerOnboardingIndexRoute
+  '/admin/pods/$id/briefcase': typeof AdminPodsIdBriefcaseRoute
   '/admin/pods/$id/select-heavy-lifter': typeof AdminPodsIdSelectHeavyLifterRoute
   '/agent/pods/$id/briefcase': typeof AgentPodsIdBriefcaseRoute
   '/agent/pods/$id/hla-invitation': typeof AgentPodsIdHlaInvitationRoute
@@ -878,6 +887,7 @@ export interface FileRouteTypes {
     | '/admin/pods/'
     | '/agent/documents/'
     | '/buyer/onboarding/'
+    | '/admin/pods/$id/briefcase'
     | '/admin/pods/$id/select-heavy-lifter'
     | '/agent/pods/$id/briefcase'
     | '/agent/pods/$id/hla-invitation'
@@ -961,6 +971,7 @@ export interface FileRouteTypes {
     | '/admin/pods'
     | '/agent/documents'
     | '/buyer/onboarding'
+    | '/admin/pods/$id/briefcase'
     | '/admin/pods/$id/select-heavy-lifter'
     | '/agent/pods/$id/briefcase'
     | '/agent/pods/$id/hla-invitation'
@@ -1048,6 +1059,7 @@ export interface FileRouteTypes {
     | '/admin/pods/'
     | '/agent/documents/'
     | '/buyer/onboarding/'
+    | '/admin/pods/$id/briefcase'
     | '/admin/pods/$id/select-heavy-lifter'
     | '/agent/pods/$id/briefcase'
     | '/agent/pods/$id/hla-invitation'
@@ -1701,6 +1713,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPodsIdSelectHeavyLifterRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/pods/$id/briefcase': {
+      id: '/admin/pods/$id/briefcase'
+      path: '/pods/$id/briefcase'
+      fullPath: '/admin/pods/$id/briefcase'
+      preLoaderRoute: typeof AdminPodsIdBriefcaseRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
@@ -1716,6 +1735,7 @@ interface AdminRouteChildren {
   AdminSubstitutionsRoute: typeof AdminSubstitutionsRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminPodsIndexRoute: typeof AdminPodsIndexRoute
+  AdminPodsIdBriefcaseRoute: typeof AdminPodsIdBriefcaseRoute
   AdminPodsIdSelectHeavyLifterRoute: typeof AdminPodsIdSelectHeavyLifterRoute
 }
 
@@ -1731,6 +1751,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminSubstitutionsRoute: AdminSubstitutionsRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminPodsIndexRoute: AdminPodsIndexRoute,
+  AdminPodsIdBriefcaseRoute: AdminPodsIdBriefcaseRoute,
   AdminPodsIdSelectHeavyLifterRoute: AdminPodsIdSelectHeavyLifterRoute,
 }
 
