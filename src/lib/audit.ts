@@ -70,7 +70,11 @@ export type AuditAction =
   | "agent.designation_accepted"
   | "agent.designation_declined"
   | "agent.tether_accepted"
+  | "agent.nar_referral_generated"
+  | "agent.nar_referral_signed"
+  | "agent.nar_referral_executed"
   | "agent.refer_only_elected";
+
 
 export type AuditEntity =
   | "seller"
