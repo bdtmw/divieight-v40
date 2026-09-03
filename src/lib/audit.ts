@@ -78,7 +78,9 @@ export type AuditAction =
   | "pod.heavy_lifter_reselected"
   | "pod.heavy_lifter_accepted"
   | "pod.heavy_lifter_declined"
-  | "pod.heavy_lifter_timed_out";
+  | "pod.heavy_lifter_timed_out"
+  | "pod.closing_hold_placed"
+  | "pod.closing_hold_lifted";
 
 
 export type AuditEntity =

@@ -93,4 +93,6 @@ export interface BuyerPodDetails {
   tetheredAgentName: string | null;
   heavyLiftingAgentName: string | null;
   hlaStatus: string | null;
+  /** Broker Closing Hold state, visible to everyone involved in the pod. */
+  closingHold: import("@/lib/closing-hold").ClosingHoldState;
 }

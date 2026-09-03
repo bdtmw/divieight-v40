@@ -1,3 +1,4 @@
+import { ClosingHoldBanner } from "@/components/ClosingHoldBanner";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -90,6 +91,10 @@ function BuyerPodDetailsPage() {
       >
         ← Back to dashboard
       </Link>
+
+      <div className="mt-4">
+        <ClosingHoldBanner hold={pod.closingHold} />
+      </div>
 
       <header className="mt-4 grid gap-6 sm:grid-cols-[220px_1fr]">
         <div className="aspect-[4/3] w-full overflow-hidden rounded-xl border border-border bg-secondary">

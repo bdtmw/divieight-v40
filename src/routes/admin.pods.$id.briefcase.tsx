@@ -1,3 +1,4 @@
+import { ClosingHoldBanner } from "@/components/ClosingHoldBanner";
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -52,6 +53,10 @@ function AdminBriefcase() {
       <p className="mt-1 text-sm text-muted-foreground">
         {data.city}, {data.state} {data.zip}
       </p>
+
+      <div className="mt-4">
+        <ClosingHoldBanner hold={data.closingHold} />
+      </div>
 
       <section className="mt-8">
         <h2 className="font-display text-lg font-semibold text-foreground">Pod members</h2>

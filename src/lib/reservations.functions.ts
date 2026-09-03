@@ -401,7 +401,7 @@ export const getMyPodDetails = createServerFn({ method: "GET" })
 
     const { data: pod } = await supabaseAdmin
       .from("pods")
-      .select("heavy_lifting_agent_id, hla_status")
+      .select("*")
       .eq("property_id", data.propertyId)
       .maybeSingle();
 
@@ -415,6 +415,16 @@ export const getMyPodDetails = createServerFn({ method: "GET" })
         .select("id, full_name")
         .in("id", agentIds);
       for (const a of rows ?? []) names.set(a.id, a.full_name);
+    }
+
+    let holdBrokerName: string | null = null;
+    if (pod?.closing_hold_placed_by) {
+      const { data: b } = await supabaseAdmin
+        .from("brokers")
+        .select("brokerage_name")
+        .eq("id", pod.closing_hold_placed_by)
+        .maybeSingle();
+      holdBrokerName = (b as any)?.brokerage_name ?? null;
     }
 
     const retained =
@@ -457,5 +467,13 @@ export const getMyPodDetails = createServerFn({ method: "GET" })
           ? (names.get(pod.heavy_lifting_agent_id) ?? null)
           : null,
       hlaStatus: pod?.hla_status ?? null,
+      // Broker Closing Hold — MONTH 4: the closing engine must block while active.
+      closingHold: {
+        active: Boolean(pod?.closing_hold_active),
+        reason: pod?.closing_hold_reason ?? null,
+        placedAt: pod?.closing_hold_placed_at ?? null,
+        placedByBrokerName: holdBrokerName,
+        liftedAt: pod?.closing_hold_lifted_at ?? null,
+      },
     };
   });

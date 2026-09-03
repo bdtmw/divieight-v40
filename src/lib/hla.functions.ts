@@ -618,12 +618,31 @@ export const getBriefcase = createServerFn({ method: "POST" })
       .eq("pod_id", pod.id)
       .order("created_at", { ascending: true });
 
+    // Broker Closing Hold state — surfaced to the Heavy Lifting Agent and the
+    // Manager. MONTH 4: the closing engine must block while this is active.
+    let holdBrokerName: string | null = null;
+    if (pod.closing_hold_placed_by) {
+      const { data: b } = await db
+        .from("brokers")
+        .select("brokerage_name")
+        .eq("id", pod.closing_hold_placed_by)
+        .maybeSingle();
+      holdBrokerName = b?.brokerage_name ?? null;
+    }
+
     return {
       podId: pod.id,
       address: property?.address ?? "—",
       city: property?.city ?? "",
       state: property?.state ?? "",
       zip: property?.zip ?? "",
+      closingHold: {
+        active: Boolean(pod.closing_hold_active),
+        reason: pod.closing_hold_reason ?? null,
+        placedAt: pod.closing_hold_placed_at ?? null,
+        placedByBrokerName: holdBrokerName,
+        liftedAt: pod.closing_hold_lifted_at ?? null,
+      },
       buyers,
       passiveAgents,
       messages: (messages ?? []).map((m: any) => ({
