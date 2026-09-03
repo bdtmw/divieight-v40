@@ -5,9 +5,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { OnboardingStepper } from "@/components/OnboardingStepper";
 import { cn } from "@/lib/utils";
-import { notifySeller } from "@/lib/notify";
 import { logAudit } from "@/lib/audit";
 import { markListingStep } from "@/lib/listing-progress";
+import { submitListingForApproval } from "@/lib/listing-approval.functions";
 
 export const Route = createFileRoute("/onboarding/agreement")({
   // Optional ?property=<id> scopes the agreement to one existing listing.
@@ -229,7 +229,7 @@ function AgreementScreen() {
     setSubmitting(false);
     setModalOpen(false);
     setDone(true);
-    toast.success("Your listing is live! Welcome to divieight.");
+    toast.success("Signed. Your listing is now with your Listing Agent for review.");
     setTimeout(() => navigate({ to: "/dashboard" }), 1600);
   }
 
@@ -252,10 +252,11 @@ function AgreementScreen() {
       {done ? (
         <div className="mt-10 rounded-xl border border-accent/40 bg-accent/10 p-10 text-center">
           <h2 className="font-display text-2xl font-semibold text-foreground">
-            Your listing is live!
+            Submitted for review
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Welcome to divieight. Redirecting you to your dashboard…
+            Your listing content is with your Listing Agent for approval, followed by
+            a compliance review. You'll be notified when it goes live. Redirecting…
           </p>
         </div>
       ) : (
