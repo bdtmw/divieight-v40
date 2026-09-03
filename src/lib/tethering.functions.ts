@@ -104,15 +104,30 @@ export async function applyTether(
 
   let referralAgreementCreated = false;
   if (stageAgreement) {
-    const { error } = await db.from("pending_referral_agreements").insert({
-      buyer_account_id: buyer.id,
-      non_resident_agent_id: referringAgentId,
-      resident_agent_id: agent.id,
-      referring_agent_role: referringAgentRole ?? "non_resident",
-      status: "pending_generation",
-    });
+    const { data: pendingRow, error } = await db
+      .from("pending_referral_agreements")
+      .insert({
+        buyer_account_id: buyer.id,
+        non_resident_agent_id: referringAgentId,
+        resident_agent_id: agent.id,
+        referring_agent_role: referringAgentRole ?? "non_resident",
+        status: "pending_generation",
+      })
+      .select("id")
+      .maybeSingle();
     referralAgreementCreated = !error;
+    // Generate the Standard NAR Referral Agreement immediately so both agents
+    // can sign it; failures here must not roll back the tethering itself.
+    if (pendingRow?.id) {
+      try {
+        const { generateReferralAgreement } = await import("@/lib/nar-referral.functions");
+        await generateReferralAgreement(db, pendingRow.id, actorId);
+      } catch (e) {
+        console.error("[tethering] referral agreement generation failed", e);
+      }
+    }
   }
+
 
   await notifyAgentUser(db, agent.auth_user_id, "You've been tethered to a new buyer.", "tethering");
 
