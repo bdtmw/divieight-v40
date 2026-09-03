@@ -423,13 +423,20 @@ function BuyerDashboardPage() {
                     {r.listing_status === "system_lock" ? "System Lock" : r.status}
                   </span>
                   <Link
-                    to="/properties/$id"
+                    to="/buyer/pods/$id"
                     params={{ id: r.property_id }}
                     className="text-xs font-medium text-foreground underline-offset-4 hover:underline"
                   >
-                    View home →
+                    View pod →
                   </Link>
-                  {r.status === "reserved" ? (
+                  <Link
+                    to="/properties/$id"
+                    params={{ id: r.property_id }}
+                    className="text-xs font-medium text-muted-foreground underline-offset-4 hover:underline"
+                  >
+                    View home
+                  </Link>
+                  {r.status === "reserved" && r.listing_status === "forming" ? (
                     <button
                       type="button"
                       onClick={() => handleWithdraw(r.id)}
@@ -438,7 +445,12 @@ function BuyerDashboardPage() {
                     >
                       {withdrawingId === r.id ? "Withdrawing…" : "Withdraw reservation"}
                     </button>
+                  ) : r.status === "reserved" ? (
+                    <span className="text-[11px] text-muted-foreground">
+                      Pod locked — exits run through the Member Substitution Pipeline.
+                    </span>
                   ) : null}
+
                 </div>
               </li>
             ))}
