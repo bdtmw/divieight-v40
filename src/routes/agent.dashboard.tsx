@@ -1,14 +1,28 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/hooks/use-auth";
 import { getAgentProfile, agentRedirect, AGENT_ROLE_LABELS, type AgentRow } from "@/lib/agent";
 import { AgentPendingBanner } from "@/components/AgentPendingBanner";
 import { AgentCertLapsedBanner } from "@/components/AgentCertLapsedBanner";
 import { AgentBrokerLapsedBanner } from "@/components/AgentBrokerLapsedBanner";
 import { AgentActionItems } from "@/components/AgentActionItems";
+import { VerifiedLeadTable } from "@/components/agent/VerifiedLeadTable";
 import { getBrokerById, type BrokerRow } from "@/lib/broker";
-import { Building2, PauseCircle, Share2 } from "lucide-react";
+import { daysUntilExpiry } from "@/lib/agent-compliance";
+import { listMyTetheredBuyers, type TetheredBuyer } from "@/lib/agent-leads.functions";
+import { listAttributionTokens, getTaggedBuyerCounts } from "@/lib/attribution";
+import {
+  BadgeCheck,
+  Building2,
+  CalendarClock,
+  Coins,
+  PauseCircle,
+  Share2,
+  ShieldCheck,
+  Users,
+} from "lucide-react";
 
 export const Route = createFileRoute("/agent/dashboard")({
   head: () => ({
@@ -21,7 +35,7 @@ export const Route = createFileRoute("/agent/dashboard")({
       { property: "og:title", content: "Agent overview — divieight" },
       {
         property: "og:description",
-        content: "Track your credentialing progress in the divieight Professional Portal.",
+        content: "Track credentialing, tethered buyers, and referral performance at divieight.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -30,10 +44,40 @@ export const Route = createFileRoute("/agent/dashboard")({
   component: AgentDashboard,
 });
 
+function StatusChip({
+  ok,
+  okLabel,
+  warnLabel,
+  icon: Icon,
+}: {
+  ok: boolean;
+  okLabel: string;
+  warnLabel: string;
+  icon: React.ComponentType<{ className?: string }>;
+}) {
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold ${
+        ok
+          ? "border-accent/50 bg-accent/10 text-accent"
+          : "border-destructive/40 bg-destructive/10 text-destructive"
+      }`}
+    >
+      <Icon className="h-3.5 w-3.5" />
+      {ok ? okLabel : warnLabel}
+    </span>
+  );
+}
+
 function AgentDashboard() {
   const { user } = useAuth();
   const [agent, setAgent] = useState<AgentRow | null>(null);
   const [broker, setBroker] = useState<BrokerRow | null>(null);
+  const [buyers, setBuyers] = useState<TetheredBuyer[]>([]);
+  const [buyersLoading, setBuyersLoading] = useState(true);
+  const [attribution, setAttribution] = useState({ tokens: 0, clicks: 0, tagged: 0 });
+
+  const loadBuyers = useServerFn(listMyTetheredBuyers);
 
   useEffect(() => {
     if (!user) return;
@@ -60,11 +104,47 @@ function AgentDashboard() {
     };
   }, [agent?.broker_id]);
 
+  useEffect(() => {
+    let cancelled = false;
+    loadBuyers({})
+      .then((rows) => {
+        if (!cancelled) setBuyers(rows);
+      })
+      .finally(() => {
+        if (!cancelled) setBuyersLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [loadBuyers]);
+
+  useEffect(() => {
+    if (!agent) return;
+    let cancelled = false;
+    Promise.all([listAttributionTokens(agent.id), getTaggedBuyerCounts(agent.id)]).then(
+      ([tokens, tagged]) => {
+        if (cancelled) return;
+        setAttribution({
+          tokens: tokens.length,
+          clicks: tokens.reduce((sum, t) => sum + (t.click_count ?? 0), 0),
+          tagged: tagged.total,
+        });
+      },
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [agent]);
+
   if (!agent) return <p className="text-sm text-muted-foreground">Loading your profile…</p>;
 
   const onboardingComplete =
     agent.onboarding_status === "complete" || agent.onboarding_status === "active";
-
+  const certDays = daysUntilExpiry(agent.nar_cert_expires_at);
+  const relationshipActive = (agent.relationship_status ?? "active") === "active";
+  const qualifiedLeads = buyers.filter(
+    (b) => b.goldenTicketIssued && b.pefStatus === "paid",
+  ).length;
 
   return (
     <div className="space-y-8">
@@ -72,11 +152,25 @@ function AgentDashboard() {
       <AgentCertLapsedBanner agent={agent} onUpdated={setAgent} />
       <AgentBrokerLapsedBanner status={agent.relationship_status} />
 
+      {!onboardingComplete ? (
+        <div className="flex flex-wrap items-center gap-3 rounded-xl border border-accent/40 bg-accent/5 p-4 text-sm">
+          <p className="min-w-0 flex-1 text-foreground">
+            Credentialing is incomplete — your profile is at status{" "}
+            <span className="font-medium">{agent.onboarding_status}</span>. Finish every step
+            before you can be tethered to a buyer pod.
+          </p>
+          <Link
+            to={agentRedirect(agent.onboarding_status)}
+            className="inline-flex h-9 items-center rounded-md bg-primary px-4 text-xs font-semibold text-primary-foreground"
+          >
+            Continue onboarding
+          </Link>
+        </div>
+      ) : null}
+
       <AgentActionItems />
 
-
-
-      <header className="space-y-2">
+      <header className="space-y-3">
         <p className="text-xs font-medium uppercase tracking-[0.2em] text-accent">
           {AGENT_ROLE_LABELS[agent.role]}
         </p>
@@ -87,30 +181,100 @@ function AgentDashboard() {
           Service area: {agent.service_area} · License {agent.license_number} (
           {agent.license_state})
         </p>
+        <div className="flex flex-wrap gap-2">
+          <StatusChip
+            ok={Boolean(agent.license_verified)}
+            okLabel="License verified"
+            warnLabel="License verification pending"
+            icon={BadgeCheck}
+          />
+          <StatusChip
+            ok={Boolean(agent.broker_id) && relationshipActive}
+            okLabel={`Broker linked${broker?.brokerage_name ? ` — ${broker.brokerage_name}` : ""}`}
+            warnLabel={
+              agent.broker_id ? "Broker relationship needs re-verification" : "No Broker of Record"
+            }
+            icon={Building2}
+          />
+          <StatusChip
+            ok={!agent.nar_cert_lapsed && (certDays === null || certDays > 0)}
+            okLabel={
+              certDays === null
+                ? "NAR certification on file"
+                : `NAR cert renews in ${certDays} day${certDays === 1 ? "" : "s"}`
+            }
+            warnLabel="NAR certification expired"
+            icon={CalendarClock}
+          />
+        </div>
       </header>
 
-      {!onboardingComplete ? (
-        <section className="rounded-xl border border-border bg-card p-6">
-          <h2 className="text-lg font-semibold text-foreground">Finish your credentialing</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Your profile is at status <span className="font-medium">{agent.onboarding_status}</span>
-            . Complete every step before you can be tethered to a buyer pod.
-          </p>
+      <section className="rounded-xl border border-border bg-card p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <Users className="h-5 w-5 text-accent" />
+            <h2 className="text-lg font-semibold text-foreground">My buyers</h2>
+          </div>
           <Link
-            to={agentRedirect(agent.onboarding_status)}
-            className="mt-4 inline-flex h-10 items-center justify-center rounded-md bg-primary px-5 text-sm font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5"
+            to="/agent/leads"
+            className="inline-flex h-9 items-center rounded-md border border-border px-4 text-xs font-semibold text-foreground"
           >
-            Continue onboarding
+            Verified lead dashboard
+          </Link>
+        </div>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {qualifiedLeads} of {buyers.length} tethered buyer{buyers.length === 1 ? "" : "s"} are
+          fully qualified. Vetting report contents remain private to the buyer and the Platform.
+        </p>
+        <div className="mt-4">
+          <VerifiedLeadTable buyers={buyers.slice(0, 3)} loading={buyersLoading} />
+        </div>
+      </section>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        <section className="rounded-xl border border-border bg-card p-6">
+          <div className="flex items-center gap-3">
+            <Coins className="h-5 w-5 text-accent" />
+            <h2 className="text-lg font-semibold text-foreground">My commission pipeline</h2>
+          </div>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {qualifiedLeads} qualified buyer{qualifiedLeads === 1 ? "" : "s"} in your pipeline.
+            Compensation is the buyer-side commission paid at closing by the title/escrow company
+            through your Broker of Record — divieight never pays agents directly.
+          </p>
+          <p className="mt-3 text-xs text-muted-foreground">
+            The full Commission Dashboard, with per-closing splits and referral shares, arrives
+            with the transaction engine.
+          </p>
+        </section>
+
+        <section className="rounded-xl border border-border bg-card p-6">
+          <div className="flex items-center gap-3">
+            <Share2 className="h-5 w-5 text-accent" />
+            <h2 className="text-lg font-semibold text-foreground">My attribution tokens</h2>
+          </div>
+          <dl className="mt-3 grid grid-cols-3 gap-3 text-center">
+            {[
+              { label: "Tokens", value: attribution.tokens },
+              { label: "Clicks", value: attribution.clicks },
+              { label: "Tagged buyers", value: attribution.tagged },
+            ].map((s) => (
+              <div key={s.label} className="rounded-lg border border-border p-3">
+                <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                  {s.label}
+                </dt>
+                <dd className="text-xl font-semibold text-foreground">{s.value}</dd>
+              </div>
+            ))}
+          </dl>
+          <Link
+            to="/agent/attribution"
+            className="mt-4 inline-flex h-9 items-center rounded-md border border-border px-4 text-xs font-semibold text-foreground"
+          >
+            Manage attribution
           </Link>
         </section>
-      ) : (
-        <section className="rounded-xl border border-border bg-card p-6">
-          <h2 className="text-lg font-semibold text-foreground">Credentialing complete</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            You are eligible to be matched to buyer pods in {agent.service_area}.
-          </p>
-        </section>
-      )}
+      </div>
 
       <section className="rounded-xl border border-border bg-card p-6">
         <div className="flex items-center gap-3">
@@ -150,27 +314,11 @@ function AgentDashboard() {
         )}
       </section>
 
-
-      <section className="rounded-xl border border-border bg-card p-6">
-        <div className="flex items-center gap-3">
-          <Share2 className="h-5 w-5 text-accent" />
-          <h2 className="text-lg font-semibold text-foreground">Referral links & QR codes</h2>
-        </div>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Generate shareable links and QR codes, then track clicks and how many buyers registered
-          carrying your Lead Attribution Tag.
-        </p>
-        <Link
-          to="/agent/attribution"
-          className="mt-4 inline-flex h-9 items-center rounded-md border border-border px-4 text-xs font-semibold text-foreground"
-        >
-          Manage attribution
-        </Link>
-      </section>
-
       <section className="rounded-xl border border-dashed border-border p-6 text-sm text-muted-foreground">
         <div className="flex flex-wrap items-center gap-3">
-          <span>In-flight transactions</span>
+          <span className="inline-flex items-center gap-2 text-foreground">
+            <ShieldCheck className="h-4 w-4 text-accent" /> In-flight transactions
+          </span>
           {agent.nar_cert_lapsed ? (
             <span className="inline-flex items-center gap-1 rounded-full border border-destructive/50 bg-destructive/10 px-3 py-1 text-xs font-semibold text-destructive">
               <PauseCircle className="h-3.5 w-3.5" /> Hold — certification lapsed
