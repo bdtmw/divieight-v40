@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type {
+  BuyerPodDetails,
   MyReservation,
   PodComposition,
   ReservationEligibility,
@@ -230,6 +231,16 @@ export const withdrawReservation = createServerFn({ method: "POST" })
     if (!reservation) return { ok: false, reason: "not_found" };
     if (reservation.status !== "reserved") return { ok: false, reason: "not_active" };
 
+    // Once the pod reaches System Lock the slice can no longer be self-released;
+    // exits run through the Member Substitution Pipeline instead.
+    {
+      const { fetchPodComposition } = await import("@/lib/pod.server");
+      const comp = await fetchPodComposition(reservation.property_id);
+      if (comp && comp.listingStatus !== "forming") {
+        return { ok: false, reason: "pod_locked" };
+      }
+    }
+
     const { error } = await supabase
       .from("pod_reservations")
       .update({ status: "withdrawn" })
@@ -310,4 +321,135 @@ export const withdrawReservation = createServerFn({ method: "POST" })
     });
 
     return { ok: true, reason: "ok" };
+  });
+
+/**
+ * Buyer-facing pod detail. Only a buyer holding a reservation in this pod can
+ * read it, and other members are de-identified. The Heavy Lifting Agent's
+ * Master Briefcase thread is intentionally NOT exposed here (see
+ * agent.pods.$id.briefcase.tsx).
+ */
+export const getMyPodDetails = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { propertyId: string }) => ({ propertyId: String(data.propertyId) }))
+  .handler(async ({ data, context }): Promise<BuyerPodDetails | { error: string }> => {
+    const { fetchPodComposition } = await import("@/lib/pod.server");
+    const { supabase, userId } = context;
+
+    const { data: buyer } = await supabase
+      .from("buyer_accounts")
+      .select("id, priority_rank, priority_rank_timestamp, tethered_resident_agent_id")
+      .eq("auth_user_id", userId)
+      .maybeSingle();
+    if (!buyer) return { error: "Buyer account not found." };
+
+    const { data: mine } = await supabase
+      .from("pod_reservations")
+      .select("id, shares_reserved, status, reserved_at")
+      .eq("property_id", data.propertyId)
+      .eq("buyer_account_id", buyer.id)
+      .order("reserved_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (!mine) return { error: "You don't hold a reservation in this pod." };
+
+    const composition = await fetchPodComposition(data.propertyId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/admin.server");
+
+    const { data: property } = await supabaseAdmin
+      .from("properties")
+      .select("id, address, city, state, zip, listing_price, property_type, exit_type, retained_shares, listing_status")
+      .eq("id", data.propertyId)
+      .maybeSingle();
+    if (!property) return { error: "Property not found." };
+
+    let photoUrl: string | null = null;
+    const { data: media } = await supabaseAdmin
+      .from("property_media")
+      .select("url")
+      .eq("property_id", data.propertyId)
+      .eq("media_type", "photo")
+      .order("display_order", { ascending: true })
+      .limit(1);
+    const path = media?.[0]?.url ?? null;
+    if (path) {
+      const { data: signed } = await supabaseAdmin.storage
+        .from("property-media")
+        .createSignedUrl(path, 60 * 60);
+      photoUrl = signed?.signedUrl ?? null;
+    }
+
+    const { data: reservations } = await supabaseAdmin
+      .from("pod_reservations")
+      .select("buyer_account_id, shares_reserved, reserved_at")
+      .eq("property_id", data.propertyId)
+      .eq("status", "reserved")
+      .order("reserved_at", { ascending: true });
+
+    const members = (reservations ?? []).map((r, i) => ({
+      label: r.buyer_account_id === buyer.id ? "You" : `Member ${i + 1}`,
+      shares: r.shares_reserved ?? 1,
+      reservedAt: r.reserved_at ?? null,
+      isMine: r.buyer_account_id === buyer.id,
+    }));
+
+    const { data: pod } = await supabaseAdmin
+      .from("pods")
+      .select("heavy_lifting_agent_id, hla_status")
+      .eq("property_id", data.propertyId)
+      .maybeSingle();
+
+    const agentIds = [buyer.tethered_resident_agent_id, pod?.heavy_lifting_agent_id].filter(
+      Boolean,
+    ) as string[];
+    const names = new Map<string, string>();
+    if (agentIds.length) {
+      const { data: rows } = await supabaseAdmin
+        .from("agents")
+        .select("id, full_name")
+        .in("id", agentIds);
+      for (const a of rows ?? []) names.set(a.id, a.full_name);
+    }
+
+    const retained =
+      property.exit_type === "hybrid_exit" ? (property.retained_shares ?? 0) : 0;
+
+    return {
+      propertyId: property.id,
+      address: property.address,
+      city: property.city,
+      state: property.state,
+      zip: property.zip ?? "",
+      listingPrice: property.listing_price ?? null,
+      propertyType: property.property_type ?? null,
+      photoUrl,
+      composition:
+        composition ?? {
+          propertyId: property.id,
+          totalShares: 8,
+          retainedShares: retained,
+          reservedShares: members.reduce((s, m) => s + m.shares, 0),
+          availableShares: Math.max(
+            0,
+            8 - retained - members.reduce((s, m) => s + m.shares, 0),
+          ),
+          hardLocked: false,
+          listingStatus: property.listing_status,
+          slots: [],
+        },
+      myShares: mine.shares_reserved ?? 0,
+      myStatus: mine.status,
+      myReservedAt: mine.reserved_at ?? null,
+      priorityRank: buyer.priority_rank ?? null,
+      priorityRankTimestamp: buyer.priority_rank_timestamp ?? null,
+      members,
+      tetheredAgentName: buyer.tethered_resident_agent_id
+        ? (names.get(buyer.tethered_resident_agent_id) ?? null)
+        : null,
+      heavyLiftingAgentName:
+        pod?.hla_status === "accepted" && pod.heavy_lifting_agent_id
+          ? (names.get(pod.heavy_lifting_agent_id) ?? null)
+          : null,
+      hlaStatus: pod?.hla_status ?? null,
+    };
   });
