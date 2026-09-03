@@ -203,11 +203,16 @@ function AgreementScreen() {
     }
 
     if (property?.id) {
-      await supabase.from("properties").update({ status: "listed" }).eq("id", property.id);
+      // Signing no longer publishes. Content now routes through Gate 1
+      // (Listing Agent approval) and Gate 2 (compliance) before going live.
       await markListingStep(property.id, "agreement");
+      try {
+        await submitListingForApproval({ data: { propertyId: property.id } });
+      } catch (e) {
+        console.error("[listing] submit for approval failed", e);
+      }
     }
 
-    await notifySeller(user.id, "listing_live");
     await logAudit({
       actorId: user.id,
       actionType: "seller.listing_agreement_signed",
