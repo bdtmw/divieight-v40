@@ -70,6 +70,7 @@ import { Route as AdminContactsRouteImport } from './routes/admin.contacts'
 import { Route as AdminBuyersRouteImport } from './routes/admin.buyers'
 import { Route as AdminBrokersRouteImport } from './routes/admin.brokers'
 import { Route as AdminAuditLogRouteImport } from './routes/admin.audit-log'
+import { Route as AdminAgentsRouteImport } from './routes/admin.agents'
 import { Route as BuyerOnboardingIndexRouteImport } from './routes/buyer.onboarding.index'
 import { Route as AgentDocumentsIndexRouteImport } from './routes/agent.documents.index'
 import { Route as AdminPodsIndexRouteImport } from './routes/admin.pods.index'
@@ -405,6 +406,11 @@ const AdminAuditLogRoute = AdminAuditLogRouteImport.update({
   path: '/audit-log',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAgentsRoute = AdminAgentsRouteImport.update({
+  id: '/agents',
+  path: '/agents',
+  getParentRoute: () => AdminRoute,
+} as any)
 const BuyerOnboardingIndexRoute = BuyerOnboardingIndexRouteImport.update({
   id: '/buyer/onboarding/',
   path: '/buyer/onboarding/',
@@ -578,6 +584,7 @@ export interface FileRoutesByFullPath {
   '/notifications': typeof NotificationsRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRouteWithChildren
+  '/admin/agents': typeof AdminAgentsRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/admin/brokers': typeof AdminBrokersRoute
   '/admin/buyers': typeof AdminBuyersRoute
@@ -666,6 +673,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
   '/register': typeof RegisterRoute
+  '/admin/agents': typeof AdminAgentsRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/admin/brokers': typeof AdminBrokersRoute
   '/admin/buyers': typeof AdminBuyersRoute
@@ -759,6 +767,7 @@ export interface FileRoutesById {
   '/notifications': typeof NotificationsRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRouteWithChildren
+  '/admin/agents': typeof AdminAgentsRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/admin/brokers': typeof AdminBrokersRoute
   '/admin/buyers': typeof AdminBuyersRoute
@@ -853,6 +862,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/register'
     | '/reset-password'
+    | '/admin/agents'
     | '/admin/audit-log'
     | '/admin/brokers'
     | '/admin/buyers'
@@ -941,6 +951,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/notifications'
     | '/register'
+    | '/admin/agents'
     | '/admin/audit-log'
     | '/admin/brokers'
     | '/admin/buyers'
@@ -1033,6 +1044,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/register'
     | '/reset-password'
+    | '/admin/agents'
     | '/admin/audit-log'
     | '/admin/brokers'
     | '/admin/buyers'
@@ -1593,6 +1605,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAuditLogRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/agents': {
+      id: '/admin/agents'
+      path: '/agents'
+      fullPath: '/admin/agents'
+      preLoaderRoute: typeof AdminAgentsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/buyer/onboarding/': {
       id: '/buyer/onboarding/'
       path: '/buyer/onboarding'
@@ -1800,6 +1819,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminAgentsRoute: typeof AdminAgentsRoute
   AdminAuditLogRoute: typeof AdminAuditLogRoute
   AdminBrokersRoute: typeof AdminBrokersRoute
   AdminBuyersRoute: typeof AdminBuyersRoute
@@ -1817,6 +1837,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAgentsRoute: AdminAgentsRoute,
   AdminAuditLogRoute: AdminAuditLogRoute,
   AdminBrokersRoute: AdminBrokersRoute,
   AdminBuyersRoute: AdminBuyersRoute,
