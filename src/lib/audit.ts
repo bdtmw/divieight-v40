@@ -73,7 +73,12 @@ export type AuditAction =
   | "agent.nar_referral_generated"
   | "agent.nar_referral_signed"
   | "agent.nar_referral_executed"
-  | "agent.refer_only_elected";
+  | "agent.refer_only_elected"
+  | "pod.heavy_lifter_selected"
+  | "pod.heavy_lifter_reselected"
+  | "pod.heavy_lifter_accepted"
+  | "pod.heavy_lifter_declined"
+  | "pod.heavy_lifter_timed_out";
 
 
 export type AuditEntity =
@@ -87,7 +92,8 @@ export type AuditEntity =
   | "agent"
   | "broker"
   | "referral_agreement"
-  | "attribution_token";
+  | "attribution_token"
+  | "pod";
 
 
 export async function logAudit(params: {
