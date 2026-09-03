@@ -355,7 +355,12 @@ export const getMyPodDetails = createServerFn({ method: "GET" })
     if (!mine) return { error: "You don't hold a reservation in this pod." };
 
     const composition = await fetchPodComposition(data.propertyId);
-    const { supabaseAdmin } = await import("@/integrations/supabase/admin.server");
+    const { supabaseAdmin: rawAdmin } = await import("@/integrations/supabase/admin.server");
+    // Pod/agent tables post-date the generated types; use a loose client here.
+    const supabaseAdmin = rawAdmin as unknown as {
+      from: (t: string) => any;
+      storage: (typeof rawAdmin)["storage"];
+    };
 
     const { data: property } = await supabaseAdmin
       .from("properties")
