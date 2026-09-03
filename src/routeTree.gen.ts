@@ -68,6 +68,7 @@ import { Route as AdminBrokersRouteImport } from './routes/admin.brokers'
 import { Route as AdminAuditLogRouteImport } from './routes/admin.audit-log'
 import { Route as BuyerOnboardingIndexRouteImport } from './routes/buyer.onboarding.index'
 import { Route as AgentDocumentsIndexRouteImport } from './routes/agent.documents.index'
+import { Route as AdminPodsIndexRouteImport } from './routes/admin.pods.index'
 import { Route as BuyerOnboardingVettingRouteImport } from './routes/buyer.onboarding.vetting'
 import { Route as BuyerOnboardingPaymentRouteImport } from './routes/buyer.onboarding.payment'
 import { Route as BuyerOnboardingLiquidityRouteImport } from './routes/buyer.onboarding.liquidity'
@@ -78,6 +79,7 @@ import { Route as BrokerOnboardingInsuranceRouteImport } from './routes/broker.o
 import { Route as BrokerOnboardingComplianceRouteImport } from './routes/broker.onboarding.compliance'
 import { Route as BrokerOnboardingBankingRouteImport } from './routes/broker.onboarding.banking'
 import { Route as ApiPublicNarCertSweepRouteImport } from './routes/api.public.nar-cert-sweep'
+import { Route as ApiPublicHlaSweepRouteImport } from './routes/api.public.hla-sweep'
 import { Route as ApiPublicEnrollmentMaintenanceRouteImport } from './routes/api.public.enrollment-maintenance'
 import { Route as ApiPublicDesignationSweepRouteImport } from './routes/api.public.designation-sweep'
 import { Route as ApiPublicBrokerRelationshipSweepRouteImport } from './routes/api.public.broker-relationship-sweep'
@@ -88,6 +90,9 @@ import { Route as AgentOnboardingInsuranceRouteImport } from './routes/agent.onb
 import { Route as AgentOnboardingComplianceRouteImport } from './routes/agent.onboarding.compliance'
 import { Route as AgentOnboardingBrokerRouteImport } from './routes/agent.onboarding.broker'
 import { Route as AgentDocumentsIdRouteImport } from './routes/agent.documents.$id'
+import { Route as AgentPodsIdHlaInvitationRouteImport } from './routes/agent.pods.$id.hla-invitation'
+import { Route as AgentPodsIdBriefcaseRouteImport } from './routes/agent.pods.$id.briefcase'
+import { Route as AdminPodsIdSelectHeavyLifterRouteImport } from './routes/admin.pods.$id.select-heavy-lifter'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -384,6 +389,11 @@ const AgentDocumentsIndexRoute = AgentDocumentsIndexRouteImport.update({
   path: '/documents/',
   getParentRoute: () => AgentRoute,
 } as any)
+const AdminPodsIndexRoute = AdminPodsIndexRouteImport.update({
+  id: '/pods/',
+  path: '/pods/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const BuyerOnboardingVettingRoute = BuyerOnboardingVettingRouteImport.update({
   id: '/buyer/onboarding/vetting',
   path: '/buyer/onboarding/vetting',
@@ -437,6 +447,11 @@ const BrokerOnboardingBankingRoute = BrokerOnboardingBankingRouteImport.update({
 const ApiPublicNarCertSweepRoute = ApiPublicNarCertSweepRouteImport.update({
   id: '/api/public/nar-cert-sweep',
   path: '/api/public/nar-cert-sweep',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicHlaSweepRoute = ApiPublicHlaSweepRouteImport.update({
+  id: '/api/public/hla-sweep',
+  path: '/api/public/hla-sweep',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicEnrollmentMaintenanceRoute =
@@ -496,6 +511,23 @@ const AgentDocumentsIdRoute = AgentDocumentsIdRouteImport.update({
   path: '/documents/$id',
   getParentRoute: () => AgentRoute,
 } as any)
+const AgentPodsIdHlaInvitationRoute =
+  AgentPodsIdHlaInvitationRouteImport.update({
+    id: '/pods/$id/hla-invitation',
+    path: '/pods/$id/hla-invitation',
+    getParentRoute: () => AgentRoute,
+  } as any)
+const AgentPodsIdBriefcaseRoute = AgentPodsIdBriefcaseRouteImport.update({
+  id: '/pods/$id/briefcase',
+  path: '/pods/$id/briefcase',
+  getParentRoute: () => AgentRoute,
+} as any)
+const AdminPodsIdSelectHeavyLifterRoute =
+  AdminPodsIdSelectHeavyLifterRouteImport.update({
+    id: '/pods/$id/select-heavy-lifter',
+    path: '/pods/$id/select-heavy-lifter',
+    getParentRoute: () => AdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -565,6 +597,7 @@ export interface FileRoutesByFullPath {
   '/api/public/broker-relationship-sweep': typeof ApiPublicBrokerRelationshipSweepRoute
   '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
+  '/api/public/hla-sweep': typeof ApiPublicHlaSweepRoute
   '/api/public/nar-cert-sweep': typeof ApiPublicNarCertSweepRoute
   '/broker/onboarding/banking': typeof BrokerOnboardingBankingRoute
   '/broker/onboarding/compliance': typeof BrokerOnboardingComplianceRoute
@@ -575,8 +608,12 @@ export interface FileRoutesByFullPath {
   '/buyer/onboarding/liquidity': typeof BuyerOnboardingLiquidityRoute
   '/buyer/onboarding/payment': typeof BuyerOnboardingPaymentRoute
   '/buyer/onboarding/vetting': typeof BuyerOnboardingVettingRoute
+  '/admin/pods/': typeof AdminPodsIndexRoute
   '/agent/documents/': typeof AgentDocumentsIndexRoute
   '/buyer/onboarding/': typeof BuyerOnboardingIndexRoute
+  '/admin/pods/$id/select-heavy-lifter': typeof AdminPodsIdSelectHeavyLifterRoute
+  '/agent/pods/$id/briefcase': typeof AgentPodsIdBriefcaseRoute
+  '/agent/pods/$id/hla-invitation': typeof AgentPodsIdHlaInvitationRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -642,6 +679,7 @@ export interface FileRoutesByTo {
   '/api/public/broker-relationship-sweep': typeof ApiPublicBrokerRelationshipSweepRoute
   '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
+  '/api/public/hla-sweep': typeof ApiPublicHlaSweepRoute
   '/api/public/nar-cert-sweep': typeof ApiPublicNarCertSweepRoute
   '/broker/onboarding/banking': typeof BrokerOnboardingBankingRoute
   '/broker/onboarding/compliance': typeof BrokerOnboardingComplianceRoute
@@ -652,8 +690,12 @@ export interface FileRoutesByTo {
   '/buyer/onboarding/liquidity': typeof BuyerOnboardingLiquidityRoute
   '/buyer/onboarding/payment': typeof BuyerOnboardingPaymentRoute
   '/buyer/onboarding/vetting': typeof BuyerOnboardingVettingRoute
+  '/admin/pods': typeof AdminPodsIndexRoute
   '/agent/documents': typeof AgentDocumentsIndexRoute
   '/buyer/onboarding': typeof BuyerOnboardingIndexRoute
+  '/admin/pods/$id/select-heavy-lifter': typeof AdminPodsIdSelectHeavyLifterRoute
+  '/agent/pods/$id/briefcase': typeof AgentPodsIdBriefcaseRoute
+  '/agent/pods/$id/hla-invitation': typeof AgentPodsIdHlaInvitationRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -724,6 +766,7 @@ export interface FileRoutesById {
   '/api/public/broker-relationship-sweep': typeof ApiPublicBrokerRelationshipSweepRoute
   '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
+  '/api/public/hla-sweep': typeof ApiPublicHlaSweepRoute
   '/api/public/nar-cert-sweep': typeof ApiPublicNarCertSweepRoute
   '/broker/onboarding/banking': typeof BrokerOnboardingBankingRoute
   '/broker/onboarding/compliance': typeof BrokerOnboardingComplianceRoute
@@ -734,8 +777,12 @@ export interface FileRoutesById {
   '/buyer/onboarding/liquidity': typeof BuyerOnboardingLiquidityRoute
   '/buyer/onboarding/payment': typeof BuyerOnboardingPaymentRoute
   '/buyer/onboarding/vetting': typeof BuyerOnboardingVettingRoute
+  '/admin/pods/': typeof AdminPodsIndexRoute
   '/agent/documents/': typeof AgentDocumentsIndexRoute
   '/buyer/onboarding/': typeof BuyerOnboardingIndexRoute
+  '/admin/pods/$id/select-heavy-lifter': typeof AdminPodsIdSelectHeavyLifterRoute
+  '/agent/pods/$id/briefcase': typeof AgentPodsIdBriefcaseRoute
+  '/agent/pods/$id/hla-invitation': typeof AgentPodsIdHlaInvitationRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -807,6 +854,7 @@ export interface FileRouteTypes {
     | '/api/public/broker-relationship-sweep'
     | '/api/public/designation-sweep'
     | '/api/public/enrollment-maintenance'
+    | '/api/public/hla-sweep'
     | '/api/public/nar-cert-sweep'
     | '/broker/onboarding/banking'
     | '/broker/onboarding/compliance'
@@ -817,8 +865,12 @@ export interface FileRouteTypes {
     | '/buyer/onboarding/liquidity'
     | '/buyer/onboarding/payment'
     | '/buyer/onboarding/vetting'
+    | '/admin/pods/'
     | '/agent/documents/'
     | '/buyer/onboarding/'
+    | '/admin/pods/$id/select-heavy-lifter'
+    | '/agent/pods/$id/briefcase'
+    | '/agent/pods/$id/hla-invitation'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -884,6 +936,7 @@ export interface FileRouteTypes {
     | '/api/public/broker-relationship-sweep'
     | '/api/public/designation-sweep'
     | '/api/public/enrollment-maintenance'
+    | '/api/public/hla-sweep'
     | '/api/public/nar-cert-sweep'
     | '/broker/onboarding/banking'
     | '/broker/onboarding/compliance'
@@ -894,8 +947,12 @@ export interface FileRouteTypes {
     | '/buyer/onboarding/liquidity'
     | '/buyer/onboarding/payment'
     | '/buyer/onboarding/vetting'
+    | '/admin/pods'
     | '/agent/documents'
     | '/buyer/onboarding'
+    | '/admin/pods/$id/select-heavy-lifter'
+    | '/agent/pods/$id/briefcase'
+    | '/agent/pods/$id/hla-invitation'
   id:
     | '__root__'
     | '/'
@@ -965,6 +1022,7 @@ export interface FileRouteTypes {
     | '/api/public/broker-relationship-sweep'
     | '/api/public/designation-sweep'
     | '/api/public/enrollment-maintenance'
+    | '/api/public/hla-sweep'
     | '/api/public/nar-cert-sweep'
     | '/broker/onboarding/banking'
     | '/broker/onboarding/compliance'
@@ -975,8 +1033,12 @@ export interface FileRouteTypes {
     | '/buyer/onboarding/liquidity'
     | '/buyer/onboarding/payment'
     | '/buyer/onboarding/vetting'
+    | '/admin/pods/'
     | '/agent/documents/'
     | '/buyer/onboarding/'
+    | '/admin/pods/$id/select-heavy-lifter'
+    | '/agent/pods/$id/briefcase'
+    | '/agent/pods/$id/hla-invitation'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1019,6 +1081,7 @@ export interface RootRouteChildren {
   ApiPublicBrokerRelationshipSweepRoute: typeof ApiPublicBrokerRelationshipSweepRoute
   ApiPublicDesignationSweepRoute: typeof ApiPublicDesignationSweepRoute
   ApiPublicEnrollmentMaintenanceRoute: typeof ApiPublicEnrollmentMaintenanceRoute
+  ApiPublicHlaSweepRoute: typeof ApiPublicHlaSweepRoute
   ApiPublicNarCertSweepRoute: typeof ApiPublicNarCertSweepRoute
   BuyerOnboardingIdentityRoute: typeof BuyerOnboardingIdentityRoute
   BuyerOnboardingLifestyleRoute: typeof BuyerOnboardingLifestyleRoute
@@ -1443,6 +1506,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentDocumentsIndexRouteImport
       parentRoute: typeof AgentRoute
     }
+    '/admin/pods/': {
+      id: '/admin/pods/'
+      path: '/pods'
+      fullPath: '/admin/pods/'
+      preLoaderRoute: typeof AdminPodsIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/buyer/onboarding/vetting': {
       id: '/buyer/onboarding/vetting'
       path: '/buyer/onboarding/vetting'
@@ -1511,6 +1581,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/nar-cert-sweep'
       fullPath: '/api/public/nar-cert-sweep'
       preLoaderRoute: typeof ApiPublicNarCertSweepRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hla-sweep': {
+      id: '/api/public/hla-sweep'
+      path: '/api/public/hla-sweep'
+      fullPath: '/api/public/hla-sweep'
+      preLoaderRoute: typeof ApiPublicHlaSweepRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/enrollment-maintenance': {
@@ -1583,6 +1660,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentDocumentsIdRouteImport
       parentRoute: typeof AgentRoute
     }
+    '/agent/pods/$id/hla-invitation': {
+      id: '/agent/pods/$id/hla-invitation'
+      path: '/pods/$id/hla-invitation'
+      fullPath: '/agent/pods/$id/hla-invitation'
+      preLoaderRoute: typeof AgentPodsIdHlaInvitationRouteImport
+      parentRoute: typeof AgentRoute
+    }
+    '/agent/pods/$id/briefcase': {
+      id: '/agent/pods/$id/briefcase'
+      path: '/pods/$id/briefcase'
+      fullPath: '/agent/pods/$id/briefcase'
+      preLoaderRoute: typeof AgentPodsIdBriefcaseRouteImport
+      parentRoute: typeof AgentRoute
+    }
+    '/admin/pods/$id/select-heavy-lifter': {
+      id: '/admin/pods/$id/select-heavy-lifter'
+      path: '/pods/$id/select-heavy-lifter'
+      fullPath: '/admin/pods/$id/select-heavy-lifter'
+      preLoaderRoute: typeof AdminPodsIdSelectHeavyLifterRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
@@ -1597,6 +1695,8 @@ interface AdminRouteChildren {
   AdminSellersRoute: typeof AdminSellersRoute
   AdminSubstitutionsRoute: typeof AdminSubstitutionsRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminPodsIndexRoute: typeof AdminPodsIndexRoute
+  AdminPodsIdSelectHeavyLifterRoute: typeof AdminPodsIdSelectHeavyLifterRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
@@ -1610,6 +1710,8 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminSellersRoute: AdminSellersRoute,
   AdminSubstitutionsRoute: AdminSubstitutionsRoute,
   AdminIndexRoute: AdminIndexRoute,
+  AdminPodsIndexRoute: AdminPodsIndexRoute,
+  AdminPodsIdSelectHeavyLifterRoute: AdminPodsIdSelectHeavyLifterRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
@@ -1628,6 +1730,8 @@ interface AgentRouteChildren {
   AgentOnboardingLicenseCheckRoute: typeof AgentOnboardingLicenseCheckRoute
   AgentOnboardingLicenseDetailsRoute: typeof AgentOnboardingLicenseDetailsRoute
   AgentDocumentsIndexRoute: typeof AgentDocumentsIndexRoute
+  AgentPodsIdBriefcaseRoute: typeof AgentPodsIdBriefcaseRoute
+  AgentPodsIdHlaInvitationRoute: typeof AgentPodsIdHlaInvitationRoute
 }
 
 const AgentRouteChildren: AgentRouteChildren = {
@@ -1644,6 +1748,8 @@ const AgentRouteChildren: AgentRouteChildren = {
   AgentOnboardingLicenseCheckRoute: AgentOnboardingLicenseCheckRoute,
   AgentOnboardingLicenseDetailsRoute: AgentOnboardingLicenseDetailsRoute,
   AgentDocumentsIndexRoute: AgentDocumentsIndexRoute,
+  AgentPodsIdBriefcaseRoute: AgentPodsIdBriefcaseRoute,
+  AgentPodsIdHlaInvitationRoute: AgentPodsIdHlaInvitationRoute,
 }
 
 const AgentRouteWithChildren = AgentRoute._addFileChildren(AgentRouteChildren)
@@ -1727,6 +1833,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicBrokerRelationshipSweepRoute: ApiPublicBrokerRelationshipSweepRoute,
   ApiPublicDesignationSweepRoute: ApiPublicDesignationSweepRoute,
   ApiPublicEnrollmentMaintenanceRoute: ApiPublicEnrollmentMaintenanceRoute,
+  ApiPublicHlaSweepRoute: ApiPublicHlaSweepRoute,
   ApiPublicNarCertSweepRoute: ApiPublicNarCertSweepRoute,
   BuyerOnboardingIdentityRoute: BuyerOnboardingIdentityRoute,
   BuyerOnboardingLifestyleRoute: BuyerOnboardingLifestyleRoute,

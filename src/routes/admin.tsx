@@ -8,6 +8,7 @@ import {
   Mail,
   CreditCard,
   Users2,
+  Boxes,
   Briefcase,
   ScrollText,
   LogOut,
@@ -37,6 +38,7 @@ const NAV = [
   { to: "/admin/brokers", label: "Brokers", icon: Briefcase },
   { to: "/admin/payments", label: "Payments", icon: CreditCard },
   { to: "/admin/contacts", label: "Contact inbox", icon: Mail },
+  { to: "/admin/pods", label: "Pods & HLA", icon: Boxes },
   { to: "/admin/substitutions", label: "Substitutions", icon: Users2 },
   { to: "/admin/audit-log", label: "Audit log", icon: ScrollText },
 ] as const;
