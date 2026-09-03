@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { BadgeCheck, LayoutDashboard, ListChecks, LogOut, Share2 } from "lucide-react";
+import { BadgeCheck, FileSignature, LayoutDashboard, ListChecks, LogOut, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -30,8 +30,10 @@ export const Route = createFileRoute("/agent")({
 const NAV = [
   { to: "/agent/dashboard", label: "Overview", icon: LayoutDashboard },
   { to: "/agent/attribution", label: "Referral links", icon: Share2 },
+  { to: "/agent/documents", label: "Agreements", icon: FileSignature },
   { to: "/agent/onboarding/license-check", label: "Onboarding", icon: ListChecks },
 ] as const;
+
 
 const PUBLIC_PREFIXES = ["/agent/register", "/agent/login"];
 
