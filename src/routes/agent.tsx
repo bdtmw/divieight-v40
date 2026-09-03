@@ -1,10 +1,11 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { BadgeCheck, FileSignature, LayoutDashboard, ListChecks, LogOut, Share2 } from "lucide-react";
+import { BadgeCheck, FileSignature, LayoutDashboard, ListChecks, LogOut, Share2, Users } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { getAgentProfile, agentRedirect, type AgentRow, AGENT_ROLE_LABELS } from "@/lib/agent";
+import { NotificationsBell } from "@/components/NotificationsBell";
 
 export const Route = createFileRoute("/agent")({
   head: () => ({
@@ -29,6 +30,7 @@ export const Route = createFileRoute("/agent")({
 
 const BASE_NAV = [
   { to: "/agent/dashboard", label: "Overview", icon: LayoutDashboard },
+  { to: "/agent/leads", label: "Verified leads", icon: Users },
   { to: "/agent/attribution", label: "Referral links", icon: Share2 },
   { to: "/agent/documents", label: "Agreements", icon: FileSignature },
 ] as const;
@@ -142,6 +144,7 @@ function AgentPortalLayout() {
             <span className="hidden text-xs text-muted-foreground sm:inline">
               {AGENT_ROLE_LABELS[agent.role]}
             </span>
+            <NotificationsBell />
             <button
               type="button"
               onClick={onSignOut}
