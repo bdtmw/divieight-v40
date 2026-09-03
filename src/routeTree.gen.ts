@@ -51,6 +51,7 @@ import { Route as BuyerAdverseActionRouteImport } from './routes/buyer.adverse-a
 import { Route as BrokerRegisterRouteImport } from './routes/broker.register'
 import { Route as BrokerLoginRouteImport } from './routes/broker.login'
 import { Route as BrokerDashboardRouteImport } from './routes/broker.dashboard'
+import { Route as BrokerClosingHoldsRouteImport } from './routes/broker.closing-holds'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AgentRegisterRouteImport } from './routes/agent.register'
 import { Route as AgentLoginRouteImport } from './routes/agent.login'
@@ -305,6 +306,11 @@ const BrokerLoginRoute = BrokerLoginRouteImport.update({
 const BrokerDashboardRoute = BrokerDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => BrokerRoute,
+} as any)
+const BrokerClosingHoldsRoute = BrokerClosingHoldsRouteImport.update({
+  id: '/closing-holds',
+  path: '/closing-holds',
   getParentRoute: () => BrokerRoute,
 } as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
@@ -576,6 +582,7 @@ export interface FileRoutesByFullPath {
   '/agent/login': typeof AgentLoginRoute
   '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/broker/closing-holds': typeof BrokerClosingHoldsRoute
   '/broker/dashboard': typeof BrokerDashboardRoute
   '/broker/login': typeof BrokerLoginRoute
   '/broker/register': typeof BrokerRegisterRoute
@@ -661,6 +668,7 @@ export interface FileRoutesByTo {
   '/agent/login': typeof AgentLoginRoute
   '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/broker/closing-holds': typeof BrokerClosingHoldsRoute
   '/broker/dashboard': typeof BrokerDashboardRoute
   '/broker/login': typeof BrokerLoginRoute
   '/broker/register': typeof BrokerRegisterRoute
@@ -751,6 +759,7 @@ export interface FileRoutesById {
   '/agent/login': typeof AgentLoginRoute
   '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/broker/closing-holds': typeof BrokerClosingHoldsRoute
   '/broker/dashboard': typeof BrokerDashboardRoute
   '/broker/login': typeof BrokerLoginRoute
   '/broker/register': typeof BrokerRegisterRoute
@@ -842,6 +851,7 @@ export interface FileRouteTypes {
     | '/agent/login'
     | '/agent/register'
     | '/auth/callback'
+    | '/broker/closing-holds'
     | '/broker/dashboard'
     | '/broker/login'
     | '/broker/register'
@@ -927,6 +937,7 @@ export interface FileRouteTypes {
     | '/agent/login'
     | '/agent/register'
     | '/auth/callback'
+    | '/broker/closing-holds'
     | '/broker/dashboard'
     | '/broker/login'
     | '/broker/register'
@@ -1016,6 +1027,7 @@ export interface FileRouteTypes {
     | '/agent/login'
     | '/agent/register'
     | '/auth/callback'
+    | '/broker/closing-holds'
     | '/broker/dashboard'
     | '/broker/login'
     | '/broker/register'
@@ -1424,6 +1436,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BrokerDashboardRouteImport
       parentRoute: typeof BrokerRoute
     }
+    '/broker/closing-holds': {
+      id: '/broker/closing-holds'
+      path: '/closing-holds'
+      fullPath: '/broker/closing-holds'
+      preLoaderRoute: typeof BrokerClosingHoldsRouteImport
+      parentRoute: typeof BrokerRoute
+    }
     '/auth/callback': {
       id: '/auth/callback'
       path: '/auth/callback'
@@ -1817,6 +1836,7 @@ const AgentRouteChildren: AgentRouteChildren = {
 const AgentRouteWithChildren = AgentRoute._addFileChildren(AgentRouteChildren)
 
 interface BrokerRouteChildren {
+  BrokerClosingHoldsRoute: typeof BrokerClosingHoldsRoute
   BrokerDashboardRoute: typeof BrokerDashboardRoute
   BrokerLoginRoute: typeof BrokerLoginRoute
   BrokerRegisterRoute: typeof BrokerRegisterRoute
@@ -1828,6 +1848,7 @@ interface BrokerRouteChildren {
 }
 
 const BrokerRouteChildren: BrokerRouteChildren = {
+  BrokerClosingHoldsRoute: BrokerClosingHoldsRoute,
   BrokerDashboardRoute: BrokerDashboardRoute,
   BrokerLoginRoute: BrokerLoginRoute,
   BrokerRegisterRoute: BrokerRegisterRoute,
