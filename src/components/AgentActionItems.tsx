@@ -10,6 +10,9 @@ import {
   type DesignationRequest,
   type ReferOnlyElection,
 } from "@/lib/designation.functions";
+import { listMyHlaInvitations } from "@/lib/hla.functions";
+import type { HlaInvitation } from "@/lib/hla";
+import { Link } from "@tanstack/react-router";
 
 /**
  * Action-required queue: buyer designations awaiting a 3-day response, and
@@ -24,22 +27,29 @@ export function AgentActionItems() {
   const loadElections = useServerFn(listReferOnlyElections);
   const respondDesignation = useServerFn(respondToDesignation);
   const respondElection = useServerFn(respondToReferOnly);
+  const loadHlaInvites = useServerFn(listMyHlaInvitations);
 
   const [designations, setDesignations] = useState<DesignationRequest[]>([]);
   const [elections, setElections] = useState<ReferOnlyElection[]>([]);
+  const [hlaInvites, setHlaInvites] = useState<HlaInvitation[]>([]);
   const [busy, setBusy] = useState(false);
 
   const refresh = useCallback(async () => {
-    const [d, e] = await Promise.all([loadDesignations({}), loadElections({})]);
+    const [d, e, h] = await Promise.all([
+      loadDesignations({}),
+      loadElections({}),
+      loadHlaInvites({}),
+    ]);
     setDesignations(d);
     setElections(e);
-  }, [loadDesignations, loadElections]);
+    setHlaInvites(h);
+  }, [loadDesignations, loadElections, loadHlaInvites]);
 
   useEffect(() => {
     void refresh();
   }, [refresh]);
 
-  if (designations.length === 0 && elections.length === 0) return null;
+  if (designations.length === 0 && elections.length === 0 && hlaInvites.length === 0) return null;
 
   return (
     <section className="rounded-xl border border-accent/40 bg-accent/5 p-6">
@@ -49,6 +59,28 @@ export function AgentActionItems() {
       </div>
 
       <ul className="mt-4 space-y-4">
+        {hlaInvites.map((inv) => (
+          <li key={inv.podId} className="rounded-lg border border-border bg-card p-4">
+            <p className="text-sm font-medium text-foreground">
+              You have been selected as Heavy Lifting Agent for a pod
+            </p>
+            <p className="mt-1 break-words text-xs text-muted-foreground">
+              {inv.address}, {inv.city}, {inv.state} {inv.zip} · {inv.buyersInPod} reserved share
+              {inv.buyersInPod === 1 ? "" : "s"}
+              {inv.acceptanceDeadlineAt
+                ? ` · respond by ${new Date(inv.acceptanceDeadlineAt).toLocaleDateString()}`
+                : ""}
+            </p>
+            <Link
+              to="/agent/pods/$id/hla-invitation"
+              params={{ id: inv.podId }}
+              className="mt-3 inline-flex h-9 items-center rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground hover:opacity-90"
+            >
+              Review and respond
+            </Link>
+          </li>
+        ))}
+
         {designations.map((d) => (
           <li key={d.buyerAccountId} className="rounded-lg border border-border bg-card p-4">
             <p className="text-sm font-medium text-foreground">
