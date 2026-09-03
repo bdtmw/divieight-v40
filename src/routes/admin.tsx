@@ -40,6 +40,7 @@ const NAV = [
   { to: "/admin/contacts", label: "Contact inbox", icon: Mail },
   { to: "/admin/pods", label: "Pods & HLA", icon: Boxes },
   { to: "/admin/substitutions", label: "Substitutions", icon: Users2 },
+  { to: "/admin/listing-compliance", label: "Listing compliance", icon: ShieldCheck },
   { to: "/admin/audit-log", label: "Audit log", icon: ScrollText },
 ] as const;
 
