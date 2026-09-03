@@ -72,9 +72,18 @@ function AdminPods() {
               </div>
 
               {p.hlaStatus === "accepted" ? (
-                <p className="mt-4 text-sm text-muted-foreground">
-                  Heavy Lifting Agent accepted {when(p.selectedAt)}.
-                </p>
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                  <p className="text-sm text-muted-foreground">
+                    Heavy Lifting Agent accepted {when(p.selectedAt)}.
+                  </p>
+                  <Link
+                    to="/admin/pods/$id/briefcase"
+                    params={{ id: p.podId }}
+                    className="inline-flex items-center rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+                  >
+                    Open Master Briefcase
+                  </Link>
+                </div>
               ) : (
                 <Link
                   to="/admin/pods/$id/select-heavy-lifter"
