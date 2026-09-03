@@ -122,7 +122,12 @@ export const createReservation = createServerFn({ method: "POST" })
 
     // Hard-Lock + System Lock need to bypass seller-scoped RLS on properties.
     try {
-      const { supabaseAdmin } = await import("@/integrations/supabase/admin.server");
+      const { supabaseAdmin: rawAdmin } = await import("@/integrations/supabase/admin.server");
+    // Pod/agent tables are newer than the generated types; use a loose client.
+    const supabaseAdmin = rawAdmin as unknown as {
+      from: (t: string) => any;
+      storage: (typeof rawAdmin)["storage"];
+    };
       const applyHardLock = !before.hardLocked;
       const applySystemLock = systemLocked && before.listingStatus !== "system_lock";
       if (applyHardLock || applySystemLock) {
@@ -336,7 +341,7 @@ export const getMyPodDetails = createServerFn({ method: "GET" })
     const { fetchPodComposition } = await import("@/lib/pod.server");
     const { supabase, userId } = context;
 
-    const { data: buyer } = await supabase
+    const { data: buyer } = await (supabase as any)
       .from("buyer_accounts")
       .select("id, priority_rank, priority_rank_timestamp, tethered_resident_agent_id")
       .eq("auth_user_id", userId)
