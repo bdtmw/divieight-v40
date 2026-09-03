@@ -54,6 +54,7 @@ import { Route as BrokerDashboardRouteImport } from './routes/broker.dashboard'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AgentRegisterRouteImport } from './routes/agent.register'
 import { Route as AgentLoginRouteImport } from './routes/agent.login'
+import { Route as AgentLeadsRouteImport } from './routes/agent.leads'
 import { Route as AgentDashboardRouteImport } from './routes/agent.dashboard'
 import { Route as AgentBrokerRelationshipRouteImport } from './routes/agent.broker-relationship'
 import { Route as AgentAttributionRouteImport } from './routes/agent.attribution'
@@ -321,6 +322,11 @@ const AgentLoginRoute = AgentLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AgentRoute,
 } as any)
+const AgentLeadsRoute = AgentLeadsRouteImport.update({
+  id: '/leads',
+  path: '/leads',
+  getParentRoute: () => AgentRoute,
+} as any)
 const AgentDashboardRoute = AgentDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -566,6 +572,7 @@ export interface FileRoutesByFullPath {
   '/agent/attribution': typeof AgentAttributionRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
+  '/agent/leads': typeof AgentLeadsRoute
   '/agent/login': typeof AgentLoginRoute
   '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -650,6 +657,7 @@ export interface FileRoutesByTo {
   '/agent/attribution': typeof AgentAttributionRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
+  '/agent/leads': typeof AgentLeadsRoute
   '/agent/login': typeof AgentLoginRoute
   '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -739,6 +747,7 @@ export interface FileRoutesById {
   '/agent/attribution': typeof AgentAttributionRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
+  '/agent/leads': typeof AgentLeadsRoute
   '/agent/login': typeof AgentLoginRoute
   '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -829,6 +838,7 @@ export interface FileRouteTypes {
     | '/agent/attribution'
     | '/agent/broker-relationship'
     | '/agent/dashboard'
+    | '/agent/leads'
     | '/agent/login'
     | '/agent/register'
     | '/auth/callback'
@@ -913,6 +923,7 @@ export interface FileRouteTypes {
     | '/agent/attribution'
     | '/agent/broker-relationship'
     | '/agent/dashboard'
+    | '/agent/leads'
     | '/agent/login'
     | '/agent/register'
     | '/auth/callback'
@@ -1001,6 +1012,7 @@ export interface FileRouteTypes {
     | '/agent/attribution'
     | '/agent/broker-relationship'
     | '/agent/dashboard'
+    | '/agent/leads'
     | '/agent/login'
     | '/agent/register'
     | '/auth/callback'
@@ -1433,6 +1445,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentLoginRouteImport
       parentRoute: typeof AgentRoute
     }
+    '/agent/leads': {
+      id: '/agent/leads'
+      path: '/leads'
+      fullPath: '/agent/leads'
+      preLoaderRoute: typeof AgentLeadsRouteImport
+      parentRoute: typeof AgentRoute
+    }
     '/agent/dashboard': {
       id: '/agent/dashboard'
       path: '/dashboard'
@@ -1761,6 +1780,7 @@ interface AgentRouteChildren {
   AgentAttributionRoute: typeof AgentAttributionRoute
   AgentBrokerRelationshipRoute: typeof AgentBrokerRelationshipRoute
   AgentDashboardRoute: typeof AgentDashboardRoute
+  AgentLeadsRoute: typeof AgentLeadsRoute
   AgentLoginRoute: typeof AgentLoginRoute
   AgentRegisterRoute: typeof AgentRegisterRoute
   AgentIndexRoute: typeof AgentIndexRoute
@@ -1779,6 +1799,7 @@ const AgentRouteChildren: AgentRouteChildren = {
   AgentAttributionRoute: AgentAttributionRoute,
   AgentBrokerRelationshipRoute: AgentBrokerRelationshipRoute,
   AgentDashboardRoute: AgentDashboardRoute,
+  AgentLeadsRoute: AgentLeadsRoute,
   AgentLoginRoute: AgentLoginRoute,
   AgentRegisterRoute: AgentRegisterRoute,
   AgentIndexRoute: AgentIndexRoute,
