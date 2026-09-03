@@ -94,6 +94,8 @@ export interface Briefcase {
   city: string;
   state: string;
   zip: string;
+  /** Broker Closing Hold state for this pod (see src/lib/closing-hold.ts). */
+  closingHold: import("@/lib/closing-hold").ClosingHoldState;
   buyers: BriefcaseBuyer[];
   passiveAgents: { agentId: string; fullName: string }[];
   messages: BriefcaseMessage[];
