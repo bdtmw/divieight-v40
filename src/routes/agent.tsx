@@ -30,8 +30,10 @@ export const Route = createFileRoute("/agent")({
 const NAV = [
   { to: "/agent/dashboard", label: "Overview", icon: LayoutDashboard },
   { to: "/agent/attribution", label: "Referral links", icon: Share2 },
+  { to: "/agent/documents", label: "Agreements", icon: FileSignature },
   { to: "/agent/onboarding/license-check", label: "Onboarding", icon: ListChecks },
 ] as const;
+
 
 const PUBLIC_PREFIXES = ["/agent/register", "/agent/login"];
 
