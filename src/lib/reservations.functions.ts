@@ -417,6 +417,16 @@ export const getMyPodDetails = createServerFn({ method: "GET" })
       for (const a of rows ?? []) names.set(a.id, a.full_name);
     }
 
+    let holdBrokerName: string | null = null;
+    if (pod?.closing_hold_placed_by) {
+      const { data: b } = await supabaseAdmin
+        .from("brokers")
+        .select("brokerage_name")
+        .eq("id", pod.closing_hold_placed_by)
+        .maybeSingle();
+      holdBrokerName = (b as any)?.brokerage_name ?? null;
+    }
+
     const retained =
       property.exit_type === "hybrid_exit" ? (property.retained_shares ?? 0) : 0;
 
