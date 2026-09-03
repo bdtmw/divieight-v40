@@ -581,7 +581,7 @@ export const getBriefcase = createServerFn({ method: "POST" })
 
     const buyers = (reservations ?? []).map((r: any, i: number) => {
       const b = buyerRows.get(r.buyer_account_id);
-      const mine = b?.tethered_resident_agent_id === agent.id;
+      const mine = !!agent && b?.tethered_resident_agent_id === agent.id;
       const name: string = b?.primary_name ?? "";
       const initials = name
         ? name
@@ -643,19 +643,22 @@ export const postBriefcaseMessage = createServerFn({ method: "POST" })
     if (!body) return { error: "Write a message first." };
     const db = await admin();
     const agent = await agentFor(db, context.userId);
-    if (!agent) return { error: "Agent profile not found." };
-    const { data: role } = await db
-      .from("pod_agent_roles")
-      .select("id")
-      .eq("pod_id", data.podId)
-      .eq("agent_id", agent.id)
-      .maybeSingle();
-    if (!role) return { error: "You are not part of this pod." };
+    const isManager = await requireAdmin(context.supabase, context.userId);
+    if (!agent && !isManager) return { error: "Agent profile not found." };
+    if (!isManager) {
+      const { data: role } = await db
+        .from("pod_agent_roles")
+        .select("id")
+        .eq("pod_id", data.podId)
+        .eq("agent_id", agent!.id)
+        .maybeSingle();
+      if (!role) return { error: "You are not part of this pod." };
+    }
 
     await db.from("pod_messages").insert({
       pod_id: data.podId,
       author_user_id: context.userId,
-      author_label: agent.full_name,
+      author_label: isManager ? "divieight, LLC (Manager)" : agent!.full_name,
       body,
     });
     return { ok: true };
