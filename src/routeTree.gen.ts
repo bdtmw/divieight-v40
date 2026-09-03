@@ -55,6 +55,7 @@ import { Route as BrokerClosingHoldsRouteImport } from './routes/broker.closing-
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AgentRegisterRouteImport } from './routes/agent.register'
 import { Route as AgentLoginRouteImport } from './routes/agent.login'
+import { Route as AgentListingsRouteImport } from './routes/agent.listings'
 import { Route as AgentLeadsRouteImport } from './routes/agent.leads'
 import { Route as AgentDashboardRouteImport } from './routes/agent.dashboard'
 import { Route as AgentBrokerRelationshipRouteImport } from './routes/agent.broker-relationship'
@@ -64,6 +65,7 @@ import { Route as AdminSellersRouteImport } from './routes/admin.sellers'
 import { Route as AdminPropertiesRouteImport } from './routes/admin.properties'
 import { Route as AdminPaymentsRouteImport } from './routes/admin.payments'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminListingComplianceRouteImport } from './routes/admin.listing-compliance'
 import { Route as AdminContactsRouteImport } from './routes/admin.contacts'
 import { Route as AdminBuyersRouteImport } from './routes/admin.buyers'
 import { Route as AdminBrokersRouteImport } from './routes/admin.brokers'
@@ -328,6 +330,11 @@ const AgentLoginRoute = AgentLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AgentRoute,
 } as any)
+const AgentListingsRoute = AgentListingsRouteImport.update({
+  id: '/listings',
+  path: '/listings',
+  getParentRoute: () => AgentRoute,
+} as any)
 const AgentLeadsRoute = AgentLeadsRouteImport.update({
   id: '/leads',
   path: '/leads',
@@ -371,6 +378,11 @@ const AdminPaymentsRoute = AdminPaymentsRouteImport.update({
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminListingComplianceRoute = AdminListingComplianceRouteImport.update({
+  id: '/listing-compliance',
+  path: '/listing-compliance',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminContactsRoute = AdminContactsRouteImport.update({
@@ -570,6 +582,7 @@ export interface FileRoutesByFullPath {
   '/admin/brokers': typeof AdminBrokersRoute
   '/admin/buyers': typeof AdminBuyersRoute
   '/admin/contacts': typeof AdminContactsRoute
+  '/admin/listing-compliance': typeof AdminListingComplianceRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/properties': typeof AdminPropertiesRoute
@@ -579,6 +592,7 @@ export interface FileRoutesByFullPath {
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/leads': typeof AgentLeadsRoute
+  '/agent/listings': typeof AgentListingsRoute
   '/agent/login': typeof AgentLoginRoute
   '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -656,6 +670,7 @@ export interface FileRoutesByTo {
   '/admin/brokers': typeof AdminBrokersRoute
   '/admin/buyers': typeof AdminBuyersRoute
   '/admin/contacts': typeof AdminContactsRoute
+  '/admin/listing-compliance': typeof AdminListingComplianceRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/properties': typeof AdminPropertiesRoute
@@ -665,6 +680,7 @@ export interface FileRoutesByTo {
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/leads': typeof AgentLeadsRoute
+  '/agent/listings': typeof AgentListingsRoute
   '/agent/login': typeof AgentLoginRoute
   '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -747,6 +763,7 @@ export interface FileRoutesById {
   '/admin/brokers': typeof AdminBrokersRoute
   '/admin/buyers': typeof AdminBuyersRoute
   '/admin/contacts': typeof AdminContactsRoute
+  '/admin/listing-compliance': typeof AdminListingComplianceRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/properties': typeof AdminPropertiesRoute
@@ -756,6 +773,7 @@ export interface FileRoutesById {
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/leads': typeof AgentLeadsRoute
+  '/agent/listings': typeof AgentListingsRoute
   '/agent/login': typeof AgentLoginRoute
   '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -839,6 +857,7 @@ export interface FileRouteTypes {
     | '/admin/brokers'
     | '/admin/buyers'
     | '/admin/contacts'
+    | '/admin/listing-compliance'
     | '/admin/login'
     | '/admin/payments'
     | '/admin/properties'
@@ -848,6 +867,7 @@ export interface FileRouteTypes {
     | '/agent/broker-relationship'
     | '/agent/dashboard'
     | '/agent/leads'
+    | '/agent/listings'
     | '/agent/login'
     | '/agent/register'
     | '/auth/callback'
@@ -925,6 +945,7 @@ export interface FileRouteTypes {
     | '/admin/brokers'
     | '/admin/buyers'
     | '/admin/contacts'
+    | '/admin/listing-compliance'
     | '/admin/login'
     | '/admin/payments'
     | '/admin/properties'
@@ -934,6 +955,7 @@ export interface FileRouteTypes {
     | '/agent/broker-relationship'
     | '/agent/dashboard'
     | '/agent/leads'
+    | '/agent/listings'
     | '/agent/login'
     | '/agent/register'
     | '/auth/callback'
@@ -1015,6 +1037,7 @@ export interface FileRouteTypes {
     | '/admin/brokers'
     | '/admin/buyers'
     | '/admin/contacts'
+    | '/admin/listing-compliance'
     | '/admin/login'
     | '/admin/payments'
     | '/admin/properties'
@@ -1024,6 +1047,7 @@ export interface FileRouteTypes {
     | '/agent/broker-relationship'
     | '/agent/dashboard'
     | '/agent/leads'
+    | '/agent/listings'
     | '/agent/login'
     | '/agent/register'
     | '/auth/callback'
@@ -1464,6 +1488,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentLoginRouteImport
       parentRoute: typeof AgentRoute
     }
+    '/agent/listings': {
+      id: '/agent/listings'
+      path: '/listings'
+      fullPath: '/agent/listings'
+      preLoaderRoute: typeof AgentListingsRouteImport
+      parentRoute: typeof AgentRoute
+    }
     '/agent/leads': {
       id: '/agent/leads'
       path: '/leads'
@@ -1525,6 +1556,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/admin/login'
       preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/listing-compliance': {
+      id: '/admin/listing-compliance'
+      path: '/listing-compliance'
+      fullPath: '/admin/listing-compliance'
+      preLoaderRoute: typeof AdminListingComplianceRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/contacts': {
@@ -1766,6 +1804,7 @@ interface AdminRouteChildren {
   AdminBrokersRoute: typeof AdminBrokersRoute
   AdminBuyersRoute: typeof AdminBuyersRoute
   AdminContactsRoute: typeof AdminContactsRoute
+  AdminListingComplianceRoute: typeof AdminListingComplianceRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminPaymentsRoute: typeof AdminPaymentsRoute
   AdminPropertiesRoute: typeof AdminPropertiesRoute
@@ -1782,6 +1821,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminBrokersRoute: AdminBrokersRoute,
   AdminBuyersRoute: AdminBuyersRoute,
   AdminContactsRoute: AdminContactsRoute,
+  AdminListingComplianceRoute: AdminListingComplianceRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminPaymentsRoute: AdminPaymentsRoute,
   AdminPropertiesRoute: AdminPropertiesRoute,
@@ -1800,6 +1840,7 @@ interface AgentRouteChildren {
   AgentBrokerRelationshipRoute: typeof AgentBrokerRelationshipRoute
   AgentDashboardRoute: typeof AgentDashboardRoute
   AgentLeadsRoute: typeof AgentLeadsRoute
+  AgentListingsRoute: typeof AgentListingsRoute
   AgentLoginRoute: typeof AgentLoginRoute
   AgentRegisterRoute: typeof AgentRegisterRoute
   AgentIndexRoute: typeof AgentIndexRoute
@@ -1819,6 +1860,7 @@ const AgentRouteChildren: AgentRouteChildren = {
   AgentBrokerRelationshipRoute: AgentBrokerRelationshipRoute,
   AgentDashboardRoute: AgentDashboardRoute,
   AgentLeadsRoute: AgentLeadsRoute,
+  AgentListingsRoute: AgentListingsRoute,
   AgentLoginRoute: AgentLoginRoute,
   AgentRegisterRoute: AgentRegisterRoute,
   AgentIndexRoute: AgentIndexRoute,

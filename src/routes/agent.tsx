@@ -35,6 +35,9 @@ const BASE_NAV = [
   { to: "/agent/documents", label: "Agreements", icon: FileSignature },
 ] as const;
 
+/** Only Listing Agents see the listing dashboard / Gate 1 approval queue. */
+const LISTING_NAV = { to: "/agent/listings", label: "My listings", icon: ListChecks } as const;
+
 const ONBOARDING_NAV = {
   label: "Onboarding",
   icon: ListChecks,
@@ -127,6 +130,16 @@ function AgentPortalLayout() {
                 {label}
               </Link>
             ))}
+            {agent.role === "listing" && (
+              <Link
+                to={LISTING_NAV.to}
+                className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                activeProps={{ className: "text-foreground" }}
+              >
+                <LISTING_NAV.icon className="h-4 w-4" />
+                {LISTING_NAV.label}
+              </Link>
+            )}
             {/* Onboarding tab disappears once credentialing is complete. */}
             {onboardingComplete ? null : (
               <Link

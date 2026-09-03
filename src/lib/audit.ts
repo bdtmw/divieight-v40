@@ -80,7 +80,20 @@ export type AuditAction =
   | "pod.heavy_lifter_declined"
   | "pod.heavy_lifter_timed_out"
   | "pod.closing_hold_placed"
-  | "pod.closing_hold_lifted";
+  | "pod.closing_hold_lifted"
+  | "seller.listing_agent_tagged"
+  | "seller.listing_agent_invited"
+  | "listing.content_submitted_for_approval"
+  | "listing.content_approved"
+  | "listing.content_approved_with_modification"
+  | "listing.content_rejected"
+  | "listing.gate1_cleared"
+  | "listing.compliance_flagged"
+  | "listing.compliance_cleared"
+  | "listing.compliance_human_review_requested"
+  | "listing.compliance_human_approved"
+  | "listing.compliance_human_denied"
+  | "listing.published";
 
 
 export type AuditEntity =

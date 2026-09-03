@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { ListingAgentTagger } from "@/components/ListingAgentTagger";
 import { EightSlicesTracker } from "@/components/EightSlicesTracker";
 import { useAuth } from "@/hooks/use-auth";
 import { SellerDataRoom } from "@/components/SellerDataRoom";
@@ -229,7 +230,11 @@ function ListingDetail() {
 
 
 
-      <section className="mt-8 rounded-xl border border-border bg-card p-6 shadow-sm">
+      <section className="mt-8">
+        <ListingAgentTagger propertyId={property.id} />
+      </section>
+
+      <section className="mt-6 rounded-xl border border-border bg-card p-6 shadow-sm">
         <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
           Property Status
         </h2>
