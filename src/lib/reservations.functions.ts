@@ -401,7 +401,7 @@ export const getMyPodDetails = createServerFn({ method: "GET" })
 
     const { data: pod } = await supabaseAdmin
       .from("pods")
-      .select("heavy_lifting_agent_id, hla_status")
+      .select("*")
       .eq("property_id", data.propertyId)
       .maybeSingle();
 
