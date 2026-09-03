@@ -394,6 +394,46 @@ export const getHlaInvitation = createServerFn({ method: "POST" })
     };
   });
 
+/** Pods where this agent has been selected as HLA and must respond. */
+export const listMyHlaInvitations = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<HlaInvitation[]> => {
+    const db = await admin();
+    const agent = await agentFor(db, context.userId);
+    if (!agent) return [];
+    const { data: pods } = await db
+      .from("pods")
+      .select("*")
+      .eq("heavy_lifting_agent_id", agent.id)
+      .eq("hla_status", "pending_acceptance");
+    const out: HlaInvitation[] = [];
+    for (const pod of (pods ?? []) as any[]) {
+      const { data: property } = await db
+        .from("properties")
+        .select("address, city, state, zip")
+        .eq("id", pod.property_id)
+        .maybeSingle();
+      const { count } = await db
+        .from("pod_reservations")
+        .select("id", { count: "exact", head: true })
+        .eq("property_id", pod.property_id)
+        .eq("status", "reserved");
+      out.push({
+        podId: pod.id,
+        propertyId: pod.property_id,
+        address: property?.address ?? "—",
+        city: property?.city ?? "",
+        state: property?.state ?? "",
+        zip: property?.zip ?? "",
+        status: pod.hla_status,
+        acceptanceDeadlineAt: pod.acceptance_deadline_at ?? null,
+        selectionBasis: pod.selection_basis ?? null,
+        buyersInPod: count ?? 0,
+      });
+    }
+    return out;
+  });
+
 export const respondToHlaInvitation = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { podId: string; choice: "accept" | "decline"; note?: string }) => input)
