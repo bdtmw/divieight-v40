@@ -457,5 +457,13 @@ export const getMyPodDetails = createServerFn({ method: "GET" })
           ? (names.get(pod.heavy_lifting_agent_id) ?? null)
           : null,
       hlaStatus: pod?.hla_status ?? null,
+      // Broker Closing Hold — MONTH 4: the closing engine must block while active.
+      closingHold: {
+        active: Boolean(pod?.closing_hold_active),
+        reason: pod?.closing_hold_reason ?? null,
+        placedAt: pod?.closing_hold_placed_at ?? null,
+        placedByBrokerName: holdBrokerName,
+        liftedAt: pod?.closing_hold_lifted_at ?? null,
+      },
     };
   });
