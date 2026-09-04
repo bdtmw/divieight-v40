@@ -56,7 +56,6 @@ import { Route as BrokerClosingHoldsRouteImport } from './routes/broker.closing-
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AgentRegisterRouteImport } from './routes/agent.register'
 import { Route as AgentLoginRouteImport } from './routes/agent.login'
-import { Route as AgentListingsRouteImport } from './routes/agent.listings'
 import { Route as AgentLeadsRouteImport } from './routes/agent.leads'
 import { Route as AgentDashboardRouteImport } from './routes/agent.dashboard'
 import { Route as AgentBrokerRelationshipRouteImport } from './routes/agent.broker-relationship'
@@ -73,6 +72,7 @@ import { Route as AdminBrokersRouteImport } from './routes/admin.brokers'
 import { Route as AdminAuditLogRouteImport } from './routes/admin.audit-log'
 import { Route as AdminAgentsRouteImport } from './routes/admin.agents'
 import { Route as BuyerOnboardingIndexRouteImport } from './routes/buyer.onboarding.index'
+import { Route as AgentListingsIndexRouteImport } from './routes/agent.listings.index'
 import { Route as AgentDocumentsIndexRouteImport } from './routes/agent.documents.index'
 import { Route as AdminPodsIndexRouteImport } from './routes/admin.pods.index'
 import { Route as BuyerPodsIdRouteImport } from './routes/buyer.pods.$id'
@@ -337,11 +337,6 @@ const AgentLoginRoute = AgentLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AgentRoute,
 } as any)
-const AgentListingsRoute = AgentListingsRouteImport.update({
-  id: '/listings',
-  path: '/listings',
-  getParentRoute: () => AgentRoute,
-} as any)
 const AgentLeadsRoute = AgentLeadsRouteImport.update({
   id: '/leads',
   path: '/leads',
@@ -421,6 +416,11 @@ const BuyerOnboardingIndexRoute = BuyerOnboardingIndexRouteImport.update({
   id: '/buyer/onboarding/',
   path: '/buyer/onboarding/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AgentListingsIndexRoute = AgentListingsIndexRouteImport.update({
+  id: '/listings/',
+  path: '/listings/',
+  getParentRoute: () => AgentRoute,
 } as any)
 const AgentDocumentsIndexRoute = AgentDocumentsIndexRouteImport.update({
   id: '/documents/',
@@ -605,7 +605,6 @@ export interface FileRoutesByFullPath {
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/leads': typeof AgentLeadsRoute
-  '/agent/listings': typeof AgentListingsRoute
   '/agent/login': typeof AgentLoginRoute
   '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -665,6 +664,7 @@ export interface FileRoutesByFullPath {
   '/buyer/pods/$id': typeof BuyerPodsIdRoute
   '/admin/pods/': typeof AdminPodsIndexRoute
   '/agent/documents/': typeof AgentDocumentsIndexRoute
+  '/agent/listings/': typeof AgentListingsIndexRoute
   '/buyer/onboarding/': typeof BuyerOnboardingIndexRoute
   '/admin/pods/$id/briefcase': typeof AdminPodsIdBriefcaseRoute
   '/admin/pods/$id/select-heavy-lifter': typeof AdminPodsIdSelectHeavyLifterRoute
@@ -695,7 +695,6 @@ export interface FileRoutesByTo {
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/leads': typeof AgentLeadsRoute
-  '/agent/listings': typeof AgentListingsRoute
   '/agent/login': typeof AgentLoginRoute
   '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -755,6 +754,7 @@ export interface FileRoutesByTo {
   '/buyer/pods/$id': typeof BuyerPodsIdRoute
   '/admin/pods': typeof AdminPodsIndexRoute
   '/agent/documents': typeof AgentDocumentsIndexRoute
+  '/agent/listings': typeof AgentListingsIndexRoute
   '/buyer/onboarding': typeof BuyerOnboardingIndexRoute
   '/admin/pods/$id/briefcase': typeof AdminPodsIdBriefcaseRoute
   '/admin/pods/$id/select-heavy-lifter': typeof AdminPodsIdSelectHeavyLifterRoute
@@ -790,7 +790,6 @@ export interface FileRoutesById {
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/leads': typeof AgentLeadsRoute
-  '/agent/listings': typeof AgentListingsRoute
   '/agent/login': typeof AgentLoginRoute
   '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -850,6 +849,7 @@ export interface FileRoutesById {
   '/buyer/pods/$id': typeof BuyerPodsIdRoute
   '/admin/pods/': typeof AdminPodsIndexRoute
   '/agent/documents/': typeof AgentDocumentsIndexRoute
+  '/agent/listings/': typeof AgentListingsIndexRoute
   '/buyer/onboarding/': typeof BuyerOnboardingIndexRoute
   '/admin/pods/$id/briefcase': typeof AdminPodsIdBriefcaseRoute
   '/admin/pods/$id/select-heavy-lifter': typeof AdminPodsIdSelectHeavyLifterRoute
@@ -886,7 +886,6 @@ export interface FileRouteTypes {
     | '/agent/broker-relationship'
     | '/agent/dashboard'
     | '/agent/leads'
-    | '/agent/listings'
     | '/agent/login'
     | '/agent/register'
     | '/auth/callback'
@@ -946,6 +945,7 @@ export interface FileRouteTypes {
     | '/buyer/pods/$id'
     | '/admin/pods/'
     | '/agent/documents/'
+    | '/agent/listings/'
     | '/buyer/onboarding/'
     | '/admin/pods/$id/briefcase'
     | '/admin/pods/$id/select-heavy-lifter'
@@ -976,7 +976,6 @@ export interface FileRouteTypes {
     | '/agent/broker-relationship'
     | '/agent/dashboard'
     | '/agent/leads'
-    | '/agent/listings'
     | '/agent/login'
     | '/agent/register'
     | '/auth/callback'
@@ -1036,6 +1035,7 @@ export interface FileRouteTypes {
     | '/buyer/pods/$id'
     | '/admin/pods'
     | '/agent/documents'
+    | '/agent/listings'
     | '/buyer/onboarding'
     | '/admin/pods/$id/briefcase'
     | '/admin/pods/$id/select-heavy-lifter'
@@ -1070,7 +1070,6 @@ export interface FileRouteTypes {
     | '/agent/broker-relationship'
     | '/agent/dashboard'
     | '/agent/leads'
-    | '/agent/listings'
     | '/agent/login'
     | '/agent/register'
     | '/auth/callback'
@@ -1130,6 +1129,7 @@ export interface FileRouteTypes {
     | '/buyer/pods/$id'
     | '/admin/pods/'
     | '/agent/documents/'
+    | '/agent/listings/'
     | '/buyer/onboarding/'
     | '/admin/pods/$id/briefcase'
     | '/admin/pods/$id/select-heavy-lifter'
@@ -1520,13 +1520,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentLoginRouteImport
       parentRoute: typeof AgentRoute
     }
-    '/agent/listings': {
-      id: '/agent/listings'
-      path: '/listings'
-      fullPath: '/agent/listings'
-      preLoaderRoute: typeof AgentListingsRouteImport
-      parentRoute: typeof AgentRoute
-    }
     '/agent/leads': {
       id: '/agent/leads'
       path: '/leads'
@@ -1638,6 +1631,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/buyer/onboarding/'
       preLoaderRoute: typeof BuyerOnboardingIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/agent/listings/': {
+      id: '/agent/listings/'
+      path: '/listings'
+      fullPath: '/agent/listings/'
+      preLoaderRoute: typeof AgentListingsIndexRouteImport
+      parentRoute: typeof AgentRoute
     }
     '/agent/documents/': {
       id: '/agent/documents/'
@@ -1881,7 +1881,6 @@ interface AgentRouteChildren {
   AgentBrokerRelationshipRoute: typeof AgentBrokerRelationshipRoute
   AgentDashboardRoute: typeof AgentDashboardRoute
   AgentLeadsRoute: typeof AgentLeadsRoute
-  AgentListingsRoute: typeof AgentListingsRoute
   AgentLoginRoute: typeof AgentLoginRoute
   AgentRegisterRoute: typeof AgentRegisterRoute
   AgentIndexRoute: typeof AgentIndexRoute
@@ -1892,6 +1891,7 @@ interface AgentRouteChildren {
   AgentOnboardingLicenseCheckRoute: typeof AgentOnboardingLicenseCheckRoute
   AgentOnboardingLicenseDetailsRoute: typeof AgentOnboardingLicenseDetailsRoute
   AgentDocumentsIndexRoute: typeof AgentDocumentsIndexRoute
+  AgentListingsIndexRoute: typeof AgentListingsIndexRoute
   AgentPodsIdBriefcaseRoute: typeof AgentPodsIdBriefcaseRoute
   AgentPodsIdHlaInvitationRoute: typeof AgentPodsIdHlaInvitationRoute
 }
@@ -1901,7 +1901,6 @@ const AgentRouteChildren: AgentRouteChildren = {
   AgentBrokerRelationshipRoute: AgentBrokerRelationshipRoute,
   AgentDashboardRoute: AgentDashboardRoute,
   AgentLeadsRoute: AgentLeadsRoute,
-  AgentListingsRoute: AgentListingsRoute,
   AgentLoginRoute: AgentLoginRoute,
   AgentRegisterRoute: AgentRegisterRoute,
   AgentIndexRoute: AgentIndexRoute,
@@ -1912,6 +1911,7 @@ const AgentRouteChildren: AgentRouteChildren = {
   AgentOnboardingLicenseCheckRoute: AgentOnboardingLicenseCheckRoute,
   AgentOnboardingLicenseDetailsRoute: AgentOnboardingLicenseDetailsRoute,
   AgentDocumentsIndexRoute: AgentDocumentsIndexRoute,
+  AgentListingsIndexRoute: AgentListingsIndexRoute,
   AgentPodsIdBriefcaseRoute: AgentPodsIdBriefcaseRoute,
   AgentPodsIdHlaInvitationRoute: AgentPodsIdHlaInvitationRoute,
 }
