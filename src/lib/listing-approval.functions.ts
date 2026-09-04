@@ -624,6 +624,9 @@ export const submitListingForApproval = createServerFn({ method: "POST" })
         status: "pending_review",
         content_approval_status: items.length > 0 ? "pending" : "approved",
         compliance_status: "not_started",
+        // A fresh submission clears any earlier whole-property rejection.
+        listing_rejection_reason: null,
+        listing_rejected_at: null,
       })
       .eq("id", property.id);
 
@@ -694,6 +697,8 @@ export const listMyListingProperties = createServerFn({ method: "GET" })
         "id, address, city, state, zip, status, listing_status, listing_price, content_approval_status, compliance_status, seller_id, listing_agent_id",
       )
       .not("listing_agent_id", "is", null)
+      // Only engagements the agent actually accepted appear in their portfolio.
+      .eq("listing_agent_engagement_status", "accepted")
       .order("created_at", { ascending: false });
     if (scope.agentIds) query = query.in("listing_agent_id", scope.agentIds);
     const { data: props } = await query;
@@ -762,7 +767,11 @@ export const listApprovalQueue = createServerFn({ method: "GET" })
     const db = await admin();
     const scope = await authorizedScope(db, context.supabase, context.userId);
 
-    let propQuery = db.from("properties").select("id, address, listing_agent_id").not("listing_agent_id", "is", null);
+    let propQuery = db
+      .from("properties")
+      .select("id, address, listing_agent_id")
+      .not("listing_agent_id", "is", null)
+      .eq("listing_agent_engagement_status", "accepted");
     if (scope.agentIds) propQuery = propQuery.in("listing_agent_id", scope.agentIds);
     const { data: props } = await propQuery;
     const rows = (props ?? []) as any[];
