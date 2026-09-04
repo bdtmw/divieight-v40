@@ -244,7 +244,7 @@ export const getListingAgentTagState = createServerFn({ method: "POST" })
     const { data: property } = await db
       .from("properties")
       .select(
-        "id, seller_id, status, listing_agent_id, content_approval_status, compliance_status",
+        "id, seller_id, status, listing_agent_id, content_approval_status, compliance_status, listing_agent_engagement_status, listing_agent_decline_reason, listing_rejection_reason, listing_rejected_at",
       )
       .eq("id", data.propertyId)
       .maybeSingle();
