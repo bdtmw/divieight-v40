@@ -295,7 +295,260 @@ export const getListingAgentTagState = createServerFn({ method: "POST" })
         label: r.label ?? r.item_type,
         reason: r.reject_reason ?? null,
       })),
+      engagementStatus: property.listing_agent_engagement_status ?? "none",
+      engagementDeclineReason: property.listing_agent_decline_reason ?? null,
+      listingRejectionReason: property.listing_rejection_reason ?? null,
+      listingRejectedAt: property.listing_rejected_at ?? null,
     };
+  });
+
+/* ------------------------------------------------------------------ */
+/* 1b. Listing Agent engagement: accept / decline / auto-assign         */
+/* ------------------------------------------------------------------ */
+
+export interface ListingEngagementInvitation {
+  propertyId: string;
+  address: string;
+  city: string;
+  state: string;
+  zip: string;
+  sellerName: string | null;
+  listingPrice: number | null;
+  invitedAt: string | null;
+}
+
+/** Engagements this Listing Agent has been asked to accept or decline. */
+export const listMyListingEngagements = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<ListingEngagementInvitation[]> => {
+    const db = await admin();
+    const agent = await agentFor(db, context.userId);
+    if (!agent) return [];
+
+    const { data: props } = await db
+      .from("properties")
+      .select("id, address, city, state, zip, seller_id, listing_price, listing_agent_engagement_at")
+      .eq("listing_agent_id", agent.id)
+      .eq("listing_agent_engagement_status", "pending")
+      .order("listing_agent_engagement_at", { ascending: true });
+    const rows = (props ?? []) as any[];
+    if (rows.length === 0) return [];
+
+    const { data: sellers } = await db
+      .from("sellers")
+      .select("id, full_name")
+      .in("id", rows.map((r) => r.seller_id));
+    const nameById = new Map(((sellers ?? []) as any[]).map((s) => [s.id, s.full_name]));
+
+    return rows.map((r) => ({
+      propertyId: r.id,
+      address: r.address,
+      city: r.city,
+      state: r.state,
+      zip: r.zip,
+      sellerName: nameById.get(r.seller_id) ?? null,
+      listingPrice: r.listing_price ?? null,
+      invitedAt: r.listing_agent_engagement_at ?? null,
+    }));
+  });
+
+/** Listing Agent accepts or declines the engagement itself (before any content review). */
+export const respondToListingEngagement = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { propertyId: string; accept: boolean; reason?: string }) => data)
+  .handler(async ({ data, context }) => {
+    const db = await admin();
+    const agent = await agentFor(db, context.userId);
+    if (!agent) throw new Error("Not authorized.");
+
+    const { data: property } = await db
+      .from("properties")
+      .select("id, address, seller_id, listing_agent_id, listing_agent_engagement_status")
+      .eq("id", data.propertyId)
+      .maybeSingle();
+    if (!property || property.listing_agent_id !== agent.id) throw new Error("Engagement not found.");
+    if (property.listing_agent_engagement_status !== "pending") {
+      throw new Error("This engagement has already been answered.");
+    }
+
+    if (data.accept) {
+      await db
+        .from("properties")
+        .update({
+          listing_agent_engagement_status: "accepted",
+          listing_agent_engagement_at: new Date().toISOString(),
+          listing_agent_decline_reason: null,
+        })
+        .eq("id", property.id);
+      await db
+        .from("listing_agent_invitations")
+        .update({ status: "accepted" })
+        .eq("property_id", property.id)
+        .eq("status", "pending");
+      await audit(db, {
+        actorId: context.userId,
+        actorType: "agent",
+        actionType: "listing.agent_engagement_accepted",
+        entityType: "property",
+        entityId: property.id,
+        metadata: { agent_id: agent.id },
+      });
+      await notifyUser(
+        db,
+        property.seller_id,
+        `${agent.full_name} accepted the Listing Agent engagement for ${property.address}.`,
+        "listing_agent",
+      );
+      return { ok: true, accepted: true };
+    }
+
+    const reason = (data.reason ?? "").trim() || "No reason given.";
+    await db.from("listing_agent_declines").insert({
+      property_id: property.id,
+      agent_id: agent.id,
+      reason,
+    });
+    await db
+      .from("properties")
+      .update({
+        listing_agent_id: null,
+        listing_agent_engagement_status: "declined",
+        listing_agent_engagement_at: new Date().toISOString(),
+        listing_agent_decline_reason: reason,
+      })
+      .eq("id", property.id);
+    await audit(db, {
+      actorId: context.userId,
+      actorType: "agent",
+      actionType: "listing.agent_engagement_declined",
+      entityType: "property",
+      entityId: property.id,
+      metadata: { agent_id: agent.id, reason },
+    });
+    await notifyUser(
+      db,
+      property.seller_id,
+      `${agent.full_name} declined the Listing Agent engagement for ${property.address}: ${reason}. Choose another Listing Agent, or let divieight assign one.`,
+      "listing_agent",
+    );
+    return { ok: true, accepted: false };
+  });
+
+/**
+ * Seller asks the platform to pick a Listing Agent: earliest-registered
+ * licensed listing agent serving the property's state, skipping anyone who
+ * already declined this property.
+ */
+export const autoAssignListingAgent = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { propertyId: string }) => data)
+  .handler(async ({ data, context }) => {
+    const db = await admin();
+    const property = await assertSellerOwns(db, data.propertyId, context.userId);
+
+    const { data: declines } = await db
+      .from("listing_agent_declines")
+      .select("agent_id")
+      .eq("property_id", property.id);
+    const declined = new Set(((declines ?? []) as any[]).map((d) => d.agent_id));
+
+    const { data: agents } = await db
+      .from("agents")
+      .select("id, full_name, auth_user_id, license_state, service_area, status, role")
+      .eq("role", "listing")
+      .order("created_at", { ascending: true });
+
+    const pool = ((agents ?? []) as any[]).filter((a) => !declined.has(a.id));
+    const state = (property.state ?? "").toLowerCase();
+    const match =
+      pool.find(
+        (a) =>
+          (a.license_state ?? "").toLowerCase() === state ||
+          (a.service_area ?? "").toLowerCase().includes(state),
+      ) ?? pool[0];
+
+    if (!match) {
+      return { ok: false as const, agentName: null, message: "No Listing Agent is available right now." };
+    }
+
+    await db
+      .from("properties")
+      .update({
+        listing_agent_id: match.id,
+        listing_agent_engagement_status: "pending",
+        listing_agent_engagement_at: new Date().toISOString(),
+        listing_agent_decline_reason: null,
+      })
+      .eq("id", property.id);
+    await audit(db, {
+      actorId: context.userId,
+      actorType: "seller",
+      actionType: "listing.agent_auto_assigned",
+      entityType: "property",
+      entityId: property.id,
+      metadata: { agent_id: match.id, agent_name: match.full_name, assigned_by: "platform" },
+    });
+    if (match.auth_user_id) {
+      await notifyUser(
+        db,
+        match.auth_user_id,
+        `divieight assigned you as Listing Agent for ${property.address} — accept or decline the engagement.`,
+        "listing_agent",
+      );
+    }
+    return { ok: true as const, agentName: match.full_name as string, message: null };
+  });
+
+/**
+ * An engaged Listing Agent rejects the property outright. The listing returns
+ * to draft so the seller can edit the property details and resubmit.
+ */
+export const rejectListingProperty = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { propertyId: string; reason: string }) => data)
+  .handler(async ({ data, context }) => {
+    const db = await admin();
+    const agent = await agentFor(db, context.userId);
+    if (!agent) throw new Error("Not authorized.");
+    const reason = data.reason.trim();
+    if (reason.length < 5) throw new Error("Give the seller a reason for the rejection.");
+
+    const { data: property } = await db
+      .from("properties")
+      .select("id, address, seller_id, listing_agent_id, listing_agent_engagement_status")
+      .eq("id", data.propertyId)
+      .maybeSingle();
+    if (!property || property.listing_agent_id !== agent.id) throw new Error("Listing not found.");
+    if (property.listing_agent_engagement_status !== "accepted") {
+      throw new Error("Accept the engagement before reviewing this property.");
+    }
+
+    await db
+      .from("properties")
+      .update({
+        status: "draft",
+        content_approval_status: "changes_requested",
+        compliance_status: "not_started",
+        listing_rejection_reason: reason,
+        listing_rejected_at: new Date().toISOString(),
+        listing_rejected_by_agent_id: agent.id,
+      })
+      .eq("id", property.id);
+    await audit(db, {
+      actorId: context.userId,
+      actorType: "agent",
+      actionType: "listing.property_rejected_by_listing_agent",
+      entityType: "property",
+      entityId: property.id,
+      metadata: { agent_id: agent.id, reason },
+    });
+    await notifyUser(
+      db,
+      property.seller_id,
+      `${agent.full_name} rejected ${property.address}: ${reason}. Edit your property details and resubmit.`,
+      "listing_agent",
+    );
+    return { ok: true };
   });
 
 /* ------------------------------------------------------------------ */
