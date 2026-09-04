@@ -75,6 +75,7 @@ import { Route as BuyerOnboardingIndexRouteImport } from './routes/buyer.onboard
 import { Route as AgentListingsIndexRouteImport } from './routes/agent.listings.index'
 import { Route as AgentDocumentsIndexRouteImport } from './routes/agent.documents.index'
 import { Route as AdminPodsIndexRouteImport } from './routes/admin.pods.index'
+import { Route as ListingsIdEditRouteImport } from './routes/listings.$id.edit'
 import { Route as BuyerPodsIdRouteImport } from './routes/buyer.pods.$id'
 import { Route as BuyerOnboardingVettingRouteImport } from './routes/buyer.onboarding.vetting'
 import { Route as BuyerOnboardingPaymentRouteImport } from './routes/buyer.onboarding.payment'
@@ -433,6 +434,11 @@ const AdminPodsIndexRoute = AdminPodsIndexRouteImport.update({
   path: '/pods/',
   getParentRoute: () => AdminRoute,
 } as any)
+const ListingsIdEditRoute = ListingsIdEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => ListingsIdRoute,
+} as any)
 const BuyerPodsIdRoute = BuyerPodsIdRouteImport.update({
   id: '/buyer/pods/$id',
   path: '/buyer/pods/$id',
@@ -627,7 +633,7 @@ export interface FileRoutesByFullPath {
   '/buyer/verification': typeof BuyerVerificationRoute
   '/buyer/wishlist': typeof BuyerWishlistRoute
   '/data-room/$id': typeof DataRoomIdRoute
-  '/listings/$id': typeof ListingsIdRoute
+  '/listings/$id': typeof ListingsIdRouteWithChildren
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/agreement': typeof OnboardingAgreementRoute
   '/onboarding/fee': typeof OnboardingFeeRoute
@@ -669,6 +675,7 @@ export interface FileRoutesByFullPath {
   '/buyer/onboarding/payment': typeof BuyerOnboardingPaymentRoute
   '/buyer/onboarding/vetting': typeof BuyerOnboardingVettingRoute
   '/buyer/pods/$id': typeof BuyerPodsIdRoute
+  '/listings/$id/edit': typeof ListingsIdEditRoute
   '/admin/pods/': typeof AdminPodsIndexRoute
   '/agent/documents/': typeof AgentDocumentsIndexRoute
   '/agent/listings/': typeof AgentListingsIndexRoute
@@ -718,7 +725,7 @@ export interface FileRoutesByTo {
   '/buyer/verification': typeof BuyerVerificationRoute
   '/buyer/wishlist': typeof BuyerWishlistRoute
   '/data-room/$id': typeof DataRoomIdRoute
-  '/listings/$id': typeof ListingsIdRoute
+  '/listings/$id': typeof ListingsIdRouteWithChildren
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/agreement': typeof OnboardingAgreementRoute
   '/onboarding/fee': typeof OnboardingFeeRoute
@@ -760,6 +767,7 @@ export interface FileRoutesByTo {
   '/buyer/onboarding/payment': typeof BuyerOnboardingPaymentRoute
   '/buyer/onboarding/vetting': typeof BuyerOnboardingVettingRoute
   '/buyer/pods/$id': typeof BuyerPodsIdRoute
+  '/listings/$id/edit': typeof ListingsIdEditRoute
   '/admin/pods': typeof AdminPodsIndexRoute
   '/agent/documents': typeof AgentDocumentsIndexRoute
   '/agent/listings': typeof AgentListingsIndexRoute
@@ -814,7 +822,7 @@ export interface FileRoutesById {
   '/buyer/verification': typeof BuyerVerificationRoute
   '/buyer/wishlist': typeof BuyerWishlistRoute
   '/data-room/$id': typeof DataRoomIdRoute
-  '/listings/$id': typeof ListingsIdRoute
+  '/listings/$id': typeof ListingsIdRouteWithChildren
   '/listings/new': typeof ListingsNewRoute
   '/onboarding/agreement': typeof OnboardingAgreementRoute
   '/onboarding/fee': typeof OnboardingFeeRoute
@@ -856,6 +864,7 @@ export interface FileRoutesById {
   '/buyer/onboarding/payment': typeof BuyerOnboardingPaymentRoute
   '/buyer/onboarding/vetting': typeof BuyerOnboardingVettingRoute
   '/buyer/pods/$id': typeof BuyerPodsIdRoute
+  '/listings/$id/edit': typeof ListingsIdEditRoute
   '/admin/pods/': typeof AdminPodsIndexRoute
   '/agent/documents/': typeof AgentDocumentsIndexRoute
   '/agent/listings/': typeof AgentListingsIndexRoute
@@ -953,6 +962,7 @@ export interface FileRouteTypes {
     | '/buyer/onboarding/payment'
     | '/buyer/onboarding/vetting'
     | '/buyer/pods/$id'
+    | '/listings/$id/edit'
     | '/admin/pods/'
     | '/agent/documents/'
     | '/agent/listings/'
@@ -1044,6 +1054,7 @@ export interface FileRouteTypes {
     | '/buyer/onboarding/payment'
     | '/buyer/onboarding/vetting'
     | '/buyer/pods/$id'
+    | '/listings/$id/edit'
     | '/admin/pods'
     | '/agent/documents'
     | '/agent/listings'
@@ -1139,6 +1150,7 @@ export interface FileRouteTypes {
     | '/buyer/onboarding/payment'
     | '/buyer/onboarding/vetting'
     | '/buyer/pods/$id'
+    | '/listings/$id/edit'
     | '/admin/pods/'
     | '/agent/documents/'
     | '/agent/listings/'
@@ -1172,7 +1184,7 @@ export interface RootRouteChildren {
   BuyerVerificationRoute: typeof BuyerVerificationRoute
   BuyerWishlistRoute: typeof BuyerWishlistRoute
   DataRoomIdRoute: typeof DataRoomIdRoute
-  ListingsIdRoute: typeof ListingsIdRoute
+  ListingsIdRoute: typeof ListingsIdRouteWithChildren
   ListingsNewRoute: typeof ListingsNewRoute
   OnboardingAgreementRoute: typeof OnboardingAgreementRoute
   OnboardingFeeRoute: typeof OnboardingFeeRoute
@@ -1665,6 +1677,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPodsIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/listings/$id/edit': {
+      id: '/listings/$id/edit'
+      path: '/edit'
+      fullPath: '/listings/$id/edit'
+      preLoaderRoute: typeof ListingsIdEditRouteImport
+      parentRoute: typeof ListingsIdRoute
+    }
     '/buyer/pods/$id': {
       id: '/buyer/pods/$id'
       path: '/buyer/pods/$id'
@@ -1980,6 +1999,18 @@ const ResetPasswordRouteWithChildren = ResetPasswordRoute._addFileChildren(
   ResetPasswordRouteChildren,
 )
 
+interface ListingsIdRouteChildren {
+  ListingsIdEditRoute: typeof ListingsIdEditRoute
+}
+
+const ListingsIdRouteChildren: ListingsIdRouteChildren = {
+  ListingsIdEditRoute: ListingsIdEditRoute,
+}
+
+const ListingsIdRouteWithChildren = ListingsIdRoute._addFileChildren(
+  ListingsIdRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
@@ -2003,7 +2034,7 @@ const rootRouteChildren: RootRouteChildren = {
   BuyerVerificationRoute: BuyerVerificationRoute,
   BuyerWishlistRoute: BuyerWishlistRoute,
   DataRoomIdRoute: DataRoomIdRoute,
-  ListingsIdRoute: ListingsIdRoute,
+  ListingsIdRoute: ListingsIdRouteWithChildren,
   ListingsNewRoute: ListingsNewRoute,
   OnboardingAgreementRoute: OnboardingAgreementRoute,
   OnboardingFeeRoute: OnboardingFeeRoute,

@@ -37,6 +37,9 @@ type Listing = {
   primary_photo?: string | null;
   has_media?: boolean;
   last_completed_step?: string | null;
+  listing_rejection_reason?: string | null;
+  listing_agent_engagement_status?: string | null;
+  listing_agent_decline_reason?: string | null;
 };
 
 type SellerInfo = {
@@ -92,7 +95,7 @@ function Dashboard() {
         supabase
           .from("properties")
           .select(
-            "id, address, city, state, status, listing_status, listing_price, property_type, exit_type, retained_shares",
+            "id, address, city, state, status, listing_status, listing_price, property_type, exit_type, retained_shares, listing_rejection_reason, listing_agent_engagement_status, listing_agent_decline_reason",
           )
           .eq("seller_id", user.id)
           .order("created_at", { ascending: false }),
@@ -108,7 +111,7 @@ function Dashboard() {
       }
       setSeller((sellerData as SellerInfo) ?? null);
 
-      const propRows = (props as Listing[]) ?? [];
+      const propRows = ((props as unknown) as Listing[]) ?? [];
 
       // Resume-step column is optional: ignore it if the column isn't there yet.
       if (propRows.length > 0) {
@@ -345,10 +348,55 @@ function Dashboard() {
                       />
                     </div>
 
+                    {l.listing_rejection_reason && (
+                      <div className="mt-4 rounded-lg border border-destructive/40 bg-destructive/10 p-4">
+                        <p className="text-sm font-medium text-foreground">
+                          Action required — your Listing Agent rejected this property
+                        </p>
+                        <p className="mt-1 break-words text-sm text-muted-foreground">
+                          {l.listing_rejection_reason}
+                        </p>
+                      </div>
+                    )}
+
+                    {l.listing_agent_engagement_status === "declined" && (
+                      <div className="mt-4 rounded-lg border border-destructive/40 bg-destructive/10 p-4">
+                        <p className="text-sm font-medium text-foreground">
+                          Action required — your Listing Agent declined the engagement
+                        </p>
+                        <p className="mt-1 break-words text-sm text-muted-foreground">
+                          {l.listing_agent_decline_reason ?? "No reason given."} Choose another
+                          Listing Agent, or let divieight pick one for you.
+                        </p>
+                        <Link
+                          to="/onboarding/listing-agent"
+                          search={{ property: l.id }}
+                          className="mt-3 inline-flex h-9 items-center rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground hover:opacity-90"
+                        >
+                          Choose a Listing Agent
+                        </Link>
+                      </div>
+                    )}
+
+                    {l.listing_agent_engagement_status === "pending" && (
+                      <p className="mt-4 text-sm text-muted-foreground">
+                        Waiting for your Listing Agent to accept the engagement.
+                      </p>
+                    )}
+
                     <div className="mt-4 flex flex-wrap items-center justify-end gap-2">
                       {/* Each step is scoped by ?property=<id>, so any listing —
                           draft or live — can be reopened at the right step without
                           repeating Identity verification. */}
+                      {l.listing_rejection_reason ? (
+                        <Link
+                          to="/listings/$id/edit"
+                          params={{ id: l.id }}
+                          className="inline-flex h-9 items-center rounded-md border border-accent bg-accent/10 px-4 text-sm font-medium text-accent transition-colors hover:bg-accent/20"
+                        >
+                          Edit property details
+                        </Link>
+                      ) : (
                       <Link
                         to={l.status !== "listed" ? resumeStepFor(l) : "/onboarding/listing"}
                         search={{ property: l.id }}
@@ -356,6 +404,7 @@ function Dashboard() {
                       >
                         {l.status !== "listed" ? "Continue Editing" : "Edit listing"}
                       </Link>
+                      )}
                       <Link
                         to="/listings/$id"
                         params={{ id: l.id }}
