@@ -11,7 +11,11 @@ import {
   type ReferOnlyElection,
 } from "@/lib/designation.functions";
 import { listMyHlaInvitations } from "@/lib/hla.functions";
-import { listMyListingProperties } from "@/lib/listing-approval.functions";
+import {
+  listMyListingEngagements,
+  listMyListingProperties,
+  type ListingEngagementInvitation,
+} from "@/lib/listing-approval.functions";
 import type { ListingAgentProperty } from "@/lib/listing-approval";
 import type { HlaInvitation } from "@/lib/hla";
 import { Link } from "@tanstack/react-router";
@@ -31,25 +35,29 @@ export function AgentActionItems() {
   const respondElection = useServerFn(respondToReferOnly);
   const loadHlaInvites = useServerFn(listMyHlaInvitations);
   const loadListings = useServerFn(listMyListingProperties);
+  const loadEngagements = useServerFn(listMyListingEngagements);
 
   const [designations, setDesignations] = useState<DesignationRequest[]>([]);
   const [elections, setElections] = useState<ReferOnlyElection[]>([]);
   const [hlaInvites, setHlaInvites] = useState<HlaInvitation[]>([]);
   const [listingReviews, setListingReviews] = useState<ListingAgentProperty[]>([]);
+  const [engagements, setEngagements] = useState<ListingEngagementInvitation[]>([]);
   const [busy, setBusy] = useState(false);
 
   const refresh = useCallback(async () => {
-    const [d, e, h, l] = await Promise.all([
+    const [d, e, h, l, g] = await Promise.all([
       loadDesignations({}),
       loadElections({}),
       loadHlaInvites({}),
       loadListings({}).catch(() => [] as ListingAgentProperty[]),
+      loadEngagements({}).catch(() => [] as ListingEngagementInvitation[]),
     ]);
     setDesignations(d);
     setElections(e);
     setHlaInvites(h);
     setListingReviews((l ?? []).filter((p) => p.pending_items > 0));
-  }, [loadDesignations, loadElections, loadHlaInvites, loadListings]);
+    setEngagements(g ?? []);
+  }, [loadDesignations, loadElections, loadHlaInvites, loadListings, loadEngagements]);
 
   useEffect(() => {
     void refresh();
@@ -59,7 +67,8 @@ export function AgentActionItems() {
     designations.length === 0 &&
     elections.length === 0 &&
     hlaInvites.length === 0 &&
-    listingReviews.length === 0
+    listingReviews.length === 0 &&
+    engagements.length === 0
   )
     return null;
 
@@ -71,6 +80,24 @@ export function AgentActionItems() {
       </div>
 
       <ul className="mt-4 space-y-4">
+        {engagements.map((inv) => (
+          <li key={`engagement-${inv.propertyId}`} className="rounded-lg border border-border bg-card p-4">
+            <p className="text-sm font-medium text-foreground">
+              A seller asked you to act as their Listing Agent
+            </p>
+            <p className="mt-1 break-words text-xs text-muted-foreground">
+              {inv.address}, {inv.city}, {inv.state} {inv.zip}
+              {inv.sellerName ? ` · Seller: ${inv.sellerName}` : ""}
+            </p>
+            <Link
+              to="/agent/listings"
+              className="mt-3 inline-flex h-9 items-center rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground hover:opacity-90"
+            >
+              Accept or decline
+            </Link>
+          </li>
+        ))}
+
         {listingReviews.map((p) => (
           <li key={`listing-${p.id}`} className="rounded-lg border border-border bg-card p-4">
             <p className="text-sm font-medium text-foreground">
