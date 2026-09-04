@@ -56,7 +56,7 @@ async function audit(
   db: Db,
   row: {
     actorId: string;
-    actorType: "seller" | "agent" | "buyer";
+    actorType: "seller" | "agent" | "buyer" | "broker";
     actionType: string;
     entityType: string;
     entityId?: string | null;
@@ -583,7 +583,7 @@ export const disposeContentItem = createServerFn({ method: "POST" })
 
     await audit(db, {
       actorId: context.userId,
-      actorType: "agent",
+      actorType: actingAsBroker ? "broker" : "agent",
       actionType:
         data.disposition === "rejected"
           ? "listing.content_rejected"
@@ -639,7 +639,7 @@ export const disposeContentItem = createServerFn({ method: "POST" })
       .eq("id", property.id);
     await audit(db, {
       actorId: context.userId,
-      actorType: "agent",
+      actorType: actingAsBroker ? "broker" : "agent",
       actionType: "listing.gate1_cleared",
       entityType: "property",
       entityId: property.id,

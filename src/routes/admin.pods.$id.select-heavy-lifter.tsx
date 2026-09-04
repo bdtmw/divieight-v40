@@ -66,6 +66,15 @@ function SelectHeavyLifter() {
         commercial relationship with the Platform plays any part in this decision.
       </p>
 
+      {/* Decline / 3-day timeout returns the pod to the manager for a new cycle. */}
+      {!locked && pod.hlaStatus === "declined" ? (
+        <div className="mt-6 rounded-xl border border-destructive/40 bg-destructive/5 p-4 text-sm text-foreground">
+          The previous Heavy Lifting Agent declined or let the 3-day acceptance window lapse.
+          Select an alternate Resident Agent below — this starts a new selection cycle, logged
+          separately in the history.
+        </div>
+      ) : null}
+
       {locked ? (
         <div className="mt-6 rounded-xl border border-border bg-card p-5 text-sm text-foreground">
           {pod.heavyLifterName} is currently the selected Heavy Lifting Agent (

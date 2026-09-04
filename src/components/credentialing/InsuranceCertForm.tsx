@@ -78,7 +78,7 @@ export function InsuranceCertForm({
 
     await logAudit({
       actorId: entity.auth_user_id,
-      actorType: "agent",
+      actorType: entityType === "broker" ? "broker" : "agent",
       actionType: "agent.eo_insurance_submitted",
       entityType,
       entityId: entity.id,
@@ -86,7 +86,7 @@ export function InsuranceCertForm({
     });
     await logAudit({
       actorId: entity.auth_user_id,
-      actorType: "agent",
+      actorType: entityType === "broker" ? "broker" : "agent",
       actionType: "agent.nar_cert_signed",
       entityType,
       entityId: entity.id,

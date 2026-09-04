@@ -91,8 +91,13 @@ function AuditLogPage() {
     [rows, actorFilter],
   );
 
+  // Seller, buyer, agent and broker are always offered — a filter option must
+  // exist even before the first row of that actor type lands in the log.
   const actorTypes = useMemo(
-    () => Array.from(new Set(rows.map((r) => r.actor_type))).sort(),
+    () =>
+      Array.from(
+        new Set(["seller", "buyer", "agent", "broker", ...rows.map((r) => r.actor_type)]),
+      ).sort(),
     [rows],
   );
 
@@ -124,7 +129,7 @@ function AuditLogPage() {
             Audit log
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            Append-only record of every significant seller and buyer action.
+            Append-only record of every significant seller, buyer, agent and broker action.
             Rows here cannot be edited or deleted.
           </p>
         </div>

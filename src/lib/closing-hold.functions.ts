@@ -251,7 +251,7 @@ export const placeClosingHold = createServerFn({ method: "POST" })
 
     await db.from("audit_log").insert({
       actor_id: context.userId,
-      actor_type: "agent",
+      actor_type: "broker",
       action_type: "pod.closing_hold_placed",
       entity_type: "pod",
       entity_id: pod.id,
@@ -309,7 +309,7 @@ export const liftClosingHold = createServerFn({ method: "POST" })
 
     await db.from("audit_log").insert({
       actor_id: context.userId,
-      actor_type: "agent",
+      actor_type: "broker",
       action_type: "pod.closing_hold_lifted",
       entity_type: "pod",
       entity_id: pod.id,
