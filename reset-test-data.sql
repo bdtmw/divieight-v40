@@ -61,15 +61,13 @@ END
 $$;
 
 -- 2) Storage files ------------------------------------------------------
--- Buckets rehte hain, unke andar ki saari objects delete.
-DELETE FROM storage.objects
-WHERE bucket_id IN (
-  'property-media',
-  'property-documents',
-  'identity-documents',
-  'verification-documents',
-  'agent-documents'
-);
+-- NOTE: SQL se storage.objects delete karna Supabase block karta hai
+-- (storage.protect_delete -> "Direct deletion from storage tables is not allowed").
+-- Files Storage API / Dashboard se delete karein:
+--   Dashboard -> Storage -> bucket kholein -> select all -> Delete
+-- Buckets: property-media, property-documents, identity-documents,
+--          verification-documents, agent-documents
+
 
 -- 3) Auth users ---------------------------------------------------------
 -- Admin ke ilawa sab delete (identities/sessions cascade ho jaate hain).
