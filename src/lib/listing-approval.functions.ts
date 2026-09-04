@@ -172,12 +172,20 @@ export const inviteListingAgent = createServerFn({ method: "POST" })
       .eq("email", email)
       .maybeSingle();
     if (existing && existing.role === "listing") {
-      await db.from("properties").update({ listing_agent_id: existing.id }).eq("id", property.id);
+      await db
+        .from("properties")
+        .update({
+          listing_agent_id: existing.id,
+          listing_agent_engagement_status: "pending",
+          listing_agent_engagement_at: new Date().toISOString(),
+          listing_agent_decline_reason: null,
+        })
+        .eq("id", property.id);
       if (existing.auth_user_id) {
         await notifyUser(
           db,
           existing.auth_user_id,
-          `You were tagged as the Listing Agent for ${property.address}.`,
+          `A seller asked you to act as Listing Agent for ${property.address} — accept or decline the engagement.`,
           "listing_agent",
         );
       }
