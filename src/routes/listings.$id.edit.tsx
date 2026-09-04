@@ -305,14 +305,11 @@ function EditPropertyScreen() {
             />
           </div>
         </div>
-        <div>
-          <label className="text-sm font-medium text-foreground">Listing price</label>
-          <CurrencyInput
-            className="mt-1"
-            value={form.listing_price}
-            onValueChange={(v) => setForm((f) => ({ ...f, listing_price: v }))}
-          />
-        </div>
+        <CurrencyInput
+          label="Listing price"
+          value={form.listing_price}
+          onValueChange={(v) => setForm((f) => ({ ...f, listing_price: v }))}
+        />
         <div>
           <label className="text-sm font-medium text-foreground">Description</label>
           <Textarea
