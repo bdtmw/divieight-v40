@@ -111,7 +111,7 @@ function Dashboard() {
       }
       setSeller((sellerData as SellerInfo) ?? null);
 
-      const propRows = (props as Listing[]) ?? [];
+      const propRows = ((props as unknown) as Listing[]) ?? [];
 
       // Resume-step column is optional: ignore it if the column isn't there yet.
       if (propRows.length > 0) {

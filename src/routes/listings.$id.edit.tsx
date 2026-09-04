@@ -79,7 +79,7 @@ function EditPropertyScreen() {
       navigate({ to: "/dashboard" });
       return;
     }
-    const p = data as Record<string, unknown>;
+    const p = data as unknown as Record<string, unknown>;
     setRejectionReason((p["listing_rejection_reason"] as string | null) ?? null);
     setForm({
       address: (p["address"] as string) ?? "",
