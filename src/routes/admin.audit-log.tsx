@@ -129,7 +129,7 @@ function AuditLogPage() {
             Audit log
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            Append-only record of every significant seller and buyer action.
+            Append-only record of every significant seller, buyer, agent and broker action.
             Rows here cannot be edited or deleted.
           </p>
         </div>
