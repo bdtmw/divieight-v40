@@ -116,7 +116,7 @@ export async function logAudit(params: {
   actionType: AuditAction;
   entityType: AuditEntity;
   entityId?: string | null;
-  actorType?: "seller" | "buyer" | "agent";
+  actorType?: "seller" | "buyer" | "agent" | "broker";
   metadata?: Record<string, unknown>;
 }) {
   const { actorId, actionType, entityType, entityId, actorType, metadata } = params;
@@ -125,9 +125,11 @@ export async function logAudit(params: {
     actor_type: actorType ??
       (actionType.startsWith("buyer.")
         ? "buyer"
-        : actionType.startsWith("agent.") || actionType.startsWith("broker.")
-          ? "agent"
-          : "seller"),
+        : actionType.startsWith("broker.")
+          ? "broker"
+          : actionType.startsWith("agent.")
+            ? "agent"
+            : "seller"),
     action_type: actionType,
     entity_type: entityType,
     entity_id: entityId ?? null,
