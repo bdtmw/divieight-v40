@@ -53,7 +53,7 @@ export function LicenseCheckPanel({
         await markLicenseVerified(row.id, entityType);
         await logAudit({
           actorId: row.auth_user_id,
-          actorType: "agent",
+          actorType: entityType === "broker" ? "broker" : "agent",
           actionType: "agent.arello_check_verified",
           entityType,
           entityId: row.id,
@@ -63,7 +63,7 @@ export function LicenseCheckPanel({
         await markLicenseNotFound(row.id, entityType);
         await logAudit({
           actorId: row.auth_user_id,
-          actorType: "agent",
+          actorType: entityType === "broker" ? "broker" : "agent",
           actionType: "agent.arello_check_not_found",
           entityType,
           entityId: row.id,
@@ -73,7 +73,7 @@ export function LicenseCheckPanel({
         await markLicensePending(row.id, entityType);
         await logAudit({
           actorId: row.auth_user_id,
-          actorType: "agent",
+          actorType: entityType === "broker" ? "broker" : "agent",
           actionType: "agent.arello_check_pending",
           entityType,
           entityId: row.id,

@@ -88,7 +88,7 @@ export function ComplianceAckForm({
 
     await logAudit({
       actorId: entity.auth_user_id,
-      actorType: "agent",
+      actorType: entityType === "broker" ? "broker" : "agent",
       actionType: "agent.fincen_acknowledged",
       entityType,
       entityId: entity.id,
@@ -96,7 +96,7 @@ export function ComplianceAckForm({
     });
     await logAudit({
       actorId: entity.auth_user_id,
-      actorType: "agent",
+      actorType: entityType === "broker" ? "broker" : "agent",
       actionType: "agent.ethics_acknowledged",
       entityType,
       entityId: entity.id,

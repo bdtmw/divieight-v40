@@ -116,7 +116,7 @@ function BrokerBankingPage() {
 
     await logAudit({
       actorId: broker.auth_user_id,
-      actorType: "agent",
+      actorType: "broker",
       actionType: "broker.banking_saved",
       entityType: "broker",
       entityId: broker.id,
@@ -132,7 +132,7 @@ function BrokerBankingPage() {
 
     await logAudit({
       actorId: broker.auth_user_id,
-      actorType: "agent",
+      actorType: "broker",
       actionType: "broker.onboarding_completed",
       entityType: "broker",
       entityId: broker.id,
