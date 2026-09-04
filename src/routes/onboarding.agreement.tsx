@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { OnboardingStepper } from "@/components/OnboardingStepper";
-import { ListingAgentTagger } from "@/components/ListingAgentTagger";
 
 import { cn } from "@/lib/utils";
 import { logAudit } from "@/lib/audit";
@@ -237,11 +236,11 @@ function AgreementScreen() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
-      <OnboardingStepper current={6} />
+      <OnboardingStepper current={7} />
 
       <div className="mt-10 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
-          Step 6 · Agreement
+          Step 7 · Agreement
         </p>
         <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           Sign your listing agreement
@@ -263,12 +262,6 @@ function AgreementScreen() {
         </div>
       ) : (
         <>
-          {property?.id && (
-            <div className="mt-8">
-              <ListingAgentTagger propertyId={property.id} />
-            </div>
-          )}
-
           <div className="mt-8 rounded-xl border border-border bg-card shadow-sm">
 
             <div className="border-b border-border px-5 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">

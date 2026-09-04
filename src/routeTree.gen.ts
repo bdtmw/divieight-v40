@@ -33,6 +33,7 @@ import { Route as RTokenRouteImport } from './routes/r.$token'
 import { Route as PropertiesIdRouteImport } from './routes/properties.$id'
 import { Route as OnboardingPropertyRouteImport } from './routes/onboarding.property'
 import { Route as OnboardingMediaRouteImport } from './routes/onboarding.media'
+import { Route as OnboardingListingAgentRouteImport } from './routes/onboarding.listing-agent'
 import { Route as OnboardingListingRouteImport } from './routes/onboarding.listing'
 import { Route as OnboardingIdentityRouteImport } from './routes/onboarding.identity'
 import { Route as OnboardingFeeRouteImport } from './routes/onboarding.fee'
@@ -219,6 +220,11 @@ const OnboardingPropertyRoute = OnboardingPropertyRouteImport.update({
 const OnboardingMediaRoute = OnboardingMediaRouteImport.update({
   id: '/onboarding/media',
   path: '/onboarding/media',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingListingAgentRoute = OnboardingListingAgentRouteImport.update({
+  id: '/onboarding/listing-agent',
+  path: '/onboarding/listing-agent',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingListingRoute = OnboardingListingRouteImport.update({
@@ -622,6 +628,7 @@ export interface FileRoutesByFullPath {
   '/onboarding/fee': typeof OnboardingFeeRoute
   '/onboarding/identity': typeof OnboardingIdentityRoute
   '/onboarding/listing': typeof OnboardingListingRoute
+  '/onboarding/listing-agent': typeof OnboardingListingAgentRoute
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/properties/$id': typeof PropertiesIdRoute
@@ -711,6 +718,7 @@ export interface FileRoutesByTo {
   '/onboarding/fee': typeof OnboardingFeeRoute
   '/onboarding/identity': typeof OnboardingIdentityRoute
   '/onboarding/listing': typeof OnboardingListingRoute
+  '/onboarding/listing-agent': typeof OnboardingListingAgentRoute
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/properties/$id': typeof PropertiesIdRoute
@@ -805,6 +813,7 @@ export interface FileRoutesById {
   '/onboarding/fee': typeof OnboardingFeeRoute
   '/onboarding/identity': typeof OnboardingIdentityRoute
   '/onboarding/listing': typeof OnboardingListingRoute
+  '/onboarding/listing-agent': typeof OnboardingListingAgentRoute
   '/onboarding/media': typeof OnboardingMediaRoute
   '/onboarding/property': typeof OnboardingPropertyRoute
   '/properties/$id': typeof PropertiesIdRoute
@@ -900,6 +909,7 @@ export interface FileRouteTypes {
     | '/onboarding/fee'
     | '/onboarding/identity'
     | '/onboarding/listing'
+    | '/onboarding/listing-agent'
     | '/onboarding/media'
     | '/onboarding/property'
     | '/properties/$id'
@@ -989,6 +999,7 @@ export interface FileRouteTypes {
     | '/onboarding/fee'
     | '/onboarding/identity'
     | '/onboarding/listing'
+    | '/onboarding/listing-agent'
     | '/onboarding/media'
     | '/onboarding/property'
     | '/properties/$id'
@@ -1082,6 +1093,7 @@ export interface FileRouteTypes {
     | '/onboarding/fee'
     | '/onboarding/identity'
     | '/onboarding/listing'
+    | '/onboarding/listing-agent'
     | '/onboarding/media'
     | '/onboarding/property'
     | '/properties/$id'
@@ -1154,6 +1166,7 @@ export interface RootRouteChildren {
   OnboardingFeeRoute: typeof OnboardingFeeRoute
   OnboardingIdentityRoute: typeof OnboardingIdentityRoute
   OnboardingListingRoute: typeof OnboardingListingRoute
+  OnboardingListingAgentRoute: typeof OnboardingListingAgentRoute
   OnboardingMediaRoute: typeof OnboardingMediaRoute
   OnboardingPropertyRoute: typeof OnboardingPropertyRoute
   PropertiesIdRoute: typeof PropertiesIdRoute
@@ -1344,6 +1357,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding/media'
       fullPath: '/onboarding/media'
       preLoaderRoute: typeof OnboardingMediaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding/listing-agent': {
+      id: '/onboarding/listing-agent'
+      path: '/onboarding/listing-agent'
+      fullPath: '/onboarding/listing-agent'
+      preLoaderRoute: typeof OnboardingListingAgentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding/listing': {
@@ -1968,6 +1988,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingFeeRoute: OnboardingFeeRoute,
   OnboardingIdentityRoute: OnboardingIdentityRoute,
   OnboardingListingRoute: OnboardingListingRoute,
+  OnboardingListingAgentRoute: OnboardingListingAgentRoute,
   OnboardingMediaRoute: OnboardingMediaRoute,
   OnboardingPropertyRoute: OnboardingPropertyRoute,
   PropertiesIdRoute: PropertiesIdRoute,
