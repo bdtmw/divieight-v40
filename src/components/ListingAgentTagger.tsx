@@ -8,6 +8,7 @@ import {
   searchListingAgents,
   requestHumanComplianceReview,
   rescanCompliance,
+  autoAssignListingAgent,
   type ListingAgentOption,
   type ListingAgentTagState,
 } from "@/lib/listing-approval.functions";
@@ -85,10 +86,35 @@ export function ListingAgentTagger({ propertyId }: { propertyId: string }) {
         can go live on the marketplace.
       </p>
 
+      {state?.listingRejectionReason && (
+        <div className="mt-4 rounded-lg border border-destructive/40 bg-destructive/10 p-4">
+          <p className="text-sm font-medium text-foreground">
+            Your Listing Agent rejected this property
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">{state.listingRejectionReason}</p>
+        </div>
+      )}
+
+      {state?.engagementStatus === "declined" && (
+        <div className="mt-4 rounded-lg border border-destructive/40 bg-destructive/10 p-4">
+          <p className="text-sm font-medium text-foreground">
+            That agent declined the engagement
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {state.engagementDeclineReason ?? "No reason given."} Choose another Listing Agent
+            below, or let divieight assign one for you.
+          </p>
+        </div>
+      )}
+
       {state?.agentName ? (
         <div className="mt-4 rounded-lg border border-accent/40 bg-accent/10 p-4">
           <p className="text-sm font-medium text-foreground">{state.agentName}</p>
-          <p className="text-xs text-muted-foreground">Tagged as Listing Agent</p>
+          <p className="text-xs text-muted-foreground">
+            {state.engagementStatus === "accepted"
+              ? "Accepted — this agent is your Listing Agent"
+              : "Invited — waiting for this agent to accept"}
+          </p>
         </div>
       ) : state?.invitedEmail ? (
         <div className="mt-4 rounded-lg border border-border bg-muted/40 p-4 text-sm text-muted-foreground">
@@ -130,6 +156,34 @@ export function ListingAgentTagger({ propertyId }: { propertyId: string }) {
                 ))}
               </ul>
             )}
+          </div>
+
+          <div>
+            <p className="text-sm font-medium text-foreground">Or let divieight choose for you</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              We pick a licensed Listing Agent serving your area and send them the request.
+            </p>
+            <Button
+              type="button"
+              className="mt-2"
+              variant="secondary"
+              disabled={busy}
+              onClick={async () => {
+                setBusy(true);
+                try {
+                  const res = await autoAssignListingAgent({ data: { propertyId } });
+                  if (res.ok) toast.success(`${res.agentName} was invited as your Listing Agent.`);
+                  else toast.error(res.message ?? "No Listing Agent is available right now.");
+                  await refresh();
+                } catch (e) {
+                  toast.error(e instanceof Error ? e.message : "Could not assign an agent.");
+                } finally {
+                  setBusy(false);
+                }
+              }}
+            >
+              Choose one for me
+            </Button>
           </div>
 
           <div>
