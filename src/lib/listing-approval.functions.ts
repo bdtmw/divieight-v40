@@ -227,6 +227,13 @@ export interface ListingAgentTagState {
   status: string;
   flaggedPhrases: string[];
   rejectedItems: { id: string; label: string; reason: string | null }[];
+  /** 'none' | 'pending' | 'accepted' | 'declined' */
+  engagementStatus: string;
+  /** Why the agent turned the engagement down (declined state only). */
+  engagementDeclineReason: string | null;
+  /** Set when an engaged Listing Agent rejected the whole property. */
+  listingRejectionReason: string | null;
+  listingRejectedAt: string | null;
 }
 
 export const getListingAgentTagState = createServerFn({ method: "POST" })
