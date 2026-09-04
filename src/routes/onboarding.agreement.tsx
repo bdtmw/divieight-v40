@@ -8,7 +8,7 @@ import { OnboardingStepper } from "@/components/OnboardingStepper";
 import { cn } from "@/lib/utils";
 import { logAudit } from "@/lib/audit";
 import { markListingStep } from "@/lib/listing-progress";
-import { submitListingForApproval } from "@/lib/listing-approval.functions";
+import { submitListingForApproval, getListingAgentTagState } from "@/lib/listing-approval.functions";
 
 export const Route = createFileRoute("/onboarding/agreement")({
   // Optional ?property=<id> scopes the agreement to one existing listing.
@@ -144,8 +144,20 @@ function AgreementScreen() {
         : query.order("created_at", { ascending: false }).limit(1);
       const { data: p } = await query.maybeSingle();
       setProperty(p ?? null);
+
+      // A Listing Agent must be tagged or invited before the agreement step.
+      if (p?.id) {
+        try {
+          const tag = await getListingAgentTagState({ data: { propertyId: p.id } });
+          if (!tag.agentName && !tag.invitedEmail) {
+            navigate({ to: "/onboarding/listing-agent", search: { property: p.id } });
+          }
+        } catch {
+          /* ignore — leave the seller on the agreement step */
+        }
+      }
     })();
-  }, [user, propertyParam]);
+  }, [user, propertyParam, navigate]);
 
   const agreement = useMemo(() => buildAgreement(seller, property), [seller, property]);
   const documentHash = useMemo(() => hashDocument(agreement), [agreement]);
