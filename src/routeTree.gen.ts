@@ -96,6 +96,7 @@ import { Route as AgentOnboardingLicenseCheckRouteImport } from './routes/agent.
 import { Route as AgentOnboardingInsuranceRouteImport } from './routes/agent.onboarding.insurance'
 import { Route as AgentOnboardingComplianceRouteImport } from './routes/agent.onboarding.compliance'
 import { Route as AgentOnboardingBrokerRouteImport } from './routes/agent.onboarding.broker'
+import { Route as AgentListingsIdRouteImport } from './routes/agent.listings.$id'
 import { Route as AgentDocumentsIdRouteImport } from './routes/agent.documents.$id'
 import { Route as AgentPodsIdHlaInvitationRouteImport } from './routes/agent.pods.$id.hla-invitation'
 import { Route as AgentPodsIdBriefcaseRouteImport } from './routes/agent.pods.$id.briefcase'
@@ -549,6 +550,11 @@ const AgentOnboardingBrokerRoute = AgentOnboardingBrokerRouteImport.update({
   path: '/onboarding/broker',
   getParentRoute: () => AgentRoute,
 } as any)
+const AgentListingsIdRoute = AgentListingsIdRouteImport.update({
+  id: '/listings/$id',
+  path: '/listings/$id',
+  getParentRoute: () => AgentRoute,
+} as any)
 const AgentDocumentsIdRoute = AgentDocumentsIdRouteImport.update({
   id: '/documents/$id',
   path: '/documents/$id',
@@ -641,6 +647,7 @@ export interface FileRoutesByFullPath {
   '/properties/': typeof PropertiesIndexRoute
   '/reset-password/': typeof ResetPasswordIndexRoute
   '/agent/documents/$id': typeof AgentDocumentsIdRoute
+  '/agent/listings/$id': typeof AgentListingsIdRoute
   '/agent/onboarding/broker': typeof AgentOnboardingBrokerRoute
   '/agent/onboarding/compliance': typeof AgentOnboardingComplianceRoute
   '/agent/onboarding/insurance': typeof AgentOnboardingInsuranceRoute
@@ -731,6 +738,7 @@ export interface FileRoutesByTo {
   '/properties': typeof PropertiesIndexRoute
   '/reset-password': typeof ResetPasswordIndexRoute
   '/agent/documents/$id': typeof AgentDocumentsIdRoute
+  '/agent/listings/$id': typeof AgentListingsIdRoute
   '/agent/onboarding/broker': typeof AgentOnboardingBrokerRoute
   '/agent/onboarding/compliance': typeof AgentOnboardingComplianceRoute
   '/agent/onboarding/insurance': typeof AgentOnboardingInsuranceRoute
@@ -826,6 +834,7 @@ export interface FileRoutesById {
   '/properties/': typeof PropertiesIndexRoute
   '/reset-password/': typeof ResetPasswordIndexRoute
   '/agent/documents/$id': typeof AgentDocumentsIdRoute
+  '/agent/listings/$id': typeof AgentListingsIdRoute
   '/agent/onboarding/broker': typeof AgentOnboardingBrokerRoute
   '/agent/onboarding/compliance': typeof AgentOnboardingComplianceRoute
   '/agent/onboarding/insurance': typeof AgentOnboardingInsuranceRoute
@@ -922,6 +931,7 @@ export interface FileRouteTypes {
     | '/properties/'
     | '/reset-password/'
     | '/agent/documents/$id'
+    | '/agent/listings/$id'
     | '/agent/onboarding/broker'
     | '/agent/onboarding/compliance'
     | '/agent/onboarding/insurance'
@@ -1012,6 +1022,7 @@ export interface FileRouteTypes {
     | '/properties'
     | '/reset-password'
     | '/agent/documents/$id'
+    | '/agent/listings/$id'
     | '/agent/onboarding/broker'
     | '/agent/onboarding/compliance'
     | '/agent/onboarding/insurance'
@@ -1106,6 +1117,7 @@ export interface FileRouteTypes {
     | '/properties/'
     | '/reset-password/'
     | '/agent/documents/$id'
+    | '/agent/listings/$id'
     | '/agent/onboarding/broker'
     | '/agent/onboarding/compliance'
     | '/agent/onboarding/insurance'
@@ -1800,6 +1812,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentOnboardingBrokerRouteImport
       parentRoute: typeof AgentRoute
     }
+    '/agent/listings/$id': {
+      id: '/agent/listings/$id'
+      path: '/listings/$id'
+      fullPath: '/agent/listings/$id'
+      preLoaderRoute: typeof AgentListingsIdRouteImport
+      parentRoute: typeof AgentRoute
+    }
     '/agent/documents/$id': {
       id: '/agent/documents/$id'
       path: '/documents/$id'
@@ -1885,6 +1904,7 @@ interface AgentRouteChildren {
   AgentRegisterRoute: typeof AgentRegisterRoute
   AgentIndexRoute: typeof AgentIndexRoute
   AgentDocumentsIdRoute: typeof AgentDocumentsIdRoute
+  AgentListingsIdRoute: typeof AgentListingsIdRoute
   AgentOnboardingBrokerRoute: typeof AgentOnboardingBrokerRoute
   AgentOnboardingComplianceRoute: typeof AgentOnboardingComplianceRoute
   AgentOnboardingInsuranceRoute: typeof AgentOnboardingInsuranceRoute
@@ -1905,6 +1925,7 @@ const AgentRouteChildren: AgentRouteChildren = {
   AgentRegisterRoute: AgentRegisterRoute,
   AgentIndexRoute: AgentIndexRoute,
   AgentDocumentsIdRoute: AgentDocumentsIdRoute,
+  AgentListingsIdRoute: AgentListingsIdRoute,
   AgentOnboardingBrokerRoute: AgentOnboardingBrokerRoute,
   AgentOnboardingComplianceRoute: AgentOnboardingComplianceRoute,
   AgentOnboardingInsuranceRoute: AgentOnboardingInsuranceRoute,

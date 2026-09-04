@@ -74,7 +74,8 @@ function ListingAgentDashboard() {
               </p>
             </div>
             <Link
-              to="/properties/$id"
+              to="/agent/listings/$id"
+              hash="preview"
               params={{ id: p.id }}
               className="text-sm font-medium text-accent underline-offset-4 hover:underline"
             >
@@ -130,7 +131,8 @@ function ListingAgentDashboard() {
               </span>
             </span>
             <Link
-              to="/listings/$id"
+              to="/agent/listings/$id"
+              hash="documents"
               params={{ id: p.id }}
               className="font-medium text-accent underline-offset-4 hover:underline"
             >
