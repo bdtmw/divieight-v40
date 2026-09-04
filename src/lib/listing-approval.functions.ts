@@ -129,7 +129,15 @@ export const tagListingAgent = createServerFn({ method: "POST" })
       .maybeSingle();
     if (!agent || agent.role !== "listing") throw new Error("That agent is not a Listing Agent.");
 
-    await db.from("properties").update({ listing_agent_id: agent.id }).eq("id", property.id);
+    await db
+      .from("properties")
+      .update({
+        listing_agent_id: agent.id,
+        listing_agent_engagement_status: "pending",
+        listing_agent_engagement_at: new Date().toISOString(),
+        listing_agent_decline_reason: null,
+      })
+      .eq("id", property.id);
     await audit(db, {
       actorId: context.userId,
       actorType: "seller",
@@ -142,7 +150,7 @@ export const tagListingAgent = createServerFn({ method: "POST" })
       await notifyUser(
         db,
         agent.auth_user_id,
-        `You were tagged as the Listing Agent for ${property.address}.`,
+        `A seller asked you to act as Listing Agent for ${property.address} — accept or decline the engagement.`,
         "listing_agent",
       );
     }
