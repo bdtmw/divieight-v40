@@ -13,11 +13,24 @@ export function useAuth() {
       setUser(s?.user ?? null);
     });
 
-    supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(async ({ data }) => {
+      if (data.session) {
+        // Validate the stored session against the server. If the auth user was
+        // deleted (e.g. test-data reset), drop the stale local session.
+        const { data: verified, error } = await supabase.auth.getUser();
+        if (error || !verified.user) {
+          await supabase.auth.signOut();
+          setSession(null);
+          setUser(null);
+          setLoading(false);
+          return;
+        }
+      }
       setSession(data.session);
       setUser(data.session?.user ?? null);
       setLoading(false);
     });
+
 
     return () => sub.subscription.unsubscribe();
   }, []);
