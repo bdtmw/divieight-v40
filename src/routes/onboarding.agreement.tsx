@@ -4,6 +4,8 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { OnboardingStepper } from "@/components/OnboardingStepper";
+import { ListingAgentTagger } from "@/components/ListingAgentTagger";
+
 import { cn } from "@/lib/utils";
 import { logAudit } from "@/lib/audit";
 import { markListingStep } from "@/lib/listing-progress";
@@ -261,7 +263,14 @@ function AgreementScreen() {
         </div>
       ) : (
         <>
+          {property?.id && (
+            <div className="mt-8">
+              <ListingAgentTagger propertyId={property.id} />
+            </div>
+          )}
+
           <div className="mt-8 rounded-xl border border-border bg-card shadow-sm">
+
             <div className="border-b border-border px-5 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Listing Agreement · {DOCUMENT_VERSION}
             </div>
