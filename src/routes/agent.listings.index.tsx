@@ -2,7 +2,17 @@ import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { EightSlicesTracker } from "@/components/EightSlicesTracker";
 import { ListingContentApprovalQueue } from "@/components/ListingContentApprovalQueue";
-import { listMyListingProperties } from "@/lib/listing-approval.functions";
+import { useServerFn } from "@tanstack/react-start";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  listMyListingEngagements,
+  listMyListingProperties,
+  rejectListingProperty,
+  respondToListingEngagement,
+  type ListingEngagementInvitation,
+} from "@/lib/listing-approval.functions";
 import {
   APPROVAL_STATUS_LABELS,
   COMPLIANCE_STATUS_LABELS,
@@ -32,18 +42,35 @@ export const Route = createFileRoute("/agent/listings/")({
 
 function ListingAgentDashboard() {
   const [rows, setRows] = useState<ListingAgentProperty[]>([]);
+  const [invites, setInvites] = useState<ListingEngagementInvitation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [declineFor, setDeclineFor] = useState<string | null>(null);
+  const [declineReason, setDeclineReason] = useState("");
+  const [rejectFor, setRejectFor] = useState<string | null>(null);
+  const [rejectReason, setRejectReason] = useState("");
+
+  const loadEngagements = useServerFn(listMyListingEngagements);
+  const respondEngagement = useServerFn(respondToListingEngagement);
+  const rejectProperty = useServerFn(rejectListingProperty);
+
+  async function refresh() {
+    try {
+      const [r, i] = await Promise.all([listMyListingProperties(), loadEngagements({})]);
+      setRows(r);
+      setInvites(i);
+      setError(null);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not load listings.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
-    let cancelled = false;
-    listMyListingProperties()
-      .then((r) => !cancelled && setRows(r))
-      .catch((e) => !cancelled && setError(e instanceof Error ? e.message : "Could not load listings."))
-      .finally(() => !cancelled && setLoading(false));
-    return () => {
-      cancelled = true;
-    };
+    void refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -55,6 +82,102 @@ function ListingAgentDashboard() {
           approval and a compliance review before the listing goes live.
         </p>
       </header>
+
+      {invites.length > 0 && (
+        <section className="rounded-xl border border-accent/40 bg-accent/5 p-6">
+          <h2 className="font-display text-lg font-semibold text-foreground">
+            Engagement requests ({invites.length})
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            A seller asked you to act as their Listing Agent. Property details open once you accept.
+          </p>
+          <ul className="mt-4 space-y-4">
+            {invites.map((inv) => (
+              <li key={inv.propertyId} className="rounded-lg border border-border bg-card p-4">
+                <p className="break-words text-sm font-medium text-foreground">{inv.address}</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {inv.city}, {inv.state} {inv.zip}
+                  {inv.sellerName ? ` · Seller: ${inv.sellerName}` : ""}
+                </p>
+                {declineFor === inv.propertyId ? (
+                  <div className="mt-3 space-y-2">
+                    <Textarea
+                      value={declineReason}
+                      onChange={(e) => setDeclineReason(e.target.value)}
+                      placeholder="Why are you declining this engagement?"
+                      rows={3}
+                    />
+                    <div className="flex flex-wrap gap-2">
+                      <Button
+                        size="sm"
+                        disabled={busy}
+                        onClick={async () => {
+                          setBusy(true);
+                          try {
+                            await respondEngagement({
+                              data: {
+                                propertyId: inv.propertyId,
+                                accept: false,
+                                reason: declineReason,
+                              },
+                            });
+                            toast.success("Engagement declined — the seller has been notified.");
+                            setDeclineFor(null);
+                            setDeclineReason("");
+                            await refresh();
+                          } catch (e) {
+                            toast.error(e instanceof Error ? e.message : "Could not decline.");
+                          } finally {
+                            setBusy(false);
+                          }
+                        }}
+                      >
+                        Confirm decline
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => setDeclineFor(null)}>
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Button
+                      size="sm"
+                      disabled={busy}
+                      onClick={async () => {
+                        setBusy(true);
+                        try {
+                          await respondEngagement({
+                            data: { propertyId: inv.propertyId, accept: true },
+                          });
+                          toast.success("Engagement accepted.");
+                          await refresh();
+                        } catch (e) {
+                          toast.error(e instanceof Error ? e.message : "Could not accept.");
+                        } finally {
+                          setBusy(false);
+                        }
+                      }}
+                    >
+                      Accept engagement
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setDeclineFor(inv.propertyId);
+                        setDeclineReason("");
+                      }}
+                    >
+                      Decline
+                    </Button>
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {loading && <p className="text-sm text-muted-foreground">Loading…</p>}
       {error && <p className="text-sm text-destructive">{error}</p>}
@@ -150,6 +273,59 @@ function ListingAgentDashboard() {
               </div>
             </div>
           )}
+
+          <div className="mt-6 border-t border-border pt-5">
+            {rejectFor === p.id ? (
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-foreground">
+                  Reject this property and send it back to the seller
+                </p>
+                <Textarea
+                  value={rejectReason}
+                  onChange={(e) => setRejectReason(e.target.value)}
+                  placeholder="Explain what the seller must change."
+                  rows={3}
+                />
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    disabled={busy}
+                    onClick={async () => {
+                      setBusy(true);
+                      try {
+                        await rejectProperty({ data: { propertyId: p.id, reason: rejectReason } });
+                        toast.success("Property rejected — the seller has been notified.");
+                        setRejectFor(null);
+                        setRejectReason("");
+                        await refresh();
+                      } catch (e) {
+                        toast.error(e instanceof Error ? e.message : "Could not reject.");
+                      } finally {
+                        setBusy(false);
+                      }
+                    }}
+                  >
+                    Confirm rejection
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => setRejectFor(null)}>
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  setRejectFor(p.id);
+                  setRejectReason("");
+                }}
+              >
+                Reject this property
+              </Button>
+            )}
+          </div>
         </section>
       ))}
     </div>
