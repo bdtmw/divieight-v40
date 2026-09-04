@@ -9,7 +9,7 @@ import {
   type ListingAgentProperty,
 } from "@/lib/listing-approval";
 
-export const Route = createFileRoute("/agent/listings")({
+export const Route = createFileRoute("/agent/listings/")({
   head: () => ({
     meta: [
       { title: "Listing Agent Dashboard — divieight" },

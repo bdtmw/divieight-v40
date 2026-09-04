@@ -909,3 +909,108 @@ export const resolveComplianceReview = createServerFn({ method: "POST" })
     }
     return { ok: true };
   });
+
+/**
+ * Listing Agent / Broker / Admin view of one tagged property: full detail,
+ * photos and data-room documents. Read through the admin client and scoped
+ * by `authorizedScope`, because RLS on `properties` is seller-owned and the
+ * public marketplace page only serves listings already published.
+ */
+export const getListingAgentPropertyDetail = createServerFn({ method: "GET" })
+  .inputValidator((data: { propertyId: string }) => data)
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ data, context }) => {
+    const db = await admin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/admin.server");
+    const scope = await authorizedScope(db, context.supabase, context.userId);
+
+    const { data: property } = await db
+      .from("properties")
+      .select(
+        "id, address, city, state, zip, status, listing_status, listing_price, property_type, bedrooms, bathrooms, square_footage, description, seller_id, listing_agent_id, content_approval_status, compliance_status",
+      )
+      .eq("id", data.propertyId)
+      .maybeSingle();
+    if (!property) throw new Error("Listing not found.");
+    if (scope.agentIds && !scope.agentIds.includes(property.listing_agent_id)) {
+      throw new Error("You are not the Listing Agent for this property.");
+    }
+
+    const [{ data: seller }, { data: media }, { data: docs }] = await Promise.all([
+      db
+        .from("sellers")
+        .select("id, full_name, exit_type, retained_shares")
+        .eq("id", property.seller_id)
+        .maybeSingle(),
+      db
+        .from("property_media")
+        .select("url, caption, display_order, media_type")
+        .eq("property_id", property.id)
+        .eq("media_type", "photo")
+        .order("display_order", { ascending: true }),
+      db
+        .from("property_documents")
+        .select("id, document_name, document_type, file_url, uploaded_at")
+        .eq("property_id", property.id)
+        .order("uploaded_at", { ascending: false }),
+    ]);
+
+    const photoPaths = ((media ?? []) as any[]).map((m) => m.url).filter(Boolean);
+    let photos: { url: string; caption: string | null }[] = [];
+    if (photoPaths.length > 0) {
+      const { data: signed } = await supabaseAdmin.storage
+        .from("property-media")
+        .createSignedUrls(photoPaths, 60 * 60);
+      const byPath = new Map<string, string>();
+      ((signed ?? []) as any[]).forEach((s) => {
+        if (s.path && s.signedUrl) byPath.set(s.path, s.signedUrl);
+      });
+      photos = ((media ?? []) as any[])
+        .map((m) => ({ url: byPath.get(m.url) ?? "", caption: m.caption ?? null }))
+        .filter((p) => !!p.url);
+    }
+
+    const documents: { id: string; name: string; type: string | null; url: string | null; uploadedAt: string | null }[] =
+      [];
+    for (const d of (docs ?? []) as any[]) {
+      const { data: signed } = await supabaseAdmin.storage
+        .from("property-documents")
+        .createSignedUrl(d.file_url, 60 * 60);
+      documents.push({
+        id: d.id,
+        name: d.document_name,
+        type: d.document_type ?? null,
+        url: signed?.signedUrl ?? null,
+        uploadedAt: d.uploaded_at ?? null,
+      });
+    }
+
+    return {
+      property: {
+        id: property.id,
+        address: property.address,
+        city: property.city,
+        state: property.state,
+        zip: property.zip,
+        status: property.status,
+        listing_status: property.listing_status ?? "forming",
+        listing_price: property.listing_price,
+        property_type: property.property_type,
+        bedrooms: property.bedrooms,
+        bathrooms: property.bathrooms,
+        square_footage: property.square_footage,
+        description: property.description,
+        content_approval_status: property.content_approval_status ?? "not_submitted",
+        compliance_status: property.compliance_status ?? "not_started",
+      },
+      seller: seller
+        ? {
+            full_name: seller.full_name ?? null,
+            exit_type: seller.exit_type ?? null,
+            retained_shares: seller.retained_shares ?? null,
+          }
+        : null,
+      photos,
+      documents,
+    };
+  });
