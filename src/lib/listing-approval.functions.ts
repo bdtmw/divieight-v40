@@ -1212,13 +1212,20 @@ export const getListingAgentPropertyDetail = createServerFn({ method: "GET" })
     const { data: property } = await db
       .from("properties")
       .select(
-        "id, address, city, state, zip, status, listing_status, listing_price, property_type, bedrooms, bathrooms, square_footage, description, seller_id, listing_agent_id, content_approval_status, compliance_status",
+        "id, address, city, state, zip, status, listing_status, listing_price, property_type, bedrooms, bathrooms, square_footage, description, seller_id, listing_agent_id, content_approval_status, compliance_status, listing_agent_engagement_status",
       )
       .eq("id", data.propertyId)
       .maybeSingle();
     if (!property) throw new Error("Listing not found.");
     if (scope.agentIds && !scope.agentIds.includes(property.listing_agent_id)) {
       throw new Error("You are not the Listing Agent for this property.");
+    }
+    // Details stay hidden until the agent accepts the engagement.
+    if (
+      scope.kind === "agent" &&
+      (property.listing_agent_engagement_status ?? "none") !== "accepted"
+    ) {
+      throw new Error("Accept the Listing Agent engagement to view this property.");
     }
 
     const [{ data: seller }, { data: media }, { data: docs }] = await Promise.all([
