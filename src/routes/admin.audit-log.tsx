@@ -91,8 +91,13 @@ function AuditLogPage() {
     [rows, actorFilter],
   );
 
+  // Seller, buyer, agent and broker are always offered — a filter option must
+  // exist even before the first row of that actor type lands in the log.
   const actorTypes = useMemo(
-    () => Array.from(new Set(rows.map((r) => r.actor_type))).sort(),
+    () =>
+      Array.from(
+        new Set(["seller", "buyer", "agent", "broker", ...rows.map((r) => r.actor_type)]),
+      ).sort(),
     [rows],
   );
 
