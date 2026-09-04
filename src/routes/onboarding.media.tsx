@@ -393,7 +393,7 @@ function MediaScreen() {
       return;
     }
     toast.success("Media saved. Listing moved to review.");
-    navigate({ to: "/onboarding/agreement", search: { property: propertyId } });
+    navigate({ to: "/onboarding/listing-agent", search: { property: propertyId } });
   }
 
   return (

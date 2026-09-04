@@ -4,6 +4,7 @@ export type ListingStep =
   | "property_authority"
   | "listing_creation"
   | "media_upload"
+  | "listing_agent"
   | "agreement";
 
 /**
@@ -25,7 +26,8 @@ export async function markListingStep(propertyId: string, step: ListingStep) {
 const ROUTES: Record<ListingStep, string> = {
   property_authority: "/onboarding/listing",
   listing_creation: "/onboarding/media",
-  media_upload: "/onboarding/agreement",
+  media_upload: "/onboarding/listing-agent",
+  listing_agent: "/onboarding/agreement",
   agreement: "/onboarding/agreement",
 };
 

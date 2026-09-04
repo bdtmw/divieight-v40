@@ -3,10 +3,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 
-const STEPS = ["Intent", "Identity", "Property", "Listing", "Media", "Agreement"] as const;
+const STEPS = ["Intent", "Identity", "Property", "Listing", "Media", "Listing Agent", "Agreement"] as const;
 const IDENTITY_STEP = 2;
 
-export type OnboardingStep = 1 | 2 | 3 | 4 | 5 | 6;
+export type OnboardingStep = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 /**
  * Identity is a one-time check. Once the seller has completed it, we hide the
