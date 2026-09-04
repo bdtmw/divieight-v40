@@ -11,6 +11,8 @@ import {
   type ReferOnlyElection,
 } from "@/lib/designation.functions";
 import { listMyHlaInvitations } from "@/lib/hla.functions";
+import { listMyListingProperties } from "@/lib/listing-approval.functions";
+import type { ListingAgentProperty } from "@/lib/listing-approval";
 import type { HlaInvitation } from "@/lib/hla";
 import { Link } from "@tanstack/react-router";
 
@@ -28,28 +30,38 @@ export function AgentActionItems() {
   const respondDesignation = useServerFn(respondToDesignation);
   const respondElection = useServerFn(respondToReferOnly);
   const loadHlaInvites = useServerFn(listMyHlaInvitations);
+  const loadListings = useServerFn(listMyListingProperties);
 
   const [designations, setDesignations] = useState<DesignationRequest[]>([]);
   const [elections, setElections] = useState<ReferOnlyElection[]>([]);
   const [hlaInvites, setHlaInvites] = useState<HlaInvitation[]>([]);
+  const [listingReviews, setListingReviews] = useState<ListingAgentProperty[]>([]);
   const [busy, setBusy] = useState(false);
 
   const refresh = useCallback(async () => {
-    const [d, e, h] = await Promise.all([
+    const [d, e, h, l] = await Promise.all([
       loadDesignations({}),
       loadElections({}),
       loadHlaInvites({}),
+      loadListings({}).catch(() => [] as ListingAgentProperty[]),
     ]);
     setDesignations(d);
     setElections(e);
     setHlaInvites(h);
-  }, [loadDesignations, loadElections, loadHlaInvites]);
+    setListingReviews((l ?? []).filter((p) => p.pending_items > 0));
+  }, [loadDesignations, loadElections, loadHlaInvites, loadListings]);
 
   useEffect(() => {
     void refresh();
   }, [refresh]);
 
-  if (designations.length === 0 && elections.length === 0 && hlaInvites.length === 0) return null;
+  if (
+    designations.length === 0 &&
+    elections.length === 0 &&
+    hlaInvites.length === 0 &&
+    listingReviews.length === 0
+  )
+    return null;
 
   return (
     <section className="rounded-xl border border-accent/40 bg-accent/5 p-6">
@@ -59,6 +71,24 @@ export function AgentActionItems() {
       </div>
 
       <ul className="mt-4 space-y-4">
+        {listingReviews.map((p) => (
+          <li key={`listing-${p.id}`} className="rounded-lg border border-border bg-card p-4">
+            <p className="text-sm font-medium text-foreground">
+              Listing content is awaiting your approval ({p.pending_items})
+            </p>
+            <p className="mt-1 break-words text-xs text-muted-foreground">
+              {p.address}, {p.city}, {p.state} {p.zip}
+              {p.seller_name ? ` · Seller: ${p.seller_name}` : ""}
+            </p>
+            <Link
+              to="/agent/listings"
+              className="mt-3 inline-flex h-9 items-center rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground hover:opacity-90"
+            >
+              Review listing content
+            </Link>
+          </li>
+        ))}
+
         {hlaInvites.map((inv) => (
           <li key={inv.podId} className="rounded-lg border border-border bg-card p-4">
             <p className="text-sm font-medium text-foreground">
