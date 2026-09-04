@@ -7,6 +7,7 @@ import { OnboardingStepper } from "@/components/OnboardingStepper";
 import { ListingAgentTagger } from "@/components/ListingAgentTagger";
 import { Button } from "@/components/ui/button";
 import { markListingStep } from "@/lib/listing-progress";
+import { getListingAgentTagState } from "@/lib/listing-approval.functions";
 
 export const Route = createFileRoute("/onboarding/listing-agent")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -60,8 +61,23 @@ function ListingAgentScreen() {
     })();
   }, [user, loading, propertyParam, navigate]);
 
+  const [checking, setChecking] = useState(false);
+
   async function goNext() {
     if (!propertyId) return;
+    setChecking(true);
+    try {
+      const state = await getListingAgentTagState({ data: { propertyId } });
+      if (!state.agentName && !state.invitedEmail) {
+        toast.error("Tag a Listing Agent or invite one by email before continuing.");
+        return;
+      }
+    } catch {
+      toast.error("Could not confirm your Listing Agent. Please try again.");
+      return;
+    } finally {
+      setChecking(false);
+    }
     await markListingStep(propertyId, "listing_agent");
     navigate({ to: "/onboarding/agreement", search: { property: propertyId } });
   }
@@ -102,7 +118,7 @@ function ListingAgentScreen() {
             >
               Back
             </Button>
-            <Button onClick={goNext}>Continue to agreement</Button>
+            <Button onClick={goNext} disabled={checking}>Continue to agreement</Button>
           </div>
         </>
       )}
