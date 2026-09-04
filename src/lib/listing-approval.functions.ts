@@ -108,11 +108,11 @@ export const searchListingAgents = createServerFn({ method: "POST" })
 async function assertSellerOwns(db: Db, propertyId: string, userId: string) {
   const { data } = await db
     .from("properties")
-    .select("id, seller_id, address")
+    .select("id, seller_id, address, state")
     .eq("id", propertyId)
     .maybeSingle();
   if (!data || data.seller_id !== userId) throw new Error("Property not found.");
-  return data as { id: string; seller_id: string; address: string };
+  return data as { id: string; seller_id: string; address: string; state: string | null };
 }
 
 export const tagListingAgent = createServerFn({ method: "POST" })
