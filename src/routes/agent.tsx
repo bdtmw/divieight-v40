@@ -64,6 +64,8 @@ function AgentPortalLayout() {
       return;
     }
     setChecking(true);
+    // Re-check on navigation too: right after registration the profile row is
+    // created a moment before we land on the first onboarding screen.
     getAgentProfile(user.id).then((row) => {
       if (cancelled) return;
       setAgent(row);
@@ -72,7 +74,8 @@ function AgentPortalLayout() {
     return () => {
       cancelled = true;
     };
-  }, [user, loading]);
+  }, [user, loading, pathname]);
+
 
   useEffect(() => {
     if (isPublic || loading || checking) return;
