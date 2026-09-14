@@ -83,11 +83,26 @@ function AgentPortalLayout() {
       navigate({ to: "/agent/login", replace: true });
       return;
     }
-    if (!agent) {
-      toast.error("This area is for licensed agents on the divieight Professional Portal.");
-      navigate({ to: "/agent/register", replace: true });
-    }
+    if (agent) return;
+    // Give the just-created profile one more chance before bouncing out.
+    let cancelled = false;
+    const t = setTimeout(() => {
+      getAgentProfile(user.id).then((row) => {
+        if (cancelled) return;
+        if (row) {
+          setAgent(row);
+          return;
+        }
+        toast.error("This area is for licensed agents on the divieight Professional Portal.");
+        navigate({ to: "/agent/register", replace: true });
+      });
+    }, 900);
+    return () => {
+      cancelled = true;
+      clearTimeout(t);
+    };
   }, [isPublic, loading, checking, user, agent, navigate]);
+
 
   async function onSignOut() {
     await supabase.auth.signOut();
