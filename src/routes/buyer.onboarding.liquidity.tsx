@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { logAudit } from "@/lib/audit";
+import { budgetBucketLabel } from "@/lib/budget-buckets";
 import {
   LIQUIDITY_MULTIPLIER,
   PLAID_SANDBOX,
@@ -58,6 +59,7 @@ interface DocEntry {
 interface BuyerRow {
   id: string;
   target_budget: number | null;
+  target_budget_bucket: string | null;
   plaid_consent_at: string | null;
   liquidity_verified: boolean;
   liquidity_status: string;
@@ -102,7 +104,7 @@ function LiquidityGatePage() {
       const { data: b } = await supabase
         .from("buyer_accounts")
         .select(
-          "id, target_budget, plaid_consent_at, liquidity_verified, liquidity_status, liquidity_institution, liquidity_documents, priority_rank_timestamp",
+          "id, target_budget, target_budget_bucket, plaid_consent_at, liquidity_verified, liquidity_status, liquidity_institution, liquidity_documents, priority_rank_timestamp",
         )
         .eq("auth_user_id", user.id)
         .maybeSingle();
@@ -127,7 +129,9 @@ function LiquidityGatePage() {
     };
   }, [user, loading, navigate]);
 
+  // Internal Liquidity Gate basis only — never rendered as a figure.
   const budget = buyer?.target_budget ?? 0;
+  const budgetLabel = buyer ? budgetBucketLabel(buyer.target_budget_bucket, buyer.target_budget) : "";
   const required = budget * LIQUIDITY_MULTIPLIER;
 
   async function saveConsent(next: boolean) {
@@ -312,7 +316,8 @@ function LiquidityGatePage() {
         <p className="mt-3 text-base text-muted-foreground">
           Before your Golden Ticket is issued we confirm you hold at least{" "}
           {LIQUIDITY_MULTIPLIER}× your target budget
-          {budget > 0 ? ` (${currency(required)} against a ${currency(budget)} budget)` : ""}.
+          {budgetLabel ? ` range (${budgetLabel})` : ""}. The check runs internally — we never
+          display a calculated figure.
         </p>
       </div>
 
@@ -381,7 +386,7 @@ function LiquidityGatePage() {
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
             {balances
-              ? `${buyer.liquidity_institution} · ${currency(totalAvailableBalance(balances))} available against ${currency(required)} required.`
+              ? `${buyer.liquidity_institution} · ${currency(totalAvailableBalance(balances))} available — clears the 1.2× requirement for your budget range.`
               : `Verified via ${buyer.liquidity_institution ?? "your linked institution"}.`}
           </p>
         </div>

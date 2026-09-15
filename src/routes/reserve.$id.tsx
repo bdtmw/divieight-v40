@@ -12,6 +12,7 @@ import {
   createReservation,
 } from "@/lib/reservations.functions";
 import { RESERVATION_BLOCK_COPY } from "@/lib/pod";
+import { budgetBucketLabel } from "@/lib/budget-buckets";
 import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/reserve/$id")({
@@ -255,7 +256,7 @@ function ReservePage() {
                 <p className="mt-1 text-sm text-muted-foreground">
                   Your verified liquidity covers at least 1.2× your stated target budget
                   {eligibility?.targetBudget
-                    ? ` of ${money(eligibility.targetBudget)}`
+                    ? ` range of ${budgetBucketLabel(null, eligibility.targetBudget)}`
                     : ""}
                   , so you're eligible to hold a share on this home.
                 </p>

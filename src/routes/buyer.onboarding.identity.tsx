@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { BuyerOnboardingStepper } from "@/components/BuyerOnboardingStepper";
 import { Field } from "@/components/Field";
-import { CurrencyInput } from "@/components/CurrencyInput";
+import { BUDGET_BUCKETS, bucketById, bucketForAmount, liquidityBasisFor } from "@/lib/budget-buckets";
 import { cn } from "@/lib/utils";
 import { logAudit } from "@/lib/audit";
 
@@ -90,7 +90,8 @@ function BuyerIdentityScreen() {
     date_of_birth: "",
   });
   const [intent, setIntent] = useState<string>("");
-  const [budget, setBudget] = useState("");
+  /** Bucket id — the budget is never captured as a free-typed amount. */
+  const [budgetBucket, setBudgetBucket] = useState("");
   const [reserveConfirmed, setReserveConfirmed] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -104,7 +105,7 @@ function BuyerIdentityScreen() {
     (async () => {
       const { data: account } = await supabase
         .from("buyer_accounts")
-        .select("id, intent, target_budget")
+        .select("id, intent, target_budget, target_budget_bucket")
         .eq("auth_user_id", user.id)
         .maybeSingle();
       if (cancelled) return;
@@ -114,7 +115,10 @@ function BuyerIdentityScreen() {
       }
       setAccountId(account.id);
       if (account.intent) setIntent(account.intent);
-      if (account.target_budget != null) setBudget(String(account.target_budget));
+      // Legacy rows hold an exact amount — show it as its nearest bucket.
+      const row = account as unknown as { target_budget: number | null; target_budget_bucket: string | null };
+      const existing = bucketById(row.target_budget_bucket) ?? bucketForAmount(row.target_budget);
+      if (existing) setBudgetBucket(existing.id);
 
       const { data: member } = await supabase
         .from("account_members")
@@ -171,10 +175,7 @@ function BuyerIdentityScreen() {
     if (!fields.address.trim()) next.address = "Address is required.";
     if (!fields.date_of_birth.trim()) next.date_of_birth = "Date of birth is required.";
     if (!intent) next.intent = "Select how you plan to use your shares.";
-    const parsedBudget = Number(budget.replace(/[^0-9.]/g, ""));
-    if (!budget.trim() || !Number.isFinite(parsedBudget) || parsedBudget <= 0) {
-      next.budget = "Enter your target budget.";
-    }
+    if (!bucketById(budgetBucket)) next.budget = "Select your target budget range.";
     if (!reserveConfirmed) next.reserve = "Please confirm your 20% reserve.";
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -225,7 +226,9 @@ function BuyerIdentityScreen() {
       .from("buyer_accounts")
       .update({
         intent,
-        target_budget: Number(budget.replace(/[^0-9.]/g, "")),
+        target_budget_bucket: budgetBucket,
+        // Internal Liquidity Gate basis only — never displayed to a human.
+        target_budget: liquidityBasisFor(bucketById(budgetBucket)!),
         last_activity_at: new Date().toISOString(),
         stall_warning_sent_at: null,
         onboarding_status: "lifestyle_survey_pending",
@@ -434,15 +437,42 @@ function BuyerIdentityScreen() {
         </p>
 
         <div className="mt-5 grid gap-5">
-          <CurrencyInput
-            label="What is your target budget?"
-            name="target_budget"
-            value={budget.replace(/[^0-9]/g, "")}
-            onValueChange={setBudget}
-            error={errors.budget}
-            placeholder="250,000"
-            hint="Total amount you're prepared to invest in shares."
-          />
+          <fieldset>
+            <legend className="text-sm font-semibold text-foreground">
+              What is your target budget?
+            </legend>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Choose the range you&apos;re prepared to invest in shares. We keep budgets as broad
+              ranges so no individual buyer&apos;s figure can be identified.
+            </p>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              {BUDGET_BUCKETS.map((b) => {
+                const selected = budgetBucket === b.id;
+                return (
+                  <label
+                    key={b.id}
+                    className={cn(
+                      "flex cursor-pointer items-center gap-3 rounded-lg border p-4 transition-colors",
+                      selected ? "border-accent bg-accent/5" : "border-border hover:bg-secondary",
+                    )}
+                  >
+                    <input
+                      type="radio"
+                      name="target_budget_bucket"
+                      value={b.id}
+                      checked={selected}
+                      onChange={() => setBudgetBucket(b.id)}
+                      className="h-4 w-4 accent-[var(--color-accent)]"
+                    />
+                    <span className="text-sm font-semibold text-foreground">{b.label}</span>
+                  </label>
+                );
+              })}
+            </div>
+            {errors.budget ? (
+              <p className="mt-2 text-xs text-destructive">{errors.budget}</p>
+            ) : null}
+          </fieldset>
 
           <label className="flex items-start gap-3 rounded-lg border border-border p-4">
             <input
