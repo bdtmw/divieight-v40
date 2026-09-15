@@ -36,6 +36,9 @@ export interface TetherResult {
   fullCommission: boolean;
   /** True when a Resident Agent referrer still owes a Refer-Only election. */
   awaitingReferOnlyElection?: boolean;
+  /** True when the pick was refused because that agent holds the listing. */
+  dualAgencyBlocked?: boolean;
+
 }
 
 /** Loose market match: exact zip, or either string containing the other. */
