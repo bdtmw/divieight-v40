@@ -1,19 +1,23 @@
--- divieight — Support Intake.
+-- divieight — Support Intake tickets.
 --
--- On-site support form: anyone (signed in or not) can file a ticket; only
--- admins can read or work them. `channel` defaults to 'form' so a future
--- live-chat channel can write into the same table without restructuring.
+-- One table, no restructuring needed later: `channel` (default 'form')
+-- future-proofs the data model for a live-chat intake without changing
+-- anything else. Ticket creation and status/note changes are logged to
+-- audit_log by the app; this file only creates the storage.
 --
 -- Run this in the external Supabase SQL editor.
 
 CREATE TABLE IF NOT EXISTS public.support_tickets (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  submitter_auth_user_id uuid REFERENCES auth.users(id) ON DELETE SET NULL,
+  -- Set when the submitter was signed in; null for anonymous visitors.
+  submitter_auth_user_id uuid REFERENCES auth.users (id) ON DELETE SET NULL,
   submitter_name text NOT NULL,
   submitter_email text NOT NULL,
   category text NOT NULL,
   description text NOT NULL,
+  -- 'form' today; 'chat' reserved for a future intake without a schema change.
   channel text NOT NULL DEFAULT 'form',
+  -- new | in_progress | resolved
   status text NOT NULL DEFAULT 'new',
   internal_note text,
   resolved_at timestamptz,
@@ -21,76 +25,47 @@ CREATE TABLE IF NOT EXISTS public.support_tickets (
   updated_at timestamptz NOT NULL DEFAULT now()
 );
 
-GRANT SELECT, INSERT, UPDATE ON public.support_tickets TO authenticated;
-GRANT INSERT ON public.support_tickets TO anon;
+CREATE INDEX IF NOT EXISTS support_tickets_created_at_idx
+  ON public.support_tickets (created_at DESC);
+
+CREATE INDEX IF NOT EXISTS support_tickets_status_idx
+  ON public.support_tickets (status)
+  WHERE status <> 'resolved';
+
+CREATE INDEX IF NOT EXISTS support_tickets_category_idx
+  ON public.support_tickets (category);
+
+-- The form is reachable by signed-out visitors, so anon INSERT is required.
+GRANT INSERT ON public.support_tickets TO anon, authenticated;
+-- Signed-in users may read their own tickets; admins read all via policy.
+GRANT SELECT ON public.support_tickets TO authenticated;
+-- Only admins update (status / internal note) — enforced by policy below.
+GRANT UPDATE ON public.support_tickets TO authenticated;
 GRANT ALL ON public.support_tickets TO service_role;
 
 ALTER TABLE public.support_tickets ENABLE ROW LEVEL SECURITY;
 
--- Anyone may file a ticket; a signed-in submitter may only stamp their own id.
-DROP POLICY IF EXISTS "Anyone can file a support ticket" ON public.support_tickets;
-CREATE POLICY "Anyone can file a support ticket"
-  ON public.support_tickets FOR INSERT
+-- Anyone (including signed-out visitors) can submit a ticket.
+CREATE POLICY "Anyone can submit a support ticket"
+  ON public.support_tickets
+  FOR INSERT
   TO anon, authenticated
-  WITH CHECK (
-    submitter_auth_user_id IS NULL
-    OR submitter_auth_user_id = auth.uid()
+  WITH CHECK (true);
+
+-- Submitters can read their own tickets; admins can read all.
+CREATE POLICY "Users read own tickets, admins read all"
+  ON public.support_tickets
+  FOR SELECT
+  TO authenticated
+  USING (
+    submitter_auth_user_id = auth.uid()
+    OR public.has_role(auth.uid(), 'admin')
   );
 
--- Submitters can read their own tickets; admins read everything.
-DROP POLICY IF EXISTS "Submitters read own tickets" ON public.support_tickets;
-CREATE POLICY "Submitters read own tickets"
-  ON public.support_tickets FOR SELECT
-  TO authenticated
-  USING (submitter_auth_user_id = auth.uid());
-
-DROP POLICY IF EXISTS "Admins read all tickets" ON public.support_tickets;
-CREATE POLICY "Admins read all tickets"
-  ON public.support_tickets FOR SELECT
-  TO authenticated
-  USING (public.has_role(auth.uid(), 'admin'));
-
-DROP POLICY IF EXISTS "Admins update tickets" ON public.support_tickets;
+-- Only admins change status / add the internal note.
 CREATE POLICY "Admins update tickets"
-  ON public.support_tickets FOR UPDATE
+  ON public.support_tickets
+  FOR UPDATE
   TO authenticated
   USING (public.has_role(auth.uid(), 'admin'))
   WITH CHECK (public.has_role(auth.uid(), 'admin'));
-
-CREATE INDEX IF NOT EXISTS support_tickets_status_idx
-  ON public.support_tickets (status, created_at DESC);
-CREATE INDEX IF NOT EXISTS support_tickets_category_idx
-  ON public.support_tickets (category, created_at DESC);
-
--- Ticket creation is logged by the database so anonymous submissions are
--- captured too. Status changes are logged by the admin console.
-CREATE OR REPLACE FUNCTION public.log_support_ticket_created()
-RETURNS trigger
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = public
-AS $$
-BEGIN
-  INSERT INTO public.audit_log (actor_id, actor_type, action_type, entity_type, entity_id, metadata)
-  VALUES (
-    NEW.submitter_auth_user_id,
-    'support',
-    'support.ticket_created',
-    'support_ticket',
-    NEW.id,
-    jsonb_build_object(
-      'category', NEW.category,
-      'channel', NEW.channel,
-      'status', NEW.status,
-      'submitter_email', NEW.submitter_email,
-      'authenticated', NEW.submitter_auth_user_id IS NOT NULL
-    )
-  );
-  RETURN NEW;
-END;
-$$;
-
-DROP TRIGGER IF EXISTS support_tickets_audit_insert ON public.support_tickets;
-CREATE TRIGGER support_tickets_audit_insert
-  AFTER INSERT ON public.support_tickets
-  FOR EACH ROW EXECUTE FUNCTION public.log_support_ticket_created();
