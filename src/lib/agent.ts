@@ -36,6 +36,12 @@ export interface AgentRow {
   eo_insurance_uploaded_at: string | null;
   eo_broker_affirmed: boolean | null;
   eo_broker_affirmed_at: string | null;
+  /** E&O coverage end date, captured at onboarding. */
+  eo_expires_at: string | null;
+  /** True once coverage expired without renewed evidence. */
+  eo_lapsed: boolean | null;
+  eo_lapsed_at: string | null;
+  eo_restored_at: string | null;
   nar_cert_signed_at: string | null;
   nar_cert_expires_at: string | null;
   nar_cert_lapsed: boolean | null;

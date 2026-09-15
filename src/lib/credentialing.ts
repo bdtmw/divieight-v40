@@ -70,6 +70,7 @@ export interface CredentialEntity {
   onboarding_status: string;
   eo_insurance_url: string | null;
   eo_broker_affirmed: boolean | null;
+  eo_expires_at: string | null;
   nar_cert_signed_at: string | null;
   nar_cert_expires_at: string | null;
   nar_cert_lapsed: boolean | null;
