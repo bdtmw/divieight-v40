@@ -193,10 +193,14 @@ export function AgentActionItems() {
               A buyer you referred is now vetted — choose how to proceed
             </p>
             <p className="mt-1 break-words text-xs text-muted-foreground">
-              {e.buyerEmail ?? "Vetted buyer"} · Target market {e.market ?? "—"}. Refer-Only hands
-              the buyer to another Resident Agent; your compensation is then the 25% referral split
-              of the buyer-side commission at closing.
+              {e.buyerEmail ?? "Vetted buyer"} · Target market {e.market ?? "—"}. Keep this buyer and
+              you become their tethered Resident Agent, holding the full buyer-side commission at
+              closing (before any Heavy Lifter Premium) with no referral agreement. Hand off and
+              another Resident Agent in that market is tethered, a Standard NAR Referral Agreement is
+              generated for you both to sign, and the buyer-side commission splits 25% to you / 75%
+              to them.
             </p>
+
             <div className="mt-3 flex flex-wrap gap-2">
               <button
                 type="button"
