@@ -107,7 +107,7 @@ function SelectHeavyLifter() {
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-foreground">{a.fullName}</p>
                     <p className="text-xs text-muted-foreground">
-                      Licensed in {a.licenseState} · {a.serviceArea}
+                      Licensed in {a.licenseState} · Markets: {a.serviceArea}
                       {a.brokerageName ? ` · ${a.brokerageName}` : ""}
                     </p>
                     <p className="mt-1 text-xs text-muted-foreground">
