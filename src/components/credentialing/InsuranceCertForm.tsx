@@ -24,6 +24,7 @@ export function InsuranceCertForm({
 }) {
   const [file, setFile] = useState<File | null>(null);
   const [brokerAffirmed, setBrokerAffirmed] = useState(false);
+  const [eoExpiry, setEoExpiry] = useState("");
   const [narChecked, setNarChecked] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -45,6 +46,10 @@ export function InsuranceCertForm({
     }
     if (file && file.size > MAX_BYTES) {
       setError("File must be 10MB or smaller.");
+      return;
+    }
+    if (!eoExpiry) {
+      setError("Enter the date your E&O coverage expires.");
       return;
     }
     if (!narChecked) {
@@ -69,6 +74,7 @@ export function InsuranceCertForm({
       entityType,
       eoInsurancePath: path,
       brokerAffirmed,
+      eoExpiresAt: new Date(`${eoExpiry}T00:00:00`).toISOString(),
     });
     setSubmitting(false);
     if (res.error) {
@@ -132,6 +138,21 @@ export function InsuranceCertForm({
             }}
           />
           <span className="text-muted-foreground">{affirmationLabel}</span>
+        </label>
+
+        <label className="mt-4 block text-sm">
+          <span className="text-muted-foreground">Coverage expires on</span>
+          <input
+            type="date"
+            required
+            value={eoExpiry}
+            onChange={(e) => setEoExpiry(e.target.value)}
+            className="mt-2 h-10 w-full max-w-xs rounded-lg border border-border bg-background px-3 text-sm text-foreground"
+          />
+          <span className="mt-2 block text-xs text-muted-foreground">
+            We remind you 60, 30 and 7 days before this date, and copy your Broker of Record at 30
+            days. Coverage that expires without renewed evidence puts your work on hold.
+          </span>
         </label>
       </section>
 
