@@ -263,16 +263,59 @@ function AgentRegisterPage() {
           />
         </div>
 
-        <Field
-          label="Service area"
-          name="serviceArea"
-          placeholder="Naples, FL"
-          value={values.serviceArea}
-          onChange={set("serviceArea")}
-          error={errors.serviceArea}
-          hint="The market you cover — used later to match you with pods."
-          required
-        />
+        <div className="space-y-2">
+          <label htmlFor="marketDraft" className="text-sm font-medium text-foreground">
+            Markets you're licensed and active in
+          </label>
+          <div className="flex gap-2">
+            <input
+              id="marketDraft"
+              name="marketDraft"
+              value={marketDraft}
+              onChange={(e) => setMarketDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  addMarket();
+                }
+              }}
+              placeholder="Naples, FL"
+              className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            />
+            <button
+              type="button"
+              onClick={addMarket}
+              className="h-11 shrink-0 rounded-md border border-border px-4 text-sm font-medium text-foreground hover:bg-secondary"
+            >
+              Add
+            </button>
+          </div>
+          {values.markets.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {values.markets.map((m) => (
+                <span
+                  key={m}
+                  className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/50 px-3 py-1 text-xs text-foreground"
+                >
+                  {m}
+                  <button
+                    type="button"
+                    onClick={() => removeMarket(m)}
+                    aria-label={`Remove ${m}`}
+                    className="text-muted-foreground hover:text-destructive"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+          ) : null}
+          <p className="text-xs text-muted-foreground">
+            Add every market you cover. Whether you're Resident or Non-Resident is worked out per
+            transaction from these markets — it isn't a fixed label on your profile.
+          </p>
+          {errors.markets ? <p className="text-xs text-destructive">{errors.markets}</p> : null}
+        </div>
 
         <Field
           label="Password"
