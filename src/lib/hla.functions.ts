@@ -99,6 +99,12 @@ async function syncPods(db: Db) {
  * Eligible pool: EXCLUSIVELY the Resident Agents already tethered to buyer
  * accounts holding an active reservation inside this pod. Mirrored by a
  * database trigger so a direct write cannot bypass it.
+ *
+ * Size is whatever the real distinct agent count is — NEVER assumed to be 8.
+ * A pod legitimately has fewer tethered agents than shares when (a) one agent
+ * represents multiple buyers in the pod (allowed, counted once here and
+ * surfaced via buyersInPod), or (b) a Hybrid Exit seller retains shares, which
+ * have no buyer and therefore no tethered Resident Agent at all.
  */
 async function eligiblePool(db: Db, propertyId: string): Promise<EligibleAgent[]> {
   const { data: reservations } = await db
