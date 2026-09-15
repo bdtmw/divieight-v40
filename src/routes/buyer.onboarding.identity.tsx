@@ -437,15 +437,42 @@ function BuyerIdentityScreen() {
         </p>
 
         <div className="mt-5 grid gap-5">
-          <CurrencyInput
-            label="What is your target budget?"
-            name="target_budget"
-            value={budget.replace(/[^0-9]/g, "")}
-            onValueChange={setBudget}
-            error={errors.budget}
-            placeholder="250,000"
-            hint="Total amount you're prepared to invest in shares."
-          />
+          <fieldset>
+            <legend className="text-sm font-semibold text-foreground">
+              What is your target budget?
+            </legend>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Choose the range you&apos;re prepared to invest in shares. We keep budgets as broad
+              ranges so no individual buyer&apos;s figure can be identified.
+            </p>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              {BUDGET_BUCKETS.map((b) => {
+                const selected = budgetBucket === b.id;
+                return (
+                  <label
+                    key={b.id}
+                    className={cn(
+                      "flex cursor-pointer items-center gap-3 rounded-lg border p-4 transition-colors",
+                      selected ? "border-accent bg-accent/5" : "border-border hover:bg-secondary",
+                    )}
+                  >
+                    <input
+                      type="radio"
+                      name="target_budget_bucket"
+                      value={b.id}
+                      checked={selected}
+                      onChange={() => setBudgetBucket(b.id)}
+                      className="h-4 w-4 accent-[var(--color-accent)]"
+                    />
+                    <span className="text-sm font-semibold text-foreground">{b.label}</span>
+                  </label>
+                );
+              })}
+            </div>
+            {errors.budget ? (
+              <p className="mt-2 text-xs text-destructive">{errors.budget}</p>
+            ) : null}
+          </fieldset>
 
           <label className="flex items-start gap-3 rounded-lg border border-border p-4">
             <input
