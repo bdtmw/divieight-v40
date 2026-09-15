@@ -9,3 +9,11 @@
 export function resendFrom(): string {
   return process.env.RESEND_FROM ?? "divieight <onboarding@resend.dev>";
 }
+
+/**
+ * Plain-text footer linking to the on-site Support Intake form. Support is
+ * handled on-site only — no published support email or phone number.
+ */
+export function supportFooter(origin: string): string {
+  return `\n\nNeed help? Submit a support request: ${origin}/support`;
+}

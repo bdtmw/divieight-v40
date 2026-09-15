@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { BadgeCheck, FileSignature, Layers, LayoutDashboard, ListChecks, LogOut, Share2, Users } from "lucide-react";
+import { BadgeCheck, FileSignature, Layers, LayoutDashboard, LifeBuoy, ListChecks, LogOut, Share2, Users } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -35,6 +35,7 @@ const BASE_NAV = [
   { to: "/agent/pools", label: "Market pools", icon: Layers },
   { to: "/agent/attribution", label: "Referral links", icon: Share2 },
   { to: "/agent/documents", label: "Agreements", icon: FileSignature },
+  { to: "/support", label: "Support", icon: LifeBuoy },
 ] as const;
 
 /** Only Listing Agents see the listing dashboard / Gate 1 approval queue. */

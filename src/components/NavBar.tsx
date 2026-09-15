@@ -92,6 +92,13 @@ export function NavBar() {
           >
             Contact
           </Link>
+          <Link
+            to="/support"
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            activeProps={{ className: "text-foreground" }}
+          >
+            Support
+          </Link>
         </nav>
 
 

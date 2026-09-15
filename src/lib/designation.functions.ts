@@ -77,7 +77,7 @@ async function agentFor(db: Db, userId: string) {
 async function sendInviteEmail(to: string, name: string | null, origin: string) {
   const key = process.env['RESEND_API_KEY'];
   if (!key) return;
-  const { resendFrom } = await import("@/lib/email-sender");
+  const { resendFrom, supportFooter } = await import("@/lib/email-sender");
   const body = `${name ? `Hi ${name},` : "Hello,"}
 
 A vetted buyer on divieight has designated you as their agent.
@@ -87,7 +87,7 @@ ${origin}/agent/register
 
 You have ${DESIGNATION_WINDOW_DAYS} calendar days to accept before the buyer may name another agent or accept a platform assignment.
 
-Compensation for representing this buyer is the buyer-side commission paid at closing by the title/escrow company from sale proceeds, through your Broker of Record. divieight does not pay agents directly.`;
+Compensation for representing this buyer is the buyer-side commission paid at closing by the title/escrow company from sale proceeds, through your Broker of Record. divieight does not pay agents directly.${supportFooter(origin)}`;
   try {
     await fetch("https://api.resend.com/emails", {
       method: "POST",

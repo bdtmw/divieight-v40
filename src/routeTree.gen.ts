@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SupportRouteImport } from './routes/support'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as NotificationsRouteImport } from './routes/notifications'
@@ -62,6 +63,7 @@ import { Route as AgentDashboardRouteImport } from './routes/agent.dashboard'
 import { Route as AgentBrokerRelationshipRouteImport } from './routes/agent.broker-relationship'
 import { Route as AgentAttributionRouteImport } from './routes/agent.attribution'
 import { Route as AdminTetherResolutionRouteImport } from './routes/admin.tether-resolution'
+import { Route as AdminSupportRouteImport } from './routes/admin.support'
 import { Route as AdminSubstitutionsRouteImport } from './routes/admin.substitutions'
 import { Route as AdminSellersRouteImport } from './routes/admin.sellers'
 import { Route as AdminPropertiesRouteImport } from './routes/admin.properties'
@@ -109,6 +111,11 @@ import { Route as AgentPodsIdBriefcaseRouteImport } from './routes/agent.pods.$i
 import { Route as AdminPodsIdSelectHeavyLifterRouteImport } from './routes/admin.pods.$id.select-heavy-lifter'
 import { Route as AdminPodsIdBriefcaseRouteImport } from './routes/admin.pods.$id.briefcase'
 
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
@@ -374,6 +381,11 @@ const AdminTetherResolutionRoute = AdminTetherResolutionRouteImport.update({
   path: '/tether-resolution',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminSupportRoute = AdminSupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminSubstitutionsRoute = AdminSubstitutionsRouteImport.update({
   id: '/substitutions',
   path: '/substitutions',
@@ -634,6 +646,7 @@ export interface FileRoutesByFullPath {
   '/notifications': typeof NotificationsRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRouteWithChildren
+  '/support': typeof SupportRoute
   '/admin/agents': typeof AdminAgentsRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/admin/brokers': typeof AdminBrokersRoute
@@ -645,6 +658,7 @@ export interface FileRoutesByFullPath {
   '/admin/properties': typeof AdminPropertiesRoute
   '/admin/sellers': typeof AdminSellersRoute
   '/admin/substitutions': typeof AdminSubstitutionsRoute
+  '/admin/support': typeof AdminSupportRoute
   '/admin/tether-resolution': typeof AdminTetherResolutionRoute
   '/agent/attribution': typeof AgentAttributionRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
@@ -731,6 +745,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
   '/register': typeof RegisterRoute
+  '/support': typeof SupportRoute
   '/admin/agents': typeof AdminAgentsRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/admin/brokers': typeof AdminBrokersRoute
@@ -742,6 +757,7 @@ export interface FileRoutesByTo {
   '/admin/properties': typeof AdminPropertiesRoute
   '/admin/sellers': typeof AdminSellersRoute
   '/admin/substitutions': typeof AdminSubstitutionsRoute
+  '/admin/support': typeof AdminSupportRoute
   '/admin/tether-resolution': typeof AdminTetherResolutionRoute
   '/agent/attribution': typeof AgentAttributionRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
@@ -833,6 +849,7 @@ export interface FileRoutesById {
   '/notifications': typeof NotificationsRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRouteWithChildren
+  '/support': typeof SupportRoute
   '/admin/agents': typeof AdminAgentsRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
   '/admin/brokers': typeof AdminBrokersRoute
@@ -844,6 +861,7 @@ export interface FileRoutesById {
   '/admin/properties': typeof AdminPropertiesRoute
   '/admin/sellers': typeof AdminSellersRoute
   '/admin/substitutions': typeof AdminSubstitutionsRoute
+  '/admin/support': typeof AdminSupportRoute
   '/admin/tether-resolution': typeof AdminTetherResolutionRoute
   '/agent/attribution': typeof AgentAttributionRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
@@ -936,6 +954,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/register'
     | '/reset-password'
+    | '/support'
     | '/admin/agents'
     | '/admin/audit-log'
     | '/admin/brokers'
@@ -947,6 +966,7 @@ export interface FileRouteTypes {
     | '/admin/properties'
     | '/admin/sellers'
     | '/admin/substitutions'
+    | '/admin/support'
     | '/admin/tether-resolution'
     | '/agent/attribution'
     | '/agent/broker-relationship'
@@ -1033,6 +1053,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/notifications'
     | '/register'
+    | '/support'
     | '/admin/agents'
     | '/admin/audit-log'
     | '/admin/brokers'
@@ -1044,6 +1065,7 @@ export interface FileRouteTypes {
     | '/admin/properties'
     | '/admin/sellers'
     | '/admin/substitutions'
+    | '/admin/support'
     | '/admin/tether-resolution'
     | '/agent/attribution'
     | '/agent/broker-relationship'
@@ -1134,6 +1156,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/register'
     | '/reset-password'
+    | '/support'
     | '/admin/agents'
     | '/admin/audit-log'
     | '/admin/brokers'
@@ -1145,6 +1168,7 @@ export interface FileRouteTypes {
     | '/admin/properties'
     | '/admin/sellers'
     | '/admin/substitutions'
+    | '/admin/support'
     | '/admin/tether-resolution'
     | '/agent/attribution'
     | '/agent/broker-relationship'
@@ -1236,6 +1260,7 @@ export interface RootRouteChildren {
   NotificationsRoute: typeof NotificationsRoute
   RegisterRoute: typeof RegisterRoute
   ResetPasswordRoute: typeof ResetPasswordRouteWithChildren
+  SupportRoute: typeof SupportRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   BuyerAdverseActionRoute: typeof BuyerAdverseActionRoute
   BuyerDashboardRoute: typeof BuyerDashboardRoute
@@ -1280,6 +1305,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
@@ -1651,6 +1683,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminTetherResolutionRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/support': {
+      id: '/admin/support'
+      path: '/support'
+      fullPath: '/admin/support'
+      preLoaderRoute: typeof AdminSupportRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/substitutions': {
       id: '/admin/substitutions'
       path: '/substitutions'
@@ -1988,6 +2027,7 @@ interface AdminRouteChildren {
   AdminPropertiesRoute: typeof AdminPropertiesRoute
   AdminSellersRoute: typeof AdminSellersRoute
   AdminSubstitutionsRoute: typeof AdminSubstitutionsRoute
+  AdminSupportRoute: typeof AdminSupportRoute
   AdminTetherResolutionRoute: typeof AdminTetherResolutionRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminPodsIndexRoute: typeof AdminPodsIndexRoute
@@ -2007,6 +2047,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminPropertiesRoute: AdminPropertiesRoute,
   AdminSellersRoute: AdminSellersRoute,
   AdminSubstitutionsRoute: AdminSubstitutionsRoute,
+  AdminSupportRoute: AdminSupportRoute,
   AdminTetherResolutionRoute: AdminTetherResolutionRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminPodsIndexRoute: AdminPodsIndexRoute,
@@ -2128,6 +2169,7 @@ const rootRouteChildren: RootRouteChildren = {
   NotificationsRoute: NotificationsRoute,
   RegisterRoute: RegisterRoute,
   ResetPasswordRoute: ResetPasswordRouteWithChildren,
+  SupportRoute: SupportRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   BuyerAdverseActionRoute: BuyerAdverseActionRoute,
   BuyerDashboardRoute: BuyerDashboardRoute,
