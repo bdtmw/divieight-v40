@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { currency } from "@/lib/admin";
+import { LoggingHealthPanel } from "@/components/LoggingHealthPanel";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminOverview,
@@ -98,6 +99,8 @@ function AdminOverview() {
           </Link>
         </div>
       </div>
+
+      <LoggingHealthPanel />
     </div>
   );
 }

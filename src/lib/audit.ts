@@ -106,7 +106,8 @@ export type AuditAction =
   | "listing.approval_escalation_settings_updated"
   | "support.ticket_created"
   | "support.ticket_status_changed"
-  | "support.ticket_note_added";
+  | "support.ticket_note_added"
+  | "monitoring.logging_gap_detected";
 
 
 export type AuditEntity =
@@ -122,7 +123,8 @@ export type AuditEntity =
   | "referral_agreement"
   | "attribution_token"
   | "pod"
-  | "support_ticket";
+  | "support_ticket"
+  | "logging_source";
 
 
 export async function logAudit(params: {
