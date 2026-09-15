@@ -217,7 +217,7 @@ export function AgentActionItems() {
                 }}
                 className="h-9 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground hover:opacity-90"
               >
-                Accept Tethering for This Buyer
+                Keep this buyer
               </button>
               <button
                 type="button"
@@ -229,12 +229,12 @@ export function AgentActionItems() {
                   });
                   setBusy(false);
                   if (r.error) toast.error(r.error);
-                  else toast.success("Refer-Only elected — another Resident Agent will be tethered.");
+                  else toast.success("Handed off — another Resident Agent will be tethered and a referral agreement generated.");
                   void refresh();
                 }}
                 className="h-9 rounded-md border border-border px-3 text-sm font-medium hover:bg-muted"
               >
-                Refer-Only
+                Hand off
               </button>
             </div>
           </li>
