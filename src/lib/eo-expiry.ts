@@ -74,7 +74,7 @@ export function dueEoReminder(
 }
 
 export function eoReminderMessage(day: EoReminderDay): string {
-  return `Your E&O coverage expires in ${day} day${day === 1 ? "" : "s"} — upload renewed proof or have your broker affirm coverage.`;
+  return `Your E&O coverage expires in ${day} days — upload renewed proof or have your broker affirm coverage.`;
 }
 
 export function eoBrokerNoticeMessage(agentName: string, day: EoReminderDay): string {
