@@ -103,7 +103,10 @@ export type AuditAction =
   | "listing.approval_reminder_sent"
   | "listing.approval_reminder_escalated"
   | "listing.approval_stalled_flagged"
-  | "listing.approval_escalation_settings_updated";
+  | "listing.approval_escalation_settings_updated"
+  | "support.ticket_created"
+  | "support.ticket_status_changed"
+  | "support.ticket_note_added";
 
 
 export type AuditEntity =
@@ -118,7 +121,8 @@ export type AuditEntity =
   | "broker"
   | "referral_agreement"
   | "attribution_token"
-  | "pod";
+  | "pod"
+  | "support_ticket";
 
 
 export async function logAudit(params: {
@@ -126,7 +130,7 @@ export async function logAudit(params: {
   actionType: AuditAction;
   entityType: AuditEntity;
   entityId?: string | null;
-  actorType?: "seller" | "buyer" | "agent" | "broker";
+  actorType?: "seller" | "buyer" | "agent" | "broker" | "admin" | "support";
   metadata?: Record<string, unknown>;
 }) {
   const { actorId, actionType, entityType, entityId, actorType, metadata } = params;
