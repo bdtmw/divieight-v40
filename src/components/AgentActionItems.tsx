@@ -193,10 +193,14 @@ export function AgentActionItems() {
               A buyer you referred is now vetted — choose how to proceed
             </p>
             <p className="mt-1 break-words text-xs text-muted-foreground">
-              {e.buyerEmail ?? "Vetted buyer"} · Target market {e.market ?? "—"}. Refer-Only hands
-              the buyer to another Resident Agent; your compensation is then the 25% referral split
-              of the buyer-side commission at closing.
+              {e.buyerEmail ?? "Vetted buyer"} · Target market {e.market ?? "—"}. Keep this buyer and
+              you become their tethered Resident Agent, holding the full buyer-side commission at
+              closing (before any Heavy Lifter Premium) with no referral agreement. Hand off and
+              another Resident Agent in that market is tethered, a Standard NAR Referral Agreement is
+              generated for you both to sign, and the buyer-side commission splits 25% to you / 75%
+              to them.
             </p>
+
             <div className="mt-3 flex flex-wrap gap-2">
               <button
                 type="button"
@@ -213,7 +217,7 @@ export function AgentActionItems() {
                 }}
                 className="h-9 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground hover:opacity-90"
               >
-                Accept Tethering for This Buyer
+                Keep this buyer
               </button>
               <button
                 type="button"
@@ -225,12 +229,12 @@ export function AgentActionItems() {
                   });
                   setBusy(false);
                   if (r.error) toast.error(r.error);
-                  else toast.success("Refer-Only elected — another Resident Agent will be tethered.");
+                  else toast.success("Handed off — another Resident Agent will be tethered and a referral agreement generated.");
                   void refresh();
                 }}
                 className="h-9 rounded-md border border-border px-3 text-sm font-medium hover:bg-muted"
               >
-                Refer-Only
+                Hand off
               </button>
             </div>
           </li>
