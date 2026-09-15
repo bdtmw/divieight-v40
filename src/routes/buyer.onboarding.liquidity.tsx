@@ -67,9 +67,6 @@ interface BuyerRow {
   liquidity_documents: unknown;
 }
 
-function currency(n: number) {
-  return n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
-}
 
 function LiquidityGatePage() {
   const navigate = useNavigate();
@@ -86,7 +83,9 @@ function LiquidityGatePage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [linking, setLinking] = useState(false);
-  const [balances, setBalances] = useState<PlaidAccountBalance[] | null>(null);
+  // Binary only: whether a link attempt has produced a result this session.
+  // Balances are never held in state, stored, or rendered.
+  const [linkResolved, setLinkResolved] = useState(false);
   const [linkFailed, setLinkFailed] = useState(false);
   const [showFallback, setShowFallback] = useState(false);
 
@@ -132,7 +131,7 @@ function LiquidityGatePage() {
   // Internal Liquidity Gate basis only — never rendered as a figure.
   const budget = buyer?.target_budget ?? 0;
   const budgetLabel = buyer ? budgetBucketLabel(buyer.target_budget_bucket, buyer.target_budget) : "";
-  const required = budget * LIQUIDITY_MULTIPLIER;
+  
 
   async function saveConsent(next: boolean) {
     setConsent(next);
