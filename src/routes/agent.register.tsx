@@ -108,10 +108,10 @@ function AgentRegisterPage() {
           phone: data.phone,
           // Email confirmation often opens in a new tab/browser where the
           // sessionStorage draft is gone, so carry the profile in metadata.
-          agent_role: data.role,
+          agent_profile: true,
           license_number: data.licenseNumber,
           license_state: data.licenseState,
-          service_area: data.serviceArea,
+          markets: data.markets,
         },
       },
     });
@@ -137,10 +137,9 @@ function AgentRegisterPage() {
     saveAgentDraft({
       fullName: data.fullName,
       phone: data.phone,
-      role: data.role,
       licenseNumber: data.licenseNumber,
       licenseState: data.licenseState,
-      serviceArea: data.serviceArea,
+      markets: data.markets,
     });
 
     if (!signUp.session || !signUp.user) {
