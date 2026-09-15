@@ -23,8 +23,6 @@ export interface TetheredBuyer {
   goldenTicketIssued: boolean;
   goldenTicketIssuedAt: string | null;
   onboardingStatus: string;
-  /** 0-100, derived from the Month 2 onboarding milestones. */
-  onboardingPercent: number;
   liquidityVerified: boolean;
   liquidityStatus: string;
   /** Platform Enrollment Fee: 'paid' | 'pending' | 'unpaid'. */
@@ -33,27 +31,6 @@ export interface TetheredBuyer {
   tetheredAt: string | null;
   /** Derived per transaction from the agent's markets — never a stored role. */
   residency: Residency;
-}
-
-/** Milestone-based completion so the agent can see how far along a lead is. */
-export function onboardingPercent(row: {
-  intent: string | null;
-  primary_target_market: string | null;
-  pefPaid: boolean;
-  onboarding_status: string;
-  liquidity_verified: boolean;
-  golden_ticket_issued: boolean;
-}): number {
-  const milestones = [
-    Boolean(row.intent),
-    Boolean(row.primary_target_market),
-    row.pefPaid,
-    ["vetted", "cleared", "active", "complete"].includes(row.onboarding_status),
-    row.liquidity_verified,
-    row.golden_ticket_issued,
-  ];
-  const done = milestones.filter(Boolean).length;
-  return Math.round((done / milestones.length) * 100);
 }
 
 export const listMyTetheredBuyers = createServerFn({ method: "POST" })
@@ -108,14 +85,6 @@ export const listMyTetheredBuyers = createServerFn({ method: "POST" })
         goldenTicketIssued: Boolean(r.golden_ticket_issued),
         goldenTicketIssuedAt: r.golden_ticket_issued_at ?? null,
         onboardingStatus: r.onboarding_status ?? "unknown",
-        onboardingPercent: onboardingPercent({
-          intent: r.intent ?? null,
-          primary_target_market: r.primary_target_market ?? null,
-          pefPaid: pef === "paid",
-          onboarding_status: r.onboarding_status ?? "",
-          liquidity_verified: Boolean(r.liquidity_verified),
-          golden_ticket_issued: Boolean(r.golden_ticket_issued),
-        }),
         liquidityVerified: Boolean(r.liquidity_verified),
         liquidityStatus: r.liquidity_status ?? "pending",
         pefStatus: pef,
