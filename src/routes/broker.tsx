@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { AlertOctagon, Building2, LayoutDashboard, ListChecks, LogOut } from "lucide-react";
+import { AlertOctagon, Building2, LayoutDashboard, LifeBuoy, ListChecks, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
