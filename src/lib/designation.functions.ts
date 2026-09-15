@@ -565,8 +565,13 @@ export const respondToReferOnly = createServerFn({ method: "POST" })
       metadata: { agent_id: agent.id },
     });
 
-    await runTethering(db, election.buyer_account_id, context.userId);
+    const result = await runTethering(db, election.buyer_account_id, context.userId);
+    if (result.dualAgencyBlocked) {
+      const { DUAL_AGENCY_MESSAGE } = await import("@/lib/dual-agency");
+      return { error: DUAL_AGENCY_MESSAGE };
+    }
     return {};
+
   });
 
 /* ------------------------------------------------------------------ */
