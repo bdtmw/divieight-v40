@@ -1,12 +1,14 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { isResidentInMarket, marketMatches as marketsMatch } from "@/lib/markets";
 
 /**
  * Resident Agent Selection Logic.
  *
  * Runs the moment a Buyer Account earns Golden Ticket status:
  *   1. read the buyer's primary_target_market (zip / market string)
- *   2. find `resident` agents whose service_area matches that market
+ *   2. find agents whose `markets` array covers that market — "Resident" is
+ *      derived here per transaction, never stored on the agent
  *   3. tether the most-tenured one (earliest created_at)
  *   4. if the buyer arrived through an agent referral, stage a Standard NAR
  *      Referral Agreement placeholder for later generation
