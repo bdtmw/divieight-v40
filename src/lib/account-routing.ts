@@ -108,14 +108,13 @@ export async function resolveSignIn(
     const meta = user.user_metadata ?? {};
     const draft =
       consumeAgentDraft() ??
-      (meta.agent_role
+      (meta.license_number
         ? {
             fullName: fullName,
             phone: phone ?? "",
-            role: meta.agent_role as never,
+            markets: parseMarkets(meta.markets ?? meta.service_area),
             licenseNumber: String(meta.license_number ?? ""),
             licenseState: String(meta.license_state ?? ""),
-            serviceArea: String(meta.service_area ?? ""),
           }
         : null);
     if (!draft) {
@@ -126,10 +125,9 @@ export async function resolveSignIn(
       fullName: draft.fullName || fullName,
       email,
       phone: draft.phone || phone,
-      role: draft.role,
+      markets: parseMarkets(draft.markets),
       licenseNumber: draft.licenseNumber,
       licenseState: draft.licenseState,
-      serviceArea: draft.serviceArea,
     });
     if (created.error) return { error: created.error };
     return { to: agentRedirect(created.agent?.onboarding_status ?? "arello_pending") };
