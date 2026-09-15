@@ -242,36 +242,6 @@ function AgentRegisterPage() {
           required
         />
 
-        <fieldset className="space-y-2">
-          <legend className="text-sm font-medium text-foreground">Your role</legend>
-          {SELECTABLE_AGENT_ROLES.map((role) => (
-            <label
-              key={role}
-              className={`flex cursor-pointer items-start gap-3 rounded-md border p-3 transition-colors ${
-                values.role === role ? "border-accent bg-secondary/50" : "border-border"
-              }`}
-            >
-              <input
-                type="radio"
-                name="role"
-                value={role}
-                checked={values.role === role}
-                onChange={() => setValues((v) => ({ ...v, role }))}
-                className="mt-1"
-              />
-              <span className="space-y-0.5">
-                <span className="block text-sm font-medium text-foreground">
-                  {AGENT_ROLE_LABELS[role]}
-                </span>
-                <span className="block text-xs text-muted-foreground">
-                  {AGENT_ROLE_DESCRIPTIONS[role]}
-                </span>
-              </span>
-            </label>
-          ))}
-          {errors.role ? <p className="text-xs text-destructive">{errors.role}</p> : null}
-        </fieldset>
-
         <div className="grid gap-4 sm:grid-cols-2">
           <Field
             label="License number"
