@@ -278,23 +278,17 @@ export const withdrawReservation = createServerFn({ method: "POST" })
       }
 
       if (property) {
-        const { findCandidates } = await import("@/lib/substitution.server");
-        const { data: active } = await supabaseAdmin
-          .from("pod_reservations")
-          .select("buyer_account_id")
-          .eq("property_id", property.id)
-          .eq("status", "reserved");
-        const candidates = await findCandidates(
-          supabaseAdmin,
-          property,
-          [buyer.id, ...(active ?? []).map((a) => a.buyer_account_id)],
-          5,
-        );
-        candidateCount = candidates.length;
+        // Platform-driven substitution: remaining members get a redacted
+        // vacancy notice, and exactly one candidate is invited at a time.
+        const { openSubstitution } = await import("@/lib/substitution-invite.server");
+        const result = await openSubstitution(supabaseAdmin as never, {
+          propertyId: property.id,
+          vacatedReservationId: reservation.id,
+          actorId: userId,
+          cause: "withdrawal",
+        });
+        candidateCount = result.invited ? 1 : 0;
 
-        // TODO: automated invitation dispatch to the top-ranked candidate
-        // once buyer notification infrastructure lands. For now the ops team
-        // works the ranked list from /admin/substitutions.
         await supabase.from("audit_log").insert({
           actor_id: userId,
           actor_type: "buyer",
@@ -303,13 +297,9 @@ export const withdrawReservation = createServerFn({ method: "POST" })
           entity_id: property.id,
           metadata: {
             reservation_id: reservation.id,
-            candidates_identified: candidateCount,
-            top_candidates: candidates.map((c) => ({
-              buyer_account_id: c.buyerAccountId,
-              priority_rank: c.priorityRank,
-              priority_rank_timestamp: c.priorityRankTimestamp,
-              matched_on: c.matchedOn,
-            })),
+            invitation_sent: result.invited,
+            invitation_id: result.invited ? result.invitationId : null,
+            outcome: result.invited ? "invited" : result.reason,
           } as never,
         });
       }

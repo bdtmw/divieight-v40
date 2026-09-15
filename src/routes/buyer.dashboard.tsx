@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { enrollmentDaysRemaining, enrollmentEndDate } from "@/lib/golden-ticket";
 import { cn } from "@/lib/utils";
 import { LifestylePerksConsent } from "@/components/LifestylePerksConsent";
+import { SubstitutionInvitations } from "@/components/SubstitutionInvitations";
 
 export const Route = createFileRoute("/buyer/dashboard")({
   head: () => ({
@@ -294,6 +295,12 @@ function BuyerDashboardPage() {
           >
             Continue onboarding
           </Link>
+        </div>
+      ) : null}
+
+      {account.golden_ticket_issued ? (
+        <div className="mt-8">
+          <SubstitutionInvitations />
         </div>
       ) : null}
 

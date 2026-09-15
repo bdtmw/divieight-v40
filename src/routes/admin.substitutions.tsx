@@ -23,8 +23,9 @@ function AdminSubstitutions() {
           Member Substitution Pipeline
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Vacated slices with the top 5 compatible Golden Ticket buyers, ranked by priority
-          timestamp (earliest first). Invitations are sent manually for now.
+          Vacated slices with compatible Golden Ticket buyers, ranked by priority timestamp
+          (earliest first). The platform invites one candidate at a time and cascades
+          automatically on decline or expiry. No agent can search or request a candidate.
         </p>
       </header>
 
@@ -59,6 +60,22 @@ function AdminSubstitutions() {
                   <p>{v.availableShares} of 8 slices open</p>
                   <p>{money(v.listingPrice)} list price</p>
                 </div>
+              </div>
+
+              <div className="mt-4 rounded-lg border border-border bg-background p-3 text-xs text-muted-foreground">
+                {v.invitation ? (
+                  <>
+                    Invitation #{v.invitation.sequence} · {v.invitation.status} · sent{" "}
+                    {when(v.invitation.invitedAt)} · window {v.invitation.windowHours}h
+                    {v.invitation.windowShortened ? " (shortened for closing date)" : ""} · closes{" "}
+                    {when(v.invitation.expiresAt)} ·{" "}
+                    {v.invitation.residentAgentNotified
+                      ? "Resident Agent notified"
+                      : "no tethered Resident Agent"}
+                  </>
+                ) : (
+                  "No invitation dispatched yet."
+                )}
               </div>
 
               <p className="mt-5 flex items-center gap-2 text-sm font-medium text-foreground">

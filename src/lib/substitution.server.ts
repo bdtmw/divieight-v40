@@ -126,6 +126,16 @@ export async function buildVacancies(admin: AdminClient): Promise<Vacancy[]> {
     const exclude = [r.buyer_account_id, ...activeRows.map((a) => a.buyer_account_id)];
     const candidates = await findCandidates(admin, p, exclude, 5);
 
+    // substitution_invitations lands with the pending migration; generated
+    // types don't know it yet.
+    const { data: invRows } = await (admin as unknown as { from: (t: string) => any })
+      .from("substitution_invitations")
+      .select("id, status, sequence, invited_at, expires_at, window_hours, window_shortened, resident_agent_id")
+      .eq("property_id", p.id)
+      .order("sequence", { ascending: false })
+      .limit(1);
+    const inv = (invRows ?? [])[0] ?? null;
+
     vacancies.push({
       reservationId: r.id,
       propertyId: p.id,
@@ -138,6 +148,21 @@ export async function buildVacancies(admin: AdminClient): Promise<Vacancy[]> {
       vacatedAt: r.updated_at ?? r.reserved_at,
       availableShares,
       candidates,
+      invitation: inv
+        ? {
+            id: inv.id,
+            status:
+              inv.status === "pending" && new Date(inv.expires_at).getTime() <= Date.now()
+                ? "expired"
+                : inv.status,
+            sequence: inv.sequence,
+            invitedAt: inv.invited_at,
+            expiresAt: inv.expires_at,
+            windowHours: inv.window_hours,
+            windowShortened: Boolean(inv.window_shortened),
+            residentAgentNotified: Boolean(inv.resident_agent_id),
+          }
+        : null,
     });
   }
 
