@@ -32,6 +32,17 @@ export interface Vacancy {
   vacatedAt: string;
   availableShares: number;
   candidates: SubstitutionCandidate[];
+  /** The single live/most recent invitation for this vacancy, if any. */
+  invitation: {
+    id: string;
+    status: string;
+    sequence: number;
+    invitedAt: string;
+    expiresAt: string;
+    windowHours: number;
+    windowShortened: boolean;
+    residentAgentNotified: boolean;
+  } | null;
 }
 
 /**

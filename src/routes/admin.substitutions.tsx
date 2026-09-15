@@ -23,8 +23,9 @@ function AdminSubstitutions() {
           Member Substitution Pipeline
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Vacated slices with the top 5 compatible Golden Ticket buyers, ranked by priority
-          timestamp (earliest first). Invitations are sent manually for now.
+          Vacated slices with compatible Golden Ticket buyers, ranked by priority timestamp
+          (earliest first). The platform invites one candidate at a time and cascades
+          automatically on decline or expiry. No agent can search or request a candidate.
         </p>
       </header>
 
