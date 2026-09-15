@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { parseMarkets } from "@/lib/markets";
 import { scanForTriggerPhrases, type TriggerPhraseHit } from "@/lib/compliance-phrases";
 import type {
   ComplianceReview,
@@ -85,7 +86,7 @@ export interface ListingAgentOption {
   id: string;
   full_name: string;
   email: string | null;
-  service_area: string | null;
+  markets: string[] | null;
   license_state: string | null;
 }
 
@@ -97,10 +98,9 @@ export const searchListingAgents = createServerFn({ method: "POST" })
     const q = (data.query ?? "").trim();
     let query = db
       .from("agents")
-      .select("id, full_name, email, service_area, license_state")
-      .eq("role", "listing")
+      .select("id, full_name, email, markets, license_state")
       .limit(10);
-    if (q) query = query.or(`full_name.ilike.%${q}%,email.ilike.%${q}%,service_area.ilike.%${q}%`);
+    if (q) query = query.or(`full_name.ilike.%${q}%,email.ilike.%${q}%`);
     const { data: rows } = await query;
     return (rows ?? []) as ListingAgentOption[];
   });
@@ -124,10 +124,11 @@ export const tagListingAgent = createServerFn({ method: "POST" })
 
     const { data: agent } = await db
       .from("agents")
-      .select("id, full_name, role, auth_user_id")
+      .select("id, full_name, auth_user_id")
       .eq("id", data.agentId)
       .maybeSingle();
-    if (!agent || agent.role !== "listing") throw new Error("That agent is not a Listing Agent.");
+    // Listing Agent is a per-property relationship, not a stored role.
+    if (!agent) throw new Error("That agent could not be found.");
 
     await db
       .from("properties")
@@ -168,10 +169,10 @@ export const inviteListingAgent = createServerFn({ method: "POST" })
     // If they're already on-platform as a Listing Agent, tag them directly.
     const { data: existing } = await db
       .from("agents")
-      .select("id, full_name, role, auth_user_id")
+      .select("id, full_name, auth_user_id")
       .eq("email", email)
       .maybeSingle();
-    if (existing && existing.role === "listing") {
+    if (existing) {
       await db
         .from("properties")
         .update({
@@ -454,8 +455,7 @@ export const autoAssignListingAgent = createServerFn({ method: "POST" })
 
     const { data: agents } = await db
       .from("agents")
-      .select("id, full_name, auth_user_id, license_state, service_area, status, role")
-      .eq("role", "listing")
+      .select("id, full_name, auth_user_id, license_state, markets, status")
       .order("created_at", { ascending: true });
 
     const pool = ((agents ?? []) as any[]).filter((a) => !declined.has(a.id));
@@ -464,7 +464,7 @@ export const autoAssignListingAgent = createServerFn({ method: "POST" })
       pool.find(
         (a) =>
           (a.license_state ?? "").toLowerCase() === state ||
-          (a.service_area ?? "").toLowerCase().includes(state),
+          parseMarkets(a.markets).some((m: string) => m.toLowerCase().includes(state)),
       ) ?? pool[0];
 
     if (!match) {

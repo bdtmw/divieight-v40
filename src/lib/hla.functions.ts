@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { formatMarkets } from "@/lib/markets";
 import {
   HLA_ACCEPTANCE_WINDOW_DAYS,
   type Briefcase,
@@ -123,7 +124,7 @@ async function eligiblePool(db: Db, propertyId: string): Promise<EligibleAgent[]
 
   const { data: agents } = await db
     .from("agents")
-    .select("id, full_name, license_state, service_area, created_at, broker_id")
+    .select("id, full_name, license_state, markets, created_at, broker_id")
     .in("id", [...counts.keys()]);
 
   const brokerIds = (agents ?? []).map((a: any) => a.broker_id).filter(Boolean);
@@ -153,7 +154,7 @@ async function eligiblePool(db: Db, propertyId: string): Promise<EligibleAgent[]
     agentId: a.id,
     fullName: a.full_name,
     licenseState: a.license_state ?? "—",
-    serviceArea: a.service_area ?? "—",
+    serviceArea: formatMarkets(a.markets),
     joinedAt: a.created_at,
     tenureDays: Math.max(
       0,
