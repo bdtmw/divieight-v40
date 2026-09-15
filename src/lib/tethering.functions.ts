@@ -97,9 +97,27 @@ export async function applyTether(
   },
 ): Promise<TetherResult> {
   const { buyer, agent, actorId, referringAgentId, referringAgentRole, market, source } = params;
+
+  // Dual-agency rule: a Listing Agent can never be tethered inside that
+  // property's pod. Flat check, no exceptions.
+  const { listingAgentConflict, logDualAgency } = await import("@/lib/dual-agency");
+  const conflict = await listingAgentConflict(db as any, agent.id, buyer.id);
+  if (conflict.conflict) {
+    await logDualAgency(db as any, {
+      actorId,
+      point: "tethering",
+      agentId: agent.id,
+      propertyId: conflict.propertyId,
+      buyerAccountId: buyer.id,
+      resolution: `tether blocked (${source})`,
+    });
+    return { ...IDLE, dualAgencyBlocked: true };
+  }
+
   const stageAgreement = Boolean(referringAgentId) && referringAgentId !== agent.id;
   const fullCommission = !stageAgreement;
   const now = new Date().toISOString();
+
 
   await db
     .from("buyer_accounts")
