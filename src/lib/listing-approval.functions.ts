@@ -183,6 +183,12 @@ export const inviteListingAgent = createServerFn({ method: "POST" })
       .eq("email", email)
       .maybeSingle();
     if (existing) {
+      const { clearTethersForListingAgent: clearInvited } = await import("@/lib/dual-agency");
+      await clearInvited(db, {
+        propertyId: property.id,
+        agentId: existing.id,
+        actorId: context.userId,
+      });
       await db
         .from("properties")
         .update({
@@ -192,6 +198,7 @@ export const inviteListingAgent = createServerFn({ method: "POST" })
           listing_agent_decline_reason: null,
         })
         .eq("id", property.id);
+
       if (existing.auth_user_id) {
         await notifyUser(
           db,
