@@ -105,7 +105,7 @@ function BuyerIdentityScreen() {
     (async () => {
       const { data: account } = await supabase
         .from("buyer_accounts")
-        .select("id, intent, target_budget")
+        .select("id, intent, target_budget, target_budget_bucket")
         .eq("auth_user_id", user.id)
         .maybeSingle();
       if (cancelled) return;
@@ -115,7 +115,10 @@ function BuyerIdentityScreen() {
       }
       setAccountId(account.id);
       if (account.intent) setIntent(account.intent);
-      if (account.target_budget != null) setBudget(String(account.target_budget));
+      // Legacy rows hold an exact amount — show it as its nearest bucket.
+      const row = account as unknown as { target_budget: number | null; target_budget_bucket: string | null };
+      const existing = bucketById(row.target_budget_bucket) ?? bucketForAmount(row.target_budget);
+      if (existing) setBudgetBucket(existing.id);
 
       const { data: member } = await supabase
         .from("account_members")
