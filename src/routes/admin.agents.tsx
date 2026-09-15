@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { when } from "@/lib/admin";
-import { AGENT_ROLE_LABELS, type AgentRole } from "@/lib/agent";
+import { formatMarkets } from "@/lib/markets";
 
 export const Route = createFileRoute("/admin/agents")({
   component: AdminAgents,
@@ -13,10 +13,9 @@ type AgentAdminRow = {
   full_name: string;
   email: string | null;
   phone: string | null;
-  role: AgentRole;
   license_number: string | null;
   license_state: string | null;
-  service_area: string | null;
+  markets: string[] | null;
   broker_id: string | null;
   onboarding_status: string;
   license_verified: boolean | null;
@@ -32,7 +31,6 @@ function AdminAgents() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [q, setQ] = useState("");
-  const [role, setRole] = useState<"all" | AgentRole>("all");
 
   useEffect(() => {
     (async () => {
@@ -40,7 +38,7 @@ function AdminAgents() {
       const { data, error: err } = await db
         .from("agents")
         .select(
-          "id,full_name,email,phone,role,license_number,license_state,service_area,broker_id,onboarding_status,license_verified,nar_cert_lapsed,relationship_status,transactions_held,created_at",
+          "id,full_name,email,phone,license_number,license_state,markets,broker_id,onboarding_status,license_verified,nar_cert_lapsed,relationship_status,transactions_held,created_at",
         )
         .order("created_at", { ascending: false });
       if (err) setError(err.message ?? "Could not load agents.");
@@ -64,10 +62,9 @@ function AdminAgents() {
   }, []);
 
   const filtered = rows.filter((r) => {
-    const matches = `${r.full_name} ${r.email ?? ""} ${r.license_number ?? ""} ${r.service_area ?? ""}`
+    return `${r.full_name} ${r.email ?? ""} ${r.license_number ?? ""} ${formatMarkets(r.markets)}`
       .toLowerCase()
       .includes(q.trim().toLowerCase());
-    return matches && (role === "all" || r.role === role);
   });
 
   return (
@@ -83,18 +80,6 @@ function AdminAgents() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <select
-            value={role}
-            onChange={(e) => setRole(e.target.value as "all" | AgentRole)}
-            className="h-10 rounded-md border border-input bg-background px-3 text-sm shadow-sm"
-          >
-            <option value="all">All roles</option>
-            {(Object.keys(AGENT_ROLE_LABELS) as AgentRole[]).map((r) => (
-              <option key={r} value={r}>
-                {AGENT_ROLE_LABELS[r]}
-              </option>
-            ))}
-          </select>
           <input
             type="search"
             value={q}
@@ -117,7 +102,7 @@ function AdminAgents() {
             <thead className="bg-muted/50 text-xs uppercase tracking-wider text-muted-foreground">
               <tr>
                 <th className="px-4 py-3 text-left font-medium">Agent</th>
-                <th className="px-4 py-3 text-left font-medium">Role</th>
+                <th className="px-4 py-3 text-left font-medium">Markets</th>
                 <th className="px-4 py-3 text-left font-medium">License</th>
                 <th className="px-4 py-3 text-left font-medium">Broker of Record</th>
                 <th className="px-4 py-3 text-left font-medium">Onboarding</th>
@@ -149,11 +134,11 @@ function AdminAgents() {
                         {r.email ?? "—"} · {r.phone ?? "—"}
                       </div>
                       <div className="text-xs text-muted-foreground [overflow-wrap:anywhere]">
-                        {r.service_area ?? "—"}
+                        {formatMarkets(r.markets)}
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-muted-foreground">
-                      {AGENT_ROLE_LABELS[r.role] ?? r.role}
+                    <td className="px-4 py-3 text-muted-foreground [overflow-wrap:anywhere]">
+                      {formatMarkets(r.markets)}
                     </td>
                     <td className="px-4 py-3">
                       <div className="text-muted-foreground [overflow-wrap:anywhere]">

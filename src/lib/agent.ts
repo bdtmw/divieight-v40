@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { parseMarkets } from "@/lib/markets";
 
 /**
  * The `agents` / `brokers` tables live outside the generated Supabase types
@@ -9,26 +10,12 @@ const db = supabase as unknown as {
   from: (table: string) => any;
 };
 
-/** Roles an agent may self-select at registration. */
-export const SELECTABLE_AGENT_ROLES = ["non_resident", "resident", "listing"] as const;
-export type SelectableAgentRole = (typeof SELECTABLE_AGENT_ROLES)[number];
-
-/** All roles, including `heavy_lifting`, which the platform assigns per pod. */
-export type AgentRole = SelectableAgentRole | "heavy_lifting";
-
-export const AGENT_ROLE_LABELS: Record<AgentRole, string> = {
-  non_resident: "Non-Resident Agent",
-  resident: "Resident Agent",
-  listing: "Listing Agent",
-  heavy_lifting: "Heavy-Lifting Agent",
-};
-
-export const AGENT_ROLE_DESCRIPTIONS: Record<SelectableAgentRole, string> = {
-  non_resident:
-    "You represent buyers who live outside the market and are purchasing a share remotely.",
-  resident: "You are licensed and active in the market where the property sits.",
-  listing: "You represent sellers bringing whole properties into 1/8th share ownership.",
-};
+/**
+ * Agents no longer carry a stored role. Resident vs Non-Resident is derived
+ * per transaction from `markets` (see `@/lib/markets`), Listing Agent is
+ * `properties.listing_agent_id`, and Heavy Lifting Agent is
+ * `pods.heavy_lifting_agent_id`.
+ */
 
 export interface AgentRow {
   id: string;
@@ -36,10 +23,10 @@ export interface AgentRow {
   full_name: string;
   email: string;
   phone: string | null;
-  role: AgentRole;
+  /** Markets this agent is licensed and active in. */
+  markets: string[] | null;
   license_number: string;
   license_state: string;
-  service_area: string;
   broker_id: string | null;
   onboarding_status: string;
   license_verified: boolean | null;
@@ -76,10 +63,9 @@ export interface CreateAgentInput {
   fullName: string;
   email: string;
   phone?: string | null;
-  role: SelectableAgentRole;
+  markets: string[];
   licenseNumber: string;
   licenseState: string;
-  serviceArea: string;
 }
 
 /** Create the agent profile. New agents start at ARELLO license verification. */
@@ -97,10 +83,9 @@ export async function createAgentProfile(input: CreateAgentInput): Promise<{
       full_name: input.fullName,
       email: input.email,
       phone: input.phone ?? null,
-      role: input.role,
+      markets: parseMarkets(input.markets),
       license_number: input.licenseNumber,
       license_state: input.licenseState,
-      service_area: input.serviceArea,
       onboarding_status: "arello_pending",
     })
     .select("*")
@@ -136,10 +121,9 @@ const DRAFT_KEY = "divieight.agent_registration_draft";
 export interface AgentRegistrationDraft {
   fullName: string;
   phone: string;
-  role: SelectableAgentRole;
+  markets: string[];
   licenseNumber: string;
   licenseState: string;
-  serviceArea: string;
 }
 
 /** OAuth signups can't carry profile fields, so stash them across the redirect. */

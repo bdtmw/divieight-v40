@@ -1,12 +1,14 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { isResidentInMarket, marketMatches as marketsMatch } from "@/lib/markets";
 
 /**
  * Resident Agent Selection Logic.
  *
  * Runs the moment a Buyer Account earns Golden Ticket status:
  *   1. read the buyer's primary_target_market (zip / market string)
- *   2. find `resident` agents whose service_area matches that market
+ *   2. find agents whose `markets` array covers that market — "Resident" is
+ *      derived here per transaction, never stored on the agent
  *   3. tether the most-tenured one (earliest created_at)
  *   4. if the buyer arrived through an agent referral, stage a Standard NAR
  *      Referral Agreement placeholder for later generation
@@ -37,12 +39,7 @@ export interface TetherResult {
 }
 
 /** Loose market match: exact zip, or either string containing the other. */
-export function marketMatches(serviceArea: string, market: string) {
-  const a = serviceArea.trim().toLowerCase();
-  const b = market.trim().toLowerCase();
-  if (!a || !b) return false;
-  return a === b || a.includes(b) || b.includes(a);
-}
+export const marketMatches = marketsMatch;
 
 type Db = { from: (t: string) => any };
 
@@ -58,16 +55,19 @@ export async function notifyAgentUser(db: Db, authUserId: string | null, message
   await db.from("notifications").insert({ seller_id: authUserId, message, type });
 }
 
+/**
+ * Most-tenured agent who is Resident on this market — derived by checking the
+ * buyer's market against each agent's `markets` array.
+ */
 async function pickResidentAgent(db: Db, market: string, excludeAgentId?: string | null) {
-  const { data: residents } = await db
+  const { data: agents } = await db
     .from("agents")
-    .select("id, auth_user_id, full_name, service_area, created_at")
-    .eq("role", "resident")
+    .select("id, auth_user_id, full_name, markets, created_at")
     .order("created_at", { ascending: true });
 
   if (!market) return undefined;
-  return (residents ?? []).find(
-    (a: any) => a.id !== excludeAgentId && marketMatches(a.service_area ?? "", market),
+  return (agents ?? []).find(
+    (a: any) => a.id !== excludeAgentId && isResidentInMarket(a.markets, market),
   );
 }
 
@@ -195,7 +195,7 @@ export async function runTethering(
   if (buyer.referring_agent_id) {
     const { data } = await db
       .from("agents")
-      .select("id, auth_user_id, full_name, role, service_area, created_at")
+      .select("id, auth_user_id, full_name, markets, created_at")
       .eq("id", buyer.referring_agent_id)
       .maybeSingle();
     referrer = data ?? null;
@@ -205,10 +205,13 @@ export async function runTethering(
   let referringAgentId: string | null = null;
   let referringAgentRole: "non_resident" | "resident" | null = null;
 
-  if (referrer?.role === "non_resident") {
+  // Residency is derived here, for this buyer's market only.
+  const referrerIsResident = referrer ? isResidentInMarket(referrer.markets, market) : false;
+
+  if (referrer && !referrerIsResident) {
     referringAgentId = referrer.id;
     referringAgentRole = "non_resident";
-  } else if (referrer?.role === "resident" && marketMatches(referrer.service_area ?? "", market)) {
+  } else if (referrer && referrerIsResident) {
     // Refer-Only Election: this agent would normally be auto-tethered.
     const { data: election } = await db
       .from("refer_only_elections")

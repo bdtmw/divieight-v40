@@ -7,15 +7,7 @@ import { mapSignupError, isExistingUserSignup } from "@/lib/signup-errors";
 import { signInWithGoogle } from "@/lib/google-auth";
 import { AuthCard, GoogleButton, Divider } from "@/components/AuthCard";
 import { Field } from "@/components/Field";
-import {
-  AGENT_ROLE_DESCRIPTIONS,
-  AGENT_ROLE_LABELS,
-  SELECTABLE_AGENT_ROLES,
-  agentRedirect,
-  createAgentProfile,
-  saveAgentDraft,
-  type SelectableAgentRole,
-} from "@/lib/agent";
+import { agentRedirect, createAgentProfile, saveAgentDraft } from "@/lib/agent";
 
 export const Route = createFileRoute("/agent/register")({
   head: () => ({
@@ -44,10 +36,11 @@ const schema = z.object({
   fullName: z.string().trim().min(2, { message: "Enter your full name" }).max(120),
   email: z.string().trim().email({ message: "Enter a valid email address" }).max(255),
   phone: z.string().trim().regex(phoneRegex, { message: "Enter a valid phone number" }),
-  role: z.enum(SELECTABLE_AGENT_ROLES),
   licenseNumber: z.string().trim().min(3, { message: "Enter your license number" }).max(60),
   licenseState: z.string().trim().min(2, { message: "Enter your license state" }).max(60),
-  serviceArea: z.string().trim().min(2, { message: "Enter the market you cover" }).max(120),
+  markets: z
+    .array(z.string().trim().min(2).max(120))
+    .min(1, { message: "Add at least one market you're licensed and active in" }),
   password: z.string().min(8, { message: "Password must be at least 8 characters" }).max(72),
 });
 
@@ -57,17 +50,32 @@ function AgentRegisterPage() {
     fullName: "",
     email: "",
     phone: "",
-    role: "non_resident" as SelectableAgentRole,
     licenseNumber: "",
     licenseState: "",
-    serviceArea: "",
+    markets: [] as string[],
     password: "",
   });
+  const [marketDraft, setMarketDraft] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
 
   const set = (k: keyof typeof values) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setValues((v) => ({ ...v, [k]: e.target.value }));
+
+  function addMarket() {
+    const entry = marketDraft.trim();
+    if (!entry) return;
+    setValues((v) =>
+      v.markets.some((m) => m.toLowerCase() === entry.toLowerCase())
+        ? v
+        : { ...v, markets: [...v.markets, entry] },
+    );
+    setMarketDraft("");
+  }
+
+  function removeMarket(market: string) {
+    setValues((v) => ({ ...v, markets: v.markets.filter((m) => m !== market) }));
+  }
 
   function validate() {
     const parsed = schema.safeParse(values);
@@ -100,10 +108,10 @@ function AgentRegisterPage() {
           phone: data.phone,
           // Email confirmation often opens in a new tab/browser where the
           // sessionStorage draft is gone, so carry the profile in metadata.
-          agent_role: data.role,
+          agent_profile: true,
           license_number: data.licenseNumber,
           license_state: data.licenseState,
-          service_area: data.serviceArea,
+          markets: data.markets,
         },
       },
     });
@@ -129,10 +137,9 @@ function AgentRegisterPage() {
     saveAgentDraft({
       fullName: data.fullName,
       phone: data.phone,
-      role: data.role,
       licenseNumber: data.licenseNumber,
       licenseState: data.licenseState,
-      serviceArea: data.serviceArea,
+      markets: data.markets,
     });
 
     if (!signUp.session || !signUp.user) {
@@ -146,10 +153,9 @@ function AgentRegisterPage() {
       fullName: data.fullName,
       email: data.email,
       phone: data.phone,
-      role: data.role,
       licenseNumber: data.licenseNumber,
       licenseState: data.licenseState,
-      serviceArea: data.serviceArea,
+      markets: data.markets,
     });
 
     if (created.error) {
@@ -170,10 +176,9 @@ function AgentRegisterPage() {
     saveAgentDraft({
       fullName: data.fullName,
       phone: data.phone,
-      role: data.role,
       licenseNumber: data.licenseNumber,
       licenseState: data.licenseState,
-      serviceArea: data.serviceArea,
+      markets: data.markets,
     });
     const { error } = await signInWithGoogle("agent");
     if (error) toast.error(error);
@@ -237,36 +242,6 @@ function AgentRegisterPage() {
           required
         />
 
-        <fieldset className="space-y-2">
-          <legend className="text-sm font-medium text-foreground">Your role</legend>
-          {SELECTABLE_AGENT_ROLES.map((role) => (
-            <label
-              key={role}
-              className={`flex cursor-pointer items-start gap-3 rounded-md border p-3 transition-colors ${
-                values.role === role ? "border-accent bg-secondary/50" : "border-border"
-              }`}
-            >
-              <input
-                type="radio"
-                name="role"
-                value={role}
-                checked={values.role === role}
-                onChange={() => setValues((v) => ({ ...v, role }))}
-                className="mt-1"
-              />
-              <span className="space-y-0.5">
-                <span className="block text-sm font-medium text-foreground">
-                  {AGENT_ROLE_LABELS[role]}
-                </span>
-                <span className="block text-xs text-muted-foreground">
-                  {AGENT_ROLE_DESCRIPTIONS[role]}
-                </span>
-              </span>
-            </label>
-          ))}
-          {errors.role ? <p className="text-xs text-destructive">{errors.role}</p> : null}
-        </fieldset>
-
         <div className="grid gap-4 sm:grid-cols-2">
           <Field
             label="License number"
@@ -288,16 +263,59 @@ function AgentRegisterPage() {
           />
         </div>
 
-        <Field
-          label="Service area"
-          name="serviceArea"
-          placeholder="Naples, FL"
-          value={values.serviceArea}
-          onChange={set("serviceArea")}
-          error={errors.serviceArea}
-          hint="The market you cover — used later to match you with pods."
-          required
-        />
+        <div className="space-y-2">
+          <label htmlFor="marketDraft" className="text-sm font-medium text-foreground">
+            Markets you're licensed and active in
+          </label>
+          <div className="flex gap-2">
+            <input
+              id="marketDraft"
+              name="marketDraft"
+              value={marketDraft}
+              onChange={(e) => setMarketDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  addMarket();
+                }
+              }}
+              placeholder="Naples, FL"
+              className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            />
+            <button
+              type="button"
+              onClick={addMarket}
+              className="h-11 shrink-0 rounded-md border border-border px-4 text-sm font-medium text-foreground hover:bg-secondary"
+            >
+              Add
+            </button>
+          </div>
+          {values.markets.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {values.markets.map((m) => (
+                <span
+                  key={m}
+                  className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/50 px-3 py-1 text-xs text-foreground"
+                >
+                  {m}
+                  <button
+                    type="button"
+                    onClick={() => removeMarket(m)}
+                    aria-label={`Remove ${m}`}
+                    className="text-muted-foreground hover:text-destructive"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+          ) : null}
+          <p className="text-xs text-muted-foreground">
+            Add every market you cover. Whether you're Resident or Non-Resident is worked out per
+            transaction from these markets — it isn't a fixed label on your profile.
+          </p>
+          {errors.markets ? <p className="text-xs text-destructive">{errors.markets}</p> : null}
+        </div>
 
         <Field
           label="Password"

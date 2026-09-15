@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/hooks/use-auth";
-import { getAgentProfile, agentRedirect, AGENT_ROLE_LABELS, type AgentRow } from "@/lib/agent";
+import { getAgentProfile, agentRedirect, type AgentRow } from "@/lib/agent";
+import { formatMarkets } from "@/lib/markets";
 import { AgentPendingBanner } from "@/components/AgentPendingBanner";
 import { AgentCertLapsedBanner } from "@/components/AgentCertLapsedBanner";
 import { AgentBrokerLapsedBanner } from "@/components/AgentBrokerLapsedBanner";
@@ -172,14 +173,18 @@ function AgentDashboard() {
 
       <header className="space-y-3">
         <p className="text-xs font-medium uppercase tracking-[0.2em] text-accent">
-          {AGENT_ROLE_LABELS[agent.role]}
+          Licensed agent
         </p>
         <h1 className="font-display text-3xl font-semibold text-foreground">
           Welcome, {agent.full_name}
         </h1>
         <p className="text-sm text-muted-foreground">
-          Service area: {agent.service_area} · License {agent.license_number} (
+          Markets: {formatMarkets(agent.markets)} · License {agent.license_number} (
           {agent.license_state})
+        </p>
+        <p className="text-xs text-muted-foreground">
+          Resident or Non-Resident standing is worked out per transaction from your markets — it
+          isn't a fixed label on your profile.
         </p>
         <div className="flex flex-wrap gap-2">
           <StatusChip

@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { applyTether, loadBuyerForTether, notifyAgentUser, runTethering } from "@/lib/tethering.functions";
+import { residencyFor } from "@/lib/markets";
 
 /**
  * Buyer-Designated Agent flow + Refer-Only Election.
@@ -20,8 +21,7 @@ export interface AgentSearchResult {
   id: string;
   full_name: string;
   email: string | null;
-  role: string;
-  service_area: string | null;
+  markets: string[] | null;
 }
 
 export interface DesignationState {
@@ -68,7 +68,7 @@ async function buyerAccountFor(db: Db, userId: string, buyerAccountId: string) {
 async function agentFor(db: Db, userId: string) {
   const { data } = await db
     .from("agents")
-    .select("id, auth_user_id, full_name, email, role, service_area, created_at")
+    .select("id, auth_user_id, full_name, email, markets, created_at")
     .eq("auth_user_id", userId)
     .maybeSingle();
   return data;
@@ -117,7 +117,7 @@ export const searchAgents = createServerFn({ method: "POST" })
     const db = await admin();
     const { data: rows } = await db
       .from("agents")
-      .select("id, full_name, email, role, service_area")
+      .select("id, full_name, email, markets")
       .or(`full_name.ilike.%${q}%,email.ilike.%${q}%`)
       .limit(10);
     return (rows ?? []) as AgentSearchResult[];
@@ -435,12 +435,13 @@ export const respondToDesignation = createServerFn({ method: "POST" })
     if (buyer.referring_agent_id && buyer.referring_agent_id !== agent.id) {
       const { data: ref } = await db
         .from("agents")
-        .select("id, role")
+        .select("id, markets")
         .eq("id", buyer.referring_agent_id)
         .maybeSingle();
       if (ref) {
         referringAgentId = ref.id;
-        referringAgentRole = ref.role === "resident" ? "resident" : "non_resident";
+        // Derived for this buyer's market, never read from a stored role.
+        referringAgentRole = residencyFor(ref.markets, (buyer.primary_target_market ?? "").trim());
       }
     }
 

@@ -4,7 +4,8 @@ import { BadgeCheck, FileSignature, LayoutDashboard, ListChecks, LogOut, Share2,
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { getAgentProfile, agentRedirect, type AgentRow, AGENT_ROLE_LABELS } from "@/lib/agent";
+import { getAgentProfile, agentRedirect, type AgentRow } from "@/lib/agent";
+import { formatMarkets } from "@/lib/markets";
 import { NotificationsBell } from "@/components/NotificationsBell";
 
 export const Route = createFileRoute("/agent")({
@@ -148,16 +149,15 @@ function AgentPortalLayout() {
                 {label}
               </Link>
             ))}
-            {agent.role === "listing" && (
-              <Link
-                to={LISTING_NAV.to}
-                className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                activeProps={{ className: "text-foreground" }}
-              >
-                <LISTING_NAV.icon className="h-4 w-4" />
-                {LISTING_NAV.label}
-              </Link>
-            )}
+            {/* Listing Agent work is a per-property relationship, never a role. */}
+            <Link
+              to={LISTING_NAV.to}
+              className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              activeProps={{ className: "text-foreground" }}
+            >
+              <LISTING_NAV.icon className="h-4 w-4" />
+              {LISTING_NAV.label}
+            </Link>
             {/* Onboarding tab disappears once credentialing is complete. */}
             {onboardingComplete ? null : (
               <Link
@@ -173,7 +173,7 @@ function AgentPortalLayout() {
 
           <div className="flex items-center gap-3">
             <span className="hidden text-xs text-muted-foreground sm:inline">
-              {AGENT_ROLE_LABELS[agent.role]}
+              {formatMarkets(agent.markets)}
             </span>
             <NotificationsBell />
             <button

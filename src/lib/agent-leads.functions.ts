@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { residencyFor, type Residency } from "@/lib/markets";
 
 /**
  * Verified Lead Dashboard data.
@@ -30,6 +31,8 @@ export interface TetheredBuyer {
   pefStatus: "paid" | "pending" | "unpaid";
   priorityRank: number | null;
   tetheredAt: string | null;
+  /** Derived per transaction from the agent's markets — never a stored role. */
+  residency: Residency;
 }
 
 /** Milestone-based completion so the agent can see how far along a lead is. */
@@ -61,7 +64,7 @@ export const listMyTetheredBuyers = createServerFn({ method: "POST" })
 
     const { data: agent } = await db
       .from("agents")
-      .select("id")
+      .select("id, markets")
       .eq("auth_user_id", context.userId)
       .maybeSingle();
     if (!agent) return [];
@@ -118,6 +121,7 @@ export const listMyTetheredBuyers = createServerFn({ method: "POST" })
         pefStatus: pef,
         priorityRank: r.priority_rank ?? null,
         tetheredAt: r.tethered_at ?? null,
+        residency: residencyFor(agent.markets, (r.primary_target_market ?? "").trim()),
       } satisfies TetheredBuyer;
     });
   });
