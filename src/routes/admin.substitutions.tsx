@@ -62,6 +62,22 @@ function AdminSubstitutions() {
                 </div>
               </div>
 
+              <div className="mt-4 rounded-lg border border-border bg-background p-3 text-xs text-muted-foreground">
+                {v.invitation ? (
+                  <>
+                    Invitation #{v.invitation.sequence} · {v.invitation.status} · sent{" "}
+                    {when(v.invitation.invitedAt)} · window {v.invitation.windowHours}h
+                    {v.invitation.windowShortened ? " (shortened for closing date)" : ""} · closes{" "}
+                    {when(v.invitation.expiresAt)} ·{" "}
+                    {v.invitation.residentAgentNotified
+                      ? "Resident Agent notified"
+                      : "no tethered Resident Agent"}
+                  </>
+                ) : (
+                  "No invitation dispatched yet."
+                )}
+              </div>
+
               <p className="mt-5 flex items-center gap-2 text-sm font-medium text-foreground">
                 <Users2 className="h-4 w-4 text-accent" />
                 Top {v.candidates.length} compatible candidate
