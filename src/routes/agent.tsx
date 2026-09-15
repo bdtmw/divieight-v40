@@ -32,6 +32,7 @@ export const Route = createFileRoute("/agent")({
 const BASE_NAV = [
   { to: "/agent/dashboard", label: "Overview", icon: LayoutDashboard },
   { to: "/agent/leads", label: "Verified leads", icon: Users },
+  { to: "/agent/pools", label: "Market pools", icon: Layers },
   { to: "/agent/attribution", label: "Referral links", icon: Share2 },
   { to: "/agent/documents", label: "Agreements", icon: FileSignature },
 ] as const;

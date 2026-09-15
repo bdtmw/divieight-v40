@@ -55,6 +55,7 @@ import { Route as BrokerDashboardRouteImport } from './routes/broker.dashboard'
 import { Route as BrokerClosingHoldsRouteImport } from './routes/broker.closing-holds'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AgentRegisterRouteImport } from './routes/agent.register'
+import { Route as AgentPoolsRouteImport } from './routes/agent.pools'
 import { Route as AgentLoginRouteImport } from './routes/agent.login'
 import { Route as AgentLeadsRouteImport } from './routes/agent.leads'
 import { Route as AgentDashboardRouteImport } from './routes/agent.dashboard'
@@ -332,6 +333,11 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
 const AgentRegisterRoute = AgentRegisterRouteImport.update({
   id: '/register',
   path: '/register',
+  getParentRoute: () => AgentRoute,
+} as any)
+const AgentPoolsRoute = AgentPoolsRouteImport.update({
+  id: '/pools',
+  path: '/pools',
   getParentRoute: () => AgentRoute,
 } as any)
 const AgentLoginRoute = AgentLoginRouteImport.update({
@@ -618,6 +624,7 @@ export interface FileRoutesByFullPath {
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/leads': typeof AgentLeadsRoute
   '/agent/login': typeof AgentLoginRoute
+  '/agent/pools': typeof AgentPoolsRoute
   '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/broker/closing-holds': typeof BrokerClosingHoldsRoute
@@ -710,6 +717,7 @@ export interface FileRoutesByTo {
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/leads': typeof AgentLeadsRoute
   '/agent/login': typeof AgentLoginRoute
+  '/agent/pools': typeof AgentPoolsRoute
   '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/broker/closing-holds': typeof BrokerClosingHoldsRoute
@@ -807,6 +815,7 @@ export interface FileRoutesById {
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/leads': typeof AgentLeadsRoute
   '/agent/login': typeof AgentLoginRoute
+  '/agent/pools': typeof AgentPoolsRoute
   '/agent/register': typeof AgentRegisterRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/broker/closing-holds': typeof BrokerClosingHoldsRoute
@@ -905,6 +914,7 @@ export interface FileRouteTypes {
     | '/agent/dashboard'
     | '/agent/leads'
     | '/agent/login'
+    | '/agent/pools'
     | '/agent/register'
     | '/auth/callback'
     | '/broker/closing-holds'
@@ -997,6 +1007,7 @@ export interface FileRouteTypes {
     | '/agent/dashboard'
     | '/agent/leads'
     | '/agent/login'
+    | '/agent/pools'
     | '/agent/register'
     | '/auth/callback'
     | '/broker/closing-holds'
@@ -1093,6 +1104,7 @@ export interface FileRouteTypes {
     | '/agent/dashboard'
     | '/agent/leads'
     | '/agent/login'
+    | '/agent/pools'
     | '/agent/register'
     | '/auth/callback'
     | '/broker/closing-holds'
@@ -1537,6 +1549,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentRegisterRouteImport
       parentRoute: typeof AgentRoute
     }
+    '/agent/pools': {
+      id: '/agent/pools'
+      path: '/pools'
+      fullPath: '/agent/pools'
+      preLoaderRoute: typeof AgentPoolsRouteImport
+      parentRoute: typeof AgentRoute
+    }
     '/agent/login': {
       id: '/agent/login'
       path: '/login'
@@ -1920,6 +1939,7 @@ interface AgentRouteChildren {
   AgentDashboardRoute: typeof AgentDashboardRoute
   AgentLeadsRoute: typeof AgentLeadsRoute
   AgentLoginRoute: typeof AgentLoginRoute
+  AgentPoolsRoute: typeof AgentPoolsRoute
   AgentRegisterRoute: typeof AgentRegisterRoute
   AgentIndexRoute: typeof AgentIndexRoute
   AgentDocumentsIdRoute: typeof AgentDocumentsIdRoute
@@ -1941,6 +1961,7 @@ const AgentRouteChildren: AgentRouteChildren = {
   AgentDashboardRoute: AgentDashboardRoute,
   AgentLeadsRoute: AgentLeadsRoute,
   AgentLoginRoute: AgentLoginRoute,
+  AgentPoolsRoute: AgentPoolsRoute,
   AgentRegisterRoute: AgentRegisterRoute,
   AgentIndexRoute: AgentIndexRoute,
   AgentDocumentsIdRoute: AgentDocumentsIdRoute,
