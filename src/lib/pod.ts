@@ -16,6 +16,7 @@ export interface ReservationEligibility {
     | "ok"
     | "no_buyer_account"
     | "not_liquidity_verified"
+    | "not_tethered"
     | "not_found"
     | "sold_out"
     | "already_reserved";

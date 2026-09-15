@@ -88,11 +88,14 @@ export const createReservation = createServerFn({ method: "POST" })
 
     const { data: buyer } = await supabase
       .from("buyer_accounts")
-      .select("id, liquidity_verified")
+      .select("id, liquidity_verified, tether_status")
       .eq("auth_user_id", userId)
       .maybeSingle();
     if (!buyer) return fail("no_buyer_account");
     if (!buyer.liquidity_verified) return fail("not_liquidity_verified");
+    // Browsing stays open in Pending Tether; only commitment waits on the tether.
+    if ((buyer as { tether_status?: string | null }).tether_status !== "tethered")
+      return fail("not_tethered");
 
     const before = await fetchPodComposition(data.propertyId);
     if (!before) return fail("not_found");
