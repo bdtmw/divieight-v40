@@ -23,8 +23,6 @@ import {
   PLAID_SANDBOX,
   meetsLiquidityThreshold,
   sandboxBalanceFor,
-  totalAvailableBalance,
-  type PlaidAccountBalance,
 } from "@/lib/liquidity";
 
 export const Route = createFileRoute("/buyer/onboarding/liquidity")({
