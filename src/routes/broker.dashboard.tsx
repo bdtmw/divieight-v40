@@ -7,6 +7,7 @@ import { getBrokerProfile, type BrokerRow } from "@/lib/broker";
 import { CredentialStepper } from "@/components/credentialing/CredentialStepper";
 import { AgentBrokerLapsedBanner } from "@/components/AgentBrokerLapsedBanner";
 import { TaxFormGateBanner } from "@/components/TaxFormGateBanner";
+import { formatMarkets } from "@/lib/markets";
 
 export const Route = createFileRoute("/broker/dashboard")({
   head: () => ({
@@ -139,7 +140,7 @@ function BrokerDashboard() {
                   {a.full_name}
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  {a.role} · {a.onboarding_status}
+                  {formatMarkets((a as { markets?: unknown }).markets)} · {a.onboarding_status}
                 </span>
               </li>
             ))}

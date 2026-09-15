@@ -115,7 +115,7 @@ export interface LapsedAgentRow {
 export async function listLapsedAgentsForBroker(brokerId: string): Promise<LapsedAgentRow[]> {
   const { data, error } = await db
     .from("agents")
-    .select("id, full_name, role, relationship_status, relationship_verified_at")
+    .select("id, full_name, markets, relationship_status, relationship_verified_at")
     .eq("broker_id", brokerId)
     .neq("relationship_status", "active");
   if (error) return [];
