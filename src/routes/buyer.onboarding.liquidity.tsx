@@ -23,8 +23,6 @@ import {
   PLAID_SANDBOX,
   meetsLiquidityThreshold,
   sandboxBalanceFor,
-  totalAvailableBalance,
-  type PlaidAccountBalance,
 } from "@/lib/liquidity";
 
 export const Route = createFileRoute("/buyer/onboarding/liquidity")({
@@ -67,9 +65,6 @@ interface BuyerRow {
   liquidity_documents: unknown;
 }
 
-function currency(n: number) {
-  return n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
-}
 
 function LiquidityGatePage() {
   const navigate = useNavigate();
@@ -86,7 +81,9 @@ function LiquidityGatePage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [linking, setLinking] = useState(false);
-  const [balances, setBalances] = useState<PlaidAccountBalance[] | null>(null);
+  // Binary only: whether a link attempt has produced a result this session.
+  // Balances are never held in state, stored, or rendered.
+  const [linkResolved, setLinkResolved] = useState(false);
   const [linkFailed, setLinkFailed] = useState(false);
   const [showFallback, setShowFallback] = useState(false);
 
@@ -132,7 +129,7 @@ function LiquidityGatePage() {
   // Internal Liquidity Gate basis only — never rendered as a figure.
   const budget = buyer?.target_budget ?? 0;
   const budgetLabel = buyer ? budgetBucketLabel(buyer.target_budget_bucket, buyer.target_budget) : "";
-  const required = budget * LIQUIDITY_MULTIPLIER;
+  
 
   async function saveConsent(next: boolean) {
     setConsent(next);
@@ -189,8 +186,8 @@ function LiquidityGatePage() {
       return;
     }
 
-    const accounts = sandboxBalanceFor(budget);
-    const passed = meetsLiquidityThreshold(accounts, budget);
+    // Balances exist only inside this comparison and are discarded immediately.
+    const passed = meetsLiquidityThreshold(sandboxBalanceFor(budget), budget);
     const now = new Date().toISOString();
 
     const { error } = await supabase
@@ -212,7 +209,7 @@ function LiquidityGatePage() {
       toast.error(error.message);
       return;
     }
-    setBalances(accounts);
+    setLinkResolved(true);
     setBuyer({
       ...buyer,
       liquidity_verified: passed,
@@ -225,10 +222,10 @@ function LiquidityGatePage() {
       actionType: passed ? "buyer.liquidity_verified" : "buyer.liquidity_insufficient",
       entityType: "buyer_account",
       entityId: buyer.id,
+      // Binary outcome only — no balance, threshold, or margin figure is logged.
       metadata: {
         institution: PLAID_SANDBOX.institution,
-        available_total: totalAvailableBalance(accounts),
-        required,
+        result: passed ? "verified" : "insufficient",
         simulated: true,
       },
     });
@@ -373,7 +370,7 @@ function LiquidityGatePage() {
         </section>
       ) : null}
 
-      {balances || verified ? (
+      {linkResolved || verified ? (
         <div
           className={
             verified
@@ -385,9 +382,9 @@ function LiquidityGatePage() {
             {verified ? "Liquidity verified" : "Insufficient verified liquidity"}
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
-            {balances
-              ? `${buyer.liquidity_institution} · ${currency(totalAvailableBalance(balances))} available — clears the 1.2× requirement for your budget range.`
-              : `Verified via ${buyer.liquidity_institution ?? "your linked institution"}.`}
+            {verified
+              ? `Verified via ${buyer.liquidity_institution ?? "your linked institution"}. We record only that the requirement was met — never an amount.`
+              : `The accounts you linked at ${buyer.liquidity_institution ?? "your institution"} did not meet the requirement. No amount is recorded.`}
           </p>
         </div>
       ) : null}

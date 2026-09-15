@@ -76,17 +76,10 @@ export function VerifiedLeadTable({
             </div>
           </div>
 
-          <div className="mt-3">
-            <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-              <span>Onboarding {b.onboardingStatus.replace(/_/g, " ")}</span>
-              <span>{b.onboardingPercent}%</span>
-            </div>
-            <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-              <div
-                className="h-full rounded-full bg-accent"
-                style={{ width: `${b.onboardingPercent}%` }}
-              />
-            </div>
+          {/* Binary-vetting rule: discrete stage only — no computed progress
+              score, percentage, or band derived from vetting/financial state. */}
+          <div className="mt-3 text-[11px] text-muted-foreground">
+            Onboarding stage: {b.onboardingStatus.replace(/_/g, " ")}
           </div>
         </li>
       ))}
