@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Fragment, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { StatusToneClass, money, when } from "@/lib/admin";
+import { StatusToneClass, when } from "@/lib/admin";
 import { budgetBucketLabel } from "@/lib/budget-buckets";
 
 export const Route = createFileRoute("/admin/buyers")({
