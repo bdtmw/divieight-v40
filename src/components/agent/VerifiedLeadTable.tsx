@@ -1,4 +1,5 @@
 import type { TetheredBuyer } from "@/lib/agent-leads.functions";
+import { residencyLabel } from "@/lib/markets";
 
 /**
  * Read-only status view of the buyers tethered to the signed-in agent.
@@ -40,7 +41,7 @@ export function VerifiedLeadTable({
     return (
       <p className="text-sm text-muted-foreground">
         No buyers are tethered to you yet. Tethering happens automatically when a buyer in your
-        service area earns their Digital Key, or when a buyer designates you by name.
+        markets earns their Digital Key, or when a buyer designates you by name.
       </p>
     );
   }
@@ -60,6 +61,9 @@ export function VerifiedLeadTable({
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
+              <Badge tone={b.residency === "resident" ? "ok" : "muted"}>
+                {residencyLabel(b.residency)}
+              </Badge>
               <Badge tone={b.goldenTicketIssued ? "ok" : "muted"}>
                 {b.goldenTicketIssued ? "Digital Key issued" : "Digital Key pending"}
               </Badge>

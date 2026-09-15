@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { formatMarkets } from "@/lib/markets";
 import { Input } from "@/components/ui/input";
 import {
   getListingAgentTagState,
@@ -130,7 +131,7 @@ export function ListingAgentTagger({ propertyId }: { propertyId: string }) {
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Name, email, or service area"
+                placeholder="Name or email"
               />
               <Button type="button" variant="secondary" onClick={runSearch} disabled={busy}>
                 Search
@@ -146,7 +147,7 @@ export function ListingAgentTagger({ propertyId }: { propertyId: string }) {
                     <div className="min-w-0">
                       <p className="truncate text-sm font-medium text-foreground">{a.full_name}</p>
                       <p className="truncate text-xs text-muted-foreground">
-                        {a.service_area ?? "—"} · {a.license_state ?? "—"}
+                        {formatMarkets(a.markets)} · {a.license_state ?? "—"}
                       </p>
                     </div>
                     <Button size="sm" onClick={() => tag(a.id)} disabled={busy}>

@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { UserPlus, Clock, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import {
+import { formatMarkets } from "@/lib/markets";
   acceptPlatformAssignment,
   clearDesignation,
   designateAgent,
@@ -220,7 +221,7 @@ export function DesignateAgentCard({ buyerAccountId }: { buyerAccountId: string 
                       <div className="min-w-0">
                         <p className="truncate text-sm font-medium text-foreground">{a.full_name}</p>
                         <p className="truncate text-xs text-muted-foreground">
-                          {a.email} · {a.service_area}
+                          {a.email} · {formatMarkets(a.markets)}
                         </p>
                       </div>
                       <button
