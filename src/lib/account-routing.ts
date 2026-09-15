@@ -5,6 +5,7 @@ import { getPostLoginRedirect } from "@/lib/post-login";
 import { agentRedirect, consumeAgentDraft, createAgentProfile, getAgentProfile } from "@/lib/agent";
 import { brokerRedirect, createBrokerProfile, getBrokerProfile } from "@/lib/broker";
 import { applyReferralTag } from "@/lib/attribution";
+import { parseMarkets } from "@/lib/markets";
 
 export type AccountRole = "buyer" | "seller" | "agent" | "broker";
 
