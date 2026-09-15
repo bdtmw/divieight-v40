@@ -63,6 +63,7 @@ import { Route as AgentDashboardRouteImport } from './routes/agent.dashboard'
 import { Route as AgentBrokerRelationshipRouteImport } from './routes/agent.broker-relationship'
 import { Route as AgentAttributionRouteImport } from './routes/agent.attribution'
 import { Route as AdminTetherResolutionRouteImport } from './routes/admin.tether-resolution'
+import { Route as AdminSupportRouteImport } from './routes/admin.support'
 import { Route as AdminSubstitutionsRouteImport } from './routes/admin.substitutions'
 import { Route as AdminSellersRouteImport } from './routes/admin.sellers'
 import { Route as AdminPropertiesRouteImport } from './routes/admin.properties'
@@ -380,6 +381,11 @@ const AdminTetherResolutionRoute = AdminTetherResolutionRouteImport.update({
   path: '/tether-resolution',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminSupportRoute = AdminSupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminSubstitutionsRoute = AdminSubstitutionsRouteImport.update({
   id: '/substitutions',
   path: '/substitutions',
@@ -652,6 +658,7 @@ export interface FileRoutesByFullPath {
   '/admin/properties': typeof AdminPropertiesRoute
   '/admin/sellers': typeof AdminSellersRoute
   '/admin/substitutions': typeof AdminSubstitutionsRoute
+  '/admin/support': typeof AdminSupportRoute
   '/admin/tether-resolution': typeof AdminTetherResolutionRoute
   '/agent/attribution': typeof AgentAttributionRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
@@ -750,6 +757,7 @@ export interface FileRoutesByTo {
   '/admin/properties': typeof AdminPropertiesRoute
   '/admin/sellers': typeof AdminSellersRoute
   '/admin/substitutions': typeof AdminSubstitutionsRoute
+  '/admin/support': typeof AdminSupportRoute
   '/admin/tether-resolution': typeof AdminTetherResolutionRoute
   '/agent/attribution': typeof AgentAttributionRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
@@ -853,6 +861,7 @@ export interface FileRoutesById {
   '/admin/properties': typeof AdminPropertiesRoute
   '/admin/sellers': typeof AdminSellersRoute
   '/admin/substitutions': typeof AdminSubstitutionsRoute
+  '/admin/support': typeof AdminSupportRoute
   '/admin/tether-resolution': typeof AdminTetherResolutionRoute
   '/agent/attribution': typeof AgentAttributionRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
@@ -957,6 +966,7 @@ export interface FileRouteTypes {
     | '/admin/properties'
     | '/admin/sellers'
     | '/admin/substitutions'
+    | '/admin/support'
     | '/admin/tether-resolution'
     | '/agent/attribution'
     | '/agent/broker-relationship'
@@ -1055,6 +1065,7 @@ export interface FileRouteTypes {
     | '/admin/properties'
     | '/admin/sellers'
     | '/admin/substitutions'
+    | '/admin/support'
     | '/admin/tether-resolution'
     | '/agent/attribution'
     | '/agent/broker-relationship'
@@ -1157,6 +1168,7 @@ export interface FileRouteTypes {
     | '/admin/properties'
     | '/admin/sellers'
     | '/admin/substitutions'
+    | '/admin/support'
     | '/admin/tether-resolution'
     | '/agent/attribution'
     | '/agent/broker-relationship'
@@ -1671,6 +1683,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminTetherResolutionRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/support': {
+      id: '/admin/support'
+      path: '/support'
+      fullPath: '/admin/support'
+      preLoaderRoute: typeof AdminSupportRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/substitutions': {
       id: '/admin/substitutions'
       path: '/substitutions'
@@ -2008,6 +2027,7 @@ interface AdminRouteChildren {
   AdminPropertiesRoute: typeof AdminPropertiesRoute
   AdminSellersRoute: typeof AdminSellersRoute
   AdminSubstitutionsRoute: typeof AdminSubstitutionsRoute
+  AdminSupportRoute: typeof AdminSupportRoute
   AdminTetherResolutionRoute: typeof AdminTetherResolutionRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminPodsIndexRoute: typeof AdminPodsIndexRoute
@@ -2027,6 +2047,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminPropertiesRoute: AdminPropertiesRoute,
   AdminSellersRoute: AdminSellersRoute,
   AdminSubstitutionsRoute: AdminSubstitutionsRoute,
+  AdminSupportRoute: AdminSupportRoute,
   AdminTetherResolutionRoute: AdminTetherResolutionRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminPodsIndexRoute: AdminPodsIndexRoute,

@@ -13,6 +13,7 @@ import {
   ScrollText,
   LogOut,
   AlertTriangle,
+  LifeBuoy,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdmin } from "@/lib/admin";
@@ -40,6 +41,7 @@ const NAV = [
   { to: "/admin/brokers", label: "Brokers", icon: Briefcase },
   { to: "/admin/payments", label: "Payments", icon: CreditCard },
   { to: "/admin/contacts", label: "Contact inbox", icon: Mail },
+  { to: "/admin/support", label: "Support tickets", icon: LifeBuoy },
   { to: "/admin/pods", label: "Pods & HLA", icon: Boxes },
   { to: "/admin/substitutions", label: "Substitutions", icon: Users2 },
   { to: "/admin/tether-resolution", label: "Tether alerts", icon: AlertTriangle },

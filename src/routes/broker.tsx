@@ -31,6 +31,7 @@ const NAV = [
   { to: "/broker/dashboard", label: "Overview", icon: LayoutDashboard },
   { to: "/broker/onboarding/license-check", label: "Onboarding", icon: ListChecks },
   { to: "/broker/closing-holds", label: "Closing holds", icon: AlertOctagon },
+  { to: "/support", label: "Support", icon: LifeBuoy },
 ] as const;
 
 const PUBLIC_PREFIXES = ["/broker/register", "/broker/login"];
