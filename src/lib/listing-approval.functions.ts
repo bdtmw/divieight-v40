@@ -481,6 +481,13 @@ export const autoAssignListingAgent = createServerFn({ method: "POST" })
       return { ok: false as const, agentName: null, message: "No Listing Agent is available right now." };
     }
 
+    const { clearTethersForListingAgent: clearAuto } = await import("@/lib/dual-agency");
+    await clearAuto(db, {
+      propertyId: property.id,
+      agentId: match.id,
+      actorId: context.userId,
+    });
+
     await db
       .from("properties")
       .update({
@@ -490,6 +497,7 @@ export const autoAssignListingAgent = createServerFn({ method: "POST" })
         listing_agent_decline_reason: null,
       })
       .eq("id", property.id);
+
     await audit(db, {
       actorId: context.userId,
       actorType: "seller",
