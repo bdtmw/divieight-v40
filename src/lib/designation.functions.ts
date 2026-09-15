@@ -429,7 +429,26 @@ export const respondToDesignation = createServerFn({ method: "POST" })
       return { tethered: false };
     }
 
+    // Dual-agency: the Listing Agent on a property in this buyer's pod can
+    // never be tethered to them.
+    const { listingAgentConflict, logDualAgency, DUAL_AGENCY_DESIGNATION_MESSAGE } = await import(
+      "@/lib/dual-agency"
+    );
+    const conflict = await listingAgentConflict(db, agent.id, buyer.id);
+    if (conflict.conflict) {
+      await logDualAgency(db, {
+        actorId: context.userId,
+        point: "tethering",
+        agentId: agent.id,
+        propertyId: conflict.propertyId,
+        buyerAccountId: buyer.id,
+        resolution: "buyer designation rejected",
+      });
+      return { error: DUAL_AGENCY_DESIGNATION_MESSAGE };
+    }
+
     // Same tethering logic as the automatic path, with the designated agent.
+
     let referringAgentId: string | null = null;
     let referringAgentRole: "non_resident" | "resident" | null = null;
     if (buyer.referring_agent_id && buyer.referring_agent_id !== agent.id) {
@@ -546,8 +565,13 @@ export const respondToReferOnly = createServerFn({ method: "POST" })
       metadata: { agent_id: agent.id },
     });
 
-    await runTethering(db, election.buyer_account_id, context.userId);
+    const result = await runTethering(db, election.buyer_account_id, context.userId);
+    if (result.dualAgencyBlocked) {
+      const { DUAL_AGENCY_MESSAGE } = await import("@/lib/dual-agency");
+      return { error: DUAL_AGENCY_MESSAGE };
+    }
     return {};
+
   });
 
 /* ------------------------------------------------------------------ */

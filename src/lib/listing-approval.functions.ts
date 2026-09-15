@@ -130,6 +130,15 @@ export const tagListingAgent = createServerFn({ method: "POST" })
     // Listing Agent is a per-property relationship, not a stored role.
     if (!agent) throw new Error("That agent could not be found.");
 
+    // Dual-agency: release (and re-tether) any buyer in this property's pod
+    // already tethered to this agent BEFORE the tag is finalized.
+    const { clearTethersForListingAgent } = await import("@/lib/dual-agency");
+    await clearTethersForListingAgent(db, {
+      propertyId: property.id,
+      agentId: agent.id,
+      actorId: context.userId,
+    });
+
     await db
       .from("properties")
       .update({
@@ -139,6 +148,7 @@ export const tagListingAgent = createServerFn({ method: "POST" })
         listing_agent_decline_reason: null,
       })
       .eq("id", property.id);
+
     await audit(db, {
       actorId: context.userId,
       actorType: "seller",
@@ -173,6 +183,12 @@ export const inviteListingAgent = createServerFn({ method: "POST" })
       .eq("email", email)
       .maybeSingle();
     if (existing) {
+      const { clearTethersForListingAgent: clearInvited } = await import("@/lib/dual-agency");
+      await clearInvited(db, {
+        propertyId: property.id,
+        agentId: existing.id,
+        actorId: context.userId,
+      });
       await db
         .from("properties")
         .update({
@@ -182,6 +198,7 @@ export const inviteListingAgent = createServerFn({ method: "POST" })
           listing_agent_decline_reason: null,
         })
         .eq("id", property.id);
+
       if (existing.auth_user_id) {
         await notifyUser(
           db,
@@ -471,6 +488,13 @@ export const autoAssignListingAgent = createServerFn({ method: "POST" })
       return { ok: false as const, agentName: null, message: "No Listing Agent is available right now." };
     }
 
+    const { clearTethersForListingAgent: clearAuto } = await import("@/lib/dual-agency");
+    await clearAuto(db, {
+      propertyId: property.id,
+      agentId: match.id,
+      actorId: context.userId,
+    });
+
     await db
       .from("properties")
       .update({
@@ -480,6 +504,7 @@ export const autoAssignListingAgent = createServerFn({ method: "POST" })
         listing_agent_decline_reason: null,
       })
       .eq("id", property.id);
+
     await audit(db, {
       actorId: context.userId,
       actorType: "seller",

@@ -36,6 +36,9 @@ export interface TetherResult {
   fullCommission: boolean;
   /** True when a Resident Agent referrer still owes a Refer-Only election. */
   awaitingReferOnlyElection?: boolean;
+  /** True when the pick was refused because that agent holds the listing. */
+  dualAgencyBlocked?: boolean;
+
 }
 
 /** Loose market match: exact zip, or either string containing the other. */
@@ -59,7 +62,12 @@ export async function notifyAgentUser(db: Db, authUserId: string | null, message
  * Most-tenured agent who is Resident on this market — derived by checking the
  * buyer's market against each agent's `markets` array.
  */
-async function pickResidentAgent(db: Db, market: string, excludeAgentId?: string | null) {
+async function pickResidentAgent(
+  db: Db,
+  market: string,
+  excludeAgentId?: string | null,
+  blockedAgentIds: string[] = [],
+) {
   const { data: agents } = await db
     .from("agents")
     .select("id, auth_user_id, full_name, markets, created_at")
@@ -67,9 +75,13 @@ async function pickResidentAgent(db: Db, market: string, excludeAgentId?: string
 
   if (!market) return undefined;
   return (agents ?? []).find(
-    (a: any) => a.id !== excludeAgentId && isResidentInMarket(a.markets, market),
+    (a: any) =>
+      a.id !== excludeAgentId &&
+      !blockedAgentIds.includes(a.id) &&
+      isResidentInMarket(a.markets, market),
   );
 }
+
 
 /**
  * Shared tether writer used by the automatic pick, the buyer-designated agent
@@ -88,9 +100,27 @@ export async function applyTether(
   },
 ): Promise<TetherResult> {
   const { buyer, agent, actorId, referringAgentId, referringAgentRole, market, source } = params;
+
+  // Dual-agency rule: a Listing Agent can never be tethered inside that
+  // property's pod. Flat check, no exceptions.
+  const { listingAgentConflict, logDualAgency } = await import("@/lib/dual-agency");
+  const conflict = await listingAgentConflict(db as any, agent.id, buyer.id);
+  if (conflict.conflict) {
+    await logDualAgency(db as any, {
+      actorId,
+      point: "tethering",
+      agentId: agent.id,
+      propertyId: conflict.propertyId,
+      buyerAccountId: buyer.id,
+      resolution: `tether blocked (${source})`,
+    });
+    return { ...IDLE, dualAgencyBlocked: true };
+  }
+
   const stageAgreement = Boolean(referringAgentId) && referringAgentId !== agent.id;
   const fullCommission = !stageAgreement;
   const now = new Date().toISOString();
+
 
   await db
     .from("buyer_accounts")
@@ -205,13 +235,32 @@ export async function runTethering(
   let referringAgentId: string | null = null;
   let referringAgentRole: "non_resident" | "resident" | null = null;
 
+  // Dual-agency: agents holding the listing on a property in this buyer's pod
+  // are never eligible for the tether.
+  const { blockedAgentIdsForBuyer, logDualAgency } = await import("@/lib/dual-agency");
+  const blockedAgentIds = await blockedAgentIdsForBuyer(db as any, buyer.id);
+
   // Residency is derived here, for this buyer's market only.
   const referrerIsResident = referrer ? isResidentInMarket(referrer.markets, market) : false;
-
-  if (referrer && !referrerIsResident) {
+  const referrerBlocked = Boolean(referrer && blockedAgentIds.includes(referrer.id));
+  if (referrer && referrerBlocked) {
+    // They keep the 25% referral share, but can never hold the tether.
+    await logDualAgency(db as any, {
+      actorId,
+      point: "tethering",
+      agentId: referrer.id,
+      propertyId: null,
+      buyerAccountId: buyer.id,
+      resolution: "referring agent holds the listing — skipped, referral share preserved",
+    });
+    excludeAgentId = referrer.id;
+    referringAgentId = referrer.id;
+    referringAgentRole = referrerIsResident ? "resident" : "non_resident";
+  } else if (referrer && !referrerIsResident) {
     referringAgentId = referrer.id;
     referringAgentRole = "non_resident";
   } else if (referrer && referrerIsResident) {
+
     // Refer-Only Election: this agent would normally be auto-tethered.
     const { data: election } = await db
       .from("refer_only_elections")
@@ -257,7 +306,7 @@ export async function runTethering(
     referringAgentRole = "resident";
   }
 
-  const match = await pickResidentAgent(db, market, excludeAgentId);
+  const match = await pickResidentAgent(db, market, excludeAgentId, blockedAgentIds);
   if (!match) {
     await db
       .from("buyer_accounts")
