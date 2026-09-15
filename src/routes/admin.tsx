@@ -12,6 +12,7 @@ import {
   Briefcase,
   ScrollText,
   LogOut,
+  AlertTriangle,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdmin } from "@/lib/admin";
