@@ -92,6 +92,7 @@ import { Route as ApiPublicSubstitutionSweepRouteImport } from './routes/api.pub
 import { Route as ApiPublicNarCertSweepRouteImport } from './routes/api.public.nar-cert-sweep'
 import { Route as ApiPublicListingApprovalEscalationRouteImport } from './routes/api.public.listing-approval-escalation'
 import { Route as ApiPublicHlaSweepRouteImport } from './routes/api.public.hla-sweep'
+import { Route as ApiPublicEoExpirySweepRouteImport } from './routes/api.public.eo-expiry-sweep'
 import { Route as ApiPublicEnrollmentMaintenanceRouteImport } from './routes/api.public.enrollment-maintenance'
 import { Route as ApiPublicDesignationSweepRouteImport } from './routes/api.public.designation-sweep'
 import { Route as ApiPublicBrokerRelationshipSweepRouteImport } from './routes/api.public.broker-relationship-sweep'
@@ -530,6 +531,11 @@ const ApiPublicHlaSweepRoute = ApiPublicHlaSweepRouteImport.update({
   path: '/api/public/hla-sweep',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicEoExpirySweepRoute = ApiPublicEoExpirySweepRouteImport.update({
+  id: '/api/public/eo-expiry-sweep',
+  path: '/api/public/eo-expiry-sweep',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicEnrollmentMaintenanceRoute =
   ApiPublicEnrollmentMaintenanceRouteImport.update({
     id: '/api/public/enrollment-maintenance',
@@ -691,6 +697,7 @@ export interface FileRoutesByFullPath {
   '/api/public/broker-relationship-sweep': typeof ApiPublicBrokerRelationshipSweepRoute
   '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
+  '/api/public/eo-expiry-sweep': typeof ApiPublicEoExpirySweepRoute
   '/api/public/hla-sweep': typeof ApiPublicHlaSweepRoute
   '/api/public/listing-approval-escalation': typeof ApiPublicListingApprovalEscalationRoute
   '/api/public/nar-cert-sweep': typeof ApiPublicNarCertSweepRoute
@@ -787,6 +794,7 @@ export interface FileRoutesByTo {
   '/api/public/broker-relationship-sweep': typeof ApiPublicBrokerRelationshipSweepRoute
   '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
+  '/api/public/eo-expiry-sweep': typeof ApiPublicEoExpirySweepRoute
   '/api/public/hla-sweep': typeof ApiPublicHlaSweepRoute
   '/api/public/listing-approval-escalation': typeof ApiPublicListingApprovalEscalationRoute
   '/api/public/nar-cert-sweep': typeof ApiPublicNarCertSweepRoute
@@ -888,6 +896,7 @@ export interface FileRoutesById {
   '/api/public/broker-relationship-sweep': typeof ApiPublicBrokerRelationshipSweepRoute
   '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
+  '/api/public/eo-expiry-sweep': typeof ApiPublicEoExpirySweepRoute
   '/api/public/hla-sweep': typeof ApiPublicHlaSweepRoute
   '/api/public/listing-approval-escalation': typeof ApiPublicListingApprovalEscalationRoute
   '/api/public/nar-cert-sweep': typeof ApiPublicNarCertSweepRoute
@@ -990,6 +999,7 @@ export interface FileRouteTypes {
     | '/api/public/broker-relationship-sweep'
     | '/api/public/designation-sweep'
     | '/api/public/enrollment-maintenance'
+    | '/api/public/eo-expiry-sweep'
     | '/api/public/hla-sweep'
     | '/api/public/listing-approval-escalation'
     | '/api/public/nar-cert-sweep'
@@ -1086,6 +1096,7 @@ export interface FileRouteTypes {
     | '/api/public/broker-relationship-sweep'
     | '/api/public/designation-sweep'
     | '/api/public/enrollment-maintenance'
+    | '/api/public/eo-expiry-sweep'
     | '/api/public/hla-sweep'
     | '/api/public/listing-approval-escalation'
     | '/api/public/nar-cert-sweep'
@@ -1186,6 +1197,7 @@ export interface FileRouteTypes {
     | '/api/public/broker-relationship-sweep'
     | '/api/public/designation-sweep'
     | '/api/public/enrollment-maintenance'
+    | '/api/public/eo-expiry-sweep'
     | '/api/public/hla-sweep'
     | '/api/public/listing-approval-escalation'
     | '/api/public/nar-cert-sweep'
@@ -1252,6 +1264,7 @@ export interface RootRouteChildren {
   ApiPublicBrokerRelationshipSweepRoute: typeof ApiPublicBrokerRelationshipSweepRoute
   ApiPublicDesignationSweepRoute: typeof ApiPublicDesignationSweepRoute
   ApiPublicEnrollmentMaintenanceRoute: typeof ApiPublicEnrollmentMaintenanceRoute
+  ApiPublicEoExpirySweepRoute: typeof ApiPublicEoExpirySweepRoute
   ApiPublicHlaSweepRoute: typeof ApiPublicHlaSweepRoute
   ApiPublicListingApprovalEscalationRoute: typeof ApiPublicListingApprovalEscalationRoute
   ApiPublicNarCertSweepRoute: typeof ApiPublicNarCertSweepRoute
@@ -1848,6 +1861,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHlaSweepRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/eo-expiry-sweep': {
+      id: '/api/public/eo-expiry-sweep'
+      path: '/api/public/eo-expiry-sweep'
+      fullPath: '/api/public/eo-expiry-sweep'
+      preLoaderRoute: typeof ApiPublicEoExpirySweepRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/enrollment-maintenance': {
       id: '/api/public/enrollment-maintenance'
       path: '/api/public/enrollment-maintenance'
@@ -2136,6 +2156,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicBrokerRelationshipSweepRoute: ApiPublicBrokerRelationshipSweepRoute,
   ApiPublicDesignationSweepRoute: ApiPublicDesignationSweepRoute,
   ApiPublicEnrollmentMaintenanceRoute: ApiPublicEnrollmentMaintenanceRoute,
+  ApiPublicEoExpirySweepRoute: ApiPublicEoExpirySweepRoute,
   ApiPublicHlaSweepRoute: ApiPublicHlaSweepRoute,
   ApiPublicListingApprovalEscalationRoute:
     ApiPublicListingApprovalEscalationRoute,
