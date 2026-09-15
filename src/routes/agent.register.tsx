@@ -176,10 +176,9 @@ function AgentRegisterPage() {
     saveAgentDraft({
       fullName: data.fullName,
       phone: data.phone,
-      role: data.role,
       licenseNumber: data.licenseNumber,
       licenseState: data.licenseState,
-      serviceArea: data.serviceArea,
+      markets: data.markets,
     });
     const { error } = await signInWithGoogle("agent");
     if (error) toast.error(error);
