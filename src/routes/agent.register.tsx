@@ -7,15 +7,7 @@ import { mapSignupError, isExistingUserSignup } from "@/lib/signup-errors";
 import { signInWithGoogle } from "@/lib/google-auth";
 import { AuthCard, GoogleButton, Divider } from "@/components/AuthCard";
 import { Field } from "@/components/Field";
-import {
-  AGENT_ROLE_DESCRIPTIONS,
-  AGENT_ROLE_LABELS,
-  SELECTABLE_AGENT_ROLES,
-  agentRedirect,
-  createAgentProfile,
-  saveAgentDraft,
-  type SelectableAgentRole,
-} from "@/lib/agent";
+import { agentRedirect, createAgentProfile, saveAgentDraft } from "@/lib/agent";
 
 export const Route = createFileRoute("/agent/register")({
   head: () => ({
@@ -44,10 +36,11 @@ const schema = z.object({
   fullName: z.string().trim().min(2, { message: "Enter your full name" }).max(120),
   email: z.string().trim().email({ message: "Enter a valid email address" }).max(255),
   phone: z.string().trim().regex(phoneRegex, { message: "Enter a valid phone number" }),
-  role: z.enum(SELECTABLE_AGENT_ROLES),
   licenseNumber: z.string().trim().min(3, { message: "Enter your license number" }).max(60),
   licenseState: z.string().trim().min(2, { message: "Enter your license state" }).max(60),
-  serviceArea: z.string().trim().min(2, { message: "Enter the market you cover" }).max(120),
+  markets: z
+    .array(z.string().trim().min(2).max(120))
+    .min(1, { message: "Add at least one market you're licensed and active in" }),
   password: z.string().min(8, { message: "Password must be at least 8 characters" }).max(72),
 });
 
@@ -57,17 +50,32 @@ function AgentRegisterPage() {
     fullName: "",
     email: "",
     phone: "",
-    role: "non_resident" as SelectableAgentRole,
     licenseNumber: "",
     licenseState: "",
-    serviceArea: "",
+    markets: [] as string[],
     password: "",
   });
+  const [marketDraft, setMarketDraft] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
 
   const set = (k: keyof typeof values) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setValues((v) => ({ ...v, [k]: e.target.value }));
+
+  function addMarket() {
+    const entry = marketDraft.trim();
+    if (!entry) return;
+    setValues((v) =>
+      v.markets.some((m) => m.toLowerCase() === entry.toLowerCase())
+        ? v
+        : { ...v, markets: [...v.markets, entry] },
+    );
+    setMarketDraft("");
+  }
+
+  function removeMarket(market: string) {
+    setValues((v) => ({ ...v, markets: v.markets.filter((m) => m !== market) }));
+  }
 
   function validate() {
     const parsed = schema.safeParse(values);
