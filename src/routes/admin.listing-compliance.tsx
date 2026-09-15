@@ -90,6 +90,8 @@ function ComplianceQueue() {
         </p>
       </header>
 
+      <StalledApprovals />
+
       {loading && <p className="text-sm text-muted-foreground">Loading…</p>}
       {!loading && open.length === 0 && (
         <p className="text-sm text-muted-foreground">No open compliance items.</p>
