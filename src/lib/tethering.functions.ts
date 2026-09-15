@@ -55,16 +55,19 @@ export async function notifyAgentUser(db: Db, authUserId: string | null, message
   await db.from("notifications").insert({ seller_id: authUserId, message, type });
 }
 
+/**
+ * Most-tenured agent who is Resident on this market — derived by checking the
+ * buyer's market against each agent's `markets` array.
+ */
 async function pickResidentAgent(db: Db, market: string, excludeAgentId?: string | null) {
-  const { data: residents } = await db
+  const { data: agents } = await db
     .from("agents")
-    .select("id, auth_user_id, full_name, service_area, created_at")
-    .eq("role", "resident")
+    .select("id, auth_user_id, full_name, markets, created_at")
     .order("created_at", { ascending: true });
 
   if (!market) return undefined;
-  return (residents ?? []).find(
-    (a: any) => a.id !== excludeAgentId && marketMatches(a.service_area ?? "", market),
+  return (agents ?? []).find(
+    (a: any) => a.id !== excludeAgentId && isResidentInMarket(a.markets, market),
   );
 }
 
