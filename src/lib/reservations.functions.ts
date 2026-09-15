@@ -32,7 +32,7 @@ export const checkReservationEligibility = createServerFn({ method: "GET" })
 
     const { data: buyer } = await supabase
       .from("buyer_accounts")
-      .select("id, liquidity_verified, liquidity_status, target_budget")
+      .select("id, liquidity_verified, liquidity_status, target_budget, tether_status")
       .eq("auth_user_id", userId)
       .maybeSingle();
 
@@ -58,6 +58,9 @@ export const checkReservationEligibility = createServerFn({ method: "GET" })
     info.existingShares = (mine ?? []).reduce((s, r) => s + (r.shares_reserved ?? 0), 0);
 
     if (!buyer.liquidity_verified) return { ok: false, reason: "not_liquidity_verified", ...info };
+    // Browsing stays open in Pending Tether; only commitment waits on the tether.
+    if ((buyer as { tether_status?: string | null }).tether_status !== "tethered")
+      return { ok: false, reason: "not_tethered", ...info };
     if (info.existingShares > 0) return { ok: false, reason: "already_reserved", ...info };
     if (composition.availableShares < 1) return { ok: false, reason: "sold_out", ...info };
 
