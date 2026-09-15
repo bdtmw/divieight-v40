@@ -126,7 +126,9 @@ export async function buildVacancies(admin: AdminClient): Promise<Vacancy[]> {
     const exclude = [r.buyer_account_id, ...activeRows.map((a) => a.buyer_account_id)];
     const candidates = await findCandidates(admin, p, exclude, 5);
 
-    const { data: invRows } = await admin
+    // substitution_invitations lands with the pending migration; generated
+    // types don't know it yet.
+    const { data: invRows } = await (admin as unknown as { from: (t: string) => any })
       .from("substitution_invitations")
       .select("id, status, sequence, invited_at, expires_at, window_hours, window_shortened, resident_agent_id")
       .eq("property_id", p.id)
