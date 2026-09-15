@@ -386,7 +386,7 @@ function LiquidityGatePage() {
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
             {balances
-              ? `${buyer.liquidity_institution} · ${currency(totalAvailableBalance(balances))} available against ${currency(required)} required.`
+              ? `${buyer.liquidity_institution} · ${currency(totalAvailableBalance(balances))} available — clears the 1.2× requirement for your budget range.`
               : `Verified via ${buyer.liquidity_institution ?? "your linked institution"}.`}
           </p>
         </div>

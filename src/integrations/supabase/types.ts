@@ -137,6 +137,7 @@ export type Database = {
           priority_rank_timestamp: string | null
           stall_warning_sent_at: string | null
           target_budget: number | null
+          target_budget_bucket?: string | null
           target_zip_codes: Json
           updated_at: string
         }
@@ -167,6 +168,7 @@ export type Database = {
           priority_rank_timestamp?: string | null
           stall_warning_sent_at?: string | null
           target_budget?: number | null
+          target_budget_bucket?: string | null
           target_zip_codes?: Json
           updated_at?: string
         }
@@ -197,6 +199,7 @@ export type Database = {
           priority_rank_timestamp?: string | null
           stall_warning_sent_at?: string | null
           target_budget?: number | null
+          target_budget_bucket?: string | null
           target_zip_codes?: Json
           updated_at?: string
         }
