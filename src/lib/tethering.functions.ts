@@ -195,7 +195,7 @@ export async function runTethering(
   if (buyer.referring_agent_id) {
     const { data } = await db
       .from("agents")
-      .select("id, auth_user_id, full_name, role, service_area, created_at")
+      .select("id, auth_user_id, full_name, markets, created_at")
       .eq("id", buyer.referring_agent_id)
       .maybeSingle();
     referrer = data ?? null;
@@ -205,10 +205,13 @@ export async function runTethering(
   let referringAgentId: string | null = null;
   let referringAgentRole: "non_resident" | "resident" | null = null;
 
-  if (referrer?.role === "non_resident") {
+  // Residency is derived here, for this buyer's market only.
+  const referrerIsResident = referrer ? isResidentInMarket(referrer.markets, market) : false;
+
+  if (referrer && !referrerIsResident) {
     referringAgentId = referrer.id;
     referringAgentRole = "non_resident";
-  } else if (referrer?.role === "resident" && marketMatches(referrer.service_area ?? "", market)) {
+  } else if (referrer && referrerIsResident) {
     // Refer-Only Election: this agent would normally be auto-tethered.
     const { data: election } = await db
       .from("refer_only_elections")
