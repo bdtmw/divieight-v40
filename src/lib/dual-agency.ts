@@ -193,3 +193,18 @@ export async function verifyPodDualAgency(
   }
   return { violations };
 }
+
+/**
+ * Agent ids that may not be tethered to this buyer because they hold the
+ * listing on a property in the buyer's pod(s).
+ */
+export async function blockedAgentIdsForBuyer(db: Db, buyerAccountId: string): Promise<string[]> {
+  const propertyIds = await buyerPodPropertyIds(db, buyerAccountId);
+  if (propertyIds.length === 0) return [];
+  const { data } = await db
+    .from("properties")
+    .select("listing_agent_id")
+    .in("id", propertyIds)
+    .not("listing_agent_id", "is", null);
+  return Array.from(new Set((data ?? []).map((r: any) => r.listing_agent_id).filter(Boolean)));
+}
