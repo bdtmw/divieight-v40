@@ -30,9 +30,10 @@ export const checkReservationEligibility = createServerFn({ method: "GET" })
       composition: null as PodComposition | null,
     };
 
-    const { data: buyer } = await supabase
+    // tether_status post-dates the generated types; loose client here.
+    const { data: buyer } = await (supabase as any)
       .from("buyer_accounts")
-      .select("id, liquidity_verified, liquidity_status, target_budget")
+      .select("id, liquidity_verified, liquidity_status, target_budget, tether_status")
       .eq("auth_user_id", userId)
       .maybeSingle();
 
@@ -58,6 +59,9 @@ export const checkReservationEligibility = createServerFn({ method: "GET" })
     info.existingShares = (mine ?? []).reduce((s, r) => s + (r.shares_reserved ?? 0), 0);
 
     if (!buyer.liquidity_verified) return { ok: false, reason: "not_liquidity_verified", ...info };
+    // Browsing stays open in Pending Tether; only commitment waits on the tether.
+    if ((buyer as { tether_status?: string | null }).tether_status !== "tethered")
+      return { ok: false, reason: "not_tethered", ...info };
     if (info.existingShares > 0) return { ok: false, reason: "already_reserved", ...info };
     if (composition.availableShares < 1) return { ok: false, reason: "sold_out", ...info };
 
@@ -83,13 +87,16 @@ export const createReservation = createServerFn({ method: "POST" })
       systemLocked: false,
     });
 
-    const { data: buyer } = await supabase
+    const { data: buyer } = await (supabase as any)
       .from("buyer_accounts")
-      .select("id, liquidity_verified")
+      .select("id, liquidity_verified, tether_status")
       .eq("auth_user_id", userId)
       .maybeSingle();
     if (!buyer) return fail("no_buyer_account");
     if (!buyer.liquidity_verified) return fail("not_liquidity_verified");
+    // Browsing stays open in Pending Tether; only commitment waits on the tether.
+    if ((buyer as { tether_status?: string | null }).tether_status !== "tethered")
+      return fail("not_tethered");
 
     const before = await fetchPodComposition(data.propertyId);
     if (!before) return fail("not_found");

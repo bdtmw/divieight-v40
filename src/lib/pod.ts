@@ -16,6 +16,7 @@ export interface ReservationEligibility {
     | "ok"
     | "no_buyer_account"
     | "not_liquidity_verified"
+    | "not_tethered"
     | "not_found"
     | "sold_out"
     | "already_reserved";
@@ -58,6 +59,10 @@ export const RESERVATION_BLOCK_COPY: Record<
   not_liquidity_verified: {
     title: "Liquidity verification required",
     body: "Your funds haven't cleared the Liquidity Gate yet. Verified liquidity of at least 1.2× your target budget is required before you can hold a share.",
+  },
+  not_tethered: {
+    title: "Agent tethering required",
+    body: "You can keep browsing every listing, but committing to a home waits until you're tethered to a Resident Agent. Name your agent or accept a platform assignment from your dashboard.",
   },
   not_found: {
     title: "Listing unavailable",

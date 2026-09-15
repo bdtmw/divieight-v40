@@ -578,33 +578,82 @@ export const respondToReferOnly = createServerFn({ method: "POST" })
 /* 3-day window sweep (manually triggerable)                           */
 /* ------------------------------------------------------------------ */
 
-export async function runDesignationSweep(db: Db): Promise<{ expired: number }> {
-  const nowIso = new Date().toISOString();
+const EXPIRY_NOTICE =
+  "Your designated agent has not responded within 3 days. Resend the invitation, name a different agent, or accept a platform assignment.";
+
+/**
+ * Sends the expiry notice by email and reports whether delivery was accepted.
+ * A rejected send (bounce, invalid address, provider refusal) is what triggers
+ * the "awaiting tether resolution" admin flag.
+ */
+async function sendExpiryNotice(to: string | null): Promise<boolean> {
+  if (!to) return false;
+  const key = process.env['RESEND_API_KEY'];
+  if (!key) return false;
+  const { resendFrom } = await import("@/lib/email-sender");
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from: resendFrom(),
+        to,
+        subject: "Action needed: your designated agent has not responded",
+        text: `${EXPIRY_NOTICE}\n\nSign in to divieight to choose how to continue.`,
+      }),
+    });
+    return res.ok;
+  } catch (e) {
+    console.error("[designation] expiry notice failed", e);
+    return false;
+  }
+}
+
+export async function runDesignationSweep(
+  db: Db,
+): Promise<{ expired: number; undeliverable: number }> {
+  const now = new Date();
+  const nowIso = now.toISOString();
   const { data: rows } = await db
     .from("buyer_accounts")
-    .select("id, auth_user_id, designation_deadline_at, designation_expired, tether_status")
+    .select(
+      "id, auth_user_id, email, designation_deadline_at, designation_expired, tether_status",
+    )
     .eq("tether_status", "awaiting_designation")
     .eq("designation_expired", false)
     .not("designation_deadline_at", "is", null)
     .lt("designation_deadline_at", nowIso);
 
   let expired = 0;
+  let undeliverable = 0;
   for (const b of rows ?? []) {
-    await db.from("buyer_accounts").update({ designation_expired: true }).eq("id", b.id);
     await db.from("notifications").insert({
       seller_id: b.auth_user_id,
-      message:
-        "Your designated agent has not responded within 3 days. Resend the invitation, name a different agent, or accept a platform assignment.",
+      message: EXPIRY_NOTICE,
       type: "designation",
     });
+
+    const delivered = await sendExpiryNotice(b.email ?? null);
+    if (!delivered) undeliverable += 1;
+
+    await db
+      .from("buyer_accounts")
+      .update({
+        designation_expired: true,
+        designation_expiry_notified_at: nowIso,
+        designation_notice_delivery_failed: !delivered,
+        ...(delivered ? { last_successful_contact_at: nowIso } : {}),
+      })
+      .eq("id", b.id);
+
     await db.from("audit_log").insert({
       actor_id: b.auth_user_id,
       action_type: "buyer.agent_designation_expired",
       entity_type: "buyer_account",
       entity_id: b.id,
-      metadata: { deadline_at: b.designation_deadline_at },
+      metadata: { deadline_at: b.designation_deadline_at, notice_delivered: delivered },
     });
     expired += 1;
   }
-  return { expired };
+  return { expired, undeliverable };
 }
