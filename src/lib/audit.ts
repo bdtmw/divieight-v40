@@ -123,7 +123,8 @@ export type AuditEntity =
   | "referral_agreement"
   | "attribution_token"
   | "pod"
-  | "support_ticket";
+  | "support_ticket"
+  | "logging_source";
 
 
 export async function logAudit(params: {
