@@ -4,7 +4,8 @@ import { BadgeCheck, FileSignature, LayoutDashboard, ListChecks, LogOut, Share2,
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { getAgentProfile, agentRedirect, type AgentRow, AGENT_ROLE_LABELS } from "@/lib/agent";
+import { getAgentProfile, agentRedirect, type AgentRow } from "@/lib/agent";
+import { formatMarkets } from "@/lib/markets";
 import { NotificationsBell } from "@/components/NotificationsBell";
 
 export const Route = createFileRoute("/agent")({
