@@ -30,7 +30,8 @@ export const checkReservationEligibility = createServerFn({ method: "GET" })
       composition: null as PodComposition | null,
     };
 
-    const { data: buyer } = await supabase
+    // tether_status post-dates the generated types; loose client here.
+    const { data: buyer } = await (supabase as any)
       .from("buyer_accounts")
       .select("id, liquidity_verified, liquidity_status, target_budget, tether_status")
       .eq("auth_user_id", userId)

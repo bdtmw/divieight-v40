@@ -168,10 +168,10 @@ export const getTetherAlerts = createServerFn({ method: "GET" })
         .neq("tether_status", "tethered")
         .or("tether_resolution_flagged_at.not.is.null,pending_tether_alert_at.not.is.null");
 
-      const all = (rows ?? []).map(toRow);
+      const all: TetherAlertRow[] = (rows ?? []).map(toRow);
       return {
-        awaitingResolution: all.filter((r) => r.flaggedAt),
-        pendingOverdue: all.filter((r) => r.pendingTetherAlertAt),
+        awaitingResolution: all.filter((r: TetherAlertRow) => r.flaggedAt),
+        pendingOverdue: all.filter((r: TetherAlertRow) => r.pendingTetherAlertAt),
       };
     },
   );
