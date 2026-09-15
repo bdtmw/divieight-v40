@@ -306,7 +306,7 @@ export async function runTethering(
     referringAgentRole = "resident";
   }
 
-  const match = await pickResidentAgent(db, market, excludeAgentId);
+  const match = await pickResidentAgent(db, market, excludeAgentId, blockedAgentIds);
   if (!match) {
     await db
       .from("buyer_accounts")
