@@ -137,9 +137,18 @@ export const createReservation = createServerFn({ method: "POST" })
           })
           .eq("id", data.propertyId);
       }
+
+      // Dual-agency safeguard at Hard-Lock. Should never fire; if it does,
+      // it logs a compliance alert because it means an earlier check missed.
+      const { verifyPodDualAgency } = await import("@/lib/dual-agency");
+      await verifyPodDualAgency(supabaseAdmin as any, {
+        propertyId: data.propertyId,
+        actorId: userId,
+      });
     } catch {
       // reservation stands even if the lock write fails; maintenance can retry
     }
+
 
     await supabase.from("audit_log").insert({
       actor_id: userId,
