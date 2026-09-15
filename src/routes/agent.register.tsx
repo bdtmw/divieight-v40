@@ -153,10 +153,9 @@ function AgentRegisterPage() {
       fullName: data.fullName,
       email: data.email,
       phone: data.phone,
-      role: data.role,
       licenseNumber: data.licenseNumber,
       licenseState: data.licenseState,
-      serviceArea: data.serviceArea,
+      markets: data.markets,
     });
 
     if (created.error) {
