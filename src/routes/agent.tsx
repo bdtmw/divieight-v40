@@ -148,7 +148,7 @@ function AgentPortalLayout() {
                 {label}
               </Link>
             ))}
-            {agent.role === "listing" && (
+            {(
               <Link
                 to={LISTING_NAV.to}
                 className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -173,7 +173,7 @@ function AgentPortalLayout() {
 
           <div className="flex items-center gap-3">
             <span className="hidden text-xs text-muted-foreground sm:inline">
-              {AGENT_ROLE_LABELS[agent.role]}
+              {formatMarkets(agent.markets)}
             </span>
             <NotificationsBell />
             <button
