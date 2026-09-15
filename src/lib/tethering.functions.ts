@@ -39,12 +39,7 @@ export interface TetherResult {
 }
 
 /** Loose market match: exact zip, or either string containing the other. */
-export function marketMatches(serviceArea: string, market: string) {
-  const a = serviceArea.trim().toLowerCase();
-  const b = market.trim().toLowerCase();
-  if (!a || !b) return false;
-  return a === b || a.includes(b) || b.includes(a);
-}
+export const marketMatches = marketsMatch;
 
 type Db = { from: (t: string) => any };
 
