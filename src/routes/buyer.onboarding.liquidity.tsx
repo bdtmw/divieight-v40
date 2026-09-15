@@ -312,7 +312,8 @@ function LiquidityGatePage() {
         <p className="mt-3 text-base text-muted-foreground">
           Before your Golden Ticket is issued we confirm you hold at least{" "}
           {LIQUIDITY_MULTIPLIER}× your target budget
-          {budget > 0 ? ` (${currency(required)} against a ${currency(budget)} budget)` : ""}.
+          {budgetLabel ? ` range (${budgetLabel})` : ""}. The check runs internally — we never
+          display a calculated figure.
         </p>
       </div>
 

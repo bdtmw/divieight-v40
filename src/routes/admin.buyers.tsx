@@ -134,7 +134,7 @@ function AdminBuyers() {
                           </span>
                         </td>
                         <td className="px-4 py-3 text-xs text-foreground">
-                          {money(r.target_budget)}
+                          {budgetBucketLabel(r.target_budget_bucket, r.target_budget)}
                         </td>
                         <td className="px-4 py-3">
                           <span

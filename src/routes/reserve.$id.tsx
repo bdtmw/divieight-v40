@@ -255,7 +255,7 @@ function ReservePage() {
                 <p className="mt-1 text-sm text-muted-foreground">
                   Your verified liquidity covers at least 1.2× your stated target budget
                   {eligibility?.targetBudget
-                    ? ` of ${money(eligibility.targetBudget)}`
+                    ? ` range of ${budgetBucketLabel(null, eligibility.targetBudget)}`
                     : ""}
                   , so you're eligible to hold a share on this home.
                 </p>
