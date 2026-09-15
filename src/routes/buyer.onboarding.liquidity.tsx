@@ -372,7 +372,7 @@ function LiquidityGatePage() {
         </section>
       ) : null}
 
-      {balances || verified ? (
+      {linkResolved || verified ? (
         <div
           className={
             verified
@@ -384,9 +384,9 @@ function LiquidityGatePage() {
             {verified ? "Liquidity verified" : "Insufficient verified liquidity"}
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
-            {balances
-              ? `${buyer.liquidity_institution} · ${currency(totalAvailableBalance(balances))} available — clears the 1.2× requirement for your budget range.`
-              : `Verified via ${buyer.liquidity_institution ?? "your linked institution"}.`}
+            {verified
+              ? `Verified via ${buyer.liquidity_institution ?? "your linked institution"}. We record only that the requirement was met — never an amount.`
+              : `The accounts you linked at ${buyer.liquidity_institution ?? "your institution"} did not meet the requirement. No amount is recorded.`}
           </p>
         </div>
       ) : null}
