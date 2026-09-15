@@ -235,13 +235,32 @@ export async function runTethering(
   let referringAgentId: string | null = null;
   let referringAgentRole: "non_resident" | "resident" | null = null;
 
+  // Dual-agency: agents holding the listing on a property in this buyer's pod
+  // are never eligible for the tether.
+  const { blockedAgentIdsForBuyer, logDualAgency } = await import("@/lib/dual-agency");
+  const blockedAgentIds = await blockedAgentIdsForBuyer(db as any, buyer.id);
+
   // Residency is derived here, for this buyer's market only.
   const referrerIsResident = referrer ? isResidentInMarket(referrer.markets, market) : false;
-
-  if (referrer && !referrerIsResident) {
+  const referrerBlocked = Boolean(referrer && blockedAgentIds.includes(referrer.id));
+  if (referrer && referrerBlocked) {
+    // They keep the 25% referral share, but can never hold the tether.
+    await logDualAgency(db as any, {
+      actorId,
+      point: "tethering",
+      agentId: referrer.id,
+      propertyId: null,
+      buyerAccountId: buyer.id,
+      resolution: "referring agent holds the listing — skipped, referral share preserved",
+    });
+    excludeAgentId = referrer.id;
+    referringAgentId = referrer.id;
+    referringAgentRole = referrerIsResident ? "resident" : "non_resident";
+  } else if (referrer && !referrerIsResident) {
     referringAgentId = referrer.id;
     referringAgentRole = "non_resident";
   } else if (referrer && referrerIsResident) {
+
     // Refer-Only Election: this agent would normally be auto-tethered.
     const { data: election } = await db
       .from("refer_only_elections")
