@@ -435,12 +435,13 @@ export const respondToDesignation = createServerFn({ method: "POST" })
     if (buyer.referring_agent_id && buyer.referring_agent_id !== agent.id) {
       const { data: ref } = await db
         .from("agents")
-        .select("id, role")
+        .select("id, markets")
         .eq("id", buyer.referring_agent_id)
         .maybeSingle();
       if (ref) {
         referringAgentId = ref.id;
-        referringAgentRole = ref.role === "resident" ? "resident" : "non_resident";
+        // Derived for this buyer's market, never read from a stored role.
+        referringAgentRole = residencyFor(ref.markets, (buyer.primary_target_market ?? "").trim());
       }
     }
 
