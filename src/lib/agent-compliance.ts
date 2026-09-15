@@ -1,5 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { ENTITY_CONFIG, type EntityType } from "@/lib/credentialing";
+import { defaultEoExpiry } from "@/lib/eo-expiry";
+import { logAudit } from "@/lib/audit";
 
 /**
  * Agent onboarding step 2 — E&O insurance proof and NAR August 2024
@@ -45,6 +47,8 @@ export async function uploadEoInsurance(
 }
 
 export interface InsuranceSubmission {
+  /** E&O coverage end date (ISO). Defaults to one year out when omitted. */
+  eoExpiresAt?: string | null;
   /** Agent or broker row id. */
   entityId: string;
   entityType?: EntityType;
@@ -63,6 +67,13 @@ export async function submitInsuranceAndCertification(
 ): Promise<{ error?: string }> {
   const now = new Date().toISOString();
   const patch: Record<string, unknown> = {
+    // E&O expiry is captured here, whether proof was uploaded or the broker
+    // affirmed coverage. The 60/30/7-day reminders run off this date.
+    eo_expires_at: input.eoExpiresAt || defaultEoExpiry(now),
+    eo_lapsed: false,
+    eo_reminder_60_sent_at: null,
+    eo_reminder_30_sent_at: null,
+    eo_reminder_7_sent_at: null,
     nar_cert_signed_at: now,
     nar_cert_expires_at: narCertExpiry(now),
     nar_cert_lapsed: false,
@@ -100,5 +111,62 @@ export async function recertifyNar(
     })
     .eq("id", entityId);
   if (error) return { error: error.message };
+  return {};
+}
+
+/**
+ * Restore lapsed E&O coverage — immediate, no waiting period. Clears the
+ * lapse, resets the reminder clock, and releases the transaction hold unless
+ * the agent-broker relationship is independently holding it.
+ */
+export async function restoreEoCoverage(input: {
+  entityId: string;
+  authUserId: string;
+  eoInsurancePath?: string | null;
+  brokerAffirmed: boolean;
+  eoExpiresAt?: string | null;
+  entityType?: EntityType;
+}): Promise<{ error?: string }> {
+  const now = new Date().toISOString();
+  const cfg = ENTITY_CONFIG[input.entityType ?? "agent"];
+  const patch: Record<string, unknown> = {
+    eo_expires_at: input.eoExpiresAt || defaultEoExpiry(now),
+    eo_lapsed: false,
+    eo_lapsed_at: null,
+    eo_restored_at: now,
+    eo_reminder_60_sent_at: null,
+    eo_reminder_30_sent_at: null,
+    eo_reminder_7_sent_at: null,
+  };
+  if (input.brokerAffirmed) {
+    patch.eo_broker_affirmed = true;
+    patch.eo_broker_affirmed_at = now;
+  } else {
+    patch.eo_insurance_url = input.eoInsurancePath ?? null;
+    patch.eo_insurance_uploaded_at = now;
+  }
+
+  const { data: row } = await db
+    .from(cfg.table)
+    .select("relationship_status")
+    .eq("id", input.entityId)
+    .maybeSingle();
+  // Only release the shared hold when nothing else is holding it.
+  if ((row?.relationship_status ?? "active") === "active") patch.transactions_held = false;
+
+  const { error } = await db.from(cfg.table).update(patch).eq("id", input.entityId);
+  if (error) return { error: error.message };
+
+  await logAudit({
+    actorId: input.authUserId,
+    actorType: input.entityType === "broker" ? "broker" : "agent",
+    actionType: "agent.eo_insurance_restored",
+    entityType: input.entityType === "broker" ? "broker" : "agent",
+    entityId: input.entityId,
+    metadata: {
+      method: input.brokerAffirmed ? "broker_affirmation" : "document_upload",
+      expires_at: patch.eo_expires_at,
+    },
+  });
   return {};
 }
