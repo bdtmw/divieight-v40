@@ -148,16 +148,15 @@ function AgentPortalLayout() {
                 {label}
               </Link>
             ))}
-            {(
-              <Link
-                to={LISTING_NAV.to}
-                className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                activeProps={{ className: "text-foreground" }}
-              >
-                <LISTING_NAV.icon className="h-4 w-4" />
-                {LISTING_NAV.label}
-              </Link>
-            )}
+            {/* Listing Agent work is a per-property relationship, never a role. */}
+            <Link
+              to={LISTING_NAV.to}
+              className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              activeProps={{ className: "text-foreground" }}
+            >
+              <LISTING_NAV.icon className="h-4 w-4" />
+              {LISTING_NAV.label}
+            </Link>
             {/* Onboarding tab disappears once credentialing is complete. */}
             {onboardingComplete ? null : (
               <Link
