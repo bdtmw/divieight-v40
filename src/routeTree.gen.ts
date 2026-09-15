@@ -92,6 +92,7 @@ import { Route as BrokerOnboardingComplianceRouteImport } from './routes/broker.
 import { Route as BrokerOnboardingBankingRouteImport } from './routes/broker.onboarding.banking'
 import { Route as ApiPublicSubstitutionSweepRouteImport } from './routes/api.public.substitution-sweep'
 import { Route as ApiPublicNarCertSweepRouteImport } from './routes/api.public.nar-cert-sweep'
+import { Route as ApiPublicLoggingHealthRouteImport } from './routes/api.public.logging-health'
 import { Route as ApiPublicListingApprovalEscalationRouteImport } from './routes/api.public.listing-approval-escalation'
 import { Route as ApiPublicHlaSweepRouteImport } from './routes/api.public.hla-sweep'
 import { Route as ApiPublicEoExpirySweepRouteImport } from './routes/api.public.eo-expiry-sweep'
@@ -532,6 +533,11 @@ const ApiPublicNarCertSweepRoute = ApiPublicNarCertSweepRouteImport.update({
   path: '/api/public/nar-cert-sweep',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicLoggingHealthRoute = ApiPublicLoggingHealthRouteImport.update({
+  id: '/api/public/logging-health',
+  path: '/api/public/logging-health',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicListingApprovalEscalationRoute =
   ApiPublicListingApprovalEscalationRouteImport.update({
     id: '/api/public/listing-approval-escalation',
@@ -714,6 +720,7 @@ export interface FileRoutesByFullPath {
   '/api/public/eo-expiry-sweep': typeof ApiPublicEoExpirySweepRoute
   '/api/public/hla-sweep': typeof ApiPublicHlaSweepRoute
   '/api/public/listing-approval-escalation': typeof ApiPublicListingApprovalEscalationRoute
+  '/api/public/logging-health': typeof ApiPublicLoggingHealthRoute
   '/api/public/nar-cert-sweep': typeof ApiPublicNarCertSweepRoute
   '/api/public/substitution-sweep': typeof ApiPublicSubstitutionSweepRoute
   '/broker/onboarding/banking': typeof BrokerOnboardingBankingRoute
@@ -813,6 +820,7 @@ export interface FileRoutesByTo {
   '/api/public/eo-expiry-sweep': typeof ApiPublicEoExpirySweepRoute
   '/api/public/hla-sweep': typeof ApiPublicHlaSweepRoute
   '/api/public/listing-approval-escalation': typeof ApiPublicListingApprovalEscalationRoute
+  '/api/public/logging-health': typeof ApiPublicLoggingHealthRoute
   '/api/public/nar-cert-sweep': typeof ApiPublicNarCertSweepRoute
   '/api/public/substitution-sweep': typeof ApiPublicSubstitutionSweepRoute
   '/broker/onboarding/banking': typeof BrokerOnboardingBankingRoute
@@ -917,6 +925,7 @@ export interface FileRoutesById {
   '/api/public/eo-expiry-sweep': typeof ApiPublicEoExpirySweepRoute
   '/api/public/hla-sweep': typeof ApiPublicHlaSweepRoute
   '/api/public/listing-approval-escalation': typeof ApiPublicListingApprovalEscalationRoute
+  '/api/public/logging-health': typeof ApiPublicLoggingHealthRoute
   '/api/public/nar-cert-sweep': typeof ApiPublicNarCertSweepRoute
   '/api/public/substitution-sweep': typeof ApiPublicSubstitutionSweepRoute
   '/broker/onboarding/banking': typeof BrokerOnboardingBankingRoute
@@ -1022,6 +1031,7 @@ export interface FileRouteTypes {
     | '/api/public/eo-expiry-sweep'
     | '/api/public/hla-sweep'
     | '/api/public/listing-approval-escalation'
+    | '/api/public/logging-health'
     | '/api/public/nar-cert-sweep'
     | '/api/public/substitution-sweep'
     | '/broker/onboarding/banking'
@@ -1121,6 +1131,7 @@ export interface FileRouteTypes {
     | '/api/public/eo-expiry-sweep'
     | '/api/public/hla-sweep'
     | '/api/public/listing-approval-escalation'
+    | '/api/public/logging-health'
     | '/api/public/nar-cert-sweep'
     | '/api/public/substitution-sweep'
     | '/broker/onboarding/banking'
@@ -1224,6 +1235,7 @@ export interface FileRouteTypes {
     | '/api/public/eo-expiry-sweep'
     | '/api/public/hla-sweep'
     | '/api/public/listing-approval-escalation'
+    | '/api/public/logging-health'
     | '/api/public/nar-cert-sweep'
     | '/api/public/substitution-sweep'
     | '/broker/onboarding/banking'
@@ -1292,6 +1304,7 @@ export interface RootRouteChildren {
   ApiPublicEoExpirySweepRoute: typeof ApiPublicEoExpirySweepRoute
   ApiPublicHlaSweepRoute: typeof ApiPublicHlaSweepRoute
   ApiPublicListingApprovalEscalationRoute: typeof ApiPublicListingApprovalEscalationRoute
+  ApiPublicLoggingHealthRoute: typeof ApiPublicLoggingHealthRoute
   ApiPublicNarCertSweepRoute: typeof ApiPublicNarCertSweepRoute
   ApiPublicSubstitutionSweepRoute: typeof ApiPublicSubstitutionSweepRoute
   BuyerOnboardingIdentityRoute: typeof BuyerOnboardingIdentityRoute
@@ -1886,6 +1899,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicNarCertSweepRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/logging-health': {
+      id: '/api/public/logging-health'
+      path: '/api/public/logging-health'
+      fullPath: '/api/public/logging-health'
+      preLoaderRoute: typeof ApiPublicLoggingHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/listing-approval-escalation': {
       id: '/api/public/listing-approval-escalation'
       path: '/api/public/listing-approval-escalation'
@@ -2202,6 +2222,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHlaSweepRoute: ApiPublicHlaSweepRoute,
   ApiPublicListingApprovalEscalationRoute:
     ApiPublicListingApprovalEscalationRoute,
+  ApiPublicLoggingHealthRoute: ApiPublicLoggingHealthRoute,
   ApiPublicNarCertSweepRoute: ApiPublicNarCertSweepRoute,
   ApiPublicSubstitutionSweepRoute: ApiPublicSubstitutionSweepRoute,
   BuyerOnboardingIdentityRoute: BuyerOnboardingIdentityRoute,
