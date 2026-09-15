@@ -99,6 +99,8 @@ function AdminOverview() {
           </Link>
         </div>
       </div>
+
+      <LoggingHealthPanel />
     </div>
   );
 }
