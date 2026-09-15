@@ -93,7 +93,11 @@ export type AuditAction =
   | "listing.compliance_human_review_requested"
   | "listing.compliance_human_approved"
   | "listing.compliance_human_denied"
-  | "listing.published";
+  | "listing.published"
+  | "listing.approval_reminder_sent"
+  | "listing.approval_reminder_escalated"
+  | "listing.approval_stalled_flagged"
+  | "listing.approval_escalation_settings_updated";
 
 
 export type AuditEntity =
