@@ -226,7 +226,9 @@ function BuyerIdentityScreen() {
       .from("buyer_accounts")
       .update({
         intent,
-        target_budget: Number(budget.replace(/[^0-9.]/g, "")),
+        target_budget_bucket: budgetBucket,
+        // Internal Liquidity Gate basis only — never displayed to a human.
+        target_budget: liquidityBasisFor(bucketById(budgetBucket)!),
         last_activity_at: new Date().toISOString(),
         stall_warning_sent_at: null,
         onboarding_status: "lifestyle_survey_pending",
