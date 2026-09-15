@@ -188,8 +188,8 @@ function LiquidityGatePage() {
       return;
     }
 
-    const accounts = sandboxBalanceFor(budget);
-    const passed = meetsLiquidityThreshold(accounts, budget);
+    // Balances exist only inside this comparison and are discarded immediately.
+    const passed = meetsLiquidityThreshold(sandboxBalanceFor(budget), budget);
     const now = new Date().toISOString();
 
     const { error } = await supabase
@@ -211,7 +211,7 @@ function LiquidityGatePage() {
       toast.error(error.message);
       return;
     }
-    setBalances(accounts);
+    setLinkResolved(true);
     setBuyer({
       ...buyer,
       liquidity_verified: passed,
@@ -224,10 +224,10 @@ function LiquidityGatePage() {
       actionType: passed ? "buyer.liquidity_verified" : "buyer.liquidity_insufficient",
       entityType: "buyer_account",
       entityId: buyer.id,
+      // Binary outcome only — no balance, threshold, or margin figure is logged.
       metadata: {
         institution: PLAID_SANDBOX.institution,
-        available_total: totalAvailableBalance(accounts),
-        required,
+        result: passed ? "verified" : "insufficient",
         simulated: true,
       },
     });
