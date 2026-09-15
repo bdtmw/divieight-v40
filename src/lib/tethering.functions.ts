@@ -59,7 +59,12 @@ export async function notifyAgentUser(db: Db, authUserId: string | null, message
  * Most-tenured agent who is Resident on this market — derived by checking the
  * buyer's market against each agent's `markets` array.
  */
-async function pickResidentAgent(db: Db, market: string, excludeAgentId?: string | null) {
+async function pickResidentAgent(
+  db: Db,
+  market: string,
+  excludeAgentId?: string | null,
+  blockedAgentIds: string[] = [],
+) {
   const { data: agents } = await db
     .from("agents")
     .select("id, auth_user_id, full_name, markets, created_at")
@@ -67,9 +72,13 @@ async function pickResidentAgent(db: Db, market: string, excludeAgentId?: string
 
   if (!market) return undefined;
   return (agents ?? []).find(
-    (a: any) => a.id !== excludeAgentId && isResidentInMarket(a.markets, market),
+    (a: any) =>
+      a.id !== excludeAgentId &&
+      !blockedAgentIds.includes(a.id) &&
+      isResidentInMarket(a.markets, market),
   );
 }
+
 
 /**
  * Shared tether writer used by the automatic pick, the buyer-designated agent
