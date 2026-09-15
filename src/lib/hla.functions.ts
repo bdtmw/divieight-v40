@@ -130,8 +130,13 @@ async function eligiblePool(db: Db, propertyId: string): Promise<EligibleAgent[]
 
   const { data: agents } = await db
     .from("agents")
-    .select("id, full_name, license_state, markets, created_at, broker_id")
+    .select("id, full_name, license_state, markets, created_at, broker_id, eo_lapsed, eo_expires_at")
     .in("id", [...counts.keys()]);
+
+  // An agent whose E&O coverage has lapsed may not be selected as Heavy
+  // Lifting Agent until coverage is restored.
+  const { eoBlocksNewWork } = await import("@/lib/eo-expiry");
+  const covered = (agents ?? []).filter((a: any) => !eoBlocksNewWork(a));
 
   const brokerIds = (agents ?? []).map((a: any) => a.broker_id).filter(Boolean);
   const brokerNames = new Map<string, string>();
@@ -156,7 +161,7 @@ async function eligiblePool(db: Db, propertyId: string): Promise<EligibleAgent[]
   }
 
   const now = Date.now();
-  return (agents ?? []).map((a: any) => ({
+  return covered.map((a: any) => ({
     agentId: a.id,
     fullName: a.full_name,
     licenseState: a.license_state ?? "—",

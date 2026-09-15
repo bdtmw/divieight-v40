@@ -68,7 +68,7 @@ async function buyerAccountFor(db: Db, userId: string, buyerAccountId: string) {
 async function agentFor(db: Db, userId: string) {
   const { data } = await db
     .from("agents")
-    .select("id, auth_user_id, full_name, email, markets, created_at")
+    .select("id, auth_user_id, full_name, email, markets, created_at, eo_lapsed, eo_expires_at")
     .eq("auth_user_id", userId)
     .maybeSingle();
   return data;
@@ -402,6 +402,14 @@ export const respondToDesignation = createServerFn({ method: "POST" })
       return { error: "This designation is no longer available." };
     }
 
+    if (data.accept) {
+      const { eoBlocksNewWork, EO_LAPSED_MESSAGE } = await import("@/lib/eo-expiry");
+      // Lapsed E&O coverage blocks accepting a new tethering invitation.
+      if (eoBlocksNewWork(agent as { eo_lapsed?: boolean | null; eo_expires_at?: string | null })) {
+        return { error: EO_LAPSED_MESSAGE };
+      }
+    }
+
     if (!data.accept) {
       await db
         .from("buyer_accounts")
@@ -546,6 +554,13 @@ export const respondToReferOnly = createServerFn({ method: "POST" })
       .maybeSingle();
     if (!election || election.referring_agent_id !== agent.id || election.status !== "pending") {
       return { error: "This election is no longer available." };
+    }
+
+    if (data.choice === "accept_tether") {
+      const { eoBlocksNewWork, EO_LAPSED_MESSAGE } = await import("@/lib/eo-expiry");
+      if (eoBlocksNewWork(agent as { eo_lapsed?: boolean | null; eo_expires_at?: string | null })) {
+        return { error: EO_LAPSED_MESSAGE };
+      }
     }
 
     await db

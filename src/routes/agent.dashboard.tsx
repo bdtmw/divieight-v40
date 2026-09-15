@@ -7,11 +7,13 @@ import { getAgentProfile, agentRedirect, type AgentRow } from "@/lib/agent";
 import { formatMarkets } from "@/lib/markets";
 import { AgentPendingBanner } from "@/components/AgentPendingBanner";
 import { AgentCertLapsedBanner } from "@/components/AgentCertLapsedBanner";
+import { AgentEoLapsedBanner } from "@/components/AgentEoLapsedBanner";
 import { AgentBrokerLapsedBanner } from "@/components/AgentBrokerLapsedBanner";
 import { AgentActionItems } from "@/components/AgentActionItems";
 import { VerifiedLeadTable } from "@/components/agent/VerifiedLeadTable";
 import { getBrokerById, type BrokerRow } from "@/lib/broker";
 import { daysUntilExpiry } from "@/lib/agent-compliance";
+import { daysUntilEoExpiry } from "@/lib/eo-expiry";
 import { listMyTetheredBuyers, type TetheredBuyer } from "@/lib/agent-leads.functions";
 import { listAttributionTokens, getTaggedBuyerCounts } from "@/lib/attribution";
 import {
@@ -142,6 +144,7 @@ function AgentDashboard() {
   const onboardingComplete =
     agent.onboarding_status === "complete" || agent.onboarding_status === "active";
   const certDays = daysUntilExpiry(agent.nar_cert_expires_at);
+  const eoDays = daysUntilEoExpiry(agent.eo_expires_at);
   const relationshipActive = (agent.relationship_status ?? "active") === "active";
   const qualifiedLeads = buyers.filter(
     (b) => b.goldenTicketIssued && b.pefStatus === "paid",
@@ -151,6 +154,7 @@ function AgentDashboard() {
     <div className="space-y-8">
       <AgentPendingBanner agent={agent} onUpdated={setAgent} />
       <AgentCertLapsedBanner agent={agent} onUpdated={setAgent} />
+      <AgentEoLapsedBanner agent={agent} onUpdated={setAgent} />
       <AgentBrokerLapsedBanner status={agent.relationship_status} />
 
       {!onboardingComplete ? (
@@ -210,6 +214,16 @@ function AgentDashboard() {
             }
             warnLabel="NAR certification expired"
             icon={CalendarClock}
+          />
+          <StatusChip
+            ok={!agent.eo_lapsed && (eoDays === null || eoDays > 0)}
+            okLabel={
+              eoDays === null
+                ? "E&O coverage on file"
+                : `E&O renews in ${eoDays} day${eoDays === 1 ? "" : "s"}`
+            }
+            warnLabel="E&O coverage expired"
+            icon={ShieldCheck}
           />
         </div>
       </header>
