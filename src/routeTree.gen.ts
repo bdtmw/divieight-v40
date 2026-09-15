@@ -88,6 +88,7 @@ import { Route as BrokerOnboardingInsuranceRouteImport } from './routes/broker.o
 import { Route as BrokerOnboardingComplianceRouteImport } from './routes/broker.onboarding.compliance'
 import { Route as BrokerOnboardingBankingRouteImport } from './routes/broker.onboarding.banking'
 import { Route as ApiPublicNarCertSweepRouteImport } from './routes/api.public.nar-cert-sweep'
+import { Route as ApiPublicListingApprovalEscalationRouteImport } from './routes/api.public.listing-approval-escalation'
 import { Route as ApiPublicHlaSweepRouteImport } from './routes/api.public.hla-sweep'
 import { Route as ApiPublicEnrollmentMaintenanceRouteImport } from './routes/api.public.enrollment-maintenance'
 import { Route as ApiPublicDesignationSweepRouteImport } from './routes/api.public.designation-sweep'
@@ -505,6 +506,12 @@ const ApiPublicNarCertSweepRoute = ApiPublicNarCertSweepRouteImport.update({
   path: '/api/public/nar-cert-sweep',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicListingApprovalEscalationRoute =
+  ApiPublicListingApprovalEscalationRouteImport.update({
+    id: '/api/public/listing-approval-escalation',
+    path: '/api/public/listing-approval-escalation',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHlaSweepRoute = ApiPublicHlaSweepRouteImport.update({
   id: '/api/public/hla-sweep',
   path: '/api/public/hla-sweep',
@@ -671,6 +678,7 @@ export interface FileRoutesByFullPath {
   '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/api/public/hla-sweep': typeof ApiPublicHlaSweepRoute
+  '/api/public/listing-approval-escalation': typeof ApiPublicListingApprovalEscalationRoute
   '/api/public/nar-cert-sweep': typeof ApiPublicNarCertSweepRoute
   '/broker/onboarding/banking': typeof BrokerOnboardingBankingRoute
   '/broker/onboarding/compliance': typeof BrokerOnboardingComplianceRoute
@@ -764,6 +772,7 @@ export interface FileRoutesByTo {
   '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/api/public/hla-sweep': typeof ApiPublicHlaSweepRoute
+  '/api/public/listing-approval-escalation': typeof ApiPublicListingApprovalEscalationRoute
   '/api/public/nar-cert-sweep': typeof ApiPublicNarCertSweepRoute
   '/broker/onboarding/banking': typeof BrokerOnboardingBankingRoute
   '/broker/onboarding/compliance': typeof BrokerOnboardingComplianceRoute
@@ -862,6 +871,7 @@ export interface FileRoutesById {
   '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/api/public/hla-sweep': typeof ApiPublicHlaSweepRoute
+  '/api/public/listing-approval-escalation': typeof ApiPublicListingApprovalEscalationRoute
   '/api/public/nar-cert-sweep': typeof ApiPublicNarCertSweepRoute
   '/broker/onboarding/banking': typeof BrokerOnboardingBankingRoute
   '/broker/onboarding/compliance': typeof BrokerOnboardingComplianceRoute
@@ -961,6 +971,7 @@ export interface FileRouteTypes {
     | '/api/public/designation-sweep'
     | '/api/public/enrollment-maintenance'
     | '/api/public/hla-sweep'
+    | '/api/public/listing-approval-escalation'
     | '/api/public/nar-cert-sweep'
     | '/broker/onboarding/banking'
     | '/broker/onboarding/compliance'
@@ -1054,6 +1065,7 @@ export interface FileRouteTypes {
     | '/api/public/designation-sweep'
     | '/api/public/enrollment-maintenance'
     | '/api/public/hla-sweep'
+    | '/api/public/listing-approval-escalation'
     | '/api/public/nar-cert-sweep'
     | '/broker/onboarding/banking'
     | '/broker/onboarding/compliance'
@@ -1151,6 +1163,7 @@ export interface FileRouteTypes {
     | '/api/public/designation-sweep'
     | '/api/public/enrollment-maintenance'
     | '/api/public/hla-sweep'
+    | '/api/public/listing-approval-escalation'
     | '/api/public/nar-cert-sweep'
     | '/broker/onboarding/banking'
     | '/broker/onboarding/compliance'
@@ -1215,6 +1228,7 @@ export interface RootRouteChildren {
   ApiPublicDesignationSweepRoute: typeof ApiPublicDesignationSweepRoute
   ApiPublicEnrollmentMaintenanceRoute: typeof ApiPublicEnrollmentMaintenanceRoute
   ApiPublicHlaSweepRoute: typeof ApiPublicHlaSweepRoute
+  ApiPublicListingApprovalEscalationRoute: typeof ApiPublicListingApprovalEscalationRoute
   ApiPublicNarCertSweepRoute: typeof ApiPublicNarCertSweepRoute
   BuyerOnboardingIdentityRoute: typeof BuyerOnboardingIdentityRoute
   BuyerOnboardingLifestyleRoute: typeof BuyerOnboardingLifestyleRoute
@@ -1780,6 +1794,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicNarCertSweepRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/listing-approval-escalation': {
+      id: '/api/public/listing-approval-escalation'
+      path: '/api/public/listing-approval-escalation'
+      fullPath: '/api/public/listing-approval-escalation'
+      preLoaderRoute: typeof ApiPublicListingApprovalEscalationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hla-sweep': {
       id: '/api/public/hla-sweep'
       path: '/api/public/hla-sweep'
@@ -2074,6 +2095,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicDesignationSweepRoute: ApiPublicDesignationSweepRoute,
   ApiPublicEnrollmentMaintenanceRoute: ApiPublicEnrollmentMaintenanceRoute,
   ApiPublicHlaSweepRoute: ApiPublicHlaSweepRoute,
+  ApiPublicListingApprovalEscalationRoute:
+    ApiPublicListingApprovalEscalationRoute,
   ApiPublicNarCertSweepRoute: ApiPublicNarCertSweepRoute,
   BuyerOnboardingIdentityRoute: BuyerOnboardingIdentityRoute,
   BuyerOnboardingLifestyleRoute: BuyerOnboardingLifestyleRoute,
