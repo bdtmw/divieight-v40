@@ -87,7 +87,7 @@ export const createReservation = createServerFn({ method: "POST" })
       systemLocked: false,
     });
 
-    const { data: buyer } = await supabase
+    const { data: buyer } = await (supabase as any)
       .from("buyer_accounts")
       .select("id, liquidity_verified, tether_status")
       .eq("auth_user_id", userId)
