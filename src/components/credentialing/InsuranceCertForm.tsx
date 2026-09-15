@@ -88,7 +88,10 @@ export function InsuranceCertForm({
       actionType: "agent.eo_insurance_submitted",
       entityType,
       entityId: entity.id,
-      metadata: { method: brokerAffirmed ? "broker_affirmation" : "document_upload" },
+      metadata: {
+        method: brokerAffirmed ? "broker_affirmation" : "document_upload",
+        eo_expires_at: eoExpiry,
+      },
     });
     await logAudit({
       actorId: entity.auth_user_id,
