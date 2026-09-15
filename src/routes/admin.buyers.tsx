@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Fragment, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { StatusToneClass, money, when } from "@/lib/admin";
+import { budgetBucketLabel } from "@/lib/budget-buckets";
 
 export const Route = createFileRoute("/admin/buyers")({
   component: AdminBuyers,
@@ -14,6 +15,7 @@ type BuyerRow = {
   onboarding_status: string;
   intent: string | null;
   target_budget: number | null;
+  target_budget_bucket: string | null;
   priority_rank_timestamp: string | null;
   golden_ticket_issued: boolean;
   liquidity_status: string;
@@ -43,7 +45,7 @@ function AdminBuyers() {
         supabase
           .from("buyer_accounts")
           .select(
-            "id,email,phone,onboarding_status,intent,target_budget,priority_rank_timestamp,golden_ticket_issued,liquidity_status,liquidity_verified,last_activity_at,created_at",
+            "id,email,phone,onboarding_status,intent,target_budget,target_budget_bucket,priority_rank_timestamp,golden_ticket_issued,liquidity_status,liquidity_verified,last_activity_at,created_at",
           )
           .order("created_at", { ascending: false }),
         supabase

@@ -12,6 +12,7 @@ import {
   createReservation,
 } from "@/lib/reservations.functions";
 import { RESERVATION_BLOCK_COPY } from "@/lib/pod";
+import { budgetBucketLabel } from "@/lib/budget-buckets";
 import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/reserve/$id")({
