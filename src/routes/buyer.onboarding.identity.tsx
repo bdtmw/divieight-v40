@@ -175,10 +175,7 @@ function BuyerIdentityScreen() {
     if (!fields.address.trim()) next.address = "Address is required.";
     if (!fields.date_of_birth.trim()) next.date_of_birth = "Date of birth is required.";
     if (!intent) next.intent = "Select how you plan to use your shares.";
-    const parsedBudget = Number(budget.replace(/[^0-9.]/g, ""));
-    if (!budget.trim() || !Number.isFinite(parsedBudget) || parsedBudget <= 0) {
-      next.budget = "Enter your target budget.";
-    }
+    if (!bucketById(budgetBucket)) next.budget = "Select your target budget range.";
     if (!reserveConfirmed) next.reserve = "Please confirm your 20% reserve.";
     setErrors(next);
     return Object.keys(next).length === 0;
