@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { BuyerOnboardingStepper } from "@/components/BuyerOnboardingStepper";
 import { Field } from "@/components/Field";
-import { CurrencyInput } from "@/components/CurrencyInput";
+import { BUDGET_BUCKETS, bucketById, bucketForAmount, liquidityBasisFor } from "@/lib/budget-buckets";
 import { cn } from "@/lib/utils";
 import { logAudit } from "@/lib/audit";
 
@@ -90,7 +90,8 @@ function BuyerIdentityScreen() {
     date_of_birth: "",
   });
   const [intent, setIntent] = useState<string>("");
-  const [budget, setBudget] = useState("");
+  /** Bucket id — the budget is never captured as a free-typed amount. */
+  const [budgetBucket, setBudgetBucket] = useState("");
   const [reserveConfirmed, setReserveConfirmed] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
