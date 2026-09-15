@@ -130,6 +130,15 @@ export const tagListingAgent = createServerFn({ method: "POST" })
     // Listing Agent is a per-property relationship, not a stored role.
     if (!agent) throw new Error("That agent could not be found.");
 
+    // Dual-agency: release (and re-tether) any buyer in this property's pod
+    // already tethered to this agent BEFORE the tag is finalized.
+    const { clearTethersForListingAgent } = await import("@/lib/dual-agency");
+    await clearTethersForListingAgent(db, {
+      propertyId: property.id,
+      agentId: agent.id,
+      actorId: context.userId,
+    });
+
     await db
       .from("properties")
       .update({
@@ -139,6 +148,7 @@ export const tagListingAgent = createServerFn({ method: "POST" })
         listing_agent_decline_reason: null,
       })
       .eq("id", property.id);
+
     await audit(db, {
       actorId: context.userId,
       actorType: "seller",
