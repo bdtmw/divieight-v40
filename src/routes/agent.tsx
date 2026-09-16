@@ -165,7 +165,12 @@ function AgentPortalLayout() {
           </Link>
 
           <nav className="hidden items-center gap-6 md:flex">
-            {BASE_NAV.map(({ to, label, icon: Icon }) => (
+            {/* Until credentialing is genuinely complete the only portal
+                destinations are Support and the onboarding wizard. */}
+            {(onboardingComplete
+              ? BASE_NAV
+              : BASE_NAV.filter((n) => n.to === "/support")
+            ).map(({ to, label, icon: Icon }) => (
               <Link
                 key={to}
                 to={to}
