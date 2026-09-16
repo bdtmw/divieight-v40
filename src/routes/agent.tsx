@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { BadgeCheck, FileSignature, Layers, LayoutDashboard, LifeBuoy, ListChecks, LogOut, Share2, Users } from "lucide-react";
+import { BadgeCheck, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -13,6 +13,8 @@ import {
 import { AgentOnboardingProvider } from "@/hooks/use-agent-onboarding";
 import { formatMarkets } from "@/lib/markets";
 import { NotificationsBell } from "@/components/NotificationsBell";
+import { AgentSidebar } from "@/components/agent/AgentSidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 export const Route = createFileRoute("/agent")({
   head: () => ({
@@ -35,23 +37,7 @@ export const Route = createFileRoute("/agent")({
   component: AgentPortalLayout,
 });
 
-const BASE_NAV = [
-  { to: "/agent/dashboard", label: "Overview", icon: LayoutDashboard },
-  { to: "/agent/leads", label: "Verified leads", icon: Users },
-  { to: "/agent/pools", label: "Market pools", icon: Layers },
-  { to: "/agent/attribution", label: "Referral links", icon: Share2 },
-  { to: "/agent/documents", label: "Agreements", icon: FileSignature },
-  { to: "/support", label: "Support", icon: LifeBuoy },
-] as const;
-
-/** Only Listing Agents see the listing dashboard / Gate 1 approval queue. */
-const LISTING_NAV = { to: "/agent/listings", label: "My listings", icon: ListChecks } as const;
-
-const ONBOARDING_NAV = {
-  label: "Onboarding",
-  icon: ListChecks,
-} as const;
-
+// Portal navigation now lives in the left sidebar (AgentSidebar).
 
 const PUBLIC_PREFIXES = ["/agent/register", "/agent/login"];
 
@@ -146,98 +132,66 @@ function AgentPortalLayout() {
 
   if (!user || !agent) return null;
 
-  const onboardingComplete = status?.complete ?? false;
   const pendingRedirect = status ? agentGuardRedirect(status, pathname) : null;
   // Don't paint a page the guard is about to leave — no fake-complete content.
   const blocked = !!pendingRedirect && pendingRedirect !== pathname;
-  const nextOnboardingPath = status?.firstIncomplete?.path ?? "/agent/dashboard";
-
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-40 border-b border-border bg-card">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-          <Link to="/agent/dashboard" className="flex items-center gap-2">
-            <BadgeCheck className="h-5 w-5 text-accent" />
-            <span className="font-display text-sm font-semibold uppercase tracking-[0.18em] text-foreground">
-              Professional Portal
-            </span>
-          </Link>
+    <SidebarProvider>
+      <div className="flex min-h-screen w-full bg-background">
+        <AgentSidebar status={status} />
 
-          <nav className="hidden items-center gap-6 md:flex">
-            {/* Until credentialing is genuinely complete the only portal
-                destinations are Support and the onboarding wizard. */}
-            {(onboardingComplete
-              ? BASE_NAV
-              : BASE_NAV.filter((n) => n.to === "/support")
-            ).map(({ to, label, icon: Icon }) => (
-              <Link
-                key={to}
-                to={to}
-                className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                activeProps={{ className: "text-foreground" }}
-              >
-                <Icon className="h-4 w-4" />
-                {label}
-              </Link>
-            ))}
-            {/* Listing Agent work is a per-property relationship, never a role. */}
-            {onboardingComplete ? (
-              <Link
-                to={LISTING_NAV.to}
-                className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                activeProps={{ className: "text-foreground" }}
-              >
-                <LISTING_NAV.icon className="h-4 w-4" />
-                {LISTING_NAV.label}
-              </Link>
-            ) : null}
-            {/* Onboarding tab disappears once credentialing is complete. */}
-            {onboardingComplete ? null : (
-              <Link
-                to={nextOnboardingPath}
-                className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                activeProps={{ className: "text-foreground" }}
-              >
-                <ONBOARDING_NAV.icon className="h-4 w-4" />
-                {ONBOARDING_NAV.label}
-              </Link>
-            )}
-          </nav>
+        <div className="flex min-w-0 flex-1 flex-col">
+          <header className="sticky top-0 z-40 border-b border-border bg-card">
+            <div className="flex h-16 items-center justify-between gap-4 px-4 sm:px-6">
+              <div className="flex min-w-0 items-center gap-3">
+                <SidebarTrigger />
+                <Link to="/agent/dashboard" className="flex items-center gap-2">
+                  <BadgeCheck className="h-5 w-5 text-accent" />
+                  <span className="truncate font-display text-sm font-semibold uppercase tracking-[0.18em] text-foreground">
+                    Professional Portal
+                  </span>
+                </Link>
+              </div>
 
-          <div className="flex items-center gap-3">
-            <span className="hidden text-xs text-muted-foreground sm:inline">
-              {formatMarkets(agent.markets)}
-            </span>
-            <NotificationsBell />
-            <button
-              type="button"
-              onClick={onSignOut}
-              className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-secondary"
-            >
-              <LogOut className="h-4 w-4 text-muted-foreground" />
-              Sign out
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-        <AgentOnboardingProvider status={status}>
-          {blocked ? (
-            <div className="flex min-h-[40vh] items-center justify-center text-sm text-muted-foreground">
-              Taking you to the next onboarding step…
+              <div className="flex items-center gap-3">
+                <span className="hidden text-xs text-muted-foreground sm:inline">
+                  {agent.full_name}
+                </span>
+                <span className="hidden text-xs text-muted-foreground lg:inline">
+                  {formatMarkets(agent.markets)}
+                </span>
+                <NotificationsBell />
+                <button
+                  type="button"
+                  onClick={onSignOut}
+                  className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-secondary"
+                >
+                  <LogOut className="h-4 w-4 text-muted-foreground" />
+                  Sign out
+                </button>
+              </div>
             </div>
-          ) : (
-            <Outlet />
-          )}
-        </AgentOnboardingProvider>
-      </main>
+          </header>
 
-      <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">
-        Agents are compensated solely through buyer-side commission paid at closing by their
-        Broker of Record. divieight does not pay agents.
-      </footer>
-    </div>
+          <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6">
+            <AgentOnboardingProvider status={status}>
+              {blocked ? (
+                <div className="flex min-h-[40vh] items-center justify-center text-sm text-muted-foreground">
+                  Taking you to the next onboarding step…
+                </div>
+              ) : (
+                <Outlet />
+              )}
+            </AgentOnboardingProvider>
+          </main>
+
+          <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">
+            Agents are compensated solely through buyer-side commission paid at closing by their
+            Broker of Record. divieight does not pay agents.
+          </footer>
+        </div>
+      </div>
+    </SidebarProvider>
   );
 }
