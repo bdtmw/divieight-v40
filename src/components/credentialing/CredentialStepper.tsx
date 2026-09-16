@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { ENTITY_CONFIG, type EntityType } from "@/lib/credentialing";
+import { useAgentOnboardingStatus } from "@/hooks/use-agent-onboarding";
 
 export type CredentialStep = 1 | 2 | 3 | 4 | 5;
 
@@ -12,6 +13,10 @@ export function CredentialStepper({
   current: CredentialStep;
 }) {
   const steps = ENTITY_CONFIG[entityType].steps;
+  // For agents, completion comes from the one source of truth
+  // (`getAgentOnboardingStatus`), never from the current step number.
+  const status = useAgentOnboardingStatus();
+  const agentStatus = entityType === "agent" ? status : null;
   return (
     <ol className="mx-auto flex w-full max-w-3xl items-center gap-1.5 sm:gap-2">
       {steps.map((label, i) => {
