@@ -37,23 +37,7 @@ export const Route = createFileRoute("/agent")({
   component: AgentPortalLayout,
 });
 
-const BASE_NAV = [
-  { to: "/agent/dashboard", label: "Overview", icon: LayoutDashboard },
-  { to: "/agent/leads", label: "Verified leads", icon: Users },
-  { to: "/agent/pools", label: "Market pools", icon: Layers },
-  { to: "/agent/attribution", label: "Referral links", icon: Share2 },
-  { to: "/agent/documents", label: "Agreements", icon: FileSignature },
-  { to: "/support", label: "Support", icon: LifeBuoy },
-] as const;
-
-/** Only Listing Agents see the listing dashboard / Gate 1 approval queue. */
-const LISTING_NAV = { to: "/agent/listings", label: "My listings", icon: ListChecks } as const;
-
-const ONBOARDING_NAV = {
-  label: "Onboarding",
-  icon: ListChecks,
-} as const;
-
+// Portal navigation now lives in the left sidebar (AgentSidebar).
 
 const PUBLIC_PREFIXES = ["/agent/register", "/agent/login"];
 
