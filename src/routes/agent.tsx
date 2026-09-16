@@ -13,6 +13,8 @@ import {
 import { AgentOnboardingProvider } from "@/hooks/use-agent-onboarding";
 import { formatMarkets } from "@/lib/markets";
 import { NotificationsBell } from "@/components/NotificationsBell";
+import { AgentSidebar } from "@/components/agent/AgentSidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 export const Route = createFileRoute("/agent")({
   head: () => ({
