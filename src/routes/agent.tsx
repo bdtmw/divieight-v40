@@ -4,7 +4,13 @@ import { BadgeCheck, FileSignature, Layers, LayoutDashboard, LifeBuoy, ListCheck
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { getAgentProfile, agentRedirect, type AgentRow } from "@/lib/agent";
+import { getAgentProfile, type AgentRow } from "@/lib/agent";
+import {
+  getAgentOnboardingStatus,
+  agentGuardRedirect,
+  type AgentOnboardingStatus,
+} from "@/lib/agent-onboarding-status";
+import { AgentOnboardingProvider } from "@/hooks/use-agent-onboarding";
 import { formatMarkets } from "@/lib/markets";
 import { NotificationsBell } from "@/components/NotificationsBell";
 
