@@ -4,7 +4,13 @@ import { BadgeCheck, FileSignature, Layers, LayoutDashboard, LifeBuoy, ListCheck
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { getAgentProfile, agentRedirect, type AgentRow } from "@/lib/agent";
+import { getAgentProfile, type AgentRow } from "@/lib/agent";
+import {
+  getAgentOnboardingStatus,
+  agentGuardRedirect,
+  type AgentOnboardingStatus,
+} from "@/lib/agent-onboarding-status";
+import { AgentOnboardingProvider } from "@/hooks/use-agent-onboarding";
 import { formatMarkets } from "@/lib/markets";
 import { NotificationsBell } from "@/components/NotificationsBell";
 
@@ -55,6 +61,7 @@ function AgentPortalLayout() {
   const { user, loading } = useAuth();
   const [agent, setAgent] = useState<AgentRow | null>(null);
   const [checking, setChecking] = useState(true);
+  const [status, setStatus] = useState<AgentOnboardingStatus | null>(null);
 
   const isPublic = PUBLIC_PREFIXES.some((p) => pathname.startsWith(p));
 
@@ -63,21 +70,35 @@ function AgentPortalLayout() {
     if (loading) return;
     if (!user) {
       setAgent(null);
+      setStatus(null);
       setChecking(false);
       return;
     }
     setChecking(true);
     // Re-check on navigation too: right after registration the profile row is
-    // created a moment before we land on the first onboarding screen.
-    getAgentProfile(user.id).then((row) => {
+    // created a moment before we land on the first onboarding screen. The
+    // onboarding status is re-read from the database on EVERY navigation, so
+    // a typed URL, bookmark or back/forward cannot bypass the guard.
+    getAgentProfile(user.id).then(async (row) => {
       if (cancelled) return;
       setAgent(row);
+      const next = row ? await getAgentOnboardingStatus(row.id) : null;
+      if (cancelled) return;
+      setStatus(next);
       setChecking(false);
     });
     return () => {
       cancelled = true;
     };
   }, [user, loading, pathname]);
+
+  // Pin the agent to the first genuinely-incomplete onboarding step.
+  useEffect(() => {
+    if (isPublic || loading || checking || !agent || !status) return;
+    const target = agentGuardRedirect(status, pathname);
+    if (target && target !== pathname) navigate({ to: target, replace: true });
+  }, [isPublic, loading, checking, agent, status, pathname, navigate]);
+
 
 
   useEffect(() => {
@@ -125,8 +146,12 @@ function AgentPortalLayout() {
 
   if (!user || !agent) return null;
 
-  const onboardingComplete =
-    agent.onboarding_status === "complete" || agent.onboarding_status === "active";
+  const onboardingComplete = status?.complete ?? false;
+  const pendingRedirect = status ? agentGuardRedirect(status, pathname) : null;
+  // Don't paint a page the guard is about to leave — no fake-complete content.
+  const blocked = !!pendingRedirect && pendingRedirect !== pathname;
+  const nextOnboardingPath = status?.firstIncomplete?.path ?? "/agent/dashboard";
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -140,7 +165,12 @@ function AgentPortalLayout() {
           </Link>
 
           <nav className="hidden items-center gap-6 md:flex">
-            {BASE_NAV.map(({ to, label, icon: Icon }) => (
+            {/* Until credentialing is genuinely complete the only portal
+                destinations are Support and the onboarding wizard. */}
+            {(onboardingComplete
+              ? BASE_NAV
+              : BASE_NAV.filter((n) => n.to === "/support")
+            ).map(({ to, label, icon: Icon }) => (
               <Link
                 key={to}
                 to={to}
@@ -152,18 +182,20 @@ function AgentPortalLayout() {
               </Link>
             ))}
             {/* Listing Agent work is a per-property relationship, never a role. */}
-            <Link
-              to={LISTING_NAV.to}
-              className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-              activeProps={{ className: "text-foreground" }}
-            >
-              <LISTING_NAV.icon className="h-4 w-4" />
-              {LISTING_NAV.label}
-            </Link>
+            {onboardingComplete ? (
+              <Link
+                to={LISTING_NAV.to}
+                className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                activeProps={{ className: "text-foreground" }}
+              >
+                <LISTING_NAV.icon className="h-4 w-4" />
+                {LISTING_NAV.label}
+              </Link>
+            ) : null}
             {/* Onboarding tab disappears once credentialing is complete. */}
             {onboardingComplete ? null : (
               <Link
-                to={agentRedirect(agent.onboarding_status)}
+                to={nextOnboardingPath}
                 className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                 activeProps={{ className: "text-foreground" }}
               >
@@ -191,7 +223,15 @@ function AgentPortalLayout() {
       </header>
 
       <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-        <Outlet />
+        <AgentOnboardingProvider status={status}>
+          {blocked ? (
+            <div className="flex min-h-[40vh] items-center justify-center text-sm text-muted-foreground">
+              Taking you to the next onboarding step…
+            </div>
+          ) : (
+            <Outlet />
+          )}
+        </AgentOnboardingProvider>
       </main>
 
       <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">
