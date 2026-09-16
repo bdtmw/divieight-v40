@@ -146,8 +146,12 @@ function AgentPortalLayout() {
 
   if (!user || !agent) return null;
 
-  const onboardingComplete =
-    agent.onboarding_status === "complete" || agent.onboarding_status === "active";
+  const onboardingComplete = status?.complete ?? false;
+  const pendingRedirect = status ? agentGuardRedirect(status, pathname) : null;
+  // Don't paint a page the guard is about to leave — no fake-complete content.
+  const blocked = !!pendingRedirect && pendingRedirect !== pathname;
+  const nextOnboardingPath = status?.firstIncomplete?.path ?? "/agent/dashboard";
+
 
   return (
     <div className="min-h-screen bg-background">
