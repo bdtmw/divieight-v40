@@ -223,7 +223,15 @@ function AgentPortalLayout() {
       </header>
 
       <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-        <Outlet />
+        <AgentOnboardingProvider status={status}>
+          {blocked ? (
+            <div className="flex min-h-[40vh] items-center justify-center text-sm text-muted-foreground">
+              Taking you to the next onboarding step…
+            </div>
+          ) : (
+            <Outlet />
+          )}
+        </AgentOnboardingProvider>
       </main>
 
       <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">
