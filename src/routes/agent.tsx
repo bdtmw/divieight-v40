@@ -61,6 +61,7 @@ function AgentPortalLayout() {
   const { user, loading } = useAuth();
   const [agent, setAgent] = useState<AgentRow | null>(null);
   const [checking, setChecking] = useState(true);
+  const [status, setStatus] = useState<AgentOnboardingStatus | null>(null);
 
   const isPublic = PUBLIC_PREFIXES.some((p) => pathname.startsWith(p));
 
@@ -69,21 +70,35 @@ function AgentPortalLayout() {
     if (loading) return;
     if (!user) {
       setAgent(null);
+      setStatus(null);
       setChecking(false);
       return;
     }
     setChecking(true);
     // Re-check on navigation too: right after registration the profile row is
-    // created a moment before we land on the first onboarding screen.
-    getAgentProfile(user.id).then((row) => {
+    // created a moment before we land on the first onboarding screen. The
+    // onboarding status is re-read from the database on EVERY navigation, so
+    // a typed URL, bookmark or back/forward cannot bypass the guard.
+    getAgentProfile(user.id).then(async (row) => {
       if (cancelled) return;
       setAgent(row);
+      const next = row ? await getAgentOnboardingStatus(row.id) : null;
+      if (cancelled) return;
+      setStatus(next);
       setChecking(false);
     });
     return () => {
       cancelled = true;
     };
   }, [user, loading, pathname]);
+
+  // Pin the agent to the first genuinely-incomplete onboarding step.
+  useEffect(() => {
+    if (isPublic || loading || checking || !agent || !status) return;
+    const target = agentGuardRedirect(status, pathname);
+    if (target && target !== pathname) navigate({ to: target, replace: true });
+  }, [isPublic, loading, checking, agent, status, pathname, navigate]);
+
 
 
   useEffect(() => {
