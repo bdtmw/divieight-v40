@@ -207,6 +207,5 @@ function AgentPortalLayout() {
         </div>
       </div>
     </SidebarProvider>
-    </div>
   );
 }
