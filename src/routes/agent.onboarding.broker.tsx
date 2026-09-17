@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
 import { Building2, Copy, Loader2, Mail, Search } from "lucide-react";
 import { toast } from "sonner";
@@ -12,12 +12,17 @@ import { logAudit } from "@/lib/audit";
 import {
   createBrokerInvitation,
   invitationLink,
-  linkAgentToBroker,
   listAgentInvitations,
   searchBrokers,
   type BrokerInvitationRow,
   type BrokerRow,
 } from "@/lib/broker";
+import {
+  getAgentLinkRequestState,
+  requestBrokerLink,
+  type AgentLinkRequestState,
+} from "@/lib/broker-link-requests";
+import { BrokerLinkRequestStatus } from "@/components/BrokerLinkRequestStatus";
 
 export const Route = createFileRoute("/agent/onboarding/broker")({
   head: () => ({
@@ -79,22 +84,19 @@ function BrokerLinkPage() {
   async function onLink(broker: BrokerRow) {
     if (!agent) return;
     setLinking(broker.id);
-    const res = await linkAgentToBroker(agent.id, broker.id);
+    const res = await requestBrokerLink({
+      agent,
+      brokerId: broker.id,
+      brokerageName: broker.brokerage_name,
+      reason: "initial_registration",
+    });
     setLinking(null);
     if (res.error) {
       toast.error(res.error);
       return;
     }
-    await logAudit({
-      actorId: agent.auth_user_id,
-      actorType: "agent",
-      actionType: "broker.linked",
-      entityType: "broker",
-      entityId: broker.id,
-      metadata: { agent_id: agent.id, brokerage_name: broker.brokerage_name },
-    });
-    toast.success(`${broker.brokerage_name} is now your Broker of Record.`);
-    navigate({ to: "/agent/dashboard" });
+    setLinkState(await getAgentLinkRequestState(agent.id));
+    toast.success(`Request sent to ${broker.brokerage_name} — awaiting their approval.`);
   }
 
   async function onInvite(e: FormEvent) {
