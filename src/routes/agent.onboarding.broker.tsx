@@ -47,8 +47,8 @@ export const Route = createFileRoute("/agent/onboarding/broker")({
 
 function BrokerLinkPage() {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const [agent, setAgent] = useState<AgentRow | null>(null);
+  const [linkState, setLinkState] = useState<AgentLinkRequestState | null>(null);
   const [term, setTerm] = useState("");
   const [results, setResults] = useState<BrokerRow[]>([]);
   const [linking, setLinking] = useState<string | null>(null);
@@ -62,7 +62,11 @@ function BrokerLinkPage() {
     getAgentProfile(user.id).then(async (row) => {
       if (cancelled) return;
       setAgent(row);
-      if (row) setInvitations(await listAgentInvitations(row.id));
+      if (row) {
+        setInvitations(await listAgentInvitations(row.id));
+        const state = await getAgentLinkRequestState(row.id);
+        if (!cancelled) setLinkState(state);
+      }
     });
     return () => {
       cancelled = true;
@@ -137,6 +141,7 @@ function BrokerLinkPage() {
 
       {agent ? <AgentPendingBanner agent={agent} onUpdated={setAgent} /> : null}
       {agent ? <AgentCertLapsedBanner agent={agent} onUpdated={setAgent} /> : null}
+      <BrokerLinkRequestStatus state={linkState} />
 
       <header className="space-y-2">
         <h1 className="font-display text-3xl font-semibold text-foreground">
