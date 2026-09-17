@@ -193,11 +193,11 @@ function BrokerLinkPage() {
                 <button
                   type="button"
                   onClick={() => onLink(b)}
-                  disabled={linking === b.id}
+                  disabled={linking === b.id || !!linkState?.pending}
                   className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground disabled:opacity-60"
                 >
                   {linking === b.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
-                  Link broker
+                  {linkState?.pending ? "Awaiting approval" : "Request link"}
                 </button>
               </li>
             ))
