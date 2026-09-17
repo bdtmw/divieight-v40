@@ -14,6 +14,12 @@ import {
   type RelationshipStatus,
 } from "@/lib/broker-relationship";
 import { logAudit } from "@/lib/audit";
+import {
+  getAgentLinkRequestState,
+  requestBrokerLink,
+  type AgentLinkRequestState,
+} from "@/lib/broker-link-requests";
+import { BrokerLinkRequestStatus } from "@/components/BrokerLinkRequestStatus";
 
 export const Route = createFileRoute("/agent/broker-relationship")({
   head: () => ({
@@ -43,12 +49,18 @@ function BrokerRelationshipPage() {
   const [results, setResults] = useState<BrokerRow[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
   const [check, setCheck] = useState<RelationshipCheck | null>(null);
+  const [linkState, setLinkState] = useState<AgentLinkRequestState | null>(null);
 
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
-    getAgentProfile(user.id).then((row) => {
-      if (!cancelled) setAgent(row);
+    getAgentProfile(user.id).then(async (row) => {
+      if (cancelled) return;
+      setAgent(row);
+      if (row) {
+        const state = await getAgentLinkRequestState(row.id);
+        if (!cancelled) setLinkState(state);
+      }
     });
     return () => {
       cancelled = true;
@@ -110,6 +122,29 @@ function BrokerRelationshipPage() {
     setBusy(null);
   }
 
+  /**
+   * Changing brokerage never rewrites broker_id directly — the new Broker of
+   * Record must accept. The current broker and relationship_status stay put
+   * until they do.
+   */
+  async function requestChange(brokerId: string, brokerName: string) {
+    if (!agent) return;
+    setBusy(brokerId);
+    const res = await requestBrokerLink({
+      agent,
+      brokerId,
+      brokerageName: brokerName,
+      reason: "broker_change",
+    });
+    setBusy(null);
+    if (res.error) {
+      toast.error(res.error);
+      return;
+    }
+    setLinkState(await getAgentLinkRequestState(agent.id));
+    toast.success(`Request sent to ${brokerName} — awaiting their approval.`);
+  }
+
   if (!agent) return <p className="text-sm text-muted-foreground">Loading your profile…</p>;
 
   const status = (agent.relationship_status ?? "active") as RelationshipStatus;
@@ -129,6 +164,8 @@ function BrokerRelationshipPage() {
           While it is unverified, in-flight transactions involving you are held.
         </p>
       </header>
+
+      <BrokerLinkRequestStatus state={linkState} />
 
       <section className="rounded-xl border border-border bg-card p-6 text-sm">
         <div className="flex flex-wrap items-center gap-3">
@@ -175,8 +212,8 @@ function BrokerRelationshipPage() {
       <section className="rounded-xl border border-border bg-card p-6">
         <h2 className="text-lg font-semibold text-foreground">Select a different broker</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          If you have hung your license with another brokerage, select it below. Commission is
-          always paid at closing to your Broker of Record by the title/escrow company.
+          If you have hung your license with another brokerage, request it below — the new
+          Broker of Record must accept before anything changes on your profile. Commission is always paid at closing to your Broker of Record by the title/escrow company.
         </p>
         <div className="mt-4 flex items-center gap-2 rounded-md border border-border px-3">
           <Search className="h-4 w-4 text-muted-foreground" />
@@ -202,12 +239,12 @@ function BrokerRelationshipPage() {
                 </span>
                 <button
                   type="button"
-                  onClick={() => verifyWith(b.id, b.brokerage_name)}
-                  disabled={busy !== null}
+                  onClick={() => requestChange(b.id, b.brokerage_name)}
+                  disabled={busy !== null || !!linkState?.pending}
                   className="inline-flex h-9 items-center gap-2 rounded-md border border-border px-4 text-xs font-semibold text-foreground disabled:opacity-60"
                 >
                   {busy === b.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
-                  Verify &amp; link
+                  {linkState?.pending ? "Awaiting approval" : "Request link"}
                 </button>
               </li>
             ))

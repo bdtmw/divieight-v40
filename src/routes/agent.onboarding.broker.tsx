@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
 import { Building2, Copy, Loader2, Mail, Search } from "lucide-react";
 import { toast } from "sonner";
@@ -12,12 +12,17 @@ import { logAudit } from "@/lib/audit";
 import {
   createBrokerInvitation,
   invitationLink,
-  linkAgentToBroker,
   listAgentInvitations,
   searchBrokers,
   type BrokerInvitationRow,
   type BrokerRow,
 } from "@/lib/broker";
+import {
+  getAgentLinkRequestState,
+  requestBrokerLink,
+  type AgentLinkRequestState,
+} from "@/lib/broker-link-requests";
+import { BrokerLinkRequestStatus } from "@/components/BrokerLinkRequestStatus";
 
 export const Route = createFileRoute("/agent/onboarding/broker")({
   head: () => ({
@@ -42,8 +47,8 @@ export const Route = createFileRoute("/agent/onboarding/broker")({
 
 function BrokerLinkPage() {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const [agent, setAgent] = useState<AgentRow | null>(null);
+  const [linkState, setLinkState] = useState<AgentLinkRequestState | null>(null);
   const [term, setTerm] = useState("");
   const [results, setResults] = useState<BrokerRow[]>([]);
   const [linking, setLinking] = useState<string | null>(null);
@@ -57,7 +62,11 @@ function BrokerLinkPage() {
     getAgentProfile(user.id).then(async (row) => {
       if (cancelled) return;
       setAgent(row);
-      if (row) setInvitations(await listAgentInvitations(row.id));
+      if (row) {
+        setInvitations(await listAgentInvitations(row.id));
+        const state = await getAgentLinkRequestState(row.id);
+        if (!cancelled) setLinkState(state);
+      }
     });
     return () => {
       cancelled = true;
@@ -79,22 +88,19 @@ function BrokerLinkPage() {
   async function onLink(broker: BrokerRow) {
     if (!agent) return;
     setLinking(broker.id);
-    const res = await linkAgentToBroker(agent.id, broker.id);
+    const res = await requestBrokerLink({
+      agent,
+      brokerId: broker.id,
+      brokerageName: broker.brokerage_name,
+      reason: "initial_registration",
+    });
     setLinking(null);
     if (res.error) {
       toast.error(res.error);
       return;
     }
-    await logAudit({
-      actorId: agent.auth_user_id,
-      actorType: "agent",
-      actionType: "broker.linked",
-      entityType: "broker",
-      entityId: broker.id,
-      metadata: { agent_id: agent.id, brokerage_name: broker.brokerage_name },
-    });
-    toast.success(`${broker.brokerage_name} is now your Broker of Record.`);
-    navigate({ to: "/agent/dashboard" });
+    setLinkState(await getAgentLinkRequestState(agent.id));
+    toast.success(`Request sent to ${broker.brokerage_name} — awaiting their approval.`);
   }
 
   async function onInvite(e: FormEvent) {
@@ -135,6 +141,7 @@ function BrokerLinkPage() {
 
       {agent ? <AgentPendingBanner agent={agent} onUpdated={setAgent} /> : null}
       {agent ? <AgentCertLapsedBanner agent={agent} onUpdated={setAgent} /> : null}
+      <BrokerLinkRequestStatus state={linkState} />
 
       <header className="space-y-2">
         <h1 className="font-display text-3xl font-semibold text-foreground">
@@ -186,11 +193,11 @@ function BrokerLinkPage() {
                 <button
                   type="button"
                   onClick={() => onLink(b)}
-                  disabled={linking === b.id}
+                  disabled={linking === b.id || !!linkState?.pending}
                   className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground disabled:opacity-60"
                 >
                   {linking === b.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
-                  Link broker
+                  {linkState?.pending ? "Awaiting approval" : "Request link"}
                 </button>
               </li>
             ))
