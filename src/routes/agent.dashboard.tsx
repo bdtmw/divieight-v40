@@ -17,6 +17,10 @@ import {
   type AgentLinkRequestState,
 } from "@/lib/broker-link-requests";
 import { BrokerLinkRequestStatus } from "@/components/BrokerLinkRequestStatus";
+import {
+  getAgentOnboardingStatus,
+  type AgentOnboardingStatus,
+} from "@/lib/agent-onboarding-status";
 import { daysUntilExpiry } from "@/lib/agent-compliance";
 import { daysUntilEoExpiry } from "@/lib/eo-expiry";
 import { listMyTetheredBuyers, type TetheredBuyer } from "@/lib/agent-leads.functions";
