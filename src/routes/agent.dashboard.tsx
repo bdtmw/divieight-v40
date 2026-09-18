@@ -96,8 +96,14 @@ function AgentDashboard() {
       if (cancelled) return;
       setAgent(row);
       if (row) {
-        const state = await getAgentLinkRequestState(row.id);
-        if (!cancelled) setLinkState(state);
+        const [state, onboarding] = await Promise.all([
+          getAgentLinkRequestState(row.id),
+          getAgentOnboardingStatus(row.id),
+        ]);
+        if (!cancelled) {
+          setLinkState(state);
+          setOnboardingState(onboarding);
+        }
       }
     });
     return () => {
