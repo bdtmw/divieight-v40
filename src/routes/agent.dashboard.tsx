@@ -12,6 +12,11 @@ import { AgentBrokerLapsedBanner } from "@/components/AgentBrokerLapsedBanner";
 import { AgentActionItems } from "@/components/AgentActionItems";
 import { VerifiedLeadTable } from "@/components/agent/VerifiedLeadTable";
 import { getBrokerById, type BrokerRow } from "@/lib/broker";
+import {
+  getAgentLinkRequestState,
+  type AgentLinkRequestState,
+} from "@/lib/broker-link-requests";
+import { BrokerLinkRequestStatus } from "@/components/BrokerLinkRequestStatus";
 import { daysUntilExpiry } from "@/lib/agent-compliance";
 import { daysUntilEoExpiry } from "@/lib/eo-expiry";
 import { listMyTetheredBuyers, type TetheredBuyer } from "@/lib/agent-leads.functions";
@@ -76,6 +81,7 @@ function AgentDashboard() {
   const { user } = useAuth();
   const [agent, setAgent] = useState<AgentRow | null>(null);
   const [broker, setBroker] = useState<BrokerRow | null>(null);
+  const [linkState, setLinkState] = useState<AgentLinkRequestState | null>(null);
   const [buyers, setBuyers] = useState<TetheredBuyer[]>([]);
   const [buyersLoading, setBuyersLoading] = useState(true);
   const [attribution, setAttribution] = useState({ tokens: 0, clicks: 0, tagged: 0 });
@@ -85,8 +91,13 @@ function AgentDashboard() {
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
-    getAgentProfile(user.id).then((row) => {
-      if (!cancelled) setAgent(row);
+    getAgentProfile(user.id).then(async (row) => {
+      if (cancelled) return;
+      setAgent(row);
+      if (row) {
+        const state = await getAgentLinkRequestState(row.id);
+        if (!cancelled) setLinkState(state);
+      }
     });
     return () => {
       cancelled = true;
@@ -300,6 +311,7 @@ function AgentDashboard() {
           <Building2 className="h-5 w-5 text-accent" />
           <h2 className="text-lg font-semibold text-foreground">Broker of Record</h2>
         </div>
+        <BrokerLinkRequestStatus state={linkState} className="mt-4" />
         {agent.broker_id ? (
           <>
             <p className="mt-2 text-sm font-medium text-foreground [overflow-wrap:anywhere]">
@@ -321,7 +333,9 @@ function AgentDashboard() {
         ) : (
           <>
             <p className="mt-2 text-sm text-muted-foreground">
-              No Broker of Record is linked to your profile yet.
+              {linkState?.pending
+                ? "No Broker of Record is linked yet — your request is with the brokerage."
+                : "No Broker of Record is linked to your profile yet."}
             </p>
             <Link
               to="/agent/onboarding/broker"
