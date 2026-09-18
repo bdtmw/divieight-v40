@@ -17,6 +17,10 @@ import {
   type AgentLinkRequestState,
 } from "@/lib/broker-link-requests";
 import { BrokerLinkRequestStatus } from "@/components/BrokerLinkRequestStatus";
+import {
+  getAgentOnboardingStatus,
+  type AgentOnboardingStatus,
+} from "@/lib/agent-onboarding-status";
 import { daysUntilExpiry } from "@/lib/agent-compliance";
 import { daysUntilEoExpiry } from "@/lib/eo-expiry";
 import { listMyTetheredBuyers, type TetheredBuyer } from "@/lib/agent-leads.functions";
@@ -85,6 +89,7 @@ function AgentDashboard() {
   const [buyers, setBuyers] = useState<TetheredBuyer[]>([]);
   const [buyersLoading, setBuyersLoading] = useState(true);
   const [attribution, setAttribution] = useState({ tokens: 0, clicks: 0, tagged: 0 });
+  const [onboardingState, setOnboardingState] = useState<AgentOnboardingStatus | null>(null);
 
   const loadBuyers = useServerFn(listMyTetheredBuyers);
 
@@ -95,8 +100,14 @@ function AgentDashboard() {
       if (cancelled) return;
       setAgent(row);
       if (row) {
-        const state = await getAgentLinkRequestState(row.id);
-        if (!cancelled) setLinkState(state);
+        const [state, onboarding] = await Promise.all([
+          getAgentLinkRequestState(row.id),
+          getAgentOnboardingStatus(row.id),
+        ]);
+        if (!cancelled) {
+          setLinkState(state);
+          setOnboardingState(onboarding);
+        }
       }
     });
     return () => {
@@ -152,8 +163,7 @@ function AgentDashboard() {
 
   if (!agent) return <p className="text-sm text-muted-foreground">Loading your profile…</p>;
 
-  const onboardingComplete =
-    agent.onboarding_status === "complete" || agent.onboarding_status === "active";
+  const onboardingComplete = onboardingState?.complete ?? true;
   const certDays = daysUntilExpiry(agent.nar_cert_expires_at);
   const eoDays = daysUntilEoExpiry(agent.eo_expires_at);
   const relationshipActive = (agent.relationship_status ?? "active") === "active";
