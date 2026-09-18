@@ -152,8 +152,7 @@ function AgentDashboard() {
 
   if (!agent) return <p className="text-sm text-muted-foreground">Loading your profile…</p>;
 
-  const onboardingComplete =
-    agent.onboarding_status === "complete" || agent.onboarding_status === "active";
+  const onboardingComplete = onboardingState?.complete ?? true;
   const certDays = daysUntilExpiry(agent.nar_cert_expires_at);
   const eoDays = daysUntilEoExpiry(agent.eo_expires_at);
   const relationshipActive = (agent.relationship_status ?? "active") === "active";
