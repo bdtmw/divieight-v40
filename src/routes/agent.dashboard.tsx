@@ -85,6 +85,7 @@ function AgentDashboard() {
   const [buyers, setBuyers] = useState<TetheredBuyer[]>([]);
   const [buyersLoading, setBuyersLoading] = useState(true);
   const [attribution, setAttribution] = useState({ tokens: 0, clicks: 0, tagged: 0 });
+  const [onboardingState, setOnboardingState] = useState<AgentOnboardingStatus | null>(null);
 
   const loadBuyers = useServerFn(listMyTetheredBuyers);
 
