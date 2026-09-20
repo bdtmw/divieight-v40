@@ -185,6 +185,7 @@ export async function acceptLinkRequest(
     .from("agents")
     .update({
       broker_id: broker.id,
+      onboarding_status: "complete",
       relationship_status: "active",
       relationship_verified_at: now,
       transactions_held: false,
