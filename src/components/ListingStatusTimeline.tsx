@@ -37,6 +37,11 @@ const STAGES: {
   },
 ];
 
+/** Canonical labels for a property's pod status — reuse, don't invent new ones. */
+export function listingStatusLabel(status: string): string {
+  return STAGES.find((s) => s.key === status)?.label ?? "Forming";
+}
+
 interface Props {
   status: ListingStatus;
   className?: string;

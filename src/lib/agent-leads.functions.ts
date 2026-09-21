@@ -14,6 +14,15 @@ import { residencyFor, type Residency } from "@/lib/markets";
  * by the buyer; the scoping to `tethered_resident_agent_id` is enforced here.
  */
 
+/** Display-only summary of an active reservation held by a tethered buyer. */
+export interface BuyerReservationSummary {
+  reservationId: string;
+  propertyId: string;
+  label: string;
+  sharesReserved: number;
+  listingStatus: string;
+}
+
 export interface TetheredBuyer {
   buyerAccountId: string;
   /** Display identity for the agent — email is the buyer's contact of record. */
@@ -31,6 +40,8 @@ export interface TetheredBuyer {
   tetheredAt: string | null;
   /** Derived per transaction from the agent's markets — never a stored role. */
   residency: Residency;
+  /** Zero, one, or (rarely) several active reservations. Display only. */
+  reservations: BuyerReservationSummary[];
 }
 
 export const listMyTetheredBuyers = createServerFn({ method: "POST" })
@@ -75,6 +86,35 @@ export const listMyTetheredBuyers = createServerFn({ method: "POST" })
       }
     }
 
+    // Display-only: active reservations per buyer. Read-only over Month 2 data.
+    const { data: reservations } = await db
+      .from("pod_reservations")
+      .select(
+        "id, buyer_account_id, property_id, shares_reserved, reserved_at, properties ( address, city, state, listing_status )",
+      )
+      .eq("status", "reserved")
+      .in(
+        "buyer_account_id",
+        rows.map((r) => r.id),
+      )
+      .order("reserved_at", { ascending: true });
+
+    const byBuyer = new Map<string, BuyerReservationSummary[]>();
+    for (const res of (reservations ?? []) as any[]) {
+      const p = res.properties ?? {};
+      const label =
+        [p.address, p.city, p.state].filter(Boolean).join(", ") || "Subject property";
+      const list = byBuyer.get(res.buyer_account_id) ?? [];
+      list.push({
+        reservationId: res.id,
+        propertyId: res.property_id,
+        label,
+        sharesReserved: Number(res.shares_reserved ?? 0),
+        listingStatus: (p.listing_status as string) ?? "forming",
+      });
+      byBuyer.set(res.buyer_account_id, list);
+    }
+
     return rows.map((r) => {
       const pef = payStatus.get(r.id) ?? "unpaid";
       return {
@@ -91,6 +131,7 @@ export const listMyTetheredBuyers = createServerFn({ method: "POST" })
         priorityRank: r.priority_rank ?? null,
         tetheredAt: r.tethered_at ?? null,
         residency: residencyFor(agent.markets, (r.primary_target_market ?? "").trim()),
+        reservations: byBuyer.get(r.id) ?? [],
       } satisfies TetheredBuyer;
     });
   });
