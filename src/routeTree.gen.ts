@@ -49,6 +49,7 @@ import { Route as BuyerLoginRouteImport } from './routes/buyer.login'
 import { Route as BuyerGoldenTicketRouteImport } from './routes/buyer.golden-ticket'
 import { Route as BuyerDocumentsRouteImport } from './routes/buyer.documents'
 import { Route as BuyerDashboardRouteImport } from './routes/buyer.dashboard'
+import { Route as BuyerAuthorizationsRouteImport } from './routes/buyer.authorizations'
 import { Route as BuyerAdverseActionRouteImport } from './routes/buyer.adverse-action'
 import { Route as BrokerRegisterRouteImport } from './routes/broker.register'
 import { Route as BrokerLoginRouteImport } from './routes/broker.login'
@@ -318,6 +319,11 @@ const BuyerDocumentsRoute = BuyerDocumentsRouteImport.update({
 const BuyerDashboardRoute = BuyerDashboardRouteImport.update({
   id: '/buyer/dashboard',
   path: '/buyer/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuyerAuthorizationsRoute = BuyerAuthorizationsRouteImport.update({
+  id: '/buyer/authorizations',
+  path: '/buyer/authorizations',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BuyerAdverseActionRoute = BuyerAdverseActionRouteImport.update({
@@ -732,6 +738,7 @@ export interface FileRoutesByFullPath {
   '/broker/login': typeof BrokerLoginRoute
   '/broker/register': typeof BrokerRegisterRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
+  '/buyer/authorizations': typeof BuyerAuthorizationsRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/documents': typeof BuyerDocumentsRoute
   '/buyer/golden-ticket': typeof BuyerGoldenTicketRoute
@@ -839,6 +846,7 @@ export interface FileRoutesByTo {
   '/broker/login': typeof BrokerLoginRoute
   '/broker/register': typeof BrokerRegisterRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
+  '/buyer/authorizations': typeof BuyerAuthorizationsRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/documents': typeof BuyerDocumentsRoute
   '/buyer/golden-ticket': typeof BuyerGoldenTicketRoute
@@ -952,6 +960,7 @@ export interface FileRoutesById {
   '/broker/login': typeof BrokerLoginRoute
   '/broker/register': typeof BrokerRegisterRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
+  '/buyer/authorizations': typeof BuyerAuthorizationsRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/documents': typeof BuyerDocumentsRoute
   '/buyer/golden-ticket': typeof BuyerGoldenTicketRoute
@@ -1066,6 +1075,7 @@ export interface FileRouteTypes {
     | '/broker/login'
     | '/broker/register'
     | '/buyer/adverse-action'
+    | '/buyer/authorizations'
     | '/buyer/dashboard'
     | '/buyer/documents'
     | '/buyer/golden-ticket'
@@ -1173,6 +1183,7 @@ export interface FileRouteTypes {
     | '/broker/login'
     | '/broker/register'
     | '/buyer/adverse-action'
+    | '/buyer/authorizations'
     | '/buyer/dashboard'
     | '/buyer/documents'
     | '/buyer/golden-ticket'
@@ -1285,6 +1296,7 @@ export interface FileRouteTypes {
     | '/broker/login'
     | '/broker/register'
     | '/buyer/adverse-action'
+    | '/buyer/authorizations'
     | '/buyer/dashboard'
     | '/buyer/documents'
     | '/buyer/golden-ticket'
@@ -1372,6 +1384,7 @@ export interface RootRouteChildren {
   SupportRoute: typeof SupportRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   BuyerAdverseActionRoute: typeof BuyerAdverseActionRoute
+  BuyerAuthorizationsRoute: typeof BuyerAuthorizationsRoute
   BuyerDashboardRoute: typeof BuyerDashboardRoute
   BuyerDocumentsRoute: typeof BuyerDocumentsRoute
   BuyerGoldenTicketRoute: typeof BuyerGoldenTicketRoute
@@ -1696,6 +1709,13 @@ declare module '@tanstack/react-router' {
       path: '/buyer/dashboard'
       fullPath: '/buyer/dashboard'
       preLoaderRoute: typeof BuyerDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buyer/authorizations': {
+      id: '/buyer/authorizations'
+      path: '/buyer/authorizations'
+      fullPath: '/buyer/authorizations'
+      preLoaderRoute: typeof BuyerAuthorizationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/buyer/adverse-action': {
@@ -2368,6 +2388,7 @@ const rootRouteChildren: RootRouteChildren = {
   SupportRoute: SupportRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   BuyerAdverseActionRoute: BuyerAdverseActionRoute,
+  BuyerAuthorizationsRoute: BuyerAuthorizationsRoute,
   BuyerDashboardRoute: BuyerDashboardRoute,
   BuyerDocumentsRoute: BuyerDocumentsRoute,
   BuyerGoldenTicketRoute: BuyerGoldenTicketRoute,
