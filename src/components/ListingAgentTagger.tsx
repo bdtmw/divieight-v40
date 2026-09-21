@@ -138,11 +138,20 @@ export function ListingAgentTagger({ propertyId }: { propertyId: string }) {
             <div className="mt-2 flex gap-2">
               <Input
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Name or email"
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setSearched(false);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    void runSearch();
+                  }
+                }}
+                placeholder="Name, email or license number"
               />
               <Button type="button" variant="secondary" onClick={runSearch} disabled={busy}>
-                Search
+                {busy ? "Searching…" : "Search"}
               </Button>
             </div>
             {results.length > 0 && (
@@ -164,6 +173,12 @@ export function ListingAgentTagger({ propertyId }: { propertyId: string }) {
                   </li>
                 ))}
               </ul>
+            )}
+            {searched && !busy && results.length === 0 && (
+              <p className="mt-3 rounded-lg border border-border bg-muted/40 p-3 text-xs text-muted-foreground">
+                No Listing Agents matched that search. Try a different name, or invite yours by
+                email below.
+              </p>
             )}
           </div>
 
