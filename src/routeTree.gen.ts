@@ -80,6 +80,7 @@ import { Route as AdminAgentsRouteImport } from './routes/admin.agents'
 import { Route as BuyerOnboardingIndexRouteImport } from './routes/buyer.onboarding.index'
 import { Route as AgentListingsIndexRouteImport } from './routes/agent.listings.index'
 import { Route as AgentDocumentsIndexRouteImport } from './routes/agent.documents.index'
+import { Route as AdminPropertiesIndexRouteImport } from './routes/admin.properties.index'
 import { Route as AdminPodsIndexRouteImport } from './routes/admin.pods.index'
 import { Route as ListingsIdEditRouteImport } from './routes/listings.$id.edit'
 import { Route as BuyerPodsIdRouteImport } from './routes/buyer.pods.$id'
@@ -473,6 +474,11 @@ const AgentDocumentsIndexRoute = AgentDocumentsIndexRouteImport.update({
   path: '/documents/',
   getParentRoute: () => AgentRoute,
 } as any)
+const AdminPropertiesIndexRoute = AdminPropertiesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminPropertiesRoute,
+} as any)
 const AdminPodsIndexRoute = AdminPodsIndexRouteImport.update({
   id: '/pods/',
   path: '/pods/',
@@ -777,6 +783,7 @@ export interface FileRoutesByFullPath {
   '/buyer/pods/$id': typeof BuyerPodsIdRoute
   '/listings/$id/edit': typeof ListingsIdEditRoute
   '/admin/pods/': typeof AdminPodsIndexRoute
+  '/admin/properties/': typeof AdminPropertiesIndexRoute
   '/agent/documents/': typeof AgentDocumentsIndexRoute
   '/agent/listings/': typeof AgentListingsIndexRoute
   '/buyer/onboarding/': typeof BuyerOnboardingIndexRoute
@@ -806,7 +813,6 @@ export interface FileRoutesByTo {
   '/admin/listing-compliance': typeof AdminListingComplianceRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/payments': typeof AdminPaymentsRoute
-  '/admin/properties': typeof AdminPropertiesRouteWithChildren
   '/admin/sellers': typeof AdminSellersRoute
   '/admin/substitutions': typeof AdminSubstitutionsRoute
   '/admin/support': typeof AdminSupportRoute
@@ -883,6 +889,7 @@ export interface FileRoutesByTo {
   '/buyer/pods/$id': typeof BuyerPodsIdRoute
   '/listings/$id/edit': typeof ListingsIdEditRoute
   '/admin/pods': typeof AdminPodsIndexRoute
+  '/admin/properties': typeof AdminPropertiesIndexRoute
   '/agent/documents': typeof AgentDocumentsIndexRoute
   '/agent/listings': typeof AgentListingsIndexRoute
   '/buyer/onboarding': typeof BuyerOnboardingIndexRoute
@@ -994,6 +1001,7 @@ export interface FileRoutesById {
   '/buyer/pods/$id': typeof BuyerPodsIdRoute
   '/listings/$id/edit': typeof ListingsIdEditRoute
   '/admin/pods/': typeof AdminPodsIndexRoute
+  '/admin/properties/': typeof AdminPropertiesIndexRoute
   '/agent/documents/': typeof AgentDocumentsIndexRoute
   '/agent/listings/': typeof AgentListingsIndexRoute
   '/buyer/onboarding/': typeof BuyerOnboardingIndexRoute
@@ -1106,6 +1114,7 @@ export interface FileRouteTypes {
     | '/buyer/pods/$id'
     | '/listings/$id/edit'
     | '/admin/pods/'
+    | '/admin/properties/'
     | '/agent/documents/'
     | '/agent/listings/'
     | '/buyer/onboarding/'
@@ -1135,7 +1144,6 @@ export interface FileRouteTypes {
     | '/admin/listing-compliance'
     | '/admin/login'
     | '/admin/payments'
-    | '/admin/properties'
     | '/admin/sellers'
     | '/admin/substitutions'
     | '/admin/support'
@@ -1212,6 +1220,7 @@ export interface FileRouteTypes {
     | '/buyer/pods/$id'
     | '/listings/$id/edit'
     | '/admin/pods'
+    | '/admin/properties'
     | '/agent/documents'
     | '/agent/listings'
     | '/buyer/onboarding'
@@ -1322,6 +1331,7 @@ export interface FileRouteTypes {
     | '/buyer/pods/$id'
     | '/listings/$id/edit'
     | '/admin/pods/'
+    | '/admin/properties/'
     | '/agent/documents/'
     | '/agent/listings/'
     | '/buyer/onboarding/'
@@ -1891,6 +1901,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentDocumentsIndexRouteImport
       parentRoute: typeof AgentRoute
     }
+    '/admin/properties/': {
+      id: '/admin/properties/'
+      path: '/'
+      fullPath: '/admin/properties/'
+      preLoaderRoute: typeof AdminPropertiesIndexRouteImport
+      parentRoute: typeof AdminPropertiesRoute
+    }
     '/admin/pods/': {
       id: '/admin/pods/'
       path: '/pods'
@@ -2154,10 +2171,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminPropertiesRouteChildren {
+  AdminPropertiesIndexRoute: typeof AdminPropertiesIndexRoute
   AdminPropertiesIdDueDiligenceRoute: typeof AdminPropertiesIdDueDiligenceRoute
 }
 
 const AdminPropertiesRouteChildren: AdminPropertiesRouteChildren = {
+  AdminPropertiesIndexRoute: AdminPropertiesIndexRoute,
   AdminPropertiesIdDueDiligenceRoute: AdminPropertiesIdDueDiligenceRoute,
 }
 
