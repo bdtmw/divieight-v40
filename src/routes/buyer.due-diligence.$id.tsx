@@ -3,9 +3,13 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { AlertTriangle, CheckCircle2, FileText, Lock, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
+import { DiligenceDocumentPreview } from "@/components/DiligenceDocumentPreview";
+import {
+  SecondaryVerification,
+  TYPED_INITIALS_VERIFICATION,
+} from "@/components/SecondaryVerification";
 import {
   DD_CATEGORY_LABELS,
-  SECONDARY_VERIFICATION_OPTIONS,
   deviceFingerprint,
   formatDate,
   gatingDocuments,
@@ -195,9 +199,8 @@ function DocumentCard({
   const [scrolled, setScrolled] = useState(false);
   const [memberId, setMemberId] = useState(members[0]?.id ?? "");
   const [checked, setChecked] = useState(false);
-  const [verification, setVerification] = useState<string>(
-    SECONDARY_VERIFICATION_OPTIONS[0].value,
-  );
+  const [verification, setVerification] = useState<string>(TYPED_INITIALS_VERIFICATION);
+  const [verificationReady, setVerificationReady] = useState(false);
   const [noticeShownAt, setNoticeShownAt] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -214,6 +217,23 @@ function DocumentCard({
       setMemberId(pendingMembers[0].id);
     }
   }, [pendingMembers, memberId]);
+
+  useEffect(() => {
+    if (!open) return;
+    setScrolled(false);
+    setChecked(false);
+    setVerification(TYPED_INITIALS_VERIFICATION);
+    setVerificationReady(false);
+  }, [open, doc.id, doc.content_hash]);
+
+  useEffect(() => {
+    if (!open) return;
+    setScrolled(false);
+    setChecked(false);
+    setVerificationReady(false);
+  }, [memberId, open]);
+
+  const selectedMember = pendingMembers.find((m) => m.id === memberId) ?? pendingMembers[0];
 
   return (
     <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
@@ -267,29 +287,12 @@ function DocumentCard({
 
       {open ? (
         <div className="mt-4 space-y-4">
-          <div
-            onScroll={(e) => {
-              const el = e.currentTarget;
-              if (el.scrollTop + el.clientHeight >= el.scrollHeight - 24) setScrolled(true);
-            }}
-            className="max-h-96 overflow-y-auto rounded-lg border border-border bg-background p-4"
-          >
-            {doc.signed_url ? (
-              <iframe
-                title={doc.document_title}
-                src={doc.signed_url}
-                className="h-[28rem] w-full rounded"
-              />
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                This document is temporarily unavailable. Please refresh.
-              </p>
-            )}
-            <div className="h-[30rem]" aria-hidden />
-            <p className="pb-2 text-center text-xs text-muted-foreground">
-              — end of document —
-            </p>
-          </div>
+          <DiligenceDocumentPreview
+            title={doc.document_title}
+            url={doc.signed_url}
+            version={doc.content_hash}
+            onScrolledToEnd={() => setScrolled(true)}
+          />
 
           {doc.is_governing_instrument ? (
             <div className="rounded-lg border border-accent/40 bg-accent/5 p-4">
@@ -341,24 +344,17 @@ function DocumentCard({
                 </span>
               </label>
 
-              <label className="block text-xs font-medium text-muted-foreground">
-                Secondary verification
-                <select
-                  value={verification}
-                  onChange={(e) => setVerification(e.target.value)}
-                  className="mt-1 block h-10 w-full max-w-sm rounded-md border border-border bg-background px-3 text-sm text-foreground"
-                >
-                  {SECONDARY_VERIFICATION_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <SecondaryVerification
+                signerName={selectedMember?.full_name ?? ""}
+                value={verification}
+                onChange={setVerification}
+                onVerifiedChange={setVerificationReady}
+                disabled={!checked || saving}
+              />
 
               <button
                 type="button"
-                disabled={!checked || !scrolled || saving || !memberId}
+                disabled={!checked || !scrolled || !verificationReady || saving || !memberId}
                 onClick={async () => {
                   setSaving(true);
                   await onAcknowledge(memberId, verification, noticeShownAt);

@@ -193,7 +193,7 @@ function parseAck(d: any): AckInput & { accountMemberId?: string } {
     documentId: String(d.documentId),
     contentHash: String(d.contentHash),
     signedName: String(d.signedName ?? "").trim(),
-    secondaryVerificationMethod: String(d.secondaryVerificationMethod ?? "authenticated_session"),
+    secondaryVerificationMethod: String(d.secondaryVerificationMethod ?? "typed_initials"),
     ipAddress: d.ipAddress ? String(d.ipAddress) : null,
     deviceFingerprint: d.deviceFingerprint ? String(d.deviceFingerprint) : null,
     noticeShownAt: d.noticeShownAt ? String(d.noticeShownAt) : null,

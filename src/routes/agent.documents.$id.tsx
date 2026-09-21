@@ -31,7 +31,7 @@ export const Route = createFileRoute("/agent/documents/$id")({
 });
 
 const VERIFICATION_OPTIONS = [
-  { value: "portal_session", label: "Logged-in Professional Portal session" },
+  { value: "typed_initials", label: "Typed initials" },
   { value: "license_number", label: "License number on file" },
   { value: "email_on_file", label: "Email address on file" },
 ] as const;
