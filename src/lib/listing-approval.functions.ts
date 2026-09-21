@@ -31,11 +31,11 @@ async function admin(): Promise<Db> {
 async function agentFor(db: Db, userId: string) {
   const { data } = await db
     .from("agents")
-    .select("id, full_name, role, broker_id, auth_user_id")
+    .select("id, full_name, broker_id, auth_user_id")
     .eq("auth_user_id", userId)
     .maybeSingle();
   return data as
-    | { id: string; full_name: string; role: string; broker_id: string | null }
+    | { id: string; full_name: string; broker_id: string | null }
     | null;
 }
 
@@ -95,13 +95,18 @@ export const searchListingAgents = createServerFn({ method: "POST" })
   .inputValidator((data: { query: string }) => data)
   .handler(async ({ data }): Promise<ListingAgentOption[]> => {
     const db = await admin();
-    const q = (data.query ?? "").trim();
+    const q = (data.query ?? "").trim().replace(/[(),]/g, " ").trim();
     let query = db
       .from("agents")
       .select("id, full_name, email, markets, license_state")
       .limit(10);
-    if (q) query = query.or(`full_name.ilike.%${q}%,email.ilike.%${q}%`);
-    const { data: rows } = await query;
+    if (q) {
+      query = query.or(
+        `full_name.ilike.%${q}%,email.ilike.%${q}%,license_number.ilike.%${q}%,license_state.ilike.%${q}%`,
+      );
+    }
+    const { data: rows, error } = await query;
+    if (error) throw new Error(error.message);
     return (rows ?? []) as ListingAgentOption[];
   });
 
@@ -177,11 +182,12 @@ export const inviteListingAgent = createServerFn({ method: "POST" })
     const email = data.email.trim().toLowerCase();
 
     // If they're already on-platform as a Listing Agent, tag them directly.
-    const { data: existing } = await db
+    const { data: existingRows } = await db
       .from("agents")
       .select("id, full_name, auth_user_id")
-      .eq("email", email)
-      .maybeSingle();
+      .ilike("email", email)
+      .limit(1);
+    const existing = ((existingRows ?? []) as any[])[0] ?? null;
     if (existing) {
       const { clearTethersForListingAgent: clearInvited } = await import("@/lib/dual-agency");
       await clearInvited(db, {
@@ -218,13 +224,21 @@ export const inviteListingAgent = createServerFn({ method: "POST" })
       return { ok: true, invited: false, agentName: existing.full_name as string };
     }
 
-    await db.from("listing_agent_invitations").insert({
+    // Only one pending invitation per property — supersede any earlier one.
+    await db
+      .from("listing_agent_invitations")
+      .update({ status: "superseded" })
+      .eq("property_id", property.id)
+      .eq("status", "pending");
+
+    const { error: inviteError } = await db.from("listing_agent_invitations").insert({
       property_id: property.id,
       seller_id: context.userId,
       email,
       full_name: data.fullName?.trim() || null,
       status: "pending",
     });
+    if (inviteError) throw new Error(inviteError.message);
     await audit(db, {
       actorId: context.userId,
       actorType: "seller",
@@ -472,7 +486,7 @@ export const autoAssignListingAgent = createServerFn({ method: "POST" })
 
     const { data: agents } = await db
       .from("agents")
-      .select("id, full_name, auth_user_id, license_state, markets, status")
+      .select("id, full_name, auth_user_id, license_state, markets")
       .order("created_at", { ascending: true });
 
     const pool = ((agents ?? []) as any[]).filter((a) => !declined.has(a.id));

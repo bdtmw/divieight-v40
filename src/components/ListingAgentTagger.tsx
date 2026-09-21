@@ -24,6 +24,7 @@ export function ListingAgentTagger({ propertyId }: { propertyId: string }) {
   const [state, setState] = useState<ListingAgentTagState | null>(null);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<ListingAgentOption[]>([]);
+  const [searched, setSearched] = useState(false);
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -42,8 +43,15 @@ export function ListingAgentTagger({ propertyId }: { propertyId: string }) {
 
   async function runSearch() {
     setBusy(true);
+    setSearched(false);
     try {
-      setResults(await searchListingAgents({ data: { query } }));
+      const rows = await searchListingAgents({ data: { query } });
+      setResults(rows);
+      setSearched(true);
+    } catch (e) {
+      setResults([]);
+      setSearched(true);
+      toast.error(e instanceof Error ? e.message : "Search failed. Please try again.");
     } finally {
       setBusy(false);
     }
@@ -130,11 +138,20 @@ export function ListingAgentTagger({ propertyId }: { propertyId: string }) {
             <div className="mt-2 flex gap-2">
               <Input
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Name or email"
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setSearched(false);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    void runSearch();
+                  }
+                }}
+                placeholder="Name, email or license number"
               />
               <Button type="button" variant="secondary" onClick={runSearch} disabled={busy}>
-                Search
+                {busy ? "Searching…" : "Search"}
               </Button>
             </div>
             {results.length > 0 && (
@@ -156,6 +173,12 @@ export function ListingAgentTagger({ propertyId }: { propertyId: string }) {
                   </li>
                 ))}
               </ul>
+            )}
+            {searched && !busy && results.length === 0 && (
+              <p className="mt-3 rounded-lg border border-border bg-muted/40 p-3 text-xs text-muted-foreground">
+                No Listing Agents matched that search. Try a different name, or invite yours by
+                email below.
+              </p>
             )}
           </div>
 
