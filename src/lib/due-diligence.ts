@@ -103,6 +103,30 @@ export function hashDocumentContent(input: string): string {
   return `djb2_${(h >>> 0).toString(16)}_${input.length}`;
 }
 
+/** Content hash of an uploaded file's bytes — same djb2 scheme as text. */
+export async function hashFile(file: File): Promise<string> {
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  let h = 5381;
+  for (let i = 0; i < bytes.length; i++) h = ((h << 5) + h + bytes[i]) & 0xffffffff;
+  return `djb2_${(h >>> 0).toString(16)}_${bytes.length}`;
+}
+
+/** Categories an admin may place (the Seller's Disclosure is seller-only). */
+export const ADMIN_DD_CATEGORIES: DdCategory[] = [
+  "inspection",
+  "appraisal",
+  "title_commitment",
+  "operating_agreement",
+  "real_estate_purchase_agreement",
+  "other",
+];
+
+/** Governing by default when the admin hasn't overridden the toggle. */
+export const AUTO_GOVERNING_CATEGORIES: DdCategory[] = [
+  "operating_agreement",
+  "real_estate_purchase_agreement",
+];
+
 /** Low-entropy, non-identifying device fingerprint captured with each ack. */
 export function deviceFingerprint(): string {
   if (typeof window === "undefined") return "server";

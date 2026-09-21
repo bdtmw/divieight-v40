@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { StatusToneClass, money, when } from "@/lib/admin";
@@ -95,18 +95,19 @@ function AdminProperties() {
                 <th className="px-4 py-3 text-left font-medium">Status</th>
                 <th className="px-4 py-3 text-left font-medium">Listing stage</th>
                 <th className="px-4 py-3 text-left font-medium">Created</th>
+                <th className="px-4 py-3 text-left font-medium">Due diligence</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">
+                  <td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">
                     Loading…
                   </td>
                 </tr>
               ) : filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">
+                  <td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">
                     No properties found.
                   </td>
                 </tr>
@@ -136,6 +137,15 @@ function AdminProperties() {
                       {r.retained_shares != null ? ` · ${r.retained_shares}/8 retained` : ""}
                     </td>
                     <td className="px-4 py-3 text-xs text-muted-foreground">{when(r.created_at)}</td>
+                    <td className="px-4 py-3 text-xs">
+                      <Link
+                        to="/admin/properties/$id/due-diligence"
+                        params={{ id: r.id }}
+                        className="font-medium text-accent underline-offset-4 hover:underline"
+                      >
+                        Documents →
+                      </Link>
+                    </td>
                   </tr>
                 ))
               )}

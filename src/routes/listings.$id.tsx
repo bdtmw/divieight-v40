@@ -5,6 +5,7 @@ import { ListingAgentTagger } from "@/components/ListingAgentTagger";
 import { EightSlicesTracker } from "@/components/EightSlicesTracker";
 import { useAuth } from "@/hooks/use-auth";
 import { SellerDataRoom } from "@/components/SellerDataRoom";
+import { DiligenceUploader } from "@/components/DiligenceUploader";
 import {
   ListingStatusTimeline,
   type ListingStatus,
@@ -275,7 +276,12 @@ function ListingDetail() {
       ) : null}
         </>
       ) : user ? (
-        <SellerDataRoom propertyId={property.id} sellerId={user.id} />
+        <>
+          <SellerDataRoom propertyId={property.id} sellerId={user.id} />
+          <section className="mt-10">
+            <DiligenceUploader propertyId={property.id} mode="seller" />
+          </section>
+        </>
       ) : null}
     </div>
 
