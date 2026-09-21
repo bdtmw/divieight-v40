@@ -31,11 +31,11 @@ async function admin(): Promise<Db> {
 async function agentFor(db: Db, userId: string) {
   const { data } = await db
     .from("agents")
-    .select("id, full_name, role, broker_id, auth_user_id")
+    .select("id, full_name, broker_id, auth_user_id")
     .eq("auth_user_id", userId)
     .maybeSingle();
   return data as
-    | { id: string; full_name: string; role: string; broker_id: string | null }
+    | { id: string; full_name: string; broker_id: string | null }
     | null;
 }
 
