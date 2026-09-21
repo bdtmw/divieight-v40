@@ -226,6 +226,13 @@ function DocumentCard({
     setVerificationReady(false);
   }, [open, doc.id, doc.content_hash]);
 
+  useEffect(() => {
+    if (!open) return;
+    setScrolled(false);
+    setChecked(false);
+    setVerificationReady(false);
+  }, [memberId, open]);
+
   const selectedMember = pendingMembers.find((m) => m.id === memberId) ?? pendingMembers[0];
 
   return (

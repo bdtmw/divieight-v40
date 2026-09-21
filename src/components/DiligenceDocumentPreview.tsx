@@ -101,6 +101,7 @@ export function DiligenceDocumentPreview({
   }, [onScrolledToEnd, url, version]);
 
   function handleScroll(event: UIEvent<HTMLDivElement>) {
+    if (loading) return;
     const el = event.currentTarget;
     if (el.scrollTop + el.clientHeight >= el.scrollHeight - 12) onScrolledToEnd();
   }
