@@ -86,6 +86,35 @@ export const listMyTetheredBuyers = createServerFn({ method: "POST" })
       }
     }
 
+    // Display-only: active reservations per buyer. Read-only over Month 2 data.
+    const { data: reservations } = await db
+      .from("pod_reservations")
+      .select(
+        "id, buyer_account_id, property_id, shares_reserved, reserved_at, properties ( address, city, state, listing_status )",
+      )
+      .eq("status", "reserved")
+      .in(
+        "buyer_account_id",
+        rows.map((r) => r.id),
+      )
+      .order("reserved_at", { ascending: true });
+
+    const byBuyer = new Map<string, BuyerReservationSummary[]>();
+    for (const res of (reservations ?? []) as any[]) {
+      const p = res.properties ?? {};
+      const label =
+        [p.address, p.city, p.state].filter(Boolean).join(", ") || "Subject property";
+      const list = byBuyer.get(res.buyer_account_id) ?? [];
+      list.push({
+        reservationId: res.id,
+        propertyId: res.property_id,
+        label,
+        sharesReserved: Number(res.shares_reserved ?? 0),
+        listingStatus: (p.listing_status as string) ?? "forming",
+      });
+      byBuyer.set(res.buyer_account_id, list);
+    }
+
     return rows.map((r) => {
       const pef = payStatus.get(r.id) ?? "unpaid";
       return {
