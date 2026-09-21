@@ -77,6 +77,7 @@ import { Route as AdminEntityGenesisRouteImport } from './routes/admin.entity-ge
 import { Route as AdminContactsRouteImport } from './routes/admin.contacts'
 import { Route as AdminBuyersRouteImport } from './routes/admin.buyers'
 import { Route as AdminBrokersRouteImport } from './routes/admin.brokers'
+import { Route as AdminAuthorizationsRouteImport } from './routes/admin.authorizations'
 import { Route as AdminAuditLogRouteImport } from './routes/admin.audit-log'
 import { Route as AdminAgentsRouteImport } from './routes/admin.agents'
 import { Route as BuyerOnboardingIndexRouteImport } from './routes/buyer.onboarding.index'
@@ -463,6 +464,11 @@ const AdminBrokersRoute = AdminBrokersRouteImport.update({
   path: '/brokers',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAuthorizationsRoute = AdminAuthorizationsRouteImport.update({
+  id: '/authorizations',
+  path: '/authorizations',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAuditLogRoute = AdminAuditLogRouteImport.update({
   id: '/audit-log',
   path: '/audit-log',
@@ -724,6 +730,7 @@ export interface FileRoutesByFullPath {
   '/support': typeof SupportRoute
   '/admin/agents': typeof AdminAgentsRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
+  '/admin/authorizations': typeof AdminAuthorizationsRoute
   '/admin/brokers': typeof AdminBrokersRoute
   '/admin/buyers': typeof AdminBuyersRoute
   '/admin/contacts': typeof AdminContactsRoute
@@ -835,6 +842,7 @@ export interface FileRoutesByTo {
   '/support': typeof SupportRoute
   '/admin/agents': typeof AdminAgentsRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
+  '/admin/authorizations': typeof AdminAuthorizationsRoute
   '/admin/brokers': typeof AdminBrokersRoute
   '/admin/buyers': typeof AdminBuyersRoute
   '/admin/contacts': typeof AdminContactsRoute
@@ -950,6 +958,7 @@ export interface FileRoutesById {
   '/support': typeof SupportRoute
   '/admin/agents': typeof AdminAgentsRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
+  '/admin/authorizations': typeof AdminAuthorizationsRoute
   '/admin/brokers': typeof AdminBrokersRoute
   '/admin/buyers': typeof AdminBuyersRoute
   '/admin/contacts': typeof AdminContactsRoute
@@ -1067,6 +1076,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/admin/agents'
     | '/admin/audit-log'
+    | '/admin/authorizations'
     | '/admin/brokers'
     | '/admin/buyers'
     | '/admin/contacts'
@@ -1178,6 +1188,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/admin/agents'
     | '/admin/audit-log'
+    | '/admin/authorizations'
     | '/admin/brokers'
     | '/admin/buyers'
     | '/admin/contacts'
@@ -1292,6 +1303,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/admin/agents'
     | '/admin/audit-log'
+    | '/admin/authorizations'
     | '/admin/brokers'
     | '/admin/buyers'
     | '/admin/contacts'
@@ -1931,6 +1943,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBrokersRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/authorizations': {
+      id: '/admin/authorizations'
+      path: '/authorizations'
+      fullPath: '/admin/authorizations'
+      preLoaderRoute: typeof AdminAuthorizationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/audit-log': {
       id: '/admin/audit-log'
       path: '/audit-log'
@@ -2266,6 +2285,7 @@ const AdminPropertiesRouteWithChildren = AdminPropertiesRoute._addFileChildren(
 interface AdminRouteChildren {
   AdminAgentsRoute: typeof AdminAgentsRoute
   AdminAuditLogRoute: typeof AdminAuditLogRoute
+  AdminAuthorizationsRoute: typeof AdminAuthorizationsRoute
   AdminBrokersRoute: typeof AdminBrokersRoute
   AdminBuyersRoute: typeof AdminBuyersRoute
   AdminContactsRoute: typeof AdminContactsRoute
@@ -2287,6 +2307,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAgentsRoute: AdminAgentsRoute,
   AdminAuditLogRoute: AdminAuditLogRoute,
+  AdminAuthorizationsRoute: AdminAuthorizationsRoute,
   AdminBrokersRoute: AdminBrokersRoute,
   AdminBuyersRoute: AdminBuyersRoute,
   AdminContactsRoute: AdminContactsRoute,
