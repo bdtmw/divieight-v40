@@ -49,6 +49,7 @@ import { Route as BuyerLoginRouteImport } from './routes/buyer.login'
 import { Route as BuyerGoldenTicketRouteImport } from './routes/buyer.golden-ticket'
 import { Route as BuyerDocumentsRouteImport } from './routes/buyer.documents'
 import { Route as BuyerDashboardRouteImport } from './routes/buyer.dashboard'
+import { Route as BuyerAuthorizationsRouteImport } from './routes/buyer.authorizations'
 import { Route as BuyerAdverseActionRouteImport } from './routes/buyer.adverse-action'
 import { Route as BrokerRegisterRouteImport } from './routes/broker.register'
 import { Route as BrokerLoginRouteImport } from './routes/broker.login'
@@ -62,6 +63,7 @@ import { Route as AgentLeadsRouteImport } from './routes/agent.leads'
 import { Route as AgentDueDiligenceRouteImport } from './routes/agent.due-diligence'
 import { Route as AgentDashboardRouteImport } from './routes/agent.dashboard'
 import { Route as AgentBrokerRelationshipRouteImport } from './routes/agent.broker-relationship'
+import { Route as AgentAuthorizationsRouteImport } from './routes/agent.authorizations'
 import { Route as AgentAttributionRouteImport } from './routes/agent.attribution'
 import { Route as AdminTetherResolutionRouteImport } from './routes/admin.tether-resolution'
 import { Route as AdminSupportRouteImport } from './routes/admin.support'
@@ -75,6 +77,7 @@ import { Route as AdminEntityGenesisRouteImport } from './routes/admin.entity-ge
 import { Route as AdminContactsRouteImport } from './routes/admin.contacts'
 import { Route as AdminBuyersRouteImport } from './routes/admin.buyers'
 import { Route as AdminBrokersRouteImport } from './routes/admin.brokers'
+import { Route as AdminAuthorizationsRouteImport } from './routes/admin.authorizations'
 import { Route as AdminAuditLogRouteImport } from './routes/admin.audit-log'
 import { Route as AdminAgentsRouteImport } from './routes/admin.agents'
 import { Route as BuyerOnboardingIndexRouteImport } from './routes/buyer.onboarding.index'
@@ -90,6 +93,7 @@ import { Route as BuyerOnboardingLiquidityRouteImport } from './routes/buyer.onb
 import { Route as BuyerOnboardingLifestyleRouteImport } from './routes/buyer.onboarding.lifestyle'
 import { Route as BuyerOnboardingIdentityRouteImport } from './routes/buyer.onboarding.identity'
 import { Route as BuyerDueDiligenceIdRouteImport } from './routes/buyer.due-diligence.$id'
+import { Route as BuyerAuthorizationsIdRouteImport } from './routes/buyer.authorizations.$id'
 import { Route as BrokerOnboardingLicenseCheckRouteImport } from './routes/broker.onboarding.license-check'
 import { Route as BrokerOnboardingInsuranceRouteImport } from './routes/broker.onboarding.insurance'
 import { Route as BrokerOnboardingComplianceRouteImport } from './routes/broker.onboarding.compliance'
@@ -104,6 +108,7 @@ import { Route as ApiPublicEnrollmentMaintenanceRouteImport } from './routes/api
 import { Route as ApiPublicDiligenceEscalationRouteImport } from './routes/api.public.diligence-escalation'
 import { Route as ApiPublicDesignationSweepRouteImport } from './routes/api.public.designation-sweep'
 import { Route as ApiPublicBrokerRelationshipSweepRouteImport } from './routes/api.public.broker-relationship-sweep'
+import { Route as ApiPublicAuthorizationEscalationRouteImport } from './routes/api.public.authorization-escalation'
 import { Route as ApiPublicArelloRetryRouteImport } from './routes/api.public.arello-retry'
 import { Route as AgentOnboardingLicenseDetailsRouteImport } from './routes/agent.onboarding.license-details'
 import { Route as AgentOnboardingLicenseCheckRouteImport } from './routes/agent.onboarding.license-check'
@@ -319,6 +324,11 @@ const BuyerDashboardRoute = BuyerDashboardRouteImport.update({
   path: '/buyer/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuyerAuthorizationsRoute = BuyerAuthorizationsRouteImport.update({
+  id: '/buyer/authorizations',
+  path: '/buyer/authorizations',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BuyerAdverseActionRoute = BuyerAdverseActionRouteImport.update({
   id: '/buyer/adverse-action',
   path: '/buyer/adverse-action',
@@ -384,6 +394,11 @@ const AgentBrokerRelationshipRoute = AgentBrokerRelationshipRouteImport.update({
   path: '/broker-relationship',
   getParentRoute: () => AgentRoute,
 } as any)
+const AgentAuthorizationsRoute = AgentAuthorizationsRouteImport.update({
+  id: '/authorizations',
+  path: '/authorizations',
+  getParentRoute: () => AgentRoute,
+} as any)
 const AgentAttributionRoute = AgentAttributionRouteImport.update({
   id: '/attribution',
   path: '/attribution',
@@ -447,6 +462,11 @@ const AdminBuyersRoute = AdminBuyersRouteImport.update({
 const AdminBrokersRoute = AdminBrokersRouteImport.update({
   id: '/brokers',
   path: '/brokers',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAuthorizationsRoute = AdminAuthorizationsRouteImport.update({
+  id: '/authorizations',
+  path: '/authorizations',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminAuditLogRoute = AdminAuditLogRouteImport.update({
@@ -526,6 +546,11 @@ const BuyerDueDiligenceIdRoute = BuyerDueDiligenceIdRouteImport.update({
   path: '/buyer/due-diligence/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuyerAuthorizationsIdRoute = BuyerAuthorizationsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => BuyerAuthorizationsRoute,
+} as any)
 const BrokerOnboardingLicenseCheckRoute =
   BrokerOnboardingLicenseCheckRouteImport.update({
     id: '/onboarding/license-check',
@@ -603,6 +628,12 @@ const ApiPublicBrokerRelationshipSweepRoute =
   ApiPublicBrokerRelationshipSweepRouteImport.update({
     id: '/api/public/broker-relationship-sweep',
     path: '/api/public/broker-relationship-sweep',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicAuthorizationEscalationRoute =
+  ApiPublicAuthorizationEscalationRouteImport.update({
+    id: '/api/public/authorization-escalation',
+    path: '/api/public/authorization-escalation',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicArelloRetryRoute = ApiPublicArelloRetryRouteImport.update({
@@ -699,6 +730,7 @@ export interface FileRoutesByFullPath {
   '/support': typeof SupportRoute
   '/admin/agents': typeof AdminAgentsRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
+  '/admin/authorizations': typeof AdminAuthorizationsRoute
   '/admin/brokers': typeof AdminBrokersRoute
   '/admin/buyers': typeof AdminBuyersRoute
   '/admin/contacts': typeof AdminContactsRoute
@@ -712,6 +744,7 @@ export interface FileRoutesByFullPath {
   '/admin/support': typeof AdminSupportRoute
   '/admin/tether-resolution': typeof AdminTetherResolutionRoute
   '/agent/attribution': typeof AgentAttributionRoute
+  '/agent/authorizations': typeof AgentAuthorizationsRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/due-diligence': typeof AgentDueDiligenceRoute
@@ -725,6 +758,7 @@ export interface FileRoutesByFullPath {
   '/broker/login': typeof BrokerLoginRoute
   '/broker/register': typeof BrokerRegisterRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
+  '/buyer/authorizations': typeof BuyerAuthorizationsRouteWithChildren
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/documents': typeof BuyerDocumentsRoute
   '/buyer/golden-ticket': typeof BuyerGoldenTicketRoute
@@ -760,6 +794,7 @@ export interface FileRoutesByFullPath {
   '/agent/onboarding/license-check': typeof AgentOnboardingLicenseCheckRoute
   '/agent/onboarding/license-details': typeof AgentOnboardingLicenseDetailsRoute
   '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
+  '/api/public/authorization-escalation': typeof ApiPublicAuthorizationEscalationRoute
   '/api/public/broker-relationship-sweep': typeof ApiPublicBrokerRelationshipSweepRoute
   '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
   '/api/public/diligence-escalation': typeof ApiPublicDiligenceEscalationRoute
@@ -774,6 +809,7 @@ export interface FileRoutesByFullPath {
   '/broker/onboarding/compliance': typeof BrokerOnboardingComplianceRoute
   '/broker/onboarding/insurance': typeof BrokerOnboardingInsuranceRoute
   '/broker/onboarding/license-check': typeof BrokerOnboardingLicenseCheckRoute
+  '/buyer/authorizations/$id': typeof BuyerAuthorizationsIdRoute
   '/buyer/due-diligence/$id': typeof BuyerDueDiligenceIdRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -806,6 +842,7 @@ export interface FileRoutesByTo {
   '/support': typeof SupportRoute
   '/admin/agents': typeof AdminAgentsRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
+  '/admin/authorizations': typeof AdminAuthorizationsRoute
   '/admin/brokers': typeof AdminBrokersRoute
   '/admin/buyers': typeof AdminBuyersRoute
   '/admin/contacts': typeof AdminContactsRoute
@@ -818,6 +855,7 @@ export interface FileRoutesByTo {
   '/admin/support': typeof AdminSupportRoute
   '/admin/tether-resolution': typeof AdminTetherResolutionRoute
   '/agent/attribution': typeof AgentAttributionRoute
+  '/agent/authorizations': typeof AgentAuthorizationsRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/due-diligence': typeof AgentDueDiligenceRoute
@@ -831,6 +869,7 @@ export interface FileRoutesByTo {
   '/broker/login': typeof BrokerLoginRoute
   '/broker/register': typeof BrokerRegisterRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
+  '/buyer/authorizations': typeof BuyerAuthorizationsRouteWithChildren
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/documents': typeof BuyerDocumentsRoute
   '/buyer/golden-ticket': typeof BuyerGoldenTicketRoute
@@ -866,6 +905,7 @@ export interface FileRoutesByTo {
   '/agent/onboarding/license-check': typeof AgentOnboardingLicenseCheckRoute
   '/agent/onboarding/license-details': typeof AgentOnboardingLicenseDetailsRoute
   '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
+  '/api/public/authorization-escalation': typeof ApiPublicAuthorizationEscalationRoute
   '/api/public/broker-relationship-sweep': typeof ApiPublicBrokerRelationshipSweepRoute
   '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
   '/api/public/diligence-escalation': typeof ApiPublicDiligenceEscalationRoute
@@ -880,6 +920,7 @@ export interface FileRoutesByTo {
   '/broker/onboarding/compliance': typeof BrokerOnboardingComplianceRoute
   '/broker/onboarding/insurance': typeof BrokerOnboardingInsuranceRoute
   '/broker/onboarding/license-check': typeof BrokerOnboardingLicenseCheckRoute
+  '/buyer/authorizations/$id': typeof BuyerAuthorizationsIdRoute
   '/buyer/due-diligence/$id': typeof BuyerDueDiligenceIdRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -917,6 +958,7 @@ export interface FileRoutesById {
   '/support': typeof SupportRoute
   '/admin/agents': typeof AdminAgentsRoute
   '/admin/audit-log': typeof AdminAuditLogRoute
+  '/admin/authorizations': typeof AdminAuthorizationsRoute
   '/admin/brokers': typeof AdminBrokersRoute
   '/admin/buyers': typeof AdminBuyersRoute
   '/admin/contacts': typeof AdminContactsRoute
@@ -930,6 +972,7 @@ export interface FileRoutesById {
   '/admin/support': typeof AdminSupportRoute
   '/admin/tether-resolution': typeof AdminTetherResolutionRoute
   '/agent/attribution': typeof AgentAttributionRoute
+  '/agent/authorizations': typeof AgentAuthorizationsRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/due-diligence': typeof AgentDueDiligenceRoute
@@ -943,6 +986,7 @@ export interface FileRoutesById {
   '/broker/login': typeof BrokerLoginRoute
   '/broker/register': typeof BrokerRegisterRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
+  '/buyer/authorizations': typeof BuyerAuthorizationsRouteWithChildren
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/documents': typeof BuyerDocumentsRoute
   '/buyer/golden-ticket': typeof BuyerGoldenTicketRoute
@@ -978,6 +1022,7 @@ export interface FileRoutesById {
   '/agent/onboarding/license-check': typeof AgentOnboardingLicenseCheckRoute
   '/agent/onboarding/license-details': typeof AgentOnboardingLicenseDetailsRoute
   '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
+  '/api/public/authorization-escalation': typeof ApiPublicAuthorizationEscalationRoute
   '/api/public/broker-relationship-sweep': typeof ApiPublicBrokerRelationshipSweepRoute
   '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
   '/api/public/diligence-escalation': typeof ApiPublicDiligenceEscalationRoute
@@ -992,6 +1037,7 @@ export interface FileRoutesById {
   '/broker/onboarding/compliance': typeof BrokerOnboardingComplianceRoute
   '/broker/onboarding/insurance': typeof BrokerOnboardingInsuranceRoute
   '/broker/onboarding/license-check': typeof BrokerOnboardingLicenseCheckRoute
+  '/buyer/authorizations/$id': typeof BuyerAuthorizationsIdRoute
   '/buyer/due-diligence/$id': typeof BuyerDueDiligenceIdRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -1030,6 +1076,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/admin/agents'
     | '/admin/audit-log'
+    | '/admin/authorizations'
     | '/admin/brokers'
     | '/admin/buyers'
     | '/admin/contacts'
@@ -1043,6 +1090,7 @@ export interface FileRouteTypes {
     | '/admin/support'
     | '/admin/tether-resolution'
     | '/agent/attribution'
+    | '/agent/authorizations'
     | '/agent/broker-relationship'
     | '/agent/dashboard'
     | '/agent/due-diligence'
@@ -1056,6 +1104,7 @@ export interface FileRouteTypes {
     | '/broker/login'
     | '/broker/register'
     | '/buyer/adverse-action'
+    | '/buyer/authorizations'
     | '/buyer/dashboard'
     | '/buyer/documents'
     | '/buyer/golden-ticket'
@@ -1091,6 +1140,7 @@ export interface FileRouteTypes {
     | '/agent/onboarding/license-check'
     | '/agent/onboarding/license-details'
     | '/api/public/arello-retry'
+    | '/api/public/authorization-escalation'
     | '/api/public/broker-relationship-sweep'
     | '/api/public/designation-sweep'
     | '/api/public/diligence-escalation'
@@ -1105,6 +1155,7 @@ export interface FileRouteTypes {
     | '/broker/onboarding/compliance'
     | '/broker/onboarding/insurance'
     | '/broker/onboarding/license-check'
+    | '/buyer/authorizations/$id'
     | '/buyer/due-diligence/$id'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -1137,6 +1188,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/admin/agents'
     | '/admin/audit-log'
+    | '/admin/authorizations'
     | '/admin/brokers'
     | '/admin/buyers'
     | '/admin/contacts'
@@ -1149,6 +1201,7 @@ export interface FileRouteTypes {
     | '/admin/support'
     | '/admin/tether-resolution'
     | '/agent/attribution'
+    | '/agent/authorizations'
     | '/agent/broker-relationship'
     | '/agent/dashboard'
     | '/agent/due-diligence'
@@ -1162,6 +1215,7 @@ export interface FileRouteTypes {
     | '/broker/login'
     | '/broker/register'
     | '/buyer/adverse-action'
+    | '/buyer/authorizations'
     | '/buyer/dashboard'
     | '/buyer/documents'
     | '/buyer/golden-ticket'
@@ -1197,6 +1251,7 @@ export interface FileRouteTypes {
     | '/agent/onboarding/license-check'
     | '/agent/onboarding/license-details'
     | '/api/public/arello-retry'
+    | '/api/public/authorization-escalation'
     | '/api/public/broker-relationship-sweep'
     | '/api/public/designation-sweep'
     | '/api/public/diligence-escalation'
@@ -1211,6 +1266,7 @@ export interface FileRouteTypes {
     | '/broker/onboarding/compliance'
     | '/broker/onboarding/insurance'
     | '/broker/onboarding/license-check'
+    | '/buyer/authorizations/$id'
     | '/buyer/due-diligence/$id'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -1247,6 +1303,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/admin/agents'
     | '/admin/audit-log'
+    | '/admin/authorizations'
     | '/admin/brokers'
     | '/admin/buyers'
     | '/admin/contacts'
@@ -1260,6 +1317,7 @@ export interface FileRouteTypes {
     | '/admin/support'
     | '/admin/tether-resolution'
     | '/agent/attribution'
+    | '/agent/authorizations'
     | '/agent/broker-relationship'
     | '/agent/dashboard'
     | '/agent/due-diligence'
@@ -1273,6 +1331,7 @@ export interface FileRouteTypes {
     | '/broker/login'
     | '/broker/register'
     | '/buyer/adverse-action'
+    | '/buyer/authorizations'
     | '/buyer/dashboard'
     | '/buyer/documents'
     | '/buyer/golden-ticket'
@@ -1308,6 +1367,7 @@ export interface FileRouteTypes {
     | '/agent/onboarding/license-check'
     | '/agent/onboarding/license-details'
     | '/api/public/arello-retry'
+    | '/api/public/authorization-escalation'
     | '/api/public/broker-relationship-sweep'
     | '/api/public/designation-sweep'
     | '/api/public/diligence-escalation'
@@ -1322,6 +1382,7 @@ export interface FileRouteTypes {
     | '/broker/onboarding/compliance'
     | '/broker/onboarding/insurance'
     | '/broker/onboarding/license-check'
+    | '/buyer/authorizations/$id'
     | '/buyer/due-diligence/$id'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -1359,6 +1420,7 @@ export interface RootRouteChildren {
   SupportRoute: typeof SupportRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   BuyerAdverseActionRoute: typeof BuyerAdverseActionRoute
+  BuyerAuthorizationsRoute: typeof BuyerAuthorizationsRouteWithChildren
   BuyerDashboardRoute: typeof BuyerDashboardRoute
   BuyerDocumentsRoute: typeof BuyerDocumentsRoute
   BuyerGoldenTicketRoute: typeof BuyerGoldenTicketRoute
@@ -1382,6 +1444,7 @@ export interface RootRouteChildren {
   OnboardingIndexRoute: typeof OnboardingIndexRoute
   PropertiesIndexRoute: typeof PropertiesIndexRoute
   ApiPublicArelloRetryRoute: typeof ApiPublicArelloRetryRoute
+  ApiPublicAuthorizationEscalationRoute: typeof ApiPublicAuthorizationEscalationRoute
   ApiPublicBrokerRelationshipSweepRoute: typeof ApiPublicBrokerRelationshipSweepRoute
   ApiPublicDesignationSweepRoute: typeof ApiPublicDesignationSweepRoute
   ApiPublicDiligenceEscalationRoute: typeof ApiPublicDiligenceEscalationRoute
@@ -1684,6 +1747,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyerDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/buyer/authorizations': {
+      id: '/buyer/authorizations'
+      path: '/buyer/authorizations'
+      fullPath: '/buyer/authorizations'
+      preLoaderRoute: typeof BuyerAuthorizationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/buyer/adverse-action': {
       id: '/buyer/adverse-action'
       path: '/buyer/adverse-action'
@@ -1775,6 +1845,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentBrokerRelationshipRouteImport
       parentRoute: typeof AgentRoute
     }
+    '/agent/authorizations': {
+      id: '/agent/authorizations'
+      path: '/authorizations'
+      fullPath: '/agent/authorizations'
+      preLoaderRoute: typeof AgentAuthorizationsRouteImport
+      parentRoute: typeof AgentRoute
+    }
     '/agent/attribution': {
       id: '/agent/attribution'
       path: '/attribution'
@@ -1864,6 +1941,13 @@ declare module '@tanstack/react-router' {
       path: '/brokers'
       fullPath: '/admin/brokers'
       preLoaderRoute: typeof AdminBrokersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/authorizations': {
+      id: '/admin/authorizations'
+      path: '/authorizations'
+      fullPath: '/admin/authorizations'
+      preLoaderRoute: typeof AdminAuthorizationsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/audit-log': {
@@ -1971,6 +2055,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyerDueDiligenceIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/buyer/authorizations/$id': {
+      id: '/buyer/authorizations/$id'
+      path: '/$id'
+      fullPath: '/buyer/authorizations/$id'
+      preLoaderRoute: typeof BuyerAuthorizationsIdRouteImport
+      parentRoute: typeof BuyerAuthorizationsRoute
+    }
     '/broker/onboarding/license-check': {
       id: '/broker/onboarding/license-check'
       path: '/onboarding/license-check'
@@ -2067,6 +2158,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/broker-relationship-sweep'
       fullPath: '/api/public/broker-relationship-sweep'
       preLoaderRoute: typeof ApiPublicBrokerRelationshipSweepRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/authorization-escalation': {
+      id: '/api/public/authorization-escalation'
+      path: '/api/public/authorization-escalation'
+      fullPath: '/api/public/authorization-escalation'
+      preLoaderRoute: typeof ApiPublicAuthorizationEscalationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/arello-retry': {
@@ -2187,6 +2285,7 @@ const AdminPropertiesRouteWithChildren = AdminPropertiesRoute._addFileChildren(
 interface AdminRouteChildren {
   AdminAgentsRoute: typeof AdminAgentsRoute
   AdminAuditLogRoute: typeof AdminAuditLogRoute
+  AdminAuthorizationsRoute: typeof AdminAuthorizationsRoute
   AdminBrokersRoute: typeof AdminBrokersRoute
   AdminBuyersRoute: typeof AdminBuyersRoute
   AdminContactsRoute: typeof AdminContactsRoute
@@ -2208,6 +2307,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAgentsRoute: AdminAgentsRoute,
   AdminAuditLogRoute: AdminAuditLogRoute,
+  AdminAuthorizationsRoute: AdminAuthorizationsRoute,
   AdminBrokersRoute: AdminBrokersRoute,
   AdminBuyersRoute: AdminBuyersRoute,
   AdminContactsRoute: AdminContactsRoute,
@@ -2230,6 +2330,7 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface AgentRouteChildren {
   AgentAttributionRoute: typeof AgentAttributionRoute
+  AgentAuthorizationsRoute: typeof AgentAuthorizationsRoute
   AgentBrokerRelationshipRoute: typeof AgentBrokerRelationshipRoute
   AgentDashboardRoute: typeof AgentDashboardRoute
   AgentDueDiligenceRoute: typeof AgentDueDiligenceRoute
@@ -2254,6 +2355,7 @@ interface AgentRouteChildren {
 
 const AgentRouteChildren: AgentRouteChildren = {
   AgentAttributionRoute: AgentAttributionRoute,
+  AgentAuthorizationsRoute: AgentAuthorizationsRoute,
   AgentBrokerRelationshipRoute: AgentBrokerRelationshipRoute,
   AgentDashboardRoute: AgentDashboardRoute,
   AgentDueDiligenceRoute: AgentDueDiligenceRoute,
@@ -2319,6 +2421,17 @@ const ResetPasswordRouteWithChildren = ResetPasswordRoute._addFileChildren(
   ResetPasswordRouteChildren,
 )
 
+interface BuyerAuthorizationsRouteChildren {
+  BuyerAuthorizationsIdRoute: typeof BuyerAuthorizationsIdRoute
+}
+
+const BuyerAuthorizationsRouteChildren: BuyerAuthorizationsRouteChildren = {
+  BuyerAuthorizationsIdRoute: BuyerAuthorizationsIdRoute,
+}
+
+const BuyerAuthorizationsRouteWithChildren =
+  BuyerAuthorizationsRoute._addFileChildren(BuyerAuthorizationsRouteChildren)
+
 interface ListingsIdRouteChildren {
   ListingsIdEditRoute: typeof ListingsIdEditRoute
 }
@@ -2347,6 +2460,7 @@ const rootRouteChildren: RootRouteChildren = {
   SupportRoute: SupportRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   BuyerAdverseActionRoute: BuyerAdverseActionRoute,
+  BuyerAuthorizationsRoute: BuyerAuthorizationsRouteWithChildren,
   BuyerDashboardRoute: BuyerDashboardRoute,
   BuyerDocumentsRoute: BuyerDocumentsRoute,
   BuyerGoldenTicketRoute: BuyerGoldenTicketRoute,
@@ -2370,6 +2484,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingIndexRoute: OnboardingIndexRoute,
   PropertiesIndexRoute: PropertiesIndexRoute,
   ApiPublicArelloRetryRoute: ApiPublicArelloRetryRoute,
+  ApiPublicAuthorizationEscalationRoute: ApiPublicAuthorizationEscalationRoute,
   ApiPublicBrokerRelationshipSweepRoute: ApiPublicBrokerRelationshipSweepRoute,
   ApiPublicDesignationSweepRoute: ApiPublicDesignationSweepRoute,
   ApiPublicDiligenceEscalationRoute: ApiPublicDiligenceEscalationRoute,

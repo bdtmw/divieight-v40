@@ -15,6 +15,7 @@ import {
   AlertTriangle,
   LifeBuoy,
   Building2,
+  FileSignature,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdmin } from "@/lib/admin";
@@ -43,6 +44,7 @@ const NAV = [
   { to: "/admin/payments", label: "Payments", icon: CreditCard },
   { to: "/admin/contacts", label: "Contact inbox", icon: Mail },
   { to: "/admin/support", label: "Support tickets", icon: LifeBuoy },
+  { to: "/admin/authorizations", label: "Authorizations", icon: FileSignature },
   { to: "/admin/pods", label: "Pods & HLA", icon: Boxes },
   { to: "/admin/entity-genesis", label: "Entity Genesis", icon: Building2 },
   { to: "/admin/substitutions", label: "Substitutions", icon: Users2 },

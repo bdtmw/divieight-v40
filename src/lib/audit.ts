@@ -120,7 +120,17 @@ export type AuditAction =
   | "diligence.agent_acknowledged"
   | "diligence.agent_ack_overdue"
   | "diligence.gate_cleared"
-  | "diligence.gate_blocked";
+  | "diligence.gate_blocked"
+  | "authorization.requested"
+  | "authorization.gate_blocked"
+  | "authorization.member_confirmed"
+  | "authorization.member_declined"
+  | "authorization.agent_recommendation"
+  | "authorization.granted"
+  | "authorization.declined_final"
+  | "authorization.non_response"
+  | "authorization.escalated"
+  | "authorization.notification_failed";
 
 
 export type AuditEntity =
@@ -139,7 +149,8 @@ export type AuditEntity =
   | "support_ticket"
   | "logging_source"
   | "entity_genesis"
-  | "diligence_document";
+  | "diligence_document"
+  | "authorization_request";
 
 
 export async function logAudit(params: {
