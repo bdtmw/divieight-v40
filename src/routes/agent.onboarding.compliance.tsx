@@ -18,7 +18,8 @@ export const Route = createFileRoute("/agent/onboarding/compliance")({
       { property: "og:title", content: "FinCEN & ethics — divieight" },
       {
         property: "og:description",
-        content: "Complete FinCEN/AML and ethics acknowledgments for the divieight Professional Portal.",
+        content:
+          "Complete FinCEN/AML and ethics acknowledgments for the divieight Professional Portal.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -51,7 +52,9 @@ function CompliancePage() {
       {agent ? <AgentCertLapsedBanner agent={agent} onUpdated={setAgent} /> : null}
 
       <header className="space-y-2">
-        <h1 className="font-display text-3xl font-semibold text-foreground">FinCEN &amp; ethics acknowledgments</h1>
+        <h1 className="font-display text-3xl font-semibold text-foreground">
+          FinCEN &amp; ethics acknowledgments
+        </h1>
         <p className="text-sm text-muted-foreground">
           Each acknowledgment below is recorded individually with its own timestamp.
         </p>
