@@ -162,6 +162,13 @@ export const createReservation = createServerFn({ method: "POST" })
         propertyId: data.propertyId,
         actorId: userId,
       });
+      // Required documents already on file still need this buyer's
+      // acknowledgment — tell them (and their agent) right away.
+      const { notifyOutstandingDiligence } = await import("@/lib/due-diligence-notify.server");
+      await notifyOutstandingDiligence(supabaseAdmin as never, {
+        propertyId: data.propertyId,
+        buyerAccountId: buyer.id,
+      });
     } catch {
       // reservation stands even if the lock write fails; maintenance can retry
     }
