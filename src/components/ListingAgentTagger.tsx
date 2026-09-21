@@ -24,6 +24,7 @@ export function ListingAgentTagger({ propertyId }: { propertyId: string }) {
   const [state, setState] = useState<ListingAgentTagState | null>(null);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<ListingAgentOption[]>([]);
+  const [searched, setSearched] = useState(false);
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
 
