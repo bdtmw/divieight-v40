@@ -15,6 +15,7 @@ import {
   AlertTriangle,
   LifeBuoy,
   Building2,
+  FileSignature,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdmin } from "@/lib/admin";
