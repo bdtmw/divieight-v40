@@ -80,6 +80,6 @@ CREATE POLICY "Admins and holders read cap table"
     OR EXISTS (
       SELECT 1 FROM public.sellers s
       WHERE s.id = cap_table_entries.seller_id
-        AND s.auth_user_id = auth.uid()
+        AND s.id = auth.uid()
     )
   );
