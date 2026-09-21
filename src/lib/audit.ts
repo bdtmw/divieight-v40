@@ -110,7 +110,9 @@ export type AuditAction =
   | "support.ticket_created"
   | "support.ticket_status_changed"
   | "support.ticket_note_added"
-  | "monitoring.logging_gap_detected";
+  | "monitoring.logging_gap_detected"
+  | "entity.digital_genesis_created"
+  | "entity.cap_table_updated";
 
 
 export type AuditEntity =
@@ -127,7 +129,8 @@ export type AuditEntity =
   | "attribution_token"
   | "pod"
   | "support_ticket"
-  | "logging_source";
+  | "logging_source"
+  | "entity_genesis";
 
 
 export async function logAudit(params: {

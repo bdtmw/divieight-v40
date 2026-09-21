@@ -14,6 +14,7 @@ import {
   LogOut,
   AlertTriangle,
   LifeBuoy,
+  Building2,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdmin } from "@/lib/admin";
@@ -43,6 +44,7 @@ const NAV = [
   { to: "/admin/contacts", label: "Contact inbox", icon: Mail },
   { to: "/admin/support", label: "Support tickets", icon: LifeBuoy },
   { to: "/admin/pods", label: "Pods & HLA", icon: Boxes },
+  { to: "/admin/entity-genesis", label: "Entity Genesis", icon: Building2 },
   { to: "/admin/substitutions", label: "Substitutions", icon: Users2 },
   { to: "/admin/tether-resolution", label: "Tether alerts", icon: AlertTriangle },
   { to: "/admin/listing-compliance", label: "Listing compliance", icon: ShieldCheck },
