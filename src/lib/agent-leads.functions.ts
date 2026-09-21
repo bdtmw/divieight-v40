@@ -14,6 +14,15 @@ import { residencyFor, type Residency } from "@/lib/markets";
  * by the buyer; the scoping to `tethered_resident_agent_id` is enforced here.
  */
 
+/** Display-only summary of an active reservation held by a tethered buyer. */
+export interface BuyerReservationSummary {
+  reservationId: string;
+  propertyId: string;
+  label: string;
+  sharesReserved: number;
+  listingStatus: string;
+}
+
 export interface TetheredBuyer {
   buyerAccountId: string;
   /** Display identity for the agent — email is the buyer's contact of record. */
