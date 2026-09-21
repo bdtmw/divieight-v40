@@ -63,6 +63,7 @@ import { Route as AgentLeadsRouteImport } from './routes/agent.leads'
 import { Route as AgentDueDiligenceRouteImport } from './routes/agent.due-diligence'
 import { Route as AgentDashboardRouteImport } from './routes/agent.dashboard'
 import { Route as AgentBrokerRelationshipRouteImport } from './routes/agent.broker-relationship'
+import { Route as AgentAuthorizationsRouteImport } from './routes/agent.authorizations'
 import { Route as AgentAttributionRouteImport } from './routes/agent.attribution'
 import { Route as AdminTetherResolutionRouteImport } from './routes/admin.tether-resolution'
 import { Route as AdminSupportRouteImport } from './routes/admin.support'
@@ -91,6 +92,7 @@ import { Route as BuyerOnboardingLiquidityRouteImport } from './routes/buyer.onb
 import { Route as BuyerOnboardingLifestyleRouteImport } from './routes/buyer.onboarding.lifestyle'
 import { Route as BuyerOnboardingIdentityRouteImport } from './routes/buyer.onboarding.identity'
 import { Route as BuyerDueDiligenceIdRouteImport } from './routes/buyer.due-diligence.$id'
+import { Route as BuyerAuthorizationsIdRouteImport } from './routes/buyer.authorizations.$id'
 import { Route as BrokerOnboardingLicenseCheckRouteImport } from './routes/broker.onboarding.license-check'
 import { Route as BrokerOnboardingInsuranceRouteImport } from './routes/broker.onboarding.insurance'
 import { Route as BrokerOnboardingComplianceRouteImport } from './routes/broker.onboarding.compliance'
@@ -391,6 +393,11 @@ const AgentBrokerRelationshipRoute = AgentBrokerRelationshipRouteImport.update({
   path: '/broker-relationship',
   getParentRoute: () => AgentRoute,
 } as any)
+const AgentAuthorizationsRoute = AgentAuthorizationsRouteImport.update({
+  id: '/authorizations',
+  path: '/authorizations',
+  getParentRoute: () => AgentRoute,
+} as any)
 const AgentAttributionRoute = AgentAttributionRouteImport.update({
   id: '/attribution',
   path: '/attribution',
@@ -532,6 +539,11 @@ const BuyerDueDiligenceIdRoute = BuyerDueDiligenceIdRouteImport.update({
   id: '/buyer/due-diligence/$id',
   path: '/buyer/due-diligence/$id',
   getParentRoute: () => rootRouteImport,
+} as any)
+const BuyerAuthorizationsIdRoute = BuyerAuthorizationsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => BuyerAuthorizationsRoute,
 } as any)
 const BrokerOnboardingLicenseCheckRoute =
   BrokerOnboardingLicenseCheckRouteImport.update({
@@ -725,6 +737,7 @@ export interface FileRoutesByFullPath {
   '/admin/support': typeof AdminSupportRoute
   '/admin/tether-resolution': typeof AdminTetherResolutionRoute
   '/agent/attribution': typeof AgentAttributionRoute
+  '/agent/authorizations': typeof AgentAuthorizationsRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/due-diligence': typeof AgentDueDiligenceRoute
@@ -738,7 +751,7 @@ export interface FileRoutesByFullPath {
   '/broker/login': typeof BrokerLoginRoute
   '/broker/register': typeof BrokerRegisterRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
-  '/buyer/authorizations': typeof BuyerAuthorizationsRoute
+  '/buyer/authorizations': typeof BuyerAuthorizationsRouteWithChildren
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/documents': typeof BuyerDocumentsRoute
   '/buyer/golden-ticket': typeof BuyerGoldenTicketRoute
@@ -789,6 +802,7 @@ export interface FileRoutesByFullPath {
   '/broker/onboarding/compliance': typeof BrokerOnboardingComplianceRoute
   '/broker/onboarding/insurance': typeof BrokerOnboardingInsuranceRoute
   '/broker/onboarding/license-check': typeof BrokerOnboardingLicenseCheckRoute
+  '/buyer/authorizations/$id': typeof BuyerAuthorizationsIdRoute
   '/buyer/due-diligence/$id': typeof BuyerDueDiligenceIdRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -833,6 +847,7 @@ export interface FileRoutesByTo {
   '/admin/support': typeof AdminSupportRoute
   '/admin/tether-resolution': typeof AdminTetherResolutionRoute
   '/agent/attribution': typeof AgentAttributionRoute
+  '/agent/authorizations': typeof AgentAuthorizationsRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/due-diligence': typeof AgentDueDiligenceRoute
@@ -846,7 +861,7 @@ export interface FileRoutesByTo {
   '/broker/login': typeof BrokerLoginRoute
   '/broker/register': typeof BrokerRegisterRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
-  '/buyer/authorizations': typeof BuyerAuthorizationsRoute
+  '/buyer/authorizations': typeof BuyerAuthorizationsRouteWithChildren
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/documents': typeof BuyerDocumentsRoute
   '/buyer/golden-ticket': typeof BuyerGoldenTicketRoute
@@ -897,6 +912,7 @@ export interface FileRoutesByTo {
   '/broker/onboarding/compliance': typeof BrokerOnboardingComplianceRoute
   '/broker/onboarding/insurance': typeof BrokerOnboardingInsuranceRoute
   '/broker/onboarding/license-check': typeof BrokerOnboardingLicenseCheckRoute
+  '/buyer/authorizations/$id': typeof BuyerAuthorizationsIdRoute
   '/buyer/due-diligence/$id': typeof BuyerDueDiligenceIdRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -947,6 +963,7 @@ export interface FileRoutesById {
   '/admin/support': typeof AdminSupportRoute
   '/admin/tether-resolution': typeof AdminTetherResolutionRoute
   '/agent/attribution': typeof AgentAttributionRoute
+  '/agent/authorizations': typeof AgentAuthorizationsRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/due-diligence': typeof AgentDueDiligenceRoute
@@ -960,7 +977,7 @@ export interface FileRoutesById {
   '/broker/login': typeof BrokerLoginRoute
   '/broker/register': typeof BrokerRegisterRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
-  '/buyer/authorizations': typeof BuyerAuthorizationsRoute
+  '/buyer/authorizations': typeof BuyerAuthorizationsRouteWithChildren
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/documents': typeof BuyerDocumentsRoute
   '/buyer/golden-ticket': typeof BuyerGoldenTicketRoute
@@ -1011,6 +1028,7 @@ export interface FileRoutesById {
   '/broker/onboarding/compliance': typeof BrokerOnboardingComplianceRoute
   '/broker/onboarding/insurance': typeof BrokerOnboardingInsuranceRoute
   '/broker/onboarding/license-check': typeof BrokerOnboardingLicenseCheckRoute
+  '/buyer/authorizations/$id': typeof BuyerAuthorizationsIdRoute
   '/buyer/due-diligence/$id': typeof BuyerDueDiligenceIdRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
@@ -1062,6 +1080,7 @@ export interface FileRouteTypes {
     | '/admin/support'
     | '/admin/tether-resolution'
     | '/agent/attribution'
+    | '/agent/authorizations'
     | '/agent/broker-relationship'
     | '/agent/dashboard'
     | '/agent/due-diligence'
@@ -1126,6 +1145,7 @@ export interface FileRouteTypes {
     | '/broker/onboarding/compliance'
     | '/broker/onboarding/insurance'
     | '/broker/onboarding/license-check'
+    | '/buyer/authorizations/$id'
     | '/buyer/due-diligence/$id'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -1170,6 +1190,7 @@ export interface FileRouteTypes {
     | '/admin/support'
     | '/admin/tether-resolution'
     | '/agent/attribution'
+    | '/agent/authorizations'
     | '/agent/broker-relationship'
     | '/agent/dashboard'
     | '/agent/due-diligence'
@@ -1234,6 +1255,7 @@ export interface FileRouteTypes {
     | '/broker/onboarding/compliance'
     | '/broker/onboarding/insurance'
     | '/broker/onboarding/license-check'
+    | '/buyer/authorizations/$id'
     | '/buyer/due-diligence/$id'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -1283,6 +1305,7 @@ export interface FileRouteTypes {
     | '/admin/support'
     | '/admin/tether-resolution'
     | '/agent/attribution'
+    | '/agent/authorizations'
     | '/agent/broker-relationship'
     | '/agent/dashboard'
     | '/agent/due-diligence'
@@ -1347,6 +1370,7 @@ export interface FileRouteTypes {
     | '/broker/onboarding/compliance'
     | '/broker/onboarding/insurance'
     | '/broker/onboarding/license-check'
+    | '/buyer/authorizations/$id'
     | '/buyer/due-diligence/$id'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
@@ -1384,7 +1408,7 @@ export interface RootRouteChildren {
   SupportRoute: typeof SupportRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   BuyerAdverseActionRoute: typeof BuyerAdverseActionRoute
-  BuyerAuthorizationsRoute: typeof BuyerAuthorizationsRoute
+  BuyerAuthorizationsRoute: typeof BuyerAuthorizationsRouteWithChildren
   BuyerDashboardRoute: typeof BuyerDashboardRoute
   BuyerDocumentsRoute: typeof BuyerDocumentsRoute
   BuyerGoldenTicketRoute: typeof BuyerGoldenTicketRoute
@@ -1809,6 +1833,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentBrokerRelationshipRouteImport
       parentRoute: typeof AgentRoute
     }
+    '/agent/authorizations': {
+      id: '/agent/authorizations'
+      path: '/authorizations'
+      fullPath: '/agent/authorizations'
+      preLoaderRoute: typeof AgentAuthorizationsRouteImport
+      parentRoute: typeof AgentRoute
+    }
     '/agent/attribution': {
       id: '/agent/attribution'
       path: '/attribution'
@@ -2004,6 +2035,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/buyer/due-diligence/$id'
       preLoaderRoute: typeof BuyerDueDiligenceIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/buyer/authorizations/$id': {
+      id: '/buyer/authorizations/$id'
+      path: '/$id'
+      fullPath: '/buyer/authorizations/$id'
+      preLoaderRoute: typeof BuyerAuthorizationsIdRouteImport
+      parentRoute: typeof BuyerAuthorizationsRoute
     }
     '/broker/onboarding/license-check': {
       id: '/broker/onboarding/license-check'
@@ -2271,6 +2309,7 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface AgentRouteChildren {
   AgentAttributionRoute: typeof AgentAttributionRoute
+  AgentAuthorizationsRoute: typeof AgentAuthorizationsRoute
   AgentBrokerRelationshipRoute: typeof AgentBrokerRelationshipRoute
   AgentDashboardRoute: typeof AgentDashboardRoute
   AgentDueDiligenceRoute: typeof AgentDueDiligenceRoute
@@ -2295,6 +2334,7 @@ interface AgentRouteChildren {
 
 const AgentRouteChildren: AgentRouteChildren = {
   AgentAttributionRoute: AgentAttributionRoute,
+  AgentAuthorizationsRoute: AgentAuthorizationsRoute,
   AgentBrokerRelationshipRoute: AgentBrokerRelationshipRoute,
   AgentDashboardRoute: AgentDashboardRoute,
   AgentDueDiligenceRoute: AgentDueDiligenceRoute,
@@ -2360,6 +2400,17 @@ const ResetPasswordRouteWithChildren = ResetPasswordRoute._addFileChildren(
   ResetPasswordRouteChildren,
 )
 
+interface BuyerAuthorizationsRouteChildren {
+  BuyerAuthorizationsIdRoute: typeof BuyerAuthorizationsIdRoute
+}
+
+const BuyerAuthorizationsRouteChildren: BuyerAuthorizationsRouteChildren = {
+  BuyerAuthorizationsIdRoute: BuyerAuthorizationsIdRoute,
+}
+
+const BuyerAuthorizationsRouteWithChildren =
+  BuyerAuthorizationsRoute._addFileChildren(BuyerAuthorizationsRouteChildren)
+
 interface ListingsIdRouteChildren {
   ListingsIdEditRoute: typeof ListingsIdEditRoute
 }
@@ -2388,7 +2439,7 @@ const rootRouteChildren: RootRouteChildren = {
   SupportRoute: SupportRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   BuyerAdverseActionRoute: BuyerAdverseActionRoute,
-  BuyerAuthorizationsRoute: BuyerAuthorizationsRoute,
+  BuyerAuthorizationsRoute: BuyerAuthorizationsRouteWithChildren,
   BuyerDashboardRoute: BuyerDashboardRoute,
   BuyerDocumentsRoute: BuyerDocumentsRoute,
   BuyerGoldenTicketRoute: BuyerGoldenTicketRoute,
