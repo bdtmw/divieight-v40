@@ -78,9 +78,30 @@ export function VerifiedLeadTable({
             </div>
           </div>
 
+          {/* Display-only reservation status — sourced from existing pod data. */}
+          <div className="mt-3 space-y-1 text-xs">
+            {b.reservations.length === 0 ? (
+              <p className="text-muted-foreground">Not yet committed to a property</p>
+            ) : (
+              b.reservations.map((r) => (
+                <p key={r.reservationId} className="text-muted-foreground">
+                  <Link
+                    to="/properties/$id"
+                    params={{ id: r.propertyId }}
+                    className="font-medium text-foreground underline underline-offset-2 [overflow-wrap:anywhere]"
+                  >
+                    {r.label}
+                  </Link>{" "}
+                  · {r.sharesReserved} share{r.sharesReserved === 1 ? "" : "s"} reserved ·{" "}
+                  {listingStatusLabel(r.listingStatus)}
+                </p>
+              ))
+            )}
+          </div>
+
           {/* Binary-vetting rule: discrete stage only — no computed progress
               score, percentage, or band derived from vetting/financial state. */}
-          <div className="mt-3 text-[11px] text-muted-foreground">
+          <div className="mt-2 text-[11px] text-muted-foreground">
             Onboarding stage: {b.onboardingStatus.replace(/_/g, " ")}
           </div>
         </li>
