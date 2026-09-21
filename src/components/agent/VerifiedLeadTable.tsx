@@ -1,5 +1,7 @@
+import { Link } from "@tanstack/react-router";
 import type { TetheredBuyer } from "@/lib/agent-leads.functions";
 import { residencyLabel } from "@/lib/markets";
+import { listingStatusLabel } from "@/components/ListingStatusTimeline";
 
 /**
  * Read-only status view of the buyers tethered to the signed-in agent.
