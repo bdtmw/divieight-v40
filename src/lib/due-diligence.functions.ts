@@ -623,5 +623,222 @@ export const placeDiligenceDocument = createServerFn({ method: "POST" })
       },
     });
 
+    if (data.required) {
+      await notifyNewRequiredDocument(db, {
+        id: inserted.id,
+        property_id: data.propertyId,
+        document_title: data.documentTitle,
+        amended: Boolean(data.supersedesId),
+      });
+    }
+
+    return { ok: true, id: inserted.id };
+  });
+
+/**
+ * Alert every Buyer Account reserved into this property, and their tethered
+ * Resident Agents, that a new Required document is on file.
+ */
+async function notifyNewRequiredDocument(
+  db: Db,
+  doc: { id: string; property_id: string; document_title: string; amended: boolean },
+) {
+  const { data: reservations } = await db
+    .from("pod_reservations")
+    .select("buyer_account_id")
+    .eq("property_id", doc.property_id)
+    .eq("status", "reserved");
+
+  const buyerIds = [
+    ...new Set(((reservations ?? []) as any[]).map((r) => r.buyer_account_id as string)),
+  ];
+  if (buyerIds.length === 0) return;
+
+  const { data: buyers } = await db
+    .from("buyer_accounts")
+    .select("id, auth_user_id, tethered_resident_agent_id")
+    .in("id", buyerIds);
+
+  const buyerMessage = doc.amended
+    ? `An updated version of "${doc.document_title}" is on file — your prior acknowledgment no longer applies, please review and acknowledge the current version.`
+    : `A new required due-diligence document is available: "${doc.document_title}". Please review and acknowledge it.`;
+  const agentMessage = doc.amended
+    ? `An updated version of "${doc.document_title}" requires a fresh acknowledgment for your tethered Buyer Account.`
+    : `A new required due-diligence document, "${doc.document_title}", awaits your parallel acknowledgment.`;
+
+  const agentIds = new Set<string>();
+  for (const b of (buyers ?? []) as any[]) {
+    if (b.auth_user_id) {
+      await db
+        .from("notifications")
+        .insert({ seller_id: b.auth_user_id, message: buyerMessage, type: "diligence" });
+    }
+    if (b.tethered_resident_agent_id) agentIds.add(b.tethered_resident_agent_id as string);
+  }
+
+  if (agentIds.size > 0) {
+    const { data: agents } = await db
+      .from("agents")
+      .select("id, auth_user_id")
+      .in("id", [...agentIds]);
+    for (const a of (agents ?? []) as any[]) {
+      if (!a.auth_user_id) continue;
+      await db
+        .from("notifications")
+        .insert({ seller_id: a.auth_user_id, message: agentMessage, type: "diligence" });
+    }
+  }
+}
+
+export interface PropertyDdDocument {
+  id: string;
+  document_title: string;
+  category: DdCategory;
+  required: boolean;
+  is_governing_instrument: boolean;
+  placed_at: string;
+  superseded_by: string | null;
+  signed_url: string | null;
+}
+
+/** Inventory for one property, for the admin and seller upload surfaces. */
+export const listPropertyDiligence = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { propertyId: string }) => ({ propertyId: String(d.propertyId) }))
+  .handler(
+    async ({
+      data,
+      context,
+    }): Promise<{
+      allowed: boolean;
+      isAdmin: boolean;
+      property: { id: string; address: string; city: string; state: string } | null;
+      documents: PropertyDdDocument[];
+    }> => {
+      const { supabase, userId } = context;
+      const { data: adminFlag } = await supabase.rpc("has_role", {
+        _user_id: userId,
+        _role: "admin",
+      });
+      const isAdmin = Boolean(adminFlag);
+
+      const db = await adminDb();
+      const { data: property } = await db
+        .from("properties")
+        .select("id, address, city, state, seller_id")
+        .eq("id", data.propertyId)
+        .maybeSingle();
+      if (!property) return { allowed: false, isAdmin, property: null, documents: [] };
+      if (!isAdmin && property.seller_id !== userId)
+        return { allowed: false, isAdmin, property: null, documents: [] };
+
+      const documents = await loadDocuments(db, data.propertyId);
+      return {
+        allowed: true,
+        isAdmin,
+        property: {
+          id: property.id,
+          address: property.address,
+          city: property.city,
+          state: property.state,
+        },
+        documents: documents.map((d) => ({
+          id: d.id,
+          document_title: d.document_title,
+          category: d.category,
+          required: d.required,
+          is_governing_instrument: d.is_governing_instrument,
+          placed_at: d.placed_at,
+          superseded_by: d.superseded_by,
+          signed_url: d.signed_url,
+        })),
+      };
+    },
+  );
+
+/**
+ * Seller-placed disclosure document. Category is fixed to sellers_disclosure,
+ * never a governing instrument, and always Required.
+ */
+export const placeSellerDisclosure = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: any) => ({
+    propertyId: String(d.propertyId),
+    documentTitle: String(d.documentTitle),
+    fileUrl: String(d.fileUrl),
+    contentHash: String(d.contentHash),
+    supersedesId: d.supersedesId ? String(d.supersedesId) : null,
+  }))
+  .handler(async ({ data, context }): Promise<{ ok: boolean; id?: string; error?: string }> => {
+    const db = await adminDb();
+    const { data: property } = await db
+      .from("properties")
+      .select("id, seller_id")
+      .eq("id", data.propertyId)
+      .maybeSingle();
+    if (!property || property.seller_id !== context.userId)
+      return { ok: false, error: "This property isn't on your account." };
+
+    const { data: inserted, error } = await db
+      .from("due_diligence_inventory")
+      .insert({
+        property_id: data.propertyId,
+        document_title: data.documentTitle,
+        category: "sellers_disclosure",
+        file_url: data.fileUrl,
+        content_hash: data.contentHash,
+        required: true,
+        is_governing_instrument: false,
+      })
+      .select("id")
+      .maybeSingle();
+    if (error || !inserted) return { ok: false, error: error?.message ?? "Upload failed." };
+
+    if (data.supersedesId) {
+      await db
+        .from("due_diligence_inventory")
+        .update({ superseded_by: inserted.id })
+        .eq("id", data.supersedesId);
+      await audit(db, {
+        actorId: context.userId,
+        actorType: "seller",
+        actionType: "diligence.document_superseded",
+        entityId: data.supersedesId,
+        metadata: { replaced_by: inserted.id, property_id: data.propertyId },
+      });
+      await audit(db, {
+        actorId: context.userId,
+        actorType: "system",
+        actionType: "diligence.reacknowledgment_required",
+        entityId: inserted.id,
+        metadata: {
+          property_id: data.propertyId,
+          reason: "amended_required_document",
+          prior_document_id: data.supersedesId,
+        },
+      });
+    }
+
+    await audit(db, {
+      actorId: context.userId,
+      actorType: "seller",
+      actionType: "diligence.document_placed",
+      entityId: inserted.id,
+      metadata: {
+        property_id: data.propertyId,
+        category: "sellers_disclosure",
+        required: true,
+        is_governing_instrument: false,
+        content_hash: data.contentHash,
+      },
+    });
+
+    await notifyNewRequiredDocument(db, {
+      id: inserted.id,
+      property_id: data.propertyId,
+      document_title: data.documentTitle,
+      amended: Boolean(data.supersedesId),
+    });
+
     return { ok: true, id: inserted.id };
   });
