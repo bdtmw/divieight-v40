@@ -70,6 +70,7 @@ import { Route as AdminPropertiesRouteImport } from './routes/admin.properties'
 import { Route as AdminPaymentsRouteImport } from './routes/admin.payments'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminListingComplianceRouteImport } from './routes/admin.listing-compliance'
+import { Route as AdminEntityGenesisRouteImport } from './routes/admin.entity-genesis'
 import { Route as AdminContactsRouteImport } from './routes/admin.contacts'
 import { Route as AdminBuyersRouteImport } from './routes/admin.buyers'
 import { Route as AdminBrokersRouteImport } from './routes/admin.brokers'
@@ -418,6 +419,11 @@ const AdminListingComplianceRoute = AdminListingComplianceRouteImport.update({
   path: '/listing-compliance',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminEntityGenesisRoute = AdminEntityGenesisRouteImport.update({
+  id: '/entity-genesis',
+  path: '/entity-genesis',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminContactsRoute = AdminContactsRouteImport.update({
   id: '/contacts',
   path: '/contacts',
@@ -664,6 +670,7 @@ export interface FileRoutesByFullPath {
   '/admin/brokers': typeof AdminBrokersRoute
   '/admin/buyers': typeof AdminBuyersRoute
   '/admin/contacts': typeof AdminContactsRoute
+  '/admin/entity-genesis': typeof AdminEntityGenesisRoute
   '/admin/listing-compliance': typeof AdminListingComplianceRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/payments': typeof AdminPaymentsRoute
@@ -765,6 +772,7 @@ export interface FileRoutesByTo {
   '/admin/brokers': typeof AdminBrokersRoute
   '/admin/buyers': typeof AdminBuyersRoute
   '/admin/contacts': typeof AdminContactsRoute
+  '/admin/entity-genesis': typeof AdminEntityGenesisRoute
   '/admin/listing-compliance': typeof AdminListingComplianceRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/payments': typeof AdminPaymentsRoute
@@ -871,6 +879,7 @@ export interface FileRoutesById {
   '/admin/brokers': typeof AdminBrokersRoute
   '/admin/buyers': typeof AdminBuyersRoute
   '/admin/contacts': typeof AdminContactsRoute
+  '/admin/entity-genesis': typeof AdminEntityGenesisRoute
   '/admin/listing-compliance': typeof AdminListingComplianceRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/payments': typeof AdminPaymentsRoute
@@ -978,6 +987,7 @@ export interface FileRouteTypes {
     | '/admin/brokers'
     | '/admin/buyers'
     | '/admin/contacts'
+    | '/admin/entity-genesis'
     | '/admin/listing-compliance'
     | '/admin/login'
     | '/admin/payments'
@@ -1079,6 +1089,7 @@ export interface FileRouteTypes {
     | '/admin/brokers'
     | '/admin/buyers'
     | '/admin/contacts'
+    | '/admin/entity-genesis'
     | '/admin/listing-compliance'
     | '/admin/login'
     | '/admin/payments'
@@ -1184,6 +1195,7 @@ export interface FileRouteTypes {
     | '/admin/brokers'
     | '/admin/buyers'
     | '/admin/contacts'
+    | '/admin/entity-genesis'
     | '/admin/listing-compliance'
     | '/admin/login'
     | '/admin/payments'
@@ -1757,6 +1769,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminListingComplianceRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/entity-genesis': {
+      id: '/admin/entity-genesis'
+      path: '/entity-genesis'
+      fullPath: '/admin/entity-genesis'
+      preLoaderRoute: typeof AdminEntityGenesisRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/contacts': {
       id: '/admin/contacts'
       path: '/contacts'
@@ -2060,6 +2079,7 @@ interface AdminRouteChildren {
   AdminBrokersRoute: typeof AdminBrokersRoute
   AdminBuyersRoute: typeof AdminBuyersRoute
   AdminContactsRoute: typeof AdminContactsRoute
+  AdminEntityGenesisRoute: typeof AdminEntityGenesisRoute
   AdminListingComplianceRoute: typeof AdminListingComplianceRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminPaymentsRoute: typeof AdminPaymentsRoute
@@ -2080,6 +2100,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminBrokersRoute: AdminBrokersRoute,
   AdminBuyersRoute: AdminBuyersRoute,
   AdminContactsRoute: AdminContactsRoute,
+  AdminEntityGenesisRoute: AdminEntityGenesisRoute,
   AdminListingComplianceRoute: AdminListingComplianceRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminPaymentsRoute: AdminPaymentsRoute,

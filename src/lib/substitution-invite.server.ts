@@ -385,6 +385,16 @@ export async function respondToInvitation(
       .eq("id", property.id);
   }
 
+  // Substitution changes who holds a unit — refresh the cap table.
+  {
+    const { syncCapTable } = await import("@/lib/entity-genesis.server");
+    await syncCapTable(db as never, {
+      propertyId: property.id,
+      actorId: params.authUserId,
+      reason: "substitution_accepted",
+    });
+  }
+
   await audit(db, {
     actorId: params.authUserId,
     actorType: "buyer",
