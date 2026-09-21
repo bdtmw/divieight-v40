@@ -112,7 +112,15 @@ export type AuditAction =
   | "support.ticket_note_added"
   | "monitoring.logging_gap_detected"
   | "entity.digital_genesis_created"
-  | "entity.cap_table_updated";
+  | "entity.cap_table_updated"
+  | "diligence.document_placed"
+  | "diligence.document_superseded"
+  | "diligence.reacknowledgment_required"
+  | "diligence.member_acknowledged"
+  | "diligence.agent_acknowledged"
+  | "diligence.agent_ack_overdue"
+  | "diligence.gate_cleared"
+  | "diligence.gate_blocked";
 
 
 export type AuditEntity =
@@ -130,7 +138,8 @@ export type AuditEntity =
   | "pod"
   | "support_ticket"
   | "logging_source"
-  | "entity_genesis";
+  | "entity_genesis"
+  | "diligence_document";
 
 
 export async function logAudit(params: {
