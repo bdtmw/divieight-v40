@@ -86,8 +86,9 @@ export function VerifiedLeadTable({
               b.reservations.map((r) => (
                 <p key={r.reservationId} className="text-muted-foreground">
                   <Link
-                    to="/properties/$id"
+                    to="/agent/pods/$id"
                     params={{ id: r.propertyId }}
+
                     className="font-medium text-foreground underline underline-offset-2 [overflow-wrap:anywhere]"
                   >
                     {r.label}

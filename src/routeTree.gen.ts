@@ -107,6 +107,7 @@ import { Route as AgentOnboardingComplianceRouteImport } from './routes/agent.on
 import { Route as AgentOnboardingBrokerRouteImport } from './routes/agent.onboarding.broker'
 import { Route as AgentListingsIdRouteImport } from './routes/agent.listings.$id'
 import { Route as AgentDocumentsIdRouteImport } from './routes/agent.documents.$id'
+import { Route as AgentPodsIdIndexRouteImport } from './routes/agent.pods.$id.index'
 import { Route as AgentPodsIdHlaInvitationRouteImport } from './routes/agent.pods.$id.hla-invitation'
 import { Route as AgentPodsIdBriefcaseRouteImport } from './routes/agent.pods.$id.briefcase'
 import { Route as AdminPodsIdSelectHeavyLifterRouteImport } from './routes/admin.pods.$id.select-heavy-lifter'
@@ -616,6 +617,11 @@ const AgentDocumentsIdRoute = AgentDocumentsIdRouteImport.update({
   path: '/documents/$id',
   getParentRoute: () => AgentRoute,
 } as any)
+const AgentPodsIdIndexRoute = AgentPodsIdIndexRouteImport.update({
+  id: '/pods/$id/',
+  path: '/pods/$id/',
+  getParentRoute: () => AgentRoute,
+} as any)
 const AgentPodsIdHlaInvitationRoute =
   AgentPodsIdHlaInvitationRouteImport.update({
     id: '/pods/$id/hla-invitation',
@@ -742,6 +748,7 @@ export interface FileRoutesByFullPath {
   '/admin/pods/$id/select-heavy-lifter': typeof AdminPodsIdSelectHeavyLifterRoute
   '/agent/pods/$id/briefcase': typeof AgentPodsIdBriefcaseRoute
   '/agent/pods/$id/hla-invitation': typeof AgentPodsIdHlaInvitationRoute
+  '/agent/pods/$id/': typeof AgentPodsIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -842,6 +849,7 @@ export interface FileRoutesByTo {
   '/admin/pods/$id/select-heavy-lifter': typeof AdminPodsIdSelectHeavyLifterRoute
   '/agent/pods/$id/briefcase': typeof AgentPodsIdBriefcaseRoute
   '/agent/pods/$id/hla-invitation': typeof AgentPodsIdHlaInvitationRoute
+  '/agent/pods/$id': typeof AgentPodsIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -947,6 +955,7 @@ export interface FileRoutesById {
   '/admin/pods/$id/select-heavy-lifter': typeof AdminPodsIdSelectHeavyLifterRoute
   '/agent/pods/$id/briefcase': typeof AgentPodsIdBriefcaseRoute
   '/agent/pods/$id/hla-invitation': typeof AgentPodsIdHlaInvitationRoute
+  '/agent/pods/$id/': typeof AgentPodsIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -1053,6 +1062,7 @@ export interface FileRouteTypes {
     | '/admin/pods/$id/select-heavy-lifter'
     | '/agent/pods/$id/briefcase'
     | '/agent/pods/$id/hla-invitation'
+    | '/agent/pods/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -1153,6 +1163,7 @@ export interface FileRouteTypes {
     | '/admin/pods/$id/select-heavy-lifter'
     | '/agent/pods/$id/briefcase'
     | '/agent/pods/$id/hla-invitation'
+    | '/agent/pods/$id'
   id:
     | '__root__'
     | '/'
@@ -1257,6 +1268,7 @@ export interface FileRouteTypes {
     | '/admin/pods/$id/select-heavy-lifter'
     | '/agent/pods/$id/briefcase'
     | '/agent/pods/$id/hla-invitation'
+    | '/agent/pods/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -2004,6 +2016,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentDocumentsIdRouteImport
       parentRoute: typeof AgentRoute
     }
+    '/agent/pods/$id/': {
+      id: '/agent/pods/$id/'
+      path: '/pods/$id'
+      fullPath: '/agent/pods/$id/'
+      preLoaderRoute: typeof AgentPodsIdIndexRouteImport
+      parentRoute: typeof AgentRoute
+    }
     '/agent/pods/$id/hla-invitation': {
       id: '/agent/pods/$id/hla-invitation'
       path: '/pods/$id/hla-invitation'
@@ -2097,6 +2116,7 @@ interface AgentRouteChildren {
   AgentListingsIndexRoute: typeof AgentListingsIndexRoute
   AgentPodsIdBriefcaseRoute: typeof AgentPodsIdBriefcaseRoute
   AgentPodsIdHlaInvitationRoute: typeof AgentPodsIdHlaInvitationRoute
+  AgentPodsIdIndexRoute: typeof AgentPodsIdIndexRoute
 }
 
 const AgentRouteChildren: AgentRouteChildren = {
@@ -2119,6 +2139,7 @@ const AgentRouteChildren: AgentRouteChildren = {
   AgentListingsIndexRoute: AgentListingsIndexRoute,
   AgentPodsIdBriefcaseRoute: AgentPodsIdBriefcaseRoute,
   AgentPodsIdHlaInvitationRoute: AgentPodsIdHlaInvitationRoute,
+  AgentPodsIdIndexRoute: AgentPodsIdIndexRoute,
 }
 
 const AgentRouteWithChildren = AgentRoute._addFileChildren(AgentRouteChildren)
