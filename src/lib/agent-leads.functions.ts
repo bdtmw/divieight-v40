@@ -40,6 +40,8 @@ export interface TetheredBuyer {
   tetheredAt: string | null;
   /** Derived per transaction from the agent's markets — never a stored role. */
   residency: Residency;
+  /** Zero, one, or (rarely) several active reservations. Display only. */
+  reservations: BuyerReservationSummary[];
 }
 
 export const listMyTetheredBuyers = createServerFn({ method: "POST" })
