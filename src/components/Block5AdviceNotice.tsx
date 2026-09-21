@@ -81,7 +81,7 @@ export function Block5AdviceNotice({
         block: "block_5_independent_advice",
         document_hash: BLOCK_5_HASH,
         members: roster.map((m) => m.id),
-        secondary_verification_method: "authenticated_session",
+        secondary_verification_method: "checkbox_attestation",
       },
     });
 

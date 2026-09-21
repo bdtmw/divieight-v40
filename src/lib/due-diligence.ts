@@ -48,7 +48,7 @@ export const AGENT_ACK_TEXT =
 export const AGENT_ACK_DEADLINE_DAYS = 7;
 
 export const SECONDARY_VERIFICATION_OPTIONS = [
-  { value: "authenticated_session", label: "Authenticated portal session" },
+  { value: "typed_initials", label: "Typed initials" },
   { value: "email_on_file", label: "Email address on file" },
   { value: "phone_on_file", label: "Phone number on file" },
 ] as const;
