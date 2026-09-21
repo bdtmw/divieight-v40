@@ -10,6 +10,7 @@ import {
   ListChecks,
   Lock,
   Share2,
+  ShieldCheck,
   Users,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -41,6 +42,7 @@ const PORTAL_NAV = [
   { to: "/agent/listings", label: "My listings", icon: ListChecks },
   { to: "/agent/documents", label: "Agreements", icon: FileSignature },
   { to: "/agent/due-diligence", label: "Due diligence", icon: FileCheck2 },
+  { to: "/agent/authorizations", label: "Authorizations", icon: ShieldCheck },
   { to: "/support", label: "Support", icon: LifeBuoy },
 ] as const;
 
