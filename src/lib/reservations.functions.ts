@@ -145,6 +145,16 @@ export const createReservation = createServerFn({ method: "POST" })
           .eq("id", data.propertyId);
       }
 
+      // Entity Genesis Stage 1 reacts to the Hard-Lock trigger. It never
+      // touches the price-freeze itself; the cap table then stays live on
+      // every subsequent reservation.
+      const { ensureDigitalGenesis } = await import("@/lib/entity-genesis.server");
+      await ensureDigitalGenesis(supabaseAdmin as never, {
+        propertyId: data.propertyId,
+        actorId: userId,
+        reason: applyHardLock ? "hard_lock" : "share_reserved",
+      });
+
       // Dual-agency safeguard at Hard-Lock. Should never fire; if it does,
       // it logs a compliance alert because it means an earlier check missed.
       const { verifyPodDualAgency } = await import("@/lib/dual-agency");
@@ -285,6 +295,14 @@ export const withdrawReservation = createServerFn({ method: "POST" })
       }
 
       if (property) {
+        // Cap table always reflects the current holders.
+        const { syncCapTable } = await import("@/lib/entity-genesis.server");
+        await syncCapTable(supabaseAdmin as never, {
+          propertyId: property.id,
+          actorId: userId,
+          reason: "reservation_withdrawn",
+        });
+
         // Platform-driven substitution: remaining members get a redacted
         // vacancy notice, and exactly one candidate is invited at a time.
         const { openSubstitution } = await import("@/lib/substitution-invite.server");
