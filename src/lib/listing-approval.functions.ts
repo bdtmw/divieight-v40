@@ -224,13 +224,21 @@ export const inviteListingAgent = createServerFn({ method: "POST" })
       return { ok: true, invited: false, agentName: existing.full_name as string };
     }
 
-    await db.from("listing_agent_invitations").insert({
+    // Only one pending invitation per property — supersede any earlier one.
+    await db
+      .from("listing_agent_invitations")
+      .update({ status: "superseded" })
+      .eq("property_id", property.id)
+      .eq("status", "pending");
+
+    const { error: inviteError } = await db.from("listing_agent_invitations").insert({
       property_id: property.id,
       seller_id: context.userId,
       email,
       full_name: data.fullName?.trim() || null,
       status: "pending",
     });
+    if (inviteError) throw new Error(inviteError.message);
     await audit(db, {
       actorId: context.userId,
       actorType: "seller",
