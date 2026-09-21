@@ -182,11 +182,12 @@ export const inviteListingAgent = createServerFn({ method: "POST" })
     const email = data.email.trim().toLowerCase();
 
     // If they're already on-platform as a Listing Agent, tag them directly.
-    const { data: existing } = await db
+    const { data: existingRows } = await db
       .from("agents")
       .select("id, full_name, auth_user_id")
-      .eq("email", email)
-      .maybeSingle();
+      .ilike("email", email)
+      .limit(1);
+    const existing = ((existingRows ?? []) as any[])[0] ?? null;
     if (existing) {
       const { clearTethersForListingAgent: clearInvited } = await import("@/lib/dual-agency");
       await clearInvited(db, {
