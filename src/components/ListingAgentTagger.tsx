@@ -42,8 +42,15 @@ export function ListingAgentTagger({ propertyId }: { propertyId: string }) {
 
   async function runSearch() {
     setBusy(true);
+    setSearched(false);
     try {
-      setResults(await searchListingAgents({ data: { query } }));
+      const rows = await searchListingAgents({ data: { query } });
+      setResults(rows);
+      setSearched(true);
+    } catch (e) {
+      setResults([]);
+      setSearched(true);
+      toast.error(e instanceof Error ? e.message : "Search failed. Please try again.");
     } finally {
       setBusy(false);
     }
