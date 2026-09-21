@@ -131,6 +131,7 @@ export const listMyTetheredBuyers = createServerFn({ method: "POST" })
         priorityRank: r.priority_rank ?? null,
         tetheredAt: r.tethered_at ?? null,
         residency: residencyFor(agent.markets, (r.primary_target_market ?? "").trim()),
+        reservations: byBuyer.get(r.id) ?? [],
       } satisfies TetheredBuyer;
     });
   });
