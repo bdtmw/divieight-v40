@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type UIEvent } from "react";
 import { AlertTriangle, FileText } from "lucide-react";
 
 let pdfModulePromise: Promise<any> | null = null;
@@ -100,7 +100,7 @@ export function DiligenceDocumentPreview({
     };
   }, [onScrolledToEnd, url, version]);
 
-  function handleScroll(event: React.UIEvent<HTMLDivElement>) {
+  function handleScroll(event: UIEvent<HTMLDivElement>) {
     const el = event.currentTarget;
     if (el.scrollTop + el.clientHeight >= el.scrollHeight - 12) onScrolledToEnd();
   }
