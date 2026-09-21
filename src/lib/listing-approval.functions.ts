@@ -95,13 +95,18 @@ export const searchListingAgents = createServerFn({ method: "POST" })
   .inputValidator((data: { query: string }) => data)
   .handler(async ({ data }): Promise<ListingAgentOption[]> => {
     const db = await admin();
-    const q = (data.query ?? "").trim();
+    const q = (data.query ?? "").trim().replace(/[(),]/g, " ").trim();
     let query = db
       .from("agents")
       .select("id, full_name, email, markets, license_state")
       .limit(10);
-    if (q) query = query.or(`full_name.ilike.%${q}%,email.ilike.%${q}%`);
-    const { data: rows } = await query;
+    if (q) {
+      query = query.or(
+        `full_name.ilike.%${q}%,email.ilike.%${q}%,license_number.ilike.%${q}%,license_state.ilike.%${q}%`,
+      );
+    }
+    const { data: rows, error } = await query;
+    if (error) throw new Error(error.message);
     return (rows ?? []) as ListingAgentOption[];
   });
 
