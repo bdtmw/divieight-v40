@@ -104,6 +104,7 @@ import { Route as ApiPublicEnrollmentMaintenanceRouteImport } from './routes/api
 import { Route as ApiPublicDiligenceEscalationRouteImport } from './routes/api.public.diligence-escalation'
 import { Route as ApiPublicDesignationSweepRouteImport } from './routes/api.public.designation-sweep'
 import { Route as ApiPublicBrokerRelationshipSweepRouteImport } from './routes/api.public.broker-relationship-sweep'
+import { Route as ApiPublicAuthorizationEscalationRouteImport } from './routes/api.public.authorization-escalation'
 import { Route as ApiPublicArelloRetryRouteImport } from './routes/api.public.arello-retry'
 import { Route as AgentOnboardingLicenseDetailsRouteImport } from './routes/agent.onboarding.license-details'
 import { Route as AgentOnboardingLicenseCheckRouteImport } from './routes/agent.onboarding.license-check'
@@ -605,6 +606,12 @@ const ApiPublicBrokerRelationshipSweepRoute =
     path: '/api/public/broker-relationship-sweep',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicAuthorizationEscalationRoute =
+  ApiPublicAuthorizationEscalationRouteImport.update({
+    id: '/api/public/authorization-escalation',
+    path: '/api/public/authorization-escalation',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicArelloRetryRoute = ApiPublicArelloRetryRouteImport.update({
   id: '/api/public/arello-retry',
   path: '/api/public/arello-retry',
@@ -760,6 +767,7 @@ export interface FileRoutesByFullPath {
   '/agent/onboarding/license-check': typeof AgentOnboardingLicenseCheckRoute
   '/agent/onboarding/license-details': typeof AgentOnboardingLicenseDetailsRoute
   '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
+  '/api/public/authorization-escalation': typeof ApiPublicAuthorizationEscalationRoute
   '/api/public/broker-relationship-sweep': typeof ApiPublicBrokerRelationshipSweepRoute
   '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
   '/api/public/diligence-escalation': typeof ApiPublicDiligenceEscalationRoute
@@ -866,6 +874,7 @@ export interface FileRoutesByTo {
   '/agent/onboarding/license-check': typeof AgentOnboardingLicenseCheckRoute
   '/agent/onboarding/license-details': typeof AgentOnboardingLicenseDetailsRoute
   '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
+  '/api/public/authorization-escalation': typeof ApiPublicAuthorizationEscalationRoute
   '/api/public/broker-relationship-sweep': typeof ApiPublicBrokerRelationshipSweepRoute
   '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
   '/api/public/diligence-escalation': typeof ApiPublicDiligenceEscalationRoute
@@ -978,6 +987,7 @@ export interface FileRoutesById {
   '/agent/onboarding/license-check': typeof AgentOnboardingLicenseCheckRoute
   '/agent/onboarding/license-details': typeof AgentOnboardingLicenseDetailsRoute
   '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
+  '/api/public/authorization-escalation': typeof ApiPublicAuthorizationEscalationRoute
   '/api/public/broker-relationship-sweep': typeof ApiPublicBrokerRelationshipSweepRoute
   '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
   '/api/public/diligence-escalation': typeof ApiPublicDiligenceEscalationRoute
@@ -1091,6 +1101,7 @@ export interface FileRouteTypes {
     | '/agent/onboarding/license-check'
     | '/agent/onboarding/license-details'
     | '/api/public/arello-retry'
+    | '/api/public/authorization-escalation'
     | '/api/public/broker-relationship-sweep'
     | '/api/public/designation-sweep'
     | '/api/public/diligence-escalation'
@@ -1197,6 +1208,7 @@ export interface FileRouteTypes {
     | '/agent/onboarding/license-check'
     | '/agent/onboarding/license-details'
     | '/api/public/arello-retry'
+    | '/api/public/authorization-escalation'
     | '/api/public/broker-relationship-sweep'
     | '/api/public/designation-sweep'
     | '/api/public/diligence-escalation'
@@ -1308,6 +1320,7 @@ export interface FileRouteTypes {
     | '/agent/onboarding/license-check'
     | '/agent/onboarding/license-details'
     | '/api/public/arello-retry'
+    | '/api/public/authorization-escalation'
     | '/api/public/broker-relationship-sweep'
     | '/api/public/designation-sweep'
     | '/api/public/diligence-escalation'
@@ -1382,6 +1395,7 @@ export interface RootRouteChildren {
   OnboardingIndexRoute: typeof OnboardingIndexRoute
   PropertiesIndexRoute: typeof PropertiesIndexRoute
   ApiPublicArelloRetryRoute: typeof ApiPublicArelloRetryRoute
+  ApiPublicAuthorizationEscalationRoute: typeof ApiPublicAuthorizationEscalationRoute
   ApiPublicBrokerRelationshipSweepRoute: typeof ApiPublicBrokerRelationshipSweepRoute
   ApiPublicDesignationSweepRoute: typeof ApiPublicDesignationSweepRoute
   ApiPublicDiligenceEscalationRoute: typeof ApiPublicDiligenceEscalationRoute
@@ -2069,6 +2083,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBrokerRelationshipSweepRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/authorization-escalation': {
+      id: '/api/public/authorization-escalation'
+      path: '/api/public/authorization-escalation'
+      fullPath: '/api/public/authorization-escalation'
+      preLoaderRoute: typeof ApiPublicAuthorizationEscalationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/arello-retry': {
       id: '/api/public/arello-retry'
       path: '/api/public/arello-retry'
@@ -2370,6 +2391,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingIndexRoute: OnboardingIndexRoute,
   PropertiesIndexRoute: PropertiesIndexRoute,
   ApiPublicArelloRetryRoute: ApiPublicArelloRetryRoute,
+  ApiPublicAuthorizationEscalationRoute: ApiPublicAuthorizationEscalationRoute,
   ApiPublicBrokerRelationshipSweepRoute: ApiPublicBrokerRelationshipSweepRoute,
   ApiPublicDesignationSweepRoute: ApiPublicDesignationSweepRoute,
   ApiPublicDiligenceEscalationRoute: ApiPublicDiligenceEscalationRoute,
