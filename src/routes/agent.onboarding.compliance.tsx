@@ -47,7 +47,7 @@ function CompliancePage() {
     <div className="space-y-8">
       <CredentialStepper entityType="agent" current={3} />
 
-      {!agent ? <AgentPendingBanner agent={agent} onUpdated={setAgent} /> : null}
+      {agent ? <AgentPendingBanner agent={agent} onUpdated={setAgent} /> : null}
       {agent ? <AgentCertLapsedBanner agent={agent} onUpdated={setAgent} /> : null}
 
       <header className="space-y-2">
