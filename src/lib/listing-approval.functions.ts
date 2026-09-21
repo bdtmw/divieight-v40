@@ -472,7 +472,7 @@ export const autoAssignListingAgent = createServerFn({ method: "POST" })
 
     const { data: agents } = await db
       .from("agents")
-      .select("id, full_name, auth_user_id, license_state, markets, status")
+      .select("id, full_name, auth_user_id, license_state, markets")
       .order("created_at", { ascending: true });
 
     const pool = ((agents ?? []) as any[]).filter((a) => !declined.has(a.id));
