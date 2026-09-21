@@ -2,6 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import {
   Check,
   Circle,
+  FileCheck2,
   FileSignature,
   Layers,
   LayoutDashboard,
@@ -39,6 +40,7 @@ const PORTAL_NAV = [
   { to: "/agent/attribution", label: "Attribution tokens", icon: Share2 },
   { to: "/agent/listings", label: "My listings", icon: ListChecks },
   { to: "/agent/documents", label: "Agreements", icon: FileSignature },
+  { to: "/agent/due-diligence", label: "Due diligence", icon: FileCheck2 },
   { to: "/support", label: "Support", icon: LifeBuoy },
 ] as const;
 

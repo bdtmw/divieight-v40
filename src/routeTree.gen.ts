@@ -59,6 +59,7 @@ import { Route as AgentRegisterRouteImport } from './routes/agent.register'
 import { Route as AgentPoolsRouteImport } from './routes/agent.pools'
 import { Route as AgentLoginRouteImport } from './routes/agent.login'
 import { Route as AgentLeadsRouteImport } from './routes/agent.leads'
+import { Route as AgentDueDiligenceRouteImport } from './routes/agent.due-diligence'
 import { Route as AgentDashboardRouteImport } from './routes/agent.dashboard'
 import { Route as AgentBrokerRelationshipRouteImport } from './routes/agent.broker-relationship'
 import { Route as AgentAttributionRouteImport } from './routes/agent.attribution'
@@ -87,6 +88,7 @@ import { Route as BuyerOnboardingPaymentRouteImport } from './routes/buyer.onboa
 import { Route as BuyerOnboardingLiquidityRouteImport } from './routes/buyer.onboarding.liquidity'
 import { Route as BuyerOnboardingLifestyleRouteImport } from './routes/buyer.onboarding.lifestyle'
 import { Route as BuyerOnboardingIdentityRouteImport } from './routes/buyer.onboarding.identity'
+import { Route as BuyerDueDiligenceIdRouteImport } from './routes/buyer.due-diligence.$id'
 import { Route as BrokerOnboardingLicenseCheckRouteImport } from './routes/broker.onboarding.license-check'
 import { Route as BrokerOnboardingInsuranceRouteImport } from './routes/broker.onboarding.insurance'
 import { Route as BrokerOnboardingComplianceRouteImport } from './routes/broker.onboarding.compliance'
@@ -98,6 +100,7 @@ import { Route as ApiPublicListingApprovalEscalationRouteImport } from './routes
 import { Route as ApiPublicHlaSweepRouteImport } from './routes/api.public.hla-sweep'
 import { Route as ApiPublicEoExpirySweepRouteImport } from './routes/api.public.eo-expiry-sweep'
 import { Route as ApiPublicEnrollmentMaintenanceRouteImport } from './routes/api.public.enrollment-maintenance'
+import { Route as ApiPublicDiligenceEscalationRouteImport } from './routes/api.public.diligence-escalation'
 import { Route as ApiPublicDesignationSweepRouteImport } from './routes/api.public.designation-sweep'
 import { Route as ApiPublicBrokerRelationshipSweepRouteImport } from './routes/api.public.broker-relationship-sweep'
 import { Route as ApiPublicArelloRetryRouteImport } from './routes/api.public.arello-retry'
@@ -364,6 +367,11 @@ const AgentLeadsRoute = AgentLeadsRouteImport.update({
   path: '/leads',
   getParentRoute: () => AgentRoute,
 } as any)
+const AgentDueDiligenceRoute = AgentDueDiligenceRouteImport.update({
+  id: '/due-diligence',
+  path: '/due-diligence',
+  getParentRoute: () => AgentRoute,
+} as any)
 const AgentDashboardRoute = AgentDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -506,6 +514,11 @@ const BuyerOnboardingIdentityRoute = BuyerOnboardingIdentityRouteImport.update({
   path: '/buyer/onboarding/identity',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuyerDueDiligenceIdRoute = BuyerDueDiligenceIdRouteImport.update({
+  id: '/buyer/due-diligence/$id',
+  path: '/buyer/due-diligence/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BrokerOnboardingLicenseCheckRoute =
   BrokerOnboardingLicenseCheckRouteImport.update({
     id: '/onboarding/license-check',
@@ -565,6 +578,12 @@ const ApiPublicEnrollmentMaintenanceRoute =
   ApiPublicEnrollmentMaintenanceRouteImport.update({
     id: '/api/public/enrollment-maintenance',
     path: '/api/public/enrollment-maintenance',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicDiligenceEscalationRoute =
+  ApiPublicDiligenceEscalationRouteImport.update({
+    id: '/api/public/diligence-escalation',
+    path: '/api/public/diligence-escalation',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicDesignationSweepRoute =
@@ -682,6 +701,7 @@ export interface FileRoutesByFullPath {
   '/agent/attribution': typeof AgentAttributionRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
+  '/agent/due-diligence': typeof AgentDueDiligenceRoute
   '/agent/leads': typeof AgentLeadsRoute
   '/agent/login': typeof AgentLoginRoute
   '/agent/pools': typeof AgentPoolsRoute
@@ -729,6 +749,7 @@ export interface FileRoutesByFullPath {
   '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
   '/api/public/broker-relationship-sweep': typeof ApiPublicBrokerRelationshipSweepRoute
   '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
+  '/api/public/diligence-escalation': typeof ApiPublicDiligenceEscalationRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/api/public/eo-expiry-sweep': typeof ApiPublicEoExpirySweepRoute
   '/api/public/hla-sweep': typeof ApiPublicHlaSweepRoute
@@ -740,6 +761,7 @@ export interface FileRoutesByFullPath {
   '/broker/onboarding/compliance': typeof BrokerOnboardingComplianceRoute
   '/broker/onboarding/insurance': typeof BrokerOnboardingInsuranceRoute
   '/broker/onboarding/license-check': typeof BrokerOnboardingLicenseCheckRoute
+  '/buyer/due-diligence/$id': typeof BuyerDueDiligenceIdRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
   '/buyer/onboarding/liquidity': typeof BuyerOnboardingLiquidityRoute
@@ -784,6 +806,7 @@ export interface FileRoutesByTo {
   '/agent/attribution': typeof AgentAttributionRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
+  '/agent/due-diligence': typeof AgentDueDiligenceRoute
   '/agent/leads': typeof AgentLeadsRoute
   '/agent/login': typeof AgentLoginRoute
   '/agent/pools': typeof AgentPoolsRoute
@@ -831,6 +854,7 @@ export interface FileRoutesByTo {
   '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
   '/api/public/broker-relationship-sweep': typeof ApiPublicBrokerRelationshipSweepRoute
   '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
+  '/api/public/diligence-escalation': typeof ApiPublicDiligenceEscalationRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/api/public/eo-expiry-sweep': typeof ApiPublicEoExpirySweepRoute
   '/api/public/hla-sweep': typeof ApiPublicHlaSweepRoute
@@ -842,6 +866,7 @@ export interface FileRoutesByTo {
   '/broker/onboarding/compliance': typeof BrokerOnboardingComplianceRoute
   '/broker/onboarding/insurance': typeof BrokerOnboardingInsuranceRoute
   '/broker/onboarding/license-check': typeof BrokerOnboardingLicenseCheckRoute
+  '/buyer/due-diligence/$id': typeof BuyerDueDiligenceIdRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
   '/buyer/onboarding/liquidity': typeof BuyerOnboardingLiquidityRoute
@@ -891,6 +916,7 @@ export interface FileRoutesById {
   '/agent/attribution': typeof AgentAttributionRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
+  '/agent/due-diligence': typeof AgentDueDiligenceRoute
   '/agent/leads': typeof AgentLeadsRoute
   '/agent/login': typeof AgentLoginRoute
   '/agent/pools': typeof AgentPoolsRoute
@@ -938,6 +964,7 @@ export interface FileRoutesById {
   '/api/public/arello-retry': typeof ApiPublicArelloRetryRoute
   '/api/public/broker-relationship-sweep': typeof ApiPublicBrokerRelationshipSweepRoute
   '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
+  '/api/public/diligence-escalation': typeof ApiPublicDiligenceEscalationRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/api/public/eo-expiry-sweep': typeof ApiPublicEoExpirySweepRoute
   '/api/public/hla-sweep': typeof ApiPublicHlaSweepRoute
@@ -949,6 +976,7 @@ export interface FileRoutesById {
   '/broker/onboarding/compliance': typeof BrokerOnboardingComplianceRoute
   '/broker/onboarding/insurance': typeof BrokerOnboardingInsuranceRoute
   '/broker/onboarding/license-check': typeof BrokerOnboardingLicenseCheckRoute
+  '/buyer/due-diligence/$id': typeof BuyerDueDiligenceIdRoute
   '/buyer/onboarding/identity': typeof BuyerOnboardingIdentityRoute
   '/buyer/onboarding/lifestyle': typeof BuyerOnboardingLifestyleRoute
   '/buyer/onboarding/liquidity': typeof BuyerOnboardingLiquidityRoute
@@ -999,6 +1027,7 @@ export interface FileRouteTypes {
     | '/agent/attribution'
     | '/agent/broker-relationship'
     | '/agent/dashboard'
+    | '/agent/due-diligence'
     | '/agent/leads'
     | '/agent/login'
     | '/agent/pools'
@@ -1046,6 +1075,7 @@ export interface FileRouteTypes {
     | '/api/public/arello-retry'
     | '/api/public/broker-relationship-sweep'
     | '/api/public/designation-sweep'
+    | '/api/public/diligence-escalation'
     | '/api/public/enrollment-maintenance'
     | '/api/public/eo-expiry-sweep'
     | '/api/public/hla-sweep'
@@ -1057,6 +1087,7 @@ export interface FileRouteTypes {
     | '/broker/onboarding/compliance'
     | '/broker/onboarding/insurance'
     | '/broker/onboarding/license-check'
+    | '/buyer/due-diligence/$id'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
     | '/buyer/onboarding/liquidity'
@@ -1101,6 +1132,7 @@ export interface FileRouteTypes {
     | '/agent/attribution'
     | '/agent/broker-relationship'
     | '/agent/dashboard'
+    | '/agent/due-diligence'
     | '/agent/leads'
     | '/agent/login'
     | '/agent/pools'
@@ -1148,6 +1180,7 @@ export interface FileRouteTypes {
     | '/api/public/arello-retry'
     | '/api/public/broker-relationship-sweep'
     | '/api/public/designation-sweep'
+    | '/api/public/diligence-escalation'
     | '/api/public/enrollment-maintenance'
     | '/api/public/eo-expiry-sweep'
     | '/api/public/hla-sweep'
@@ -1159,6 +1192,7 @@ export interface FileRouteTypes {
     | '/broker/onboarding/compliance'
     | '/broker/onboarding/insurance'
     | '/broker/onboarding/license-check'
+    | '/buyer/due-diligence/$id'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
     | '/buyer/onboarding/liquidity'
@@ -1207,6 +1241,7 @@ export interface FileRouteTypes {
     | '/agent/attribution'
     | '/agent/broker-relationship'
     | '/agent/dashboard'
+    | '/agent/due-diligence'
     | '/agent/leads'
     | '/agent/login'
     | '/agent/pools'
@@ -1254,6 +1289,7 @@ export interface FileRouteTypes {
     | '/api/public/arello-retry'
     | '/api/public/broker-relationship-sweep'
     | '/api/public/designation-sweep'
+    | '/api/public/diligence-escalation'
     | '/api/public/enrollment-maintenance'
     | '/api/public/eo-expiry-sweep'
     | '/api/public/hla-sweep'
@@ -1265,6 +1301,7 @@ export interface FileRouteTypes {
     | '/broker/onboarding/compliance'
     | '/broker/onboarding/insurance'
     | '/broker/onboarding/license-check'
+    | '/buyer/due-diligence/$id'
     | '/buyer/onboarding/identity'
     | '/buyer/onboarding/lifestyle'
     | '/buyer/onboarding/liquidity'
@@ -1324,6 +1361,7 @@ export interface RootRouteChildren {
   ApiPublicArelloRetryRoute: typeof ApiPublicArelloRetryRoute
   ApiPublicBrokerRelationshipSweepRoute: typeof ApiPublicBrokerRelationshipSweepRoute
   ApiPublicDesignationSweepRoute: typeof ApiPublicDesignationSweepRoute
+  ApiPublicDiligenceEscalationRoute: typeof ApiPublicDiligenceEscalationRoute
   ApiPublicEnrollmentMaintenanceRoute: typeof ApiPublicEnrollmentMaintenanceRoute
   ApiPublicEoExpirySweepRoute: typeof ApiPublicEoExpirySweepRoute
   ApiPublicHlaSweepRoute: typeof ApiPublicHlaSweepRoute
@@ -1331,6 +1369,7 @@ export interface RootRouteChildren {
   ApiPublicLoggingHealthRoute: typeof ApiPublicLoggingHealthRoute
   ApiPublicNarCertSweepRoute: typeof ApiPublicNarCertSweepRoute
   ApiPublicSubstitutionSweepRoute: typeof ApiPublicSubstitutionSweepRoute
+  BuyerDueDiligenceIdRoute: typeof BuyerDueDiligenceIdRoute
   BuyerOnboardingIdentityRoute: typeof BuyerOnboardingIdentityRoute
   BuyerOnboardingLifestyleRoute: typeof BuyerOnboardingLifestyleRoute
   BuyerOnboardingLiquidityRoute: typeof BuyerOnboardingLiquidityRoute
@@ -1692,6 +1731,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentLeadsRouteImport
       parentRoute: typeof AgentRoute
     }
+    '/agent/due-diligence': {
+      id: '/agent/due-diligence'
+      path: '/due-diligence'
+      fullPath: '/agent/due-diligence'
+      preLoaderRoute: typeof AgentDueDiligenceRouteImport
+      parentRoute: typeof AgentRoute
+    }
     '/agent/dashboard': {
       id: '/agent/dashboard'
       path: '/dashboard'
@@ -1888,6 +1934,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyerOnboardingIdentityRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/buyer/due-diligence/$id': {
+      id: '/buyer/due-diligence/$id'
+      path: '/buyer/due-diligence/$id'
+      fullPath: '/buyer/due-diligence/$id'
+      preLoaderRoute: typeof BuyerDueDiligenceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/broker/onboarding/license-check': {
       id: '/broker/onboarding/license-check'
       path: '/onboarding/license-check'
@@ -1963,6 +2016,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/enrollment-maintenance'
       fullPath: '/api/public/enrollment-maintenance'
       preLoaderRoute: typeof ApiPublicEnrollmentMaintenanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/diligence-escalation': {
+      id: '/api/public/diligence-escalation'
+      path: '/api/public/diligence-escalation'
+      fullPath: '/api/public/diligence-escalation'
+      preLoaderRoute: typeof ApiPublicDiligenceEscalationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/designation-sweep': {
@@ -2121,6 +2181,7 @@ interface AgentRouteChildren {
   AgentAttributionRoute: typeof AgentAttributionRoute
   AgentBrokerRelationshipRoute: typeof AgentBrokerRelationshipRoute
   AgentDashboardRoute: typeof AgentDashboardRoute
+  AgentDueDiligenceRoute: typeof AgentDueDiligenceRoute
   AgentLeadsRoute: typeof AgentLeadsRoute
   AgentLoginRoute: typeof AgentLoginRoute
   AgentPoolsRoute: typeof AgentPoolsRoute
@@ -2144,6 +2205,7 @@ const AgentRouteChildren: AgentRouteChildren = {
   AgentAttributionRoute: AgentAttributionRoute,
   AgentBrokerRelationshipRoute: AgentBrokerRelationshipRoute,
   AgentDashboardRoute: AgentDashboardRoute,
+  AgentDueDiligenceRoute: AgentDueDiligenceRoute,
   AgentLeadsRoute: AgentLeadsRoute,
   AgentLoginRoute: AgentLoginRoute,
   AgentPoolsRoute: AgentPoolsRoute,
@@ -2259,6 +2321,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicArelloRetryRoute: ApiPublicArelloRetryRoute,
   ApiPublicBrokerRelationshipSweepRoute: ApiPublicBrokerRelationshipSweepRoute,
   ApiPublicDesignationSweepRoute: ApiPublicDesignationSweepRoute,
+  ApiPublicDiligenceEscalationRoute: ApiPublicDiligenceEscalationRoute,
   ApiPublicEnrollmentMaintenanceRoute: ApiPublicEnrollmentMaintenanceRoute,
   ApiPublicEoExpirySweepRoute: ApiPublicEoExpirySweepRoute,
   ApiPublicHlaSweepRoute: ApiPublicHlaSweepRoute,
@@ -2267,6 +2330,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicLoggingHealthRoute: ApiPublicLoggingHealthRoute,
   ApiPublicNarCertSweepRoute: ApiPublicNarCertSweepRoute,
   ApiPublicSubstitutionSweepRoute: ApiPublicSubstitutionSweepRoute,
+  BuyerDueDiligenceIdRoute: BuyerDueDiligenceIdRoute,
   BuyerOnboardingIdentityRoute: BuyerOnboardingIdentityRoute,
   BuyerOnboardingLifestyleRoute: BuyerOnboardingLifestyleRoute,
   BuyerOnboardingLiquidityRoute: BuyerOnboardingLiquidityRoute,
