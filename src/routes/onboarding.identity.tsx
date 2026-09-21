@@ -60,6 +60,15 @@ function IdentityScreen() {
   });
   const [errors, setErrors] = useState<Partial<Record<keyof ExtractedFields, string>>>({});
 
+  function readAsDataUrl(f: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(f);
+    });
+  }
+
   async function handleFile(f: File) {
     if (!f.type.startsWith("image/")) {
       toast.error("Please upload an image file.");
@@ -70,7 +79,12 @@ function IdentityScreen() {
       return;
     }
     setFile(f);
-    setPreviewUrl(URL.createObjectURL(f));
+    // A data URL survives navigation/CSP rules that can break blob: previews.
+    try {
+      setPreviewUrl(await readAsDataUrl(f));
+    } catch {
+      setPreviewUrl(null);
+    }
     setScanning(true);
     setScanned(false);
     try {
