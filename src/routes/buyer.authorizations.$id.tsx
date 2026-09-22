@@ -21,8 +21,20 @@ import {
 import {
   getBuyerAuthorization,
   respondToAuthorization,
+  respondToCommissionItem,
   type BuyerAuthorizationPayload,
 } from "@/lib/authorization.functions";
+import {
+  COMMISSION_CONFIRMATION_TEXT,
+  COMMISSION_DECLINE_NOT_DEFAULT,
+  COMMISSION_DECLINE_TEXT,
+  COMMISSION_PROPOSER_NOTE,
+  NON_CONTINGENT_TEXT,
+  commissionItemState,
+  formatCents,
+  formatRate,
+  fundingSourceSentence,
+} from "@/lib/commission-item";
 
 export const Route = createFileRoute("/buyer/authorizations/$id")({
   head: () => ({
@@ -59,6 +71,7 @@ function BuyerAuthorizationDetail() {
   const navigate = useNavigate();
   const load = useServerFn(getBuyerAuthorization);
   const respond = useServerFn(respondToAuthorization);
+  const respondCommission = useServerFn(respondToCommissionItem);
 
   const [payload, setPayload] = useState<BuyerAuthorizationPayload | null>(null);
   const [loading, setLoading] = useState(true);
@@ -68,6 +81,12 @@ function BuyerAuthorizationDetail() {
   const [method, setMethod] = useState(TYPED_INITIALS_VERIFICATION);
   const [verified, setVerified] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  // The commission provision is a SEPARATE affirmative act with its own state.
+  const [commMemberId, setCommMemberId] = useState<string>("");
+  const [commMethod, setCommMethod] = useState(TYPED_INITIALS_VERIFICATION);
+  const [commVerified, setCommVerified] = useState(false);
+  const [commChecked, setCommChecked] = useState(false);
+  const [commSubmitting, setCommSubmitting] = useState(false);
 
   const refresh = useCallback(async () => {
     const result = await load({ data: { id } });
@@ -99,6 +118,7 @@ function BuyerAuthorizationDetail() {
     }
     setPayload(result);
     setMemberId((prev) => prev || (result.members[0]?.id ?? ""));
+    setCommMemberId((prev) => prev || (result.members[0]?.id ?? ""));
     setLoading(false);
   }, [id, load, navigate]);
 
@@ -111,6 +131,11 @@ function BuyerAuthorizationDetail() {
     setOnBehalf("");
     setAuthorityBasis("");
   }, [memberId]);
+
+  useEffect(() => {
+    setCommVerified(false);
+    setCommChecked(false);
+  }, [commMemberId]);
 
   const request = payload?.request ?? null;
   const members = payload?.members ?? [];
@@ -161,6 +186,43 @@ function BuyerAuthorizationDetail() {
       toast.error(error instanceof Error ? error.message : "Could not record your response");
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  async function submitCommission(decision: "confirmed" | "declined") {
+    const member = members.find((m) => m.id === commMemberId);
+    if (!member || !commVerified) return;
+    if (decision === "confirmed" && !commChecked) {
+      toast.error("Tick the commission authorization box to authorize this provision.");
+      return;
+    }
+    setCommSubmitting(true);
+    try {
+      const result = await respondCommission({
+        data: {
+          requestId: id,
+          accountMemberId: member.id,
+          decision,
+          signedName: member.full_name ?? "",
+          secondaryVerificationMethod: commMethod,
+          ipAddress: await clientIp(),
+          deviceFingerprint: deviceFingerprint(),
+        },
+      });
+      toast.success(
+        result.itemStatus === "declined"
+          ? "Recorded. The instrument will not be tendered; your Resident Agent and the Heavy Lifting Agent have been notified."
+          : result.itemStatus === "authorized"
+            ? "Commission provision authorized."
+            : "Recorded. Awaiting the remaining member's commission authorization.",
+      );
+      setCommVerified(false);
+      setCommChecked(false);
+      await refresh();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not record your response");
+    } finally {
+      setCommSubmitting(false);
     }
   }
 
@@ -357,6 +419,12 @@ function BuyerAuthorizationDetail() {
             ) : null}
 
             <p className="text-sm text-foreground">{CONFIRMATION_TEXT}</p>
+            {payload?.commissionItem ? (
+              <p className="text-xs text-muted-foreground">
+                This authorizes the instrument only. The buyer-side commission provision is a
+                separate item below and requires its own authorization.
+              </p>
+            ) : null}
 
             <SecondaryVerification
               signerName={signer?.full_name ?? ""}
