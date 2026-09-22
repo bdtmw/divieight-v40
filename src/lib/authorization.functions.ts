@@ -392,6 +392,7 @@ export const getBuyerAuthorization = createServerFn({ method: "GET" })
       agentName = a?.full_name ?? null;
     }
 
+    const commissionItem = await loadCommissionItem(db, row.id);
     return {
       allowed: true,
       gateBlockedPropertyId: null,
@@ -402,6 +403,10 @@ export const getBuyerAuthorization = createServerFn({ method: "GET" })
       members: await loadMembers(db, buyer.id),
       property: await propertyFor(db, row.property_id),
       agentName,
+      commissionItem,
+      commissionResponses: commissionItem
+        ? await loadCommissionResponses(db, commissionItem.id)
+        : [],
     };
   });
 
