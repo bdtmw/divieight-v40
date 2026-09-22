@@ -81,6 +81,7 @@ import { Route as AdminAuthorizationsRouteImport } from './routes/admin.authoriz
 import { Route as AdminAuditLogRouteImport } from './routes/admin.audit-log'
 import { Route as AdminAgentsRouteImport } from './routes/admin.agents'
 import { Route as BuyerOnboardingIndexRouteImport } from './routes/buyer.onboarding.index'
+import { Route as BuyerAuthorizationsIndexRouteImport } from './routes/buyer.authorizations.index'
 import { Route as AgentListingsIndexRouteImport } from './routes/agent.listings.index'
 import { Route as AgentDocumentsIndexRouteImport } from './routes/agent.documents.index'
 import { Route as AdminPropertiesIndexRouteImport } from './routes/admin.properties.index'
@@ -484,6 +485,12 @@ const BuyerOnboardingIndexRoute = BuyerOnboardingIndexRouteImport.update({
   path: '/buyer/onboarding/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuyerAuthorizationsIndexRoute =
+  BuyerAuthorizationsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => BuyerAuthorizationsRoute,
+  } as any)
 const AgentListingsIndexRoute = AgentListingsIndexRouteImport.update({
   id: '/listings/',
   path: '/listings/',
@@ -822,6 +829,7 @@ export interface FileRoutesByFullPath {
   '/admin/properties/': typeof AdminPropertiesIndexRoute
   '/agent/documents/': typeof AgentDocumentsIndexRoute
   '/agent/listings/': typeof AgentListingsIndexRoute
+  '/buyer/authorizations/': typeof BuyerAuthorizationsIndexRoute
   '/buyer/onboarding/': typeof BuyerOnboardingIndexRoute
   '/admin/pods/$id/briefcase': typeof AdminPodsIdBriefcaseRoute
   '/admin/pods/$id/select-heavy-lifter': typeof AdminPodsIdSelectHeavyLifterRoute
@@ -869,7 +877,6 @@ export interface FileRoutesByTo {
   '/broker/login': typeof BrokerLoginRoute
   '/broker/register': typeof BrokerRegisterRoute
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
-  '/buyer/authorizations': typeof BuyerAuthorizationsRouteWithChildren
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/documents': typeof BuyerDocumentsRoute
   '/buyer/golden-ticket': typeof BuyerGoldenTicketRoute
@@ -933,6 +940,7 @@ export interface FileRoutesByTo {
   '/admin/properties': typeof AdminPropertiesIndexRoute
   '/agent/documents': typeof AgentDocumentsIndexRoute
   '/agent/listings': typeof AgentListingsIndexRoute
+  '/buyer/authorizations': typeof BuyerAuthorizationsIndexRoute
   '/buyer/onboarding': typeof BuyerOnboardingIndexRoute
   '/admin/pods/$id/briefcase': typeof AdminPodsIdBriefcaseRoute
   '/admin/pods/$id/select-heavy-lifter': typeof AdminPodsIdSelectHeavyLifterRoute
@@ -1050,6 +1058,7 @@ export interface FileRoutesById {
   '/admin/properties/': typeof AdminPropertiesIndexRoute
   '/agent/documents/': typeof AgentDocumentsIndexRoute
   '/agent/listings/': typeof AgentListingsIndexRoute
+  '/buyer/authorizations/': typeof BuyerAuthorizationsIndexRoute
   '/buyer/onboarding/': typeof BuyerOnboardingIndexRoute
   '/admin/pods/$id/briefcase': typeof AdminPodsIdBriefcaseRoute
   '/admin/pods/$id/select-heavy-lifter': typeof AdminPodsIdSelectHeavyLifterRoute
@@ -1168,6 +1177,7 @@ export interface FileRouteTypes {
     | '/admin/properties/'
     | '/agent/documents/'
     | '/agent/listings/'
+    | '/buyer/authorizations/'
     | '/buyer/onboarding/'
     | '/admin/pods/$id/briefcase'
     | '/admin/pods/$id/select-heavy-lifter'
@@ -1215,7 +1225,6 @@ export interface FileRouteTypes {
     | '/broker/login'
     | '/broker/register'
     | '/buyer/adverse-action'
-    | '/buyer/authorizations'
     | '/buyer/dashboard'
     | '/buyer/documents'
     | '/buyer/golden-ticket'
@@ -1279,6 +1288,7 @@ export interface FileRouteTypes {
     | '/admin/properties'
     | '/agent/documents'
     | '/agent/listings'
+    | '/buyer/authorizations'
     | '/buyer/onboarding'
     | '/admin/pods/$id/briefcase'
     | '/admin/pods/$id/select-heavy-lifter'
@@ -1395,6 +1405,7 @@ export interface FileRouteTypes {
     | '/admin/properties/'
     | '/agent/documents/'
     | '/agent/listings/'
+    | '/buyer/authorizations/'
     | '/buyer/onboarding/'
     | '/admin/pods/$id/briefcase'
     | '/admin/pods/$id/select-heavy-lifter'
@@ -1971,6 +1982,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyerOnboardingIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/buyer/authorizations/': {
+      id: '/buyer/authorizations/'
+      path: '/'
+      fullPath: '/buyer/authorizations/'
+      preLoaderRoute: typeof BuyerAuthorizationsIndexRouteImport
+      parentRoute: typeof BuyerAuthorizationsRoute
+    }
     '/agent/listings/': {
       id: '/agent/listings/'
       path: '/listings'
@@ -2423,10 +2441,12 @@ const ResetPasswordRouteWithChildren = ResetPasswordRoute._addFileChildren(
 
 interface BuyerAuthorizationsRouteChildren {
   BuyerAuthorizationsIdRoute: typeof BuyerAuthorizationsIdRoute
+  BuyerAuthorizationsIndexRoute: typeof BuyerAuthorizationsIndexRoute
 }
 
 const BuyerAuthorizationsRouteChildren: BuyerAuthorizationsRouteChildren = {
   BuyerAuthorizationsIdRoute: BuyerAuthorizationsIdRoute,
+  BuyerAuthorizationsIndexRoute: BuyerAuthorizationsIndexRoute,
 }
 
 const BuyerAuthorizationsRouteWithChildren =
