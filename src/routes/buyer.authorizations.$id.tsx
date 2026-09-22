@@ -66,7 +66,9 @@ function BuyerAuthorizationDetail() {
     const result = await load({ data: { id } });
     // Precondition: the Due Diligence Acknowledgment Gate must be current.
     if (result.gateBlockedPropertyId) {
-      toast.error("Complete your required document acknowledgments first.");
+      toast.error(
+        "You have an unread required document — review it before you can act on this request.",
+      );
       navigate({
         to: "/buyer/due-diligence/$id",
         params: { id: result.gateBlockedPropertyId },
