@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabase } from "@/integrations/supabase/client";
-import { buildGateState, gateClear } from "@/lib/due-diligence";
+import { buildGateState, gateClear, gatingDocuments } from "@/lib/due-diligence";
 import { adminRecipients, deliver } from "@/lib/authorization.notify.server";
 import {
   AUTHORIZATION_ACTIONS,
@@ -26,6 +26,13 @@ import {
  */
 
 type Db = { from: (t: string) => any };
+
+export type DiligenceGateBlocker = "buyer" | "agent" | "both" | null;
+
+interface DiligenceGateStatus {
+  clear: boolean;
+  blocker: DiligenceGateBlocker;
+}
 
 async function adminDb(): Promise<Db> {
   const { supabaseAdmin } = await import("@/integrations/supabase/admin.server");
@@ -53,17 +60,17 @@ export async function audit(
 }
 
 /** Required-document acknowledgment status for one buyer account + property. */
-export async function diligenceGateClear(
+export async function diligenceGateStatus(
   db: Db,
   propertyId: string,
   buyerAccountId: string,
-): Promise<boolean> {
+): Promise<DiligenceGateStatus> {
   const { data: docs } = await db
     .from("due_diligence_inventory")
     .select("*")
     .eq("property_id", propertyId);
   const documents = (docs ?? []) as any[];
-  if (documents.length === 0) return true;
+  if (documents.length === 0) return { clear: true, blocker: null };
   const { data: acks } = await db
     .from("due_diligence_acknowledgments")
     .select(
@@ -78,7 +85,27 @@ export async function diligenceGateClear(
     .from("account_members")
     .select("id, full_name, role")
     .eq("buyer_account_id", buyerAccountId);
-  return gateClear(buildGateState(documents as any, (acks ?? []) as any, (members ?? []) as any));
+  const memberRows = (members ?? []) as Array<{ id: string }>;
+  const states = buildGateState(documents as any, (acks ?? []) as any, memberRows as any);
+  const required = gatingDocuments(states);
+  const buyerPending = required.some(
+    (state) =>
+      memberRows.length === 0 || memberRows.some((member) => !state.memberAcked.includes(member.id)),
+  );
+  const agentPending = required.some((state) => !state.agentAcked);
+
+  return {
+    clear: gateClear(states),
+    blocker: buyerPending ? (agentPending ? "both" : "buyer") : agentPending ? "agent" : null,
+  };
+}
+
+export async function diligenceGateClear(
+  db: Db,
+  propertyId: string,
+  buyerAccountId: string,
+): Promise<boolean> {
+  return (await diligenceGateStatus(db, propertyId, buyerAccountId)).clear;
 }
 
 async function buyerFor(db: Db, authUserId: string) {
@@ -281,6 +308,7 @@ export interface BuyerAuthorizationPayload {
   allowed: boolean;
   /** Set when the Due Diligence Gate must be cleared before this screen shows. */
   gateBlockedPropertyId: string | null;
+  gateBlocker: DiligenceGateBlocker;
   buyerAccountId: string | null;
   request: AuthorizationRequestRow | null;
   responses: AuthorizationResponseRow[];
@@ -301,6 +329,7 @@ export const getBuyerAuthorization = createServerFn({ method: "GET" })
     const empty: BuyerAuthorizationPayload = {
       allowed: false,
       gateBlockedPropertyId: null,
+      gateBlocker: null,
       buyerAccountId: buyer?.id ?? null,
       request: null,
       responses: [],
@@ -318,16 +347,25 @@ export const getBuyerAuthorization = createServerFn({ method: "GET" })
     if (!row || row.buyer_account_id !== buyer.id) return empty;
 
     // Precondition: Required document acknowledgments must be current.
-    const clear = await diligenceGateClear(db, row.property_id, buyer.id);
-    if (!clear) {
+    const gate = await diligenceGateStatus(db, row.property_id, buyer.id);
+    if (!gate.clear) {
       await audit(db, {
         actorId: context.claims?.sub as string,
         actorType: "buyer",
         actionType: "authorization.gate_blocked",
         entityId: row.id,
-        metadata: { property_id: row.property_id, reason: "diligence_acknowledgments_outstanding" },
+        metadata: {
+          property_id: row.property_id,
+          reason: "diligence_acknowledgments_outstanding",
+          blocker: gate.blocker,
+        },
       });
-      return { ...empty, allowed: false, gateBlockedPropertyId: row.property_id };
+      return {
+        ...empty,
+        allowed: false,
+        gateBlockedPropertyId: row.property_id,
+        gateBlocker: gate.blocker,
+      };
     }
 
     let agentName: string | null = null;
@@ -343,6 +381,7 @@ export const getBuyerAuthorization = createServerFn({ method: "GET" })
     return {
       allowed: true,
       gateBlockedPropertyId: null,
+      gateBlocker: null,
       buyerAccountId: buyer.id,
       request: row as AuthorizationRequestRow,
       responses: await loadResponses(db, row.id),
@@ -359,7 +398,13 @@ export const listBuyerAuthorizations = createServerFn({ method: "GET" })
     const buyer = await buyerFor(db, context.claims?.sub as string);
     if (!buyer)
       return {
-        rows: [] as Array<AuthorizationRequestRow & { propertyLabel: string; gateClear: boolean }>,
+        rows: [] as Array<
+          AuthorizationRequestRow & {
+            propertyLabel: string;
+            gateClear: boolean;
+            gateBlocker: DiligenceGateBlocker;
+          }
+        >,
       };
     const { data } = await db
       .from("authorization_requests")
@@ -368,16 +413,17 @@ export const listBuyerAuthorizations = createServerFn({ method: "GET" })
       .order("created_at", { ascending: false });
     const rows = (data ?? []) as AuthorizationRequestRow[];
     const labels = new Map<string, string>();
-    const gates = new Map<string, boolean>();
+    const gates = new Map<string, DiligenceGateStatus>();
     for (const id of new Set(rows.map((r) => r.property_id))) {
       labels.set(id, propertyLabel(await propertyFor(db, id)));
-      gates.set(id, await diligenceGateClear(db, id, buyer.id));
+      gates.set(id, await diligenceGateStatus(db, id, buyer.id));
     }
     return {
       rows: rows.map((r) => ({
         ...r,
         propertyLabel: labels.get(r.property_id) ?? "",
-        gateClear: gates.get(r.property_id) ?? true,
+        gateClear: gates.get(r.property_id)?.clear ?? true,
+        gateBlocker: gates.get(r.property_id)?.blocker ?? null,
       })),
     };
   });

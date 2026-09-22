@@ -18,6 +18,22 @@ import {
 } from "@/lib/authorization.functions";
 
 export const Route = createFileRoute("/admin/authorizations")({
+  head: () => ({
+    meta: [
+      { title: "Buyer authorizations — divieight Admin" },
+      {
+        name: "description",
+        content: "Queue and monitor Buyer Account authorization requests.",
+      },
+      { property: "og:title", content: "Buyer authorizations — divieight Admin" },
+      {
+        property: "og:description",
+        content: "Queue and monitor Buyer Account authorization requests.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: AdminAuthorizations,
 });
 
@@ -53,6 +69,7 @@ function AdminAuthorizations() {
   const [busy, setBusy] = useState(false);
 
   const refresh = useCallback(async () => {
+    setLoading(true);
     const [a, b] = await Promise.all([list({}), loadTargets({})]);
     setRows(a.rows as Row[]);
     setTargets(b.targets as Target[]);
@@ -144,9 +161,13 @@ function AdminAuthorizations() {
         <select
           value={target}
           onChange={(e) => setTarget(e.target.value)}
+          disabled={loading}
+          aria-busy={loading}
           className="block w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
         >
-          <option value="">Select buyer and property…</option>
+          <option value="">
+            {loading ? "Loading buyers and properties…" : "Select buyer and property…"}
+          </option>
           {targets.map((t) => (
             <option key={`${t.buyerAccountId}:${t.propertyId}`} value={`${t.buyerAccountId}:${t.propertyId}`}>
               {t.buyerEmail ?? t.buyerAccountId} — {t.propertyLabel}

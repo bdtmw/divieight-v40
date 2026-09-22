@@ -8,7 +8,10 @@ import {
   formatDeadline,
   type AuthorizationRequestRow,
 } from "@/lib/authorization";
-import { listBuyerAuthorizations } from "@/lib/authorization.functions";
+import {
+  listBuyerAuthorizations,
+  type DiligenceGateBlocker,
+} from "@/lib/authorization.functions";
 
 export const Route = createFileRoute("/buyer/authorizations/")({
   head: () => ({
@@ -19,12 +22,23 @@ export const Route = createFileRoute("/buyer/authorizations/")({
         content:
           "Review and expressly authorize each key moment in your divieight transaction.",
       },
+      { property: "og:title", content: "Authorization requests — divieight" },
+      {
+        property: "og:description",
+        content: "Review and expressly authorize each key moment in your divieight transaction.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: BuyerAuthorizations,
 });
 
-type Row = AuthorizationRequestRow & { propertyLabel: string; gateClear: boolean };
+type Row = AuthorizationRequestRow & {
+  propertyLabel: string;
+  gateClear: boolean;
+  gateBlocker: DiligenceGateBlocker;
+};
 
 function BuyerAuthorizations() {
   const load = useServerFn(listBuyerAuthorizations);
@@ -63,6 +77,8 @@ function BuyerAuthorizations() {
         <ul className="mt-8 space-y-3">
           {rows.map((row) => {
             const blocked = row.status === "pending" && !row.gateClear;
+            const buyerPending = row.gateBlocker === "buyer" || row.gateBlocker === "both";
+            const bothPending = row.gateBlocker === "both";
             return (
               <li key={row.id} className="rounded-xl border border-border bg-card p-5">
                 <div className="flex flex-wrap items-start justify-between gap-3">
@@ -78,7 +94,7 @@ function BuyerAuthorizations() {
                   {blocked ? (
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent">
                       <FileWarning className="h-3.5 w-3.5" />
-                      Document review required
+                      {bothPending ? "Review required (both)" : buyerPending ? "Document review required" : "Resident Agent review pending"}
                     </span>
                   ) : (
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1 text-xs font-medium text-foreground">
@@ -90,16 +106,21 @@ function BuyerAuthorizations() {
                 {blocked ? (
                   <>
                     <p className="mt-4 text-xs text-muted-foreground">
-                      You have an unread required document — review it before you can act on this
-                      request.
+                      {bothPending
+                        ? "Both you and your Resident Agent have unread documents — review yours first."
+                        : buyerPending
+                        ? "You have an unread required document — review it before you can act on this request."
+                        : "Your Resident Agent still needs to review this document before you can proceed. No action is needed from you right now."}
                     </p>
-                    <Link
-                      to="/buyer/due-diligence/$id"
-                      params={{ id: row.property_id }}
-                      className="mt-2 inline-block text-sm font-medium text-primary hover:underline"
-                    >
-                      Review the required document
-                    </Link>
+                    {buyerPending ? (
+                      <Link
+                        to="/buyer/due-diligence/$id"
+                        params={{ id: row.property_id }}
+                        className="mt-2 inline-block text-sm font-medium text-primary hover:underline"
+                      >
+                        Review the required document
+                      </Link>
+                    ) : null}
                   </>
                 ) : (
                   <Link
