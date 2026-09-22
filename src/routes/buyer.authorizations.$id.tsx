@@ -463,6 +463,154 @@ function BuyerAuthorizationDetail() {
           </div>
         ) : null}
       </section>
+
+      {/* Itemized commission authorization — a separate, discrete affirmative act. */}
+      {payload?.commissionItem ? (() => {
+        const item = payload.commissionItem;
+        const commState = commissionItemState(
+          payload.commissionResponses ?? [],
+          members.map((m) => m.id),
+        );
+        const commMember = members.find((m) => m.id === commMemberId) ?? null;
+        const commAnswered = (payload.commissionResponses ?? []).some(
+          (r) => r.account_member_id === commMemberId,
+        );
+        return (
+          <section className="mt-10 rounded-xl border-2 border-accent/40 bg-card p-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+              Separate authorization item
+            </p>
+            <h2 className="mt-1 font-display text-lg font-semibold text-foreground">
+              Buyer-side commission provision
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground">{COMMISSION_PROPOSER_NOTE}</p>
+
+            <dl className="mt-4 divide-y divide-border rounded-lg border border-border">
+              <div className="grid gap-1 px-4 py-3 sm:grid-cols-[220px_1fr]">
+                <dt className="text-xs uppercase tracking-wide text-muted-foreground">
+                  Attributable to your 1/8th share
+                </dt>
+                <dd className="text-sm font-medium text-foreground">
+                  {formatRate(item.rate_percent)} — {formatCents(item.per_share_amount_cents)}
+                </dd>
+              </div>
+              <div className="grid gap-1 px-4 py-3 sm:grid-cols-[220px_1fr]">
+                <dt className="text-xs uppercase tracking-wide text-muted-foreground">
+                  How it is funded
+                </dt>
+                <dd className="text-sm text-foreground">
+                  {fundingSourceSentence(item.funding_source)}
+                </dd>
+              </div>
+              <div className="grid gap-1 px-4 py-3 sm:grid-cols-[220px_1fr]">
+                <dt className="text-xs uppercase tracking-wide text-muted-foreground">
+                  Non-contingent obligation
+                </dt>
+                <dd className="text-sm text-foreground">{NON_CONTINGENT_TEXT}</dd>
+              </div>
+              {item.provision_text ? (
+                <div className="grid gap-1 px-4 py-3 sm:grid-cols-[220px_1fr]">
+                  <dt className="text-xs uppercase tracking-wide text-muted-foreground">
+                    Provision as proposed
+                  </dt>
+                  <dd className="text-sm text-foreground">{item.provision_text}</dd>
+                </div>
+              ) : null}
+            </dl>
+
+            <ul className="mt-4 space-y-1 text-xs text-muted-foreground">
+              {members.map((m) => {
+                const hit = (payload.commissionResponses ?? []).find(
+                  (r) => r.account_member_id === m.id,
+                );
+                return (
+                  <li key={m.id}>
+                    {m.full_name ?? "Account Member"} —{" "}
+                    {hit
+                      ? hit.decision === "confirmed"
+                        ? "commission authorized"
+                        : "commission declined"
+                      : "awaiting commission authorization"}
+                  </li>
+                );
+              })}
+            </ul>
+
+            {item.status === "declined" || commState.anyDeclined ? (
+              <p className="mt-4 rounded-lg border border-border bg-muted/40 p-3 text-sm text-foreground">
+                This provision was declined. The instrument will not be tendered; the matter is with
+                your Resident Agent and the Heavy Lifting Agent for resolution.{" "}
+                {COMMISSION_DECLINE_NOT_DEFAULT}
+              </p>
+            ) : open ? (
+              <div className="mt-5 space-y-4 rounded-lg border border-border bg-background p-4">
+                <div>
+                  <label className="text-xs text-muted-foreground" htmlFor="comm-member">
+                    Responding as
+                  </label>
+                  <select
+                    id="comm-member"
+                    value={commMemberId}
+                    onChange={(e) => setCommMemberId(e.target.value)}
+                    className="mt-1 block w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+                  >
+                    {members.map((m) => (
+                      <option key={m.id} value={m.id}>
+                        {m.full_name ?? "Account Member"}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <label className="flex items-start gap-2 text-sm text-foreground">
+                  <input
+                    type="checkbox"
+                    checked={commChecked}
+                    onChange={(e) => setCommChecked(e.target.checked)}
+                    className="mt-1"
+                  />
+                  <span>{COMMISSION_CONFIRMATION_TEXT}</span>
+                </label>
+
+                <SecondaryVerification
+                  signerName={commMember?.full_name ?? ""}
+                  value={commMethod}
+                  onChange={setCommMethod}
+                  onVerifiedChange={setCommVerified}
+                  disabled={commSubmitting}
+                />
+
+                {commAnswered ? (
+                  <p className="text-xs text-muted-foreground">
+                    This member has already acted on the commission provision. Submitting again
+                    replaces that response while the request is still pending.
+                  </p>
+                ) : null}
+
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    disabled={!commVerified || !commChecked || commSubmitting}
+                    onClick={() => submitCommission("confirmed")}
+                    className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
+                  >
+                    <ShieldCheck className="h-4 w-4" /> Authorize commission provision
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!commVerified || commSubmitting}
+                    onClick={() => submitCommission("declined")}
+                    className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground disabled:opacity-50"
+                  >
+                    Decline commission provision
+                  </button>
+                </div>
+                <p className="text-xs text-muted-foreground">{COMMISSION_DECLINE_TEXT}</p>
+              </div>
+            ) : null}
+          </section>
+        );
+      })() : null}
     </div>
   );
 }
