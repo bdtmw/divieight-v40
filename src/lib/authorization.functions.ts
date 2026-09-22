@@ -702,6 +702,16 @@ export const listAdminAuthorizations = createServerFn({ method: "GET" })
         propertyLabel: string;
         buyerEmail: string | null;
         outstanding: number;
+        memberCount: number;
+        confirmedCount: number;
+        declinedCount: number;
+        memberResponses: Array<{
+          memberId: string;
+          name: string;
+          decision: "confirmed" | "declined" | null;
+          respondedAt: string | null;
+          onBehalfOf: string | null;
+        }>;
       }
     >;
     for (const r of rows) {
@@ -710,20 +720,37 @@ export const listAdminAuthorizations = createServerFn({ method: "GET" })
         .select("email")
         .eq("id", r.buyer_account_id)
         .maybeSingle();
-      const state = authorizationState(
-        r,
-        await loadResponses(db, r.id),
-        await loadMembers(db, r.buyer_account_id),
-      );
+      const responses = await loadResponses(db, r.id);
+      const members = await loadMembers(db, r.buyer_account_id);
+      const state = authorizationState(r, responses, members);
+      const nameOf = (id: string) =>
+        members.find((m) => m.id === id)?.full_name ?? "Account Member";
+      const memberResponses = members.map((m) => {
+        const own = responses.find((x) => x.account_member_id === m.id);
+        const proxy = responses.find((x) => x.on_behalf_of_member_id === m.id);
+        const hit = own ?? proxy;
+        return {
+          memberId: m.id,
+          name: m.full_name ?? "Account Member",
+          decision: (hit?.decision as "confirmed" | "declined" | undefined) ?? null,
+          respondedAt: hit?.responded_at ?? null,
+          onBehalfOf: !own && proxy ? nameOf(proxy.account_member_id) : null,
+        };
+      });
       out.push({
         ...r,
         propertyLabel: labels.get(r.property_id) ?? "",
         buyerEmail: buyer?.email ?? null,
         outstanding: state.outstanding.length,
+        memberCount: members.length,
+        confirmedCount: state.confirmed.length,
+        declinedCount: state.declined.length,
+        memberResponses,
       });
     }
     return { rows: out };
   });
+
 
 /** Candidate buyer accounts for queueing a request (admin picker). */
 export const listAuthorizationTargets = createServerFn({ method: "GET" })
