@@ -130,7 +130,10 @@ export type AuditAction =
   | "authorization.declined_final"
   | "authorization.non_response"
   | "authorization.escalated"
-  | "authorization.notification_failed";
+  | "authorization.notification_failed"
+  | "authorization.commission_proposed"
+  | "authorization.commission_authorized"
+  | "authorization.commission_declined";
 
 
 export type AuditEntity =
