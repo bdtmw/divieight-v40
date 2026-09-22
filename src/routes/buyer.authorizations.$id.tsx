@@ -32,6 +32,13 @@ export const Route = createFileRoute("/buyer/authorizations/$id")({
         name: "description",
         content: "Confirm or decline a key transaction action for your divieight Buyer Account.",
       },
+      { property: "og:title", content: "Authorization request — divieight" },
+      {
+        property: "og:description",
+        content: "Confirm or decline a key transaction action for your divieight Buyer Account.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: BuyerAuthorizationDetail,
@@ -65,7 +72,10 @@ function BuyerAuthorizationDetail() {
   const refresh = useCallback(async () => {
     const result = await load({ data: { id } });
     // Precondition: the Due Diligence Acknowledgment Gate must be current.
-    if (result.gateBlockedPropertyId) {
+    if (
+      result.gateBlockedPropertyId &&
+      (result.gateBlocker === "buyer" || result.gateBlocker === "both")
+    ) {
       toast.error(
         "You have an unread required document — review it before you can act on this request.",
       );
@@ -73,6 +83,11 @@ function BuyerAuthorizationDetail() {
         to: "/buyer/due-diligence/$id",
         params: { id: result.gateBlockedPropertyId },
       });
+      return;
+    }
+    if (result.gateBlockedPropertyId && result.gateBlocker === "agent") {
+      setPayload(result);
+      setLoading(false);
       return;
     }
     if (!result.allowed) {
@@ -147,8 +162,32 @@ function BuyerAuthorizationDetail() {
     }
   }
 
-  if (loading || !request || !state) {
+  if (loading) {
     return <p className="px-6 py-16 text-center text-sm text-muted-foreground">Loading…</p>;
+  }
+
+  if (payload?.gateBlocker === "agent") {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
+        <Link to="/buyer/authorizations" className="text-xs text-muted-foreground hover:underline">
+          ← All authorization requests
+        </Link>
+        <div className="mt-6 flex items-start gap-3 rounded-xl border border-border bg-card p-5 text-sm">
+          <Lock className="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground" />
+          <div>
+            <h1 className="font-medium text-foreground">Resident Agent review pending</h1>
+            <p className="mt-1 text-muted-foreground">
+              Your Resident Agent still needs to review this document before you can proceed. No
+              action is needed from you right now.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!request || !state) {
+    return <p className="px-6 py-16 text-center text-sm text-muted-foreground">Request unavailable.</p>;
   }
 
   const open = request.status === "pending";
