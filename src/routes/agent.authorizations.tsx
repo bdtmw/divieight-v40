@@ -97,7 +97,11 @@ function AgentAuthorizations() {
                     </span>
                   ) : (
                     <span className="rounded-full bg-muted px-3 py-1 text-xs text-foreground">
-                      {authorizationStatusLabel(row)}
+                      {row.status === "pending"
+                        ? row.recommendation_kind
+                          ? "Recommendation sent — awaiting buyer"
+                          : "Awaiting buyer authorization"
+                        : authorizationStatusLabel(row)}
                     </span>
                   )}
                 </div>
