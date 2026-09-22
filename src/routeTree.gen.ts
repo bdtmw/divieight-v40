@@ -107,6 +107,7 @@ import { Route as ApiPublicListingApprovalEscalationRouteImport } from './routes
 import { Route as ApiPublicHlaSweepRouteImport } from './routes/api.public.hla-sweep'
 import { Route as ApiPublicEoExpirySweepRouteImport } from './routes/api.public.eo-expiry-sweep'
 import { Route as ApiPublicEnrollmentMaintenanceRouteImport } from './routes/api.public.enrollment-maintenance'
+import { Route as ApiPublicEarnestMoneySweepRouteImport } from './routes/api.public.earnest-money-sweep'
 import { Route as ApiPublicDiligenceEscalationRouteImport } from './routes/api.public.diligence-escalation'
 import { Route as ApiPublicDesignationSweepRouteImport } from './routes/api.public.designation-sweep'
 import { Route as ApiPublicBrokerRelationshipSweepRouteImport } from './routes/api.public.broker-relationship-sweep'
@@ -627,6 +628,12 @@ const ApiPublicEnrollmentMaintenanceRoute =
     path: '/api/public/enrollment-maintenance',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicEarnestMoneySweepRoute =
+  ApiPublicEarnestMoneySweepRouteImport.update({
+    id: '/api/public/earnest-money-sweep',
+    path: '/api/public/earnest-money-sweep',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicDiligenceEscalationRoute =
   ApiPublicDiligenceEscalationRouteImport.update({
     id: '/api/public/diligence-escalation',
@@ -819,6 +826,7 @@ export interface FileRoutesByFullPath {
   '/api/public/broker-relationship-sweep': typeof ApiPublicBrokerRelationshipSweepRoute
   '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
   '/api/public/diligence-escalation': typeof ApiPublicDiligenceEscalationRoute
+  '/api/public/earnest-money-sweep': typeof ApiPublicEarnestMoneySweepRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/api/public/eo-expiry-sweep': typeof ApiPublicEoExpirySweepRoute
   '/api/public/hla-sweep': typeof ApiPublicHlaSweepRoute
@@ -931,6 +939,7 @@ export interface FileRoutesByTo {
   '/api/public/broker-relationship-sweep': typeof ApiPublicBrokerRelationshipSweepRoute
   '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
   '/api/public/diligence-escalation': typeof ApiPublicDiligenceEscalationRoute
+  '/api/public/earnest-money-sweep': typeof ApiPublicEarnestMoneySweepRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/api/public/eo-expiry-sweep': typeof ApiPublicEoExpirySweepRoute
   '/api/public/hla-sweep': typeof ApiPublicHlaSweepRoute
@@ -1051,6 +1060,7 @@ export interface FileRoutesById {
   '/api/public/broker-relationship-sweep': typeof ApiPublicBrokerRelationshipSweepRoute
   '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
   '/api/public/diligence-escalation': typeof ApiPublicDiligenceEscalationRoute
+  '/api/public/earnest-money-sweep': typeof ApiPublicEarnestMoneySweepRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/api/public/eo-expiry-sweep': typeof ApiPublicEoExpirySweepRoute
   '/api/public/hla-sweep': typeof ApiPublicHlaSweepRoute
@@ -1172,6 +1182,7 @@ export interface FileRouteTypes {
     | '/api/public/broker-relationship-sweep'
     | '/api/public/designation-sweep'
     | '/api/public/diligence-escalation'
+    | '/api/public/earnest-money-sweep'
     | '/api/public/enrollment-maintenance'
     | '/api/public/eo-expiry-sweep'
     | '/api/public/hla-sweep'
@@ -1284,6 +1295,7 @@ export interface FileRouteTypes {
     | '/api/public/broker-relationship-sweep'
     | '/api/public/designation-sweep'
     | '/api/public/diligence-escalation'
+    | '/api/public/earnest-money-sweep'
     | '/api/public/enrollment-maintenance'
     | '/api/public/eo-expiry-sweep'
     | '/api/public/hla-sweep'
@@ -1403,6 +1415,7 @@ export interface FileRouteTypes {
     | '/api/public/broker-relationship-sweep'
     | '/api/public/designation-sweep'
     | '/api/public/diligence-escalation'
+    | '/api/public/earnest-money-sweep'
     | '/api/public/enrollment-maintenance'
     | '/api/public/eo-expiry-sweep'
     | '/api/public/hla-sweep'
@@ -1483,6 +1496,7 @@ export interface RootRouteChildren {
   ApiPublicBrokerRelationshipSweepRoute: typeof ApiPublicBrokerRelationshipSweepRoute
   ApiPublicDesignationSweepRoute: typeof ApiPublicDesignationSweepRoute
   ApiPublicDiligenceEscalationRoute: typeof ApiPublicDiligenceEscalationRoute
+  ApiPublicEarnestMoneySweepRoute: typeof ApiPublicEarnestMoneySweepRoute
   ApiPublicEnrollmentMaintenanceRoute: typeof ApiPublicEnrollmentMaintenanceRoute
   ApiPublicEoExpirySweepRoute: typeof ApiPublicEoExpirySweepRoute
   ApiPublicHlaSweepRoute: typeof ApiPublicHlaSweepRoute
@@ -2188,6 +2202,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicEnrollmentMaintenanceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/earnest-money-sweep': {
+      id: '/api/public/earnest-money-sweep'
+      path: '/api/public/earnest-money-sweep'
+      fullPath: '/api/public/earnest-money-sweep'
+      preLoaderRoute: typeof ApiPublicEarnestMoneySweepRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/diligence-escalation': {
       id: '/api/public/diligence-escalation'
       path: '/api/public/diligence-escalation'
@@ -2559,6 +2580,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicBrokerRelationshipSweepRoute: ApiPublicBrokerRelationshipSweepRoute,
   ApiPublicDesignationSweepRoute: ApiPublicDesignationSweepRoute,
   ApiPublicDiligenceEscalationRoute: ApiPublicDiligenceEscalationRoute,
+  ApiPublicEarnestMoneySweepRoute: ApiPublicEarnestMoneySweepRoute,
   ApiPublicEnrollmentMaintenanceRoute: ApiPublicEnrollmentMaintenanceRoute,
   ApiPublicEoExpirySweepRoute: ApiPublicEoExpirySweepRoute,
   ApiPublicHlaSweepRoute: ApiPublicHlaSweepRoute,
