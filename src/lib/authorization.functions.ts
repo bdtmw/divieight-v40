@@ -799,3 +799,365 @@ export const runAuthorizationEscalation = createServerFn({ method: "POST" })
     const { runAuthorizationEscalationSweep } = await import("@/lib/authorization.server");
     return runAuthorizationEscalationSweep(userId);
   });
+
+// ---------------------------------------------------------------------------
+// Itemized commission authorization
+//
+// A buyer-side commission provision is its own discrete authorization item.
+// It is PROPOSED by the Heavy Lifting Agent and reviewed by each Member's
+// tethered Resident Agent; the Manager only presents it and, once authorized,
+// executes the resulting instrument.
+// ---------------------------------------------------------------------------
+
+export async function loadCommissionItem(
+  db: Db,
+  requestId: string,
+): Promise<CommissionItemRow | null> {
+  const { data } = await db
+    .from("authorization_commission_items")
+    .select("*")
+    .eq("request_id", requestId)
+    .maybeSingle();
+  return (data as CommissionItemRow) ?? null;
+}
+
+export async function loadCommissionResponses(
+  db: Db,
+  itemId: string,
+): Promise<CommissionResponseRow[]> {
+  const { data } = await db
+    .from("authorization_commission_responses")
+    .select("id, item_id, account_member_id, decision, signed_name, secondary_verification_method, responded_at")
+    .eq("item_id", itemId);
+  return (data ?? []) as CommissionResponseRow[];
+}
+
+/** The pod's Heavy Lifting Agent for a property, if one has accepted. */
+async function heavyLiftingAgentId(db: Db, propertyId: string): Promise<string | null> {
+  const { data } = await db
+    .from("pods")
+    .select("heavy_lifting_agent_id, hla_status")
+    .eq("property_id", propertyId)
+    .maybeSingle();
+  if (!data || data.hla_status !== "accepted") return null;
+  return (data.heavy_lifting_agent_id as string) ?? null;
+}
+
+export interface ProposeCommissionInput {
+  requestId: string;
+  ratePercent: number;
+  fundingSource: CommissionFundingSource;
+  provisionText: string;
+}
+
+/**
+ * The Heavy Lifting Agent proposes (or revises) the commission provision.
+ * Nobody else may originate or price it — not the Manager, not the Resident
+ * Agent.
+ */
+export const proposeCommissionItem = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: ProposeCommissionInput) => {
+    if (!input?.requestId) throw new Error("Missing request");
+    const rate = Number(input.ratePercent);
+    if (!Number.isFinite(rate) || rate < 0 || rate > 100)
+      throw new Error("Enter the buyer-side commission rate as a percentage");
+    if (
+      input.fundingSource !== "proceeds_at_closing" &&
+      input.fundingSource !== "member_at_closing"
+    )
+      throw new Error("Choose how the provision is funded");
+    return { ...input, ratePercent: rate };
+  })
+  .handler(async ({ data, context }) => {
+    const userId = context.claims?.sub as string;
+    const db = await adminDb();
+    const agent = await agentFor(db, userId);
+    if (!agent) throw new Error("Not authorized");
+
+    const { data: row } = await db
+      .from("authorization_requests")
+      .select("id, property_id, buyer_account_id, action_type, terms, status")
+      .eq("id", data.requestId)
+      .maybeSingle();
+    if (!row) throw new Error("Request not found");
+    if (row.status !== "pending") throw new Error("This request is already resolved");
+
+    const hlaId = await heavyLiftingAgentId(db, row.property_id);
+    if (!hlaId || hlaId !== agent.id)
+      throw new Error("Only the pod's Heavy Lifting Agent may propose the commission provision");
+
+    const { data: property } = await db
+      .from("properties")
+      .select("listing_price")
+      .eq("id", row.property_id)
+      .maybeSingle();
+    const sharePrice = perShareBasisCents(property?.listing_price as number | null);
+    const perShare = perShareCommissionCents(
+      property?.listing_price as number | null,
+      data.ratePercent,
+    );
+    const hash = instrumentHash({
+      requestId: row.id,
+      terms: (row.terms as Record<string, string>) ?? {},
+      ratePercent: data.ratePercent,
+      fundingSource: data.fundingSource,
+      provisionText: data.provisionText ?? "",
+    });
+
+    const existing = await loadCommissionItem(db, row.id);
+    const payload = {
+      request_id: row.id,
+      proposed_by_agent_id: agent.id,
+      rate_percent: data.ratePercent,
+      funding_source: data.fundingSource,
+      provision_text: (data.provisionText ?? "").trim(),
+      share_price_cents: sharePrice,
+      per_share_amount_cents: perShare,
+      instrument_hash: hash,
+      status: "proposed",
+      updated_at: new Date().toISOString(),
+    };
+
+    let itemId = existing?.id ?? null;
+    if (existing) {
+      // A revised provision reopens the item: prior member acts no longer apply.
+      await db.from("authorization_commission_responses").delete().eq("item_id", existing.id);
+      const { error } = await db
+        .from("authorization_commission_items")
+        .update(payload)
+        .eq("id", existing.id);
+      if (error) throw new Error(error.message);
+    } else {
+      const { data: created, error } = await db
+        .from("authorization_commission_items")
+        .insert(payload)
+        .select("id")
+        .maybeSingle();
+      if (error) throw new Error(error.message);
+      itemId = created?.id ?? null;
+    }
+
+    await audit(db, {
+      actorId: userId,
+      actorType: "agent",
+      actionType: "authorization.commission_proposed",
+      entityId: row.id,
+      metadata: {
+        commission_item_id: itemId,
+        proposed_by_agent_id: agent.id,
+        rate_percent: data.ratePercent,
+        funding_source: data.fundingSource,
+        per_share_amount_cents: perShare,
+        instrument_hash: hash,
+        revised: Boolean(existing),
+      },
+    });
+
+    // Notify the buyer and the tethered Resident Agent — attributed to the HLA.
+    const property2 = await propertyFor(db, row.property_id);
+    const { data: buyer } = await db
+      .from("buyer_accounts")
+      .select("auth_user_id, email, tethered_resident_agent_id")
+      .eq("id", row.buyer_account_id)
+      .maybeSingle();
+    if (buyer) {
+      await deliver(
+        db,
+        { authUserId: buyer.auth_user_id, email: buyer.email },
+        {
+          subject: "A commission provision needs your separate authorization",
+          message: `The Heavy Lifting Agent has proposed a buyer-side commission provision for ${propertyLabel(property2)}. It is presented to you as its own authorization item, separate from the instrument itself. Authorizing the instrument does not authorize this provision.`,
+          link: `/buyer/authorizations/${row.id}`,
+          requestId: row.id,
+        },
+      );
+    }
+    if (buyer?.tethered_resident_agent_id) {
+      const { data: ra } = await db
+        .from("agents")
+        .select("auth_user_id, email")
+        .eq("id", buyer.tethered_resident_agent_id)
+        .maybeSingle();
+      if (ra)
+        await deliver(
+          db,
+          { authUserId: ra.auth_user_id, email: ra.email },
+          {
+            subject: "Commission provision proposed by the Heavy Lifting Agent",
+            message: `A buyer-side commission provision proposed by the Heavy Lifting Agent for ${propertyLabel(property2)} is available for your review alongside the authorization request.`,
+            link: "/agent/authorizations",
+            requestId: row.id,
+          },
+        );
+    }
+
+    return { id: itemId };
+  });
+
+export interface CommissionRespondInput {
+  requestId: string;
+  accountMemberId: string;
+  decision: "confirmed" | "declined";
+  signedName: string;
+  secondaryVerificationMethod: string;
+  ipAddress?: string | null;
+  deviceFingerprint?: string | null;
+}
+
+/**
+ * A Preferred Member's separate affirmative act on the commission provision.
+ * This is never implied by the instrument authorization.
+ */
+export const respondToCommissionItem = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: CommissionRespondInput) => {
+    if (!input?.requestId || !input?.accountMemberId) throw new Error("Missing request");
+    if (input.decision !== "confirmed" && input.decision !== "declined")
+      throw new Error("Invalid decision");
+    if (!input.signedName?.trim()) throw new Error("Secondary verification is required");
+    return input;
+  })
+  .handler(async ({ data, context }) => {
+    const userId = context.claims?.sub as string;
+    const db = await adminDb();
+    const buyer = await buyerFor(db, userId);
+    if (!buyer) throw new Error("No buyer account");
+
+    const { data: row } = await db
+      .from("authorization_requests")
+      .select("*")
+      .eq("id", data.requestId)
+      .maybeSingle();
+    if (!row || row.buyer_account_id !== buyer.id) throw new Error("Not authorized");
+    if (row.status !== "pending") throw new Error("This request is already resolved");
+
+    if (!(await diligenceGateClear(db, row.property_id, buyer.id)))
+      throw new Error("Outstanding due-diligence acknowledgments must be completed first");
+
+    const item = await loadCommissionItem(db, row.id);
+    if (!item) throw new Error("No commission provision is attached to this request");
+
+    const members = await loadMembers(db, buyer.id);
+    if (!members.some((m) => m.id === data.accountMemberId))
+      throw new Error("Unknown Account Member");
+
+    const presented = commissionStatement(item);
+
+    const { error } = await db.from("authorization_commission_responses").upsert(
+      {
+        item_id: item.id,
+        request_id: row.id,
+        buyer_account_id: buyer.id,
+        account_member_id: data.accountMemberId,
+        decision: data.decision,
+        signed_name: data.signedName.trim(),
+        secondary_verification_method: data.secondaryVerificationMethod,
+        presented_text: presented,
+        instrument_hash: item.instrument_hash,
+        ip_address: data.ipAddress ?? null,
+        device_fingerprint: data.deviceFingerprint ?? null,
+        responded_at: new Date().toISOString(),
+      },
+      { onConflict: "item_id,account_member_id" },
+    );
+    if (error) throw new Error(error.message);
+
+    await audit(db, {
+      actorId: userId,
+      actorType: "buyer",
+      actionType:
+        data.decision === "confirmed"
+          ? "authorization.commission_authorized"
+          : "authorization.commission_declined",
+      entityId: row.id,
+      metadata: {
+        record_type: "itemized_commission_authorization",
+        commission_item_id: item.id,
+        account_member_id: data.accountMemberId,
+        signed_name: data.signedName.trim(),
+        secondary_verification_method: data.secondaryVerificationMethod,
+        presented_text: presented,
+        instrument_hash: item.instrument_hash,
+        ip_address: data.ipAddress ?? null,
+        is_default_under_pra_section_8: false,
+      },
+    });
+
+    const responses = await loadCommissionResponses(db, item.id);
+    const state = commissionItemState(
+      responses,
+      members.map((m) => m.id),
+    );
+    const property = await propertyFor(db, row.property_id);
+
+    if (state.anyDeclined) {
+      await db
+        .from("authorization_commission_items")
+        .update({ status: "declined", updated_at: new Date().toISOString() })
+        .eq("id", item.id);
+
+      // The instrument is NOT tendered. Route the matter back to the Member's
+      // Resident Agent and to the Heavy Lifting Agent for resolution.
+      const routeTo: Array<{ authUserId: string; email: string | null }> = [];
+      if (row.agent_id) {
+        const { data: ra } = await db
+          .from("agents")
+          .select("auth_user_id, email")
+          .eq("id", row.agent_id)
+          .maybeSingle();
+        if (ra) routeTo.push({ authUserId: ra.auth_user_id, email: ra.email });
+      }
+      const hlaId = await heavyLiftingAgentId(db, row.property_id);
+      if (hlaId) {
+        const { data: hla } = await db
+          .from("agents")
+          .select("auth_user_id, email")
+          .eq("id", hlaId)
+          .maybeSingle();
+        if (hla) routeTo.push({ authUserId: hla.auth_user_id, email: hla.email });
+      }
+      for (const who of routeTo) {
+        await deliver(db, who, {
+          subject: "Commission provision declined — resolution needed",
+          message: `A Preferred Member has declined the buyer-side commission provision on ${propertyLabel(property)}. The instrument will not be tendered. This declination is explicitly NOT a Default under Section 8 of the Priority Reservation Agreement; it returns to the Resident Agent and the Heavy Lifting Agent for resolution.`,
+          link: "/agent/authorizations",
+          requestId: row.id,
+        });
+      }
+      return { itemStatus: "declined" as const, outstanding: state.outstanding.length };
+    }
+
+    if (state.complete) {
+      await db
+        .from("authorization_commission_items")
+        .update({ status: "authorized", updated_at: new Date().toISOString() })
+        .eq("id", item.id);
+
+      // If the instrument itself is already fully authorized, it can now resolve.
+      const instrumentState = authorizationState(
+        row as AuthorizationRequestRow,
+        await loadResponses(db, row.id),
+        members,
+      );
+      if (dispositionFor(instrumentState) === "authorized") {
+        await db
+          .from("authorization_requests")
+          .update({ status: "authorized", resolved_at: new Date().toISOString() })
+          .eq("id", row.id);
+        await audit(db, {
+          actorId: userId,
+          actorType: "buyer",
+          actionType: "authorization.granted",
+          entityId: row.id,
+          metadata: {
+            action: row.action_type,
+            commission_item_authorized: true,
+          },
+        });
+      }
+      return { itemStatus: "authorized" as const, outstanding: 0 };
+    }
+
+    return { itemStatus: "proposed" as const, outstanding: state.outstanding.length };
+  });
