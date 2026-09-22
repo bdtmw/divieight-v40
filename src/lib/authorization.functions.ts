@@ -603,25 +603,57 @@ export function agentSideClear(status: DiligenceGateStatus): boolean {
   return status.blocker !== "agent" && status.blocker !== "both";
 }
 
+export type AgentAuthorizationRow = AuthorizationRequestRow & {
+  propertyLabel: string;
+  agentGateClear: boolean;
+  /** True when this agent is the pod's Heavy Lifting Agent for the property. */
+  isHla: boolean;
+  commissionItem: CommissionItemRow | null;
+  commissionConfirmed: number;
+  commissionDeclined: number;
+  commissionOutstanding: number;
+};
+
 export const listAgentAuthorizations = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const db = await adminDb();
     const agent = await agentFor(db, context.claims?.sub as string);
-    if (!agent)
-      return {
-        rows: [] as Array<
-          AuthorizationRequestRow & { propertyLabel: string; agentGateClear: boolean }
-        >,
-      };
-    const { data } = await db
+    if (!agent) return { rows: [] as AgentAuthorizationRow[] };
+
+    // Requests where this agent is the tethered Resident Agent…
+    const { data: mine } = await db
       .from("authorization_requests")
       .select("*")
       .eq("agent_id", agent.id)
       .order("created_at", { ascending: false });
-    const rows = (data ?? []) as AuthorizationRequestRow[];
+
+    // …plus requests on properties where this agent is the pod's Heavy Lifting
+    // Agent, since the commission provision is proposed by the HLA.
+    const { data: hlaPods } = await db
+      .from("pods")
+      .select("property_id, hla_status")
+      .eq("heavy_lifting_agent_id", agent.id);
+    const hlaProperties = ((hlaPods ?? []) as Array<{ property_id: string; hla_status: string }>)
+      .filter((p) => p.hla_status === "accepted")
+      .map((p) => p.property_id);
+    let hlaRows: AuthorizationRequestRow[] = [];
+    if (hlaProperties.length > 0) {
+      const { data } = await db
+        .from("authorization_requests")
+        .select("*")
+        .in("property_id", hlaProperties)
+        .order("created_at", { ascending: false });
+      hlaRows = (data ?? []) as AuthorizationRequestRow[];
+    }
+
+    const byId = new Map<string, AuthorizationRequestRow>();
+    for (const r of [...((mine ?? []) as AuthorizationRequestRow[]), ...hlaRows]) byId.set(r.id, r);
+    const rows = [...byId.values()].sort((a, b) => b.created_at.localeCompare(a.created_at));
+
     const labels = new Map<string, string>();
     const gates = new Map<string, boolean>();
+    const out: AgentAuthorizationRow[] = [];
     for (const row of rows) {
       const key = `${row.property_id}:${row.buyer_account_id}`;
       if (!gates.has(key)) {
@@ -632,14 +664,26 @@ export const listAgentAuthorizations = createServerFn({ method: "GET" })
       }
       if (!labels.has(row.property_id))
         labels.set(row.property_id, propertyLabel(await propertyFor(db, row.property_id)));
+
+      const commissionItem = await loadCommissionItem(db, row.id);
+      const responses = commissionItem ? await loadCommissionResponses(db, commissionItem.id) : [];
+      const members = await loadMembers(db, row.buyer_account_id);
+      const state = commissionItemState(
+        responses,
+        members.map((m) => m.id),
+      );
+      out.push({
+        ...row,
+        propertyLabel: labels.get(row.property_id) ?? "",
+        agentGateClear: gates.get(key) ?? true,
+        isHla: hlaProperties.includes(row.property_id),
+        commissionItem,
+        commissionConfirmed: state.confirmed.length,
+        commissionDeclined: state.declined.length,
+        commissionOutstanding: commissionItem ? state.outstanding.length : 0,
+      });
     }
-    return {
-      rows: rows.map((r) => ({
-        ...r,
-        propertyLabel: labels.get(r.property_id) ?? "",
-        agentGateClear: gates.get(`${r.property_id}:${r.buyer_account_id}`) ?? true,
-      })),
-    };
+    return { rows: out };
   });
 
 /** Attach a recommendation — or explicitly note that there is none. */
