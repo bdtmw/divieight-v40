@@ -1014,6 +1014,7 @@ export const proposeCommissionItem = createServerFn({ method: "POST" })
       actorType: "agent",
       actionType: "authorization.commission_proposed",
       entityId: row.id,
+      entityType: "authorization_commission_item",
       metadata: {
         commission_item_id: itemId,
         proposed_by_agent_id: agent.id,
@@ -1142,6 +1143,7 @@ export const respondToCommissionItem = createServerFn({ method: "POST" })
           ? "authorization.commission_authorized"
           : "authorization.commission_declined",
       entityId: row.id,
+      entityType: "authorization_commission_item",
       metadata: {
         record_type: "itemized_commission_authorization",
         commission_item_id: item.id,
