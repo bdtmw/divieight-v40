@@ -357,7 +357,10 @@ export const listBuyerAuthorizations = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const db = await adminDb();
     const buyer = await buyerFor(db, context.claims?.sub as string);
-    if (!buyer) return { rows: [] as Array<AuthorizationRequestRow & { propertyLabel: string }> };
+    if (!buyer)
+      return {
+        rows: [] as Array<AuthorizationRequestRow & { propertyLabel: string; gateClear: boolean }>,
+      };
     const { data } = await db
       .from("authorization_requests")
       .select("*")
@@ -365,11 +368,17 @@ export const listBuyerAuthorizations = createServerFn({ method: "GET" })
       .order("created_at", { ascending: false });
     const rows = (data ?? []) as AuthorizationRequestRow[];
     const labels = new Map<string, string>();
+    const gates = new Map<string, boolean>();
     for (const id of new Set(rows.map((r) => r.property_id))) {
       labels.set(id, propertyLabel(await propertyFor(db, id)));
+      gates.set(id, await diligenceGateClear(db, id, buyer.id));
     }
     return {
-      rows: rows.map((r) => ({ ...r, propertyLabel: labels.get(r.property_id) ?? "" })),
+      rows: rows.map((r) => ({
+        ...r,
+        propertyLabel: labels.get(r.property_id) ?? "",
+        gateClear: gates.get(r.property_id) ?? true,
+      })),
     };
   });
 
