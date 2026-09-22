@@ -47,6 +47,7 @@ import { Route as BuyerVerificationRouteImport } from './routes/buyer.verificati
 import { Route as BuyerRegisterRouteImport } from './routes/buyer.register'
 import { Route as BuyerLoginRouteImport } from './routes/buyer.login'
 import { Route as BuyerGoldenTicketRouteImport } from './routes/buyer.golden-ticket'
+import { Route as BuyerEarnestMoneyRouteImport } from './routes/buyer.earnest-money'
 import { Route as BuyerDocumentsRouteImport } from './routes/buyer.documents'
 import { Route as BuyerDashboardRouteImport } from './routes/buyer.dashboard'
 import { Route as BuyerAuthorizationsRouteImport } from './routes/buyer.authorizations'
@@ -74,6 +75,7 @@ import { Route as AdminPaymentsRouteImport } from './routes/admin.payments'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminListingComplianceRouteImport } from './routes/admin.listing-compliance'
 import { Route as AdminEntityGenesisRouteImport } from './routes/admin.entity-genesis'
+import { Route as AdminEarnestMoneyRouteImport } from './routes/admin.earnest-money'
 import { Route as AdminContactsRouteImport } from './routes/admin.contacts'
 import { Route as AdminBuyersRouteImport } from './routes/admin.buyers'
 import { Route as AdminBrokersRouteImport } from './routes/admin.brokers'
@@ -107,6 +109,7 @@ import { Route as ApiPublicListingApprovalEscalationRouteImport } from './routes
 import { Route as ApiPublicHlaSweepRouteImport } from './routes/api.public.hla-sweep'
 import { Route as ApiPublicEoExpirySweepRouteImport } from './routes/api.public.eo-expiry-sweep'
 import { Route as ApiPublicEnrollmentMaintenanceRouteImport } from './routes/api.public.enrollment-maintenance'
+import { Route as ApiPublicEarnestMoneySweepRouteImport } from './routes/api.public.earnest-money-sweep'
 import { Route as ApiPublicDiligenceEscalationRouteImport } from './routes/api.public.diligence-escalation'
 import { Route as ApiPublicDesignationSweepRouteImport } from './routes/api.public.designation-sweep'
 import { Route as ApiPublicBrokerRelationshipSweepRouteImport } from './routes/api.public.broker-relationship-sweep'
@@ -317,6 +320,11 @@ const BuyerGoldenTicketRoute = BuyerGoldenTicketRouteImport.update({
   path: '/buyer/golden-ticket',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuyerEarnestMoneyRoute = BuyerEarnestMoneyRouteImport.update({
+  id: '/buyer/earnest-money',
+  path: '/buyer/earnest-money',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BuyerDocumentsRoute = BuyerDocumentsRouteImport.update({
   id: '/buyer/documents',
   path: '/buyer/documents',
@@ -450,6 +458,11 @@ const AdminListingComplianceRoute = AdminListingComplianceRouteImport.update({
 const AdminEntityGenesisRoute = AdminEntityGenesisRouteImport.update({
   id: '/entity-genesis',
   path: '/entity-genesis',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminEarnestMoneyRoute = AdminEarnestMoneyRouteImport.update({
+  id: '/earnest-money',
+  path: '/earnest-money',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminContactsRoute = AdminContactsRouteImport.update({
@@ -627,6 +640,12 @@ const ApiPublicEnrollmentMaintenanceRoute =
     path: '/api/public/enrollment-maintenance',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicEarnestMoneySweepRoute =
+  ApiPublicEarnestMoneySweepRouteImport.update({
+    id: '/api/public/earnest-money-sweep',
+    path: '/api/public/earnest-money-sweep',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicDiligenceEscalationRoute =
   ApiPublicDiligenceEscalationRouteImport.update({
     id: '/api/public/diligence-escalation',
@@ -755,6 +774,7 @@ export interface FileRoutesByFullPath {
   '/admin/brokers': typeof AdminBrokersRoute
   '/admin/buyers': typeof AdminBuyersRoute
   '/admin/contacts': typeof AdminContactsRoute
+  '/admin/earnest-money': typeof AdminEarnestMoneyRoute
   '/admin/entity-genesis': typeof AdminEntityGenesisRoute
   '/admin/listing-compliance': typeof AdminListingComplianceRoute
   '/admin/login': typeof AdminLoginRoute
@@ -782,6 +802,7 @@ export interface FileRoutesByFullPath {
   '/buyer/authorizations': typeof BuyerAuthorizationsRouteWithChildren
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/documents': typeof BuyerDocumentsRoute
+  '/buyer/earnest-money': typeof BuyerEarnestMoneyRoute
   '/buyer/golden-ticket': typeof BuyerGoldenTicketRoute
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
@@ -819,6 +840,7 @@ export interface FileRoutesByFullPath {
   '/api/public/broker-relationship-sweep': typeof ApiPublicBrokerRelationshipSweepRoute
   '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
   '/api/public/diligence-escalation': typeof ApiPublicDiligenceEscalationRoute
+  '/api/public/earnest-money-sweep': typeof ApiPublicEarnestMoneySweepRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/api/public/eo-expiry-sweep': typeof ApiPublicEoExpirySweepRoute
   '/api/public/hla-sweep': typeof ApiPublicHlaSweepRoute
@@ -870,6 +892,7 @@ export interface FileRoutesByTo {
   '/admin/brokers': typeof AdminBrokersRoute
   '/admin/buyers': typeof AdminBuyersRoute
   '/admin/contacts': typeof AdminContactsRoute
+  '/admin/earnest-money': typeof AdminEarnestMoneyRoute
   '/admin/entity-genesis': typeof AdminEntityGenesisRoute
   '/admin/listing-compliance': typeof AdminListingComplianceRoute
   '/admin/login': typeof AdminLoginRoute
@@ -894,6 +917,7 @@ export interface FileRoutesByTo {
   '/buyer/adverse-action': typeof BuyerAdverseActionRoute
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/documents': typeof BuyerDocumentsRoute
+  '/buyer/earnest-money': typeof BuyerEarnestMoneyRoute
   '/buyer/golden-ticket': typeof BuyerGoldenTicketRoute
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
@@ -931,6 +955,7 @@ export interface FileRoutesByTo {
   '/api/public/broker-relationship-sweep': typeof ApiPublicBrokerRelationshipSweepRoute
   '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
   '/api/public/diligence-escalation': typeof ApiPublicDiligenceEscalationRoute
+  '/api/public/earnest-money-sweep': typeof ApiPublicEarnestMoneySweepRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/api/public/eo-expiry-sweep': typeof ApiPublicEoExpirySweepRoute
   '/api/public/hla-sweep': typeof ApiPublicHlaSweepRoute
@@ -987,6 +1012,7 @@ export interface FileRoutesById {
   '/admin/brokers': typeof AdminBrokersRoute
   '/admin/buyers': typeof AdminBuyersRoute
   '/admin/contacts': typeof AdminContactsRoute
+  '/admin/earnest-money': typeof AdminEarnestMoneyRoute
   '/admin/entity-genesis': typeof AdminEntityGenesisRoute
   '/admin/listing-compliance': typeof AdminListingComplianceRoute
   '/admin/login': typeof AdminLoginRoute
@@ -1014,6 +1040,7 @@ export interface FileRoutesById {
   '/buyer/authorizations': typeof BuyerAuthorizationsRouteWithChildren
   '/buyer/dashboard': typeof BuyerDashboardRoute
   '/buyer/documents': typeof BuyerDocumentsRoute
+  '/buyer/earnest-money': typeof BuyerEarnestMoneyRoute
   '/buyer/golden-ticket': typeof BuyerGoldenTicketRoute
   '/buyer/login': typeof BuyerLoginRoute
   '/buyer/register': typeof BuyerRegisterRoute
@@ -1051,6 +1078,7 @@ export interface FileRoutesById {
   '/api/public/broker-relationship-sweep': typeof ApiPublicBrokerRelationshipSweepRoute
   '/api/public/designation-sweep': typeof ApiPublicDesignationSweepRoute
   '/api/public/diligence-escalation': typeof ApiPublicDiligenceEscalationRoute
+  '/api/public/earnest-money-sweep': typeof ApiPublicEarnestMoneySweepRoute
   '/api/public/enrollment-maintenance': typeof ApiPublicEnrollmentMaintenanceRoute
   '/api/public/eo-expiry-sweep': typeof ApiPublicEoExpirySweepRoute
   '/api/public/hla-sweep': typeof ApiPublicHlaSweepRoute
@@ -1108,6 +1136,7 @@ export interface FileRouteTypes {
     | '/admin/brokers'
     | '/admin/buyers'
     | '/admin/contacts'
+    | '/admin/earnest-money'
     | '/admin/entity-genesis'
     | '/admin/listing-compliance'
     | '/admin/login'
@@ -1135,6 +1164,7 @@ export interface FileRouteTypes {
     | '/buyer/authorizations'
     | '/buyer/dashboard'
     | '/buyer/documents'
+    | '/buyer/earnest-money'
     | '/buyer/golden-ticket'
     | '/buyer/login'
     | '/buyer/register'
@@ -1172,6 +1202,7 @@ export interface FileRouteTypes {
     | '/api/public/broker-relationship-sweep'
     | '/api/public/designation-sweep'
     | '/api/public/diligence-escalation'
+    | '/api/public/earnest-money-sweep'
     | '/api/public/enrollment-maintenance'
     | '/api/public/eo-expiry-sweep'
     | '/api/public/hla-sweep'
@@ -1223,6 +1254,7 @@ export interface FileRouteTypes {
     | '/admin/brokers'
     | '/admin/buyers'
     | '/admin/contacts'
+    | '/admin/earnest-money'
     | '/admin/entity-genesis'
     | '/admin/listing-compliance'
     | '/admin/login'
@@ -1247,6 +1279,7 @@ export interface FileRouteTypes {
     | '/buyer/adverse-action'
     | '/buyer/dashboard'
     | '/buyer/documents'
+    | '/buyer/earnest-money'
     | '/buyer/golden-ticket'
     | '/buyer/login'
     | '/buyer/register'
@@ -1284,6 +1317,7 @@ export interface FileRouteTypes {
     | '/api/public/broker-relationship-sweep'
     | '/api/public/designation-sweep'
     | '/api/public/diligence-escalation'
+    | '/api/public/earnest-money-sweep'
     | '/api/public/enrollment-maintenance'
     | '/api/public/eo-expiry-sweep'
     | '/api/public/hla-sweep'
@@ -1339,6 +1373,7 @@ export interface FileRouteTypes {
     | '/admin/brokers'
     | '/admin/buyers'
     | '/admin/contacts'
+    | '/admin/earnest-money'
     | '/admin/entity-genesis'
     | '/admin/listing-compliance'
     | '/admin/login'
@@ -1366,6 +1401,7 @@ export interface FileRouteTypes {
     | '/buyer/authorizations'
     | '/buyer/dashboard'
     | '/buyer/documents'
+    | '/buyer/earnest-money'
     | '/buyer/golden-ticket'
     | '/buyer/login'
     | '/buyer/register'
@@ -1403,6 +1439,7 @@ export interface FileRouteTypes {
     | '/api/public/broker-relationship-sweep'
     | '/api/public/designation-sweep'
     | '/api/public/diligence-escalation'
+    | '/api/public/earnest-money-sweep'
     | '/api/public/enrollment-maintenance'
     | '/api/public/eo-expiry-sweep'
     | '/api/public/hla-sweep'
@@ -1458,6 +1495,7 @@ export interface RootRouteChildren {
   BuyerAuthorizationsRoute: typeof BuyerAuthorizationsRouteWithChildren
   BuyerDashboardRoute: typeof BuyerDashboardRoute
   BuyerDocumentsRoute: typeof BuyerDocumentsRoute
+  BuyerEarnestMoneyRoute: typeof BuyerEarnestMoneyRoute
   BuyerGoldenTicketRoute: typeof BuyerGoldenTicketRoute
   BuyerLoginRoute: typeof BuyerLoginRoute
   BuyerRegisterRoute: typeof BuyerRegisterRoute
@@ -1483,6 +1521,7 @@ export interface RootRouteChildren {
   ApiPublicBrokerRelationshipSweepRoute: typeof ApiPublicBrokerRelationshipSweepRoute
   ApiPublicDesignationSweepRoute: typeof ApiPublicDesignationSweepRoute
   ApiPublicDiligenceEscalationRoute: typeof ApiPublicDiligenceEscalationRoute
+  ApiPublicEarnestMoneySweepRoute: typeof ApiPublicEarnestMoneySweepRoute
   ApiPublicEnrollmentMaintenanceRoute: typeof ApiPublicEnrollmentMaintenanceRoute
   ApiPublicEoExpirySweepRoute: typeof ApiPublicEoExpirySweepRoute
   ApiPublicHlaSweepRoute: typeof ApiPublicHlaSweepRoute
@@ -1768,6 +1807,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyerGoldenTicketRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/buyer/earnest-money': {
+      id: '/buyer/earnest-money'
+      path: '/buyer/earnest-money'
+      fullPath: '/buyer/earnest-money'
+      preLoaderRoute: typeof BuyerEarnestMoneyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/buyer/documents': {
       id: '/buyer/documents'
       path: '/buyer/documents'
@@ -1955,6 +2001,13 @@ declare module '@tanstack/react-router' {
       path: '/entity-genesis'
       fullPath: '/admin/entity-genesis'
       preLoaderRoute: typeof AdminEntityGenesisRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/earnest-money': {
+      id: '/admin/earnest-money'
+      path: '/earnest-money'
+      fullPath: '/admin/earnest-money'
+      preLoaderRoute: typeof AdminEarnestMoneyRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/contacts': {
@@ -2188,6 +2241,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicEnrollmentMaintenanceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/earnest-money-sweep': {
+      id: '/api/public/earnest-money-sweep'
+      path: '/api/public/earnest-money-sweep'
+      fullPath: '/api/public/earnest-money-sweep'
+      preLoaderRoute: typeof ApiPublicEarnestMoneySweepRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/diligence-escalation': {
       id: '/api/public/diligence-escalation'
       path: '/api/public/diligence-escalation'
@@ -2345,6 +2405,7 @@ interface AdminRouteChildren {
   AdminBrokersRoute: typeof AdminBrokersRoute
   AdminBuyersRoute: typeof AdminBuyersRoute
   AdminContactsRoute: typeof AdminContactsRoute
+  AdminEarnestMoneyRoute: typeof AdminEarnestMoneyRoute
   AdminEntityGenesisRoute: typeof AdminEntityGenesisRoute
   AdminListingComplianceRoute: typeof AdminListingComplianceRoute
   AdminLoginRoute: typeof AdminLoginRoute
@@ -2367,6 +2428,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminBrokersRoute: AdminBrokersRoute,
   AdminBuyersRoute: AdminBuyersRoute,
   AdminContactsRoute: AdminContactsRoute,
+  AdminEarnestMoneyRoute: AdminEarnestMoneyRoute,
   AdminEntityGenesisRoute: AdminEntityGenesisRoute,
   AdminListingComplianceRoute: AdminListingComplianceRoute,
   AdminLoginRoute: AdminLoginRoute,
@@ -2534,6 +2596,7 @@ const rootRouteChildren: RootRouteChildren = {
   BuyerAuthorizationsRoute: BuyerAuthorizationsRouteWithChildren,
   BuyerDashboardRoute: BuyerDashboardRoute,
   BuyerDocumentsRoute: BuyerDocumentsRoute,
+  BuyerEarnestMoneyRoute: BuyerEarnestMoneyRoute,
   BuyerGoldenTicketRoute: BuyerGoldenTicketRoute,
   BuyerLoginRoute: BuyerLoginRoute,
   BuyerRegisterRoute: BuyerRegisterRoute,
@@ -2559,6 +2622,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicBrokerRelationshipSweepRoute: ApiPublicBrokerRelationshipSweepRoute,
   ApiPublicDesignationSweepRoute: ApiPublicDesignationSweepRoute,
   ApiPublicDiligenceEscalationRoute: ApiPublicDiligenceEscalationRoute,
+  ApiPublicEarnestMoneySweepRoute: ApiPublicEarnestMoneySweepRoute,
   ApiPublicEnrollmentMaintenanceRoute: ApiPublicEnrollmentMaintenanceRoute,
   ApiPublicEoExpirySweepRoute: ApiPublicEoExpirySweepRoute,
   ApiPublicHlaSweepRoute: ApiPublicHlaSweepRoute,

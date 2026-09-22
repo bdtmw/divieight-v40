@@ -408,6 +408,18 @@ export async function respondToInvitation(
     },
   });
 
+  // A Substitute Member funds their pro-rata earnest money on the SAME
+  // timeline as the member they replace — a condition of installation.
+  {
+    const { createSubstituteObligation } = await import("@/lib/earnest-money.server");
+    await createSubstituteObligation(db as never, {
+      propertyId: property.id,
+      buyerAccountId: params.buyerAccountId,
+      shares: invitation.shares_offered ?? 1,
+      actorId: params.authUserId,
+    });
+  }
+
   if (complete) {
     await notifyRemainingMembers(
       db,

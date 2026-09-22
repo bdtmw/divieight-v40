@@ -133,7 +133,14 @@ export type AuditAction =
   | "authorization.notification_failed"
   | "authorization.commission_proposed"
   | "authorization.commission_authorized"
-  | "authorization.commission_declined";
+  | "authorization.commission_declined"
+  | "earnest.obligation_issued"
+  | "earnest.instruction_viewed"
+  | "earnest.funded"
+  | "earnest.late"
+  | "earnest.default_declared"
+  | "earnest.substitution_opened"
+  | "earnest.substitute_obligation_created";
 
 
 export type AuditEntity =
@@ -154,7 +161,8 @@ export type AuditEntity =
   | "entity_genesis"
   | "diligence_document"
   | "authorization_request"
-  | "authorization_commission_item";
+  | "authorization_commission_item"
+  | "earnest_money_obligation";
 
 
 export async function logAudit(params: {
