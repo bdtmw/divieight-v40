@@ -17,6 +17,16 @@ import {
   type AuthorizationTerms,
   type RecommendationKind,
 } from "@/lib/authorization";
+import {
+  commissionItemState,
+  commissionStatement,
+  instrumentHash,
+  perShareBasisCents,
+  perShareCommissionCents,
+  type CommissionFundingSource,
+  type CommissionItemRow,
+  type CommissionResponseRow,
+} from "@/lib/commission-item";
 
 /**
  * Buyer-Authorization Workflow — server side.
