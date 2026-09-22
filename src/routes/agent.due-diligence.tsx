@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { AlertTriangle, CheckCircle2, FileText, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/use-auth";
 import { DiligenceDocumentPreview } from "@/components/DiligenceDocumentPreview";
 import {
   SecondaryVerification,
@@ -53,25 +54,44 @@ async function clientIp(): Promise<string | null> {
 function AgentDueDiligencePage() {
   const load = useServerFn(getAgentDiligenceTasks);
   const ack = useServerFn(acknowledgeAsAgent);
+  const { user, loading: authLoading } = useAuth();
   const [tasks, setTasks] = useState<AgentDiligenceTask[]>([]);
   const [ackText, setAckText] = useState("");
   const [agentName, setAgentName] = useState("Resident Agent");
   const [loading, setLoading] = useState(true);
 
   const refresh = useCallback(async () => {
-    const r = await load();
-    setTasks(r.tasks);
-    setAckText(r.ackText);
-    setAgentName(r.agentName);
-    setLoading(false);
+    try {
+      const r = await load();
+      setTasks(r.tasks);
+      setAckText(r.ackText);
+      setAgentName(r.agentName);
+    } catch {
+      setTasks([]);
+    } finally {
+      setLoading(false);
+    }
   }, [load]);
 
   useEffect(() => {
+    if (authLoading) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
     void refresh();
-  }, [refresh]);
+  }, [refresh, user, authLoading]);
 
-  if (loading) {
+  if (authLoading || loading) {
     return <p className="px-6 py-16 text-center text-sm text-muted-foreground">Loading…</p>;
+  }
+
+  if (!user) {
+    return (
+      <p className="px-6 py-16 text-center text-sm text-muted-foreground">
+        Sign in to your agent account to review due-diligence documents.
+      </p>
+    );
   }
 
   const pending = tasks.filter((t) => !t.acknowledged);
