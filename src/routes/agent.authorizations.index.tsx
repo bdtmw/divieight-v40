@@ -10,7 +10,6 @@ import {
   diffTerms,
   formatDeadline,
   recommendationLabel,
-  type AuthorizationRequestRow,
   type RecommendationKind,
 } from "@/lib/authorization";
 import {
