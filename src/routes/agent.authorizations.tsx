@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { FileWarning } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import {
@@ -21,7 +22,7 @@ export const Route = createFileRoute("/agent/authorizations")({
   component: AgentAuthorizations,
 });
 
-type Row = AuthorizationRequestRow & { propertyLabel: string };
+type Row = AuthorizationRequestRow & { propertyLabel: string; agentGateClear: boolean };
 
 function AgentAuthorizations() {
   const load = useServerFn(listAgentAuthorizations);
