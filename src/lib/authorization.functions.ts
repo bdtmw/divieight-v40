@@ -571,12 +571,22 @@ export const respondToAuthorization = createServerFn({ method: "POST" })
 // Resident Agent side
 // ---------------------------------------------------------------------------
 
+/** True when the gate's only blocker (if any) is the buyer — the agent side is current. */
+export function agentSideClear(status: DiligenceGateStatus): boolean {
+  return status.blocker !== "agent" && status.blocker !== "both";
+}
+
 export const listAgentAuthorizations = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const db = await adminDb();
     const agent = await agentFor(db, context.claims?.sub as string);
-    if (!agent) return { rows: [] as Array<AuthorizationRequestRow & { propertyLabel: string }> };
+    if (!agent)
+      return {
+        rows: [] as Array<
+          AuthorizationRequestRow & { propertyLabel: string; agentGateClear: boolean }
+        >,
+      };
     const { data } = await db
       .from("authorization_requests")
       .select("*")
@@ -584,10 +594,25 @@ export const listAgentAuthorizations = createServerFn({ method: "GET" })
       .order("created_at", { ascending: false });
     const rows = (data ?? []) as AuthorizationRequestRow[];
     const labels = new Map<string, string>();
-    for (const id of new Set(rows.map((r) => r.property_id))) {
-      labels.set(id, propertyLabel(await propertyFor(db, id)));
+    const gates = new Map<string, boolean>();
+    for (const row of rows) {
+      const key = `${row.property_id}:${row.buyer_account_id}`;
+      if (!gates.has(key)) {
+        gates.set(
+          key,
+          agentSideClear(await diligenceGateStatus(db, row.property_id, row.buyer_account_id)),
+        );
+      }
+      if (!labels.has(row.property_id))
+        labels.set(row.property_id, propertyLabel(await propertyFor(db, row.property_id)));
     }
-    return { rows: rows.map((r) => ({ ...r, propertyLabel: labels.get(r.property_id) ?? "" })) };
+    return {
+      rows: rows.map((r) => ({
+        ...r,
+        propertyLabel: labels.get(r.property_id) ?? "",
+        agentGateClear: gates.get(`${r.property_id}:${r.buyer_account_id}`) ?? true,
+      })),
+    };
   });
 
 /** Attach a recommendation — or explicitly note that there is none. */
@@ -610,6 +635,10 @@ export const submitAgentRecommendation = createServerFn({ method: "POST" })
       .eq("id", data.requestId)
       .maybeSingle();
     if (!row || row.agent_id !== agent.id) throw new Error("Not authorized");
+
+    // Precondition: the agent's own Parallel Resident Agent Acknowledgment must be current.
+    if (!agentSideClear(await diligenceGateStatus(db, row.property_id, row.buyer_account_id)))
+      throw new Error("Review and acknowledge the required documents for this property first");
 
     await db
       .from("authorization_requests")
