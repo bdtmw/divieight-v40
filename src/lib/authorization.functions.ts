@@ -56,6 +56,7 @@ export async function audit(
     actorType: string;
     actionType: string;
     entityId?: string | null;
+    entityType?: string;
     metadata?: Record<string, unknown>;
   },
 ) {
@@ -63,7 +64,7 @@ export async function audit(
     actor_id: row.actorId,
     actor_type: row.actorType,
     action_type: row.actionType,
-    entity_type: "authorization_request",
+    entity_type: row.entityType ?? "authorization_request",
     entity_id: row.entityId ?? null,
     metadata: row.metadata ?? {},
   });
