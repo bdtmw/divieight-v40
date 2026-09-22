@@ -16,13 +16,15 @@ import {
 import {
   listAgentAuthorizations,
   submitAgentRecommendation,
+  type AgentAuthorizationRow,
 } from "@/lib/authorization.functions";
+import { formatCents, formatRate, fundingSourceLabel } from "@/lib/commission-item";
 
 export const Route = createFileRoute("/agent/authorizations/")({
   component: AgentAuthorizations,
 });
 
-type Row = AuthorizationRequestRow & { propertyLabel: string; agentGateClear: boolean };
+type Row = AgentAuthorizationRow;
 
 function AgentAuthorizations() {
   const load = useServerFn(listAgentAuthorizations);
@@ -142,6 +144,39 @@ function AgentAuthorizations() {
                     </div>
                   ))}
                 </dl>
+
+                <div className="mt-4 rounded-lg border border-border bg-muted/40 p-3">
+                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    Buyer-side commission provision
+                  </p>
+                  {row.commissionItem ? (
+                    <>
+                      <p className="mt-1 text-sm text-foreground">
+                        {formatRate(row.commissionItem.rate_percent)} of the 1/8th share price —{" "}
+                        {formatCents(row.commissionItem.per_share_amount_cents)} per Preferred
+                        Member. {fundingSourceLabel(row.commissionItem.funding_source)}.
+                      </p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Proposed by the Heavy Lifting Agent. Member authorizations:{" "}
+                        {row.commissionConfirmed} authorized · {row.commissionDeclined} declined ·{" "}
+                        {row.commissionOutstanding} outstanding.
+                      </p>
+                    </>
+                  ) : (
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      No commission provision has been proposed by the Heavy Lifting Agent yet.
+                    </p>
+                  )}
+                  {row.isHla && row.status === "pending" ? (
+                    <Link
+                      to="/agent/authorizations/$id/commission"
+                      params={{ id: row.id }}
+                      className="mt-2 inline-block text-sm font-medium text-primary hover:underline"
+                    >
+                      {row.commissionItem ? "Revise the provision" : "Propose the provision"}
+                    </Link>
+                  ) : null}
+                </div>
 
                 <p className="mt-4 text-xs text-muted-foreground">
                   Current position: {recommendationLabel(row.recommendation_kind)}
