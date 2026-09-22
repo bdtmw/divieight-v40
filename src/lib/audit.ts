@@ -153,7 +153,8 @@ export type AuditEntity =
   | "logging_source"
   | "entity_genesis"
   | "diligence_document"
-  | "authorization_request";
+  | "authorization_request"
+  | "authorization_commission_item";
 
 
 export async function logAudit(params: {
