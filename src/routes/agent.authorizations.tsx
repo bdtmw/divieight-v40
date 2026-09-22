@@ -143,7 +143,7 @@ function AgentAuthorizations() {
                   Current position: {recommendationLabel(row.recommendation_kind)}
                 </p>
 
-                {row.status === "pending" ? (
+                {row.status === "pending" && !blocked ? (
                   <div className="mt-3 space-y-3">
                     <select
                       value={entry.kind}
