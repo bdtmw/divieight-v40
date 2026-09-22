@@ -651,7 +651,7 @@ export const listAuthorizationTargets = createServerFn({ method: "GET" })
     const { data } = await db
       .from("pod_reservations")
       .select("buyer_account_id, property_id, status")
-      .in("status", ["active", "confirmed", "system_lock", "forming"]);
+      .eq("status", "reserved");
     const seen = new Set<string>();
     const targets: Array<{
       buyerAccountId: string;
