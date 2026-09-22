@@ -63,7 +63,6 @@ import { Route as AgentLeadsRouteImport } from './routes/agent.leads'
 import { Route as AgentDueDiligenceRouteImport } from './routes/agent.due-diligence'
 import { Route as AgentDashboardRouteImport } from './routes/agent.dashboard'
 import { Route as AgentBrokerRelationshipRouteImport } from './routes/agent.broker-relationship'
-import { Route as AgentAuthorizationsRouteImport } from './routes/agent.authorizations'
 import { Route as AgentAttributionRouteImport } from './routes/agent.attribution'
 import { Route as AdminTetherResolutionRouteImport } from './routes/admin.tether-resolution'
 import { Route as AdminSupportRouteImport } from './routes/admin.support'
@@ -84,6 +83,7 @@ import { Route as BuyerOnboardingIndexRouteImport } from './routes/buyer.onboard
 import { Route as BuyerAuthorizationsIndexRouteImport } from './routes/buyer.authorizations.index'
 import { Route as AgentListingsIndexRouteImport } from './routes/agent.listings.index'
 import { Route as AgentDocumentsIndexRouteImport } from './routes/agent.documents.index'
+import { Route as AgentAuthorizationsIndexRouteImport } from './routes/agent.authorizations.index'
 import { Route as AdminPropertiesIndexRouteImport } from './routes/admin.properties.index'
 import { Route as AdminPodsIndexRouteImport } from './routes/admin.pods.index'
 import { Route as ListingsIdEditRouteImport } from './routes/listings.$id.edit'
@@ -395,11 +395,6 @@ const AgentBrokerRelationshipRoute = AgentBrokerRelationshipRouteImport.update({
   path: '/broker-relationship',
   getParentRoute: () => AgentRoute,
 } as any)
-const AgentAuthorizationsRoute = AgentAuthorizationsRouteImport.update({
-  id: '/authorizations',
-  path: '/authorizations',
-  getParentRoute: () => AgentRoute,
-} as any)
 const AgentAttributionRoute = AgentAttributionRouteImport.update({
   id: '/attribution',
   path: '/attribution',
@@ -501,6 +496,12 @@ const AgentDocumentsIndexRoute = AgentDocumentsIndexRouteImport.update({
   path: '/documents/',
   getParentRoute: () => AgentRoute,
 } as any)
+const AgentAuthorizationsIndexRoute =
+  AgentAuthorizationsIndexRouteImport.update({
+    id: '/authorizations/',
+    path: '/authorizations/',
+    getParentRoute: () => AgentRoute,
+  } as any)
 const AdminPropertiesIndexRoute = AdminPropertiesIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -751,7 +752,6 @@ export interface FileRoutesByFullPath {
   '/admin/support': typeof AdminSupportRoute
   '/admin/tether-resolution': typeof AdminTetherResolutionRoute
   '/agent/attribution': typeof AgentAttributionRoute
-  '/agent/authorizations': typeof AgentAuthorizationsRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/due-diligence': typeof AgentDueDiligenceRoute
@@ -827,6 +827,7 @@ export interface FileRoutesByFullPath {
   '/listings/$id/edit': typeof ListingsIdEditRoute
   '/admin/pods/': typeof AdminPodsIndexRoute
   '/admin/properties/': typeof AdminPropertiesIndexRoute
+  '/agent/authorizations/': typeof AgentAuthorizationsIndexRoute
   '/agent/documents/': typeof AgentDocumentsIndexRoute
   '/agent/listings/': typeof AgentListingsIndexRoute
   '/buyer/authorizations/': typeof BuyerAuthorizationsIndexRoute
@@ -863,7 +864,6 @@ export interface FileRoutesByTo {
   '/admin/support': typeof AdminSupportRoute
   '/admin/tether-resolution': typeof AdminTetherResolutionRoute
   '/agent/attribution': typeof AgentAttributionRoute
-  '/agent/authorizations': typeof AgentAuthorizationsRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/due-diligence': typeof AgentDueDiligenceRoute
@@ -938,6 +938,7 @@ export interface FileRoutesByTo {
   '/listings/$id/edit': typeof ListingsIdEditRoute
   '/admin/pods': typeof AdminPodsIndexRoute
   '/admin/properties': typeof AdminPropertiesIndexRoute
+  '/agent/authorizations': typeof AgentAuthorizationsIndexRoute
   '/agent/documents': typeof AgentDocumentsIndexRoute
   '/agent/listings': typeof AgentListingsIndexRoute
   '/buyer/authorizations': typeof BuyerAuthorizationsIndexRoute
@@ -980,7 +981,6 @@ export interface FileRoutesById {
   '/admin/support': typeof AdminSupportRoute
   '/admin/tether-resolution': typeof AdminTetherResolutionRoute
   '/agent/attribution': typeof AgentAttributionRoute
-  '/agent/authorizations': typeof AgentAuthorizationsRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/due-diligence': typeof AgentDueDiligenceRoute
@@ -1056,6 +1056,7 @@ export interface FileRoutesById {
   '/listings/$id/edit': typeof ListingsIdEditRoute
   '/admin/pods/': typeof AdminPodsIndexRoute
   '/admin/properties/': typeof AdminPropertiesIndexRoute
+  '/agent/authorizations/': typeof AgentAuthorizationsIndexRoute
   '/agent/documents/': typeof AgentDocumentsIndexRoute
   '/agent/listings/': typeof AgentListingsIndexRoute
   '/buyer/authorizations/': typeof BuyerAuthorizationsIndexRoute
@@ -1099,7 +1100,6 @@ export interface FileRouteTypes {
     | '/admin/support'
     | '/admin/tether-resolution'
     | '/agent/attribution'
-    | '/agent/authorizations'
     | '/agent/broker-relationship'
     | '/agent/dashboard'
     | '/agent/due-diligence'
@@ -1175,6 +1175,7 @@ export interface FileRouteTypes {
     | '/listings/$id/edit'
     | '/admin/pods/'
     | '/admin/properties/'
+    | '/agent/authorizations/'
     | '/agent/documents/'
     | '/agent/listings/'
     | '/buyer/authorizations/'
@@ -1211,7 +1212,6 @@ export interface FileRouteTypes {
     | '/admin/support'
     | '/admin/tether-resolution'
     | '/agent/attribution'
-    | '/agent/authorizations'
     | '/agent/broker-relationship'
     | '/agent/dashboard'
     | '/agent/due-diligence'
@@ -1286,6 +1286,7 @@ export interface FileRouteTypes {
     | '/listings/$id/edit'
     | '/admin/pods'
     | '/admin/properties'
+    | '/agent/authorizations'
     | '/agent/documents'
     | '/agent/listings'
     | '/buyer/authorizations'
@@ -1327,7 +1328,6 @@ export interface FileRouteTypes {
     | '/admin/support'
     | '/admin/tether-resolution'
     | '/agent/attribution'
-    | '/agent/authorizations'
     | '/agent/broker-relationship'
     | '/agent/dashboard'
     | '/agent/due-diligence'
@@ -1403,6 +1403,7 @@ export interface FileRouteTypes {
     | '/listings/$id/edit'
     | '/admin/pods/'
     | '/admin/properties/'
+    | '/agent/authorizations/'
     | '/agent/documents/'
     | '/agent/listings/'
     | '/buyer/authorizations/'
@@ -1856,13 +1857,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentBrokerRelationshipRouteImport
       parentRoute: typeof AgentRoute
     }
-    '/agent/authorizations': {
-      id: '/agent/authorizations'
-      path: '/authorizations'
-      fullPath: '/agent/authorizations'
-      preLoaderRoute: typeof AgentAuthorizationsRouteImport
-      parentRoute: typeof AgentRoute
-    }
     '/agent/attribution': {
       id: '/agent/attribution'
       path: '/attribution'
@@ -2001,6 +1995,13 @@ declare module '@tanstack/react-router' {
       path: '/documents'
       fullPath: '/agent/documents/'
       preLoaderRoute: typeof AgentDocumentsIndexRouteImport
+      parentRoute: typeof AgentRoute
+    }
+    '/agent/authorizations/': {
+      id: '/agent/authorizations/'
+      path: '/authorizations'
+      fullPath: '/agent/authorizations/'
+      preLoaderRoute: typeof AgentAuthorizationsIndexRouteImport
       parentRoute: typeof AgentRoute
     }
     '/admin/properties/': {
@@ -2348,7 +2349,6 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface AgentRouteChildren {
   AgentAttributionRoute: typeof AgentAttributionRoute
-  AgentAuthorizationsRoute: typeof AgentAuthorizationsRoute
   AgentBrokerRelationshipRoute: typeof AgentBrokerRelationshipRoute
   AgentDashboardRoute: typeof AgentDashboardRoute
   AgentDueDiligenceRoute: typeof AgentDueDiligenceRoute
@@ -2364,6 +2364,7 @@ interface AgentRouteChildren {
   AgentOnboardingInsuranceRoute: typeof AgentOnboardingInsuranceRoute
   AgentOnboardingLicenseCheckRoute: typeof AgentOnboardingLicenseCheckRoute
   AgentOnboardingLicenseDetailsRoute: typeof AgentOnboardingLicenseDetailsRoute
+  AgentAuthorizationsIndexRoute: typeof AgentAuthorizationsIndexRoute
   AgentDocumentsIndexRoute: typeof AgentDocumentsIndexRoute
   AgentListingsIndexRoute: typeof AgentListingsIndexRoute
   AgentPodsIdBriefcaseRoute: typeof AgentPodsIdBriefcaseRoute
@@ -2373,7 +2374,6 @@ interface AgentRouteChildren {
 
 const AgentRouteChildren: AgentRouteChildren = {
   AgentAttributionRoute: AgentAttributionRoute,
-  AgentAuthorizationsRoute: AgentAuthorizationsRoute,
   AgentBrokerRelationshipRoute: AgentBrokerRelationshipRoute,
   AgentDashboardRoute: AgentDashboardRoute,
   AgentDueDiligenceRoute: AgentDueDiligenceRoute,
@@ -2389,6 +2389,7 @@ const AgentRouteChildren: AgentRouteChildren = {
   AgentOnboardingInsuranceRoute: AgentOnboardingInsuranceRoute,
   AgentOnboardingLicenseCheckRoute: AgentOnboardingLicenseCheckRoute,
   AgentOnboardingLicenseDetailsRoute: AgentOnboardingLicenseDetailsRoute,
+  AgentAuthorizationsIndexRoute: AgentAuthorizationsIndexRoute,
   AgentDocumentsIndexRoute: AgentDocumentsIndexRoute,
   AgentListingsIndexRoute: AgentListingsIndexRoute,
   AgentPodsIdBriefcaseRoute: AgentPodsIdBriefcaseRoute,

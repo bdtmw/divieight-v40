@@ -18,7 +18,7 @@ import {
   submitAgentRecommendation,
 } from "@/lib/authorization.functions";
 
-export const Route = createFileRoute("/agent/authorizations")({
+export const Route = createFileRoute("/agent/authorizations/")({
   component: AgentAuthorizations,
 });
 
