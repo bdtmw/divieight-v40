@@ -41,7 +41,18 @@ type Row = AuthorizationRequestRow & {
   propertyLabel: string;
   buyerEmail: string | null;
   outstanding: number;
+  memberCount: number;
+  confirmedCount: number;
+  declinedCount: number;
+  memberResponses: Array<{
+    memberId: string;
+    name: string;
+    decision: "confirmed" | "declined" | null;
+    respondedAt: string | null;
+    onBehalfOf: string | null;
+  }>;
 };
+
 
 type Target = {
   buyerAccountId: string;
