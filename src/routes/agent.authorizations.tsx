@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { FileWarning } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import {
@@ -21,7 +22,7 @@ export const Route = createFileRoute("/agent/authorizations")({
   component: AgentAuthorizations,
 });
 
-type Row = AuthorizationRequestRow & { propertyLabel: string };
+type Row = AuthorizationRequestRow & { propertyLabel: string; agentGateClear: boolean };
 
 function AgentAuthorizations() {
   const load = useServerFn(listAgentAuthorizations);
@@ -76,6 +77,7 @@ function AgentAuthorizations() {
               kind: (row.recommendation_kind ?? "no_recommendation") as RecommendationKind,
               text: row.recommendation_text ?? "",
             };
+            const blocked = row.status === "pending" && !row.agentGateClear;
             return (
               <li key={row.id} className="rounded-xl border border-border bg-card p-5">
                 <div className="flex flex-wrap items-start justify-between gap-3">
@@ -88,10 +90,32 @@ function AgentAuthorizations() {
                       Buyer deadline {formatDeadline(row.deadline_at)}
                     </p>
                   </div>
-                  <span className="rounded-full bg-muted px-3 py-1 text-xs text-foreground">
-                    {authorizationStatusLabel(row)}
-                  </span>
+                  {blocked ? (
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent">
+                      <FileWarning className="h-3.5 w-3.5" />
+                      Document review required
+                    </span>
+                  ) : (
+                    <span className="rounded-full bg-muted px-3 py-1 text-xs text-foreground">
+                      {authorizationStatusLabel(row)}
+                    </span>
+                  )}
                 </div>
+
+                {blocked ? (
+                  <div className="mt-4">
+                    <p className="text-xs text-muted-foreground">
+                      You have an unread required document for this property. Review and acknowledge
+                      it before you can respond to this authorization request.
+                    </p>
+                    <Link
+                      to="/agent/due-diligence"
+                      className="mt-2 inline-block text-sm font-medium text-primary hover:underline"
+                    >
+                      Review the required document
+                    </Link>
+                  </div>
+                ) : null}
 
                 <dl className="mt-4 divide-y divide-border rounded-lg border border-border">
                   {diffTerms(row.terms ?? {}, row.prior_terms).map((line) => (
@@ -119,7 +143,7 @@ function AgentAuthorizations() {
                   Current position: {recommendationLabel(row.recommendation_kind)}
                 </p>
 
-                {row.status === "pending" ? (
+                {row.status === "pending" && !blocked ? (
                   <div className="mt-3 space-y-3">
                     <select
                       value={entry.kind}
