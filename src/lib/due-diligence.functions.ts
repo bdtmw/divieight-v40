@@ -319,21 +319,33 @@ export interface AgentDiligenceTask {
 /** Parallel Resident Agent acknowledgment queue for the signed-in agent. */
 export const getAgentDiligenceTasks = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }): Promise<{ agentId: string | null; tasks: AgentDiligenceTask[]; ackText: string }> => {
+  .handler(async ({ context }): Promise<{
+    agentId: string | null;
+    agentName: string;
+    tasks: AgentDiligenceTask[];
+    ackText: string;
+  }> => {
     const db = await adminDb();
     const { data: agent } = await db
       .from("agents")
       .select("id, full_name")
       .eq("auth_user_id", context.userId)
       .maybeSingle();
-    if (!agent) return { agentId: null, tasks: [], ackText: AGENT_ACK_TEXT };
+    if (!agent)
+      return { agentId: null, agentName: "Resident Agent", tasks: [], ackText: AGENT_ACK_TEXT };
 
     const { data: buyers } = await db
       .from("buyer_accounts")
       .select("id")
       .eq("tethered_resident_agent_id", agent.id);
     const buyerIds = ((buyers ?? []) as { id: string }[]).map((b) => b.id);
-    if (buyerIds.length === 0) return { agentId: agent.id, tasks: [], ackText: AGENT_ACK_TEXT };
+    if (buyerIds.length === 0)
+      return {
+        agentId: agent.id,
+        agentName: agent.full_name ?? "Resident Agent",
+        tasks: [],
+        ackText: AGENT_ACK_TEXT,
+      };
 
     // Properties those buyers have reserved into.
     const { data: reservations } = await db
@@ -346,7 +358,13 @@ export const getAgentDiligenceTasks = createServerFn({ method: "GET" })
       buyerAccountId: r.buyer_account_id as string,
       propertyId: r.property_id as string,
     }));
-    if (pairs.length === 0) return { agentId: agent.id, tasks: [], ackText: AGENT_ACK_TEXT };
+    if (pairs.length === 0)
+      return {
+        agentId: agent.id,
+        agentName: agent.full_name ?? "Resident Agent",
+        tasks: [],
+        ackText: AGENT_ACK_TEXT,
+      };
 
     const propertyIds = [...new Set(pairs.map((p) => p.propertyId))];
     const { data: props } = await db
@@ -392,7 +410,12 @@ export const getAgentDiligenceTasks = createServerFn({ method: "GET" })
       }
     }
 
-    return { agentId: agent.id, tasks, ackText: AGENT_ACK_TEXT };
+    return {
+      agentId: agent.id,
+      agentName: agent.full_name ?? "Resident Agent",
+      tasks,
+      ackText: AGENT_ACK_TEXT,
+    };
   });
 
 /** Resident Agent parallel acknowledgment. */

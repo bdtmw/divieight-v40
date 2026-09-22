@@ -3,9 +3,13 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { AlertTriangle, CheckCircle2, FileText, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
+import { DiligenceDocumentPreview } from "@/components/DiligenceDocumentPreview";
+import {
+  SecondaryVerification,
+  TYPED_INITIALS_VERIFICATION,
+} from "@/components/SecondaryVerification";
 import {
   DD_CATEGORY_LABELS,
-  SECONDARY_VERIFICATION_OPTIONS,
   deviceFingerprint,
   formatDate,
 } from "@/lib/due-diligence";
@@ -51,12 +55,14 @@ function AgentDueDiligencePage() {
   const ack = useServerFn(acknowledgeAsAgent);
   const [tasks, setTasks] = useState<AgentDiligenceTask[]>([]);
   const [ackText, setAckText] = useState("");
+  const [agentName, setAgentName] = useState("Resident Agent");
   const [loading, setLoading] = useState(true);
 
   const refresh = useCallback(async () => {
     const r = await load();
     setTasks(r.tasks);
     setAckText(r.ackText);
+    setAgentName(r.agentName);
     setLoading(false);
   }, [load]);
 
@@ -95,6 +101,7 @@ function AgentDueDiligencePage() {
             key={`${task.documentId}:${task.buyerAccountId}`}
             task={task}
             ackText={ackText}
+            agentName={agentName}
             onAcknowledge={async (verification, noticeShownAt, typedName) => {
               const r = await ack({
                 data: {
@@ -146,10 +153,12 @@ function AgentDueDiligencePage() {
 function TaskCard({
   task,
   ackText,
+  agentName,
   onAcknowledge,
 }: {
   task: AgentDiligenceTask;
   ackText: string;
+  agentName: string;
   onAcknowledge: (
     verification: string,
     noticeShownAt: string | null,
@@ -159,16 +168,22 @@ function TaskCard({
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [checked, setChecked] = useState(false);
-  const [typedName, setTypedName] = useState("");
-  const [verification, setVerification] = useState<string>(
-    SECONDARY_VERIFICATION_OPTIONS[0].value,
-  );
+  const [verification, setVerification] = useState<string>(TYPED_INITIALS_VERIFICATION);
+  const [verificationReady, setVerificationReady] = useState(false);
   const [noticeShownAt, setNoticeShownAt] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (open && task.isGoverning && !noticeShownAt) setNoticeShownAt(new Date().toISOString());
   }, [open, task.isGoverning, noticeShownAt]);
+
+  useEffect(() => {
+    if (!open) return;
+    setScrolled(false);
+    setChecked(false);
+    setVerification(TYPED_INITIALS_VERIFICATION);
+    setVerificationReady(false);
+  }, [open, task.documentId, task.contentHash]);
 
   return (
     <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
@@ -200,27 +215,12 @@ function TaskCard({
 
       {open ? (
         <div className="mt-4 space-y-4">
-          <div
-            onScroll={(e) => {
-              const el = e.currentTarget;
-              if (el.scrollTop + el.clientHeight >= el.scrollHeight - 24) setScrolled(true);
-            }}
-            className="max-h-96 overflow-y-auto rounded-lg border border-border bg-background p-4"
-          >
-            {task.signedUrl ? (
-              <iframe
-                title={task.documentTitle}
-                src={task.signedUrl}
-                className="h-[28rem] w-full rounded"
-              />
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                This document is temporarily unavailable. Please refresh.
-              </p>
-            )}
-            <div className="h-[30rem]" aria-hidden />
-            <p className="pb-2 text-center text-xs text-muted-foreground">— end of document —</p>
-          </div>
+          <DiligenceDocumentPreview
+            title={task.documentTitle}
+            url={task.signedUrl}
+            version={task.contentHash}
+            onScrolledToEnd={() => setScrolled(true)}
+          />
 
           {task.isGoverning ? (
             <div className="rounded-lg border border-accent/40 bg-accent/5 p-4">
@@ -253,34 +253,21 @@ function TaskCard({
             </span>
           </label>
 
-          <input
-            value={typedName}
-            onChange={(e) => setTypedName(e.target.value)}
-            placeholder="Full legal name"
-            className="h-10 w-full max-w-sm rounded-md border border-border bg-background px-3 text-sm"
+          <SecondaryVerification
+            signerName={agentName}
+            value={verification}
+            onChange={setVerification}
+            onVerifiedChange={setVerificationReady}
+            disabled={!checked || saving}
           />
-
-          <label className="block text-xs font-medium text-muted-foreground">
-            Secondary verification
-            <select
-              value={verification}
-              onChange={(e) => setVerification(e.target.value)}
-              className="mt-1 block h-10 w-full max-w-sm rounded-md border border-border bg-background px-3 text-sm text-foreground"
-            >
-              {SECONDARY_VERIFICATION_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
-          </label>
 
           <button
             type="button"
-            disabled={!checked || !scrolled || typedName.trim().length < 2 || saving}
+            disabled={!checked || !scrolled || !verificationReady || saving}
             onClick={async () => {
               setSaving(true);
-              await onAcknowledge(verification, noticeShownAt, typedName.trim());
+              await onAcknowledge(verification, noticeShownAt, agentName);
+              setChecked(false);
               setSaving(false);
             }}
             className="inline-flex h-10 items-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
