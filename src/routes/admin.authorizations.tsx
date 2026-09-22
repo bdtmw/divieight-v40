@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { formatCents, formatRate, fundingSourceLabel } from "@/lib/commission-item";
 import {
   AUTHORIZATION_ACTIONS,
   AUTHORIZATION_ACTION_LABELS,
@@ -50,6 +51,19 @@ type Row = AuthorizationRequestRow & {
     decision: "confirmed" | "declined" | null;
     respondedAt: string | null;
     onBehalfOf: string | null;
+  }>;
+  commissionItem: {
+    id: string;
+    rate_percent: number;
+    funding_source: string;
+    per_share_amount_cents: number;
+    status: "proposed" | "authorized" | "declined";
+  } | null;
+  commissionMembers: Array<{
+    memberId: string;
+    name: string;
+    decision: "confirmed" | "declined" | null;
+    respondedAt: string | null;
   }>;
 };
 
@@ -289,6 +303,34 @@ function AdminAuthorizations() {
                         </li>
                       ))}
                     </ul>
+                  ) : null}
+                  {row.commissionItem ? (
+                    <div className="mt-2 rounded-lg border border-border bg-muted/40 p-2 text-xs text-muted-foreground">
+                      <p className="text-foreground">
+                        Commission provision (proposed by the Heavy Lifting Agent):{" "}
+                        {formatRate(row.commissionItem.rate_percent)} —{" "}
+                        {formatCents(row.commissionItem.per_share_amount_cents)} per 1/8th share ·{" "}
+                        {fundingSourceLabel(row.commissionItem.funding_source)} ·{" "}
+                        {row.commissionItem.status === "authorized"
+                          ? "authorized by all members"
+                          : row.commissionItem.status === "declined"
+                            ? "declined — instrument not tendered (not a Default under PRA Section 8)"
+                            : "awaiting member authorization"}
+                      </p>
+                      <ul className="mt-1 space-y-0.5">
+                        {row.commissionMembers.map((m) => (
+                          <li key={m.memberId}>
+                            {m.name}:{" "}
+                            {m.decision === "confirmed"
+                              ? "Commission authorized"
+                              : m.decision === "declined"
+                                ? "Commission declined"
+                                : "Awaiting commission authorization"}
+                            {m.respondedAt ? ` · ${formatDeadline(m.respondedAt)}` : ""}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   ) : null}
                   {row.recommendation_kind ? (
                     <p className="mt-2 text-xs text-muted-foreground">

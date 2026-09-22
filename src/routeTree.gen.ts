@@ -84,6 +84,7 @@ import { Route as BuyerOnboardingIndexRouteImport } from './routes/buyer.onboard
 import { Route as BuyerAuthorizationsIndexRouteImport } from './routes/buyer.authorizations.index'
 import { Route as AgentListingsIndexRouteImport } from './routes/agent.listings.index'
 import { Route as AgentDocumentsIndexRouteImport } from './routes/agent.documents.index'
+import { Route as AgentAuthorizationsIndexRouteImport } from './routes/agent.authorizations.index'
 import { Route as AdminPropertiesIndexRouteImport } from './routes/admin.properties.index'
 import { Route as AdminPodsIndexRouteImport } from './routes/admin.pods.index'
 import { Route as ListingsIdEditRouteImport } from './routes/listings.$id.edit'
@@ -121,6 +122,7 @@ import { Route as AgentDocumentsIdRouteImport } from './routes/agent.documents.$
 import { Route as AgentPodsIdIndexRouteImport } from './routes/agent.pods.$id.index'
 import { Route as AgentPodsIdHlaInvitationRouteImport } from './routes/agent.pods.$id.hla-invitation'
 import { Route as AgentPodsIdBriefcaseRouteImport } from './routes/agent.pods.$id.briefcase'
+import { Route as AgentAuthorizationsIdCommissionRouteImport } from './routes/agent.authorizations.$id.commission'
 import { Route as AdminPropertiesIdDueDiligenceRouteImport } from './routes/admin.properties.$id.due-diligence'
 import { Route as AdminPodsIdSelectHeavyLifterRouteImport } from './routes/admin.pods.$id.select-heavy-lifter'
 import { Route as AdminPodsIdBriefcaseRouteImport } from './routes/admin.pods.$id.briefcase'
@@ -501,6 +503,12 @@ const AgentDocumentsIndexRoute = AgentDocumentsIndexRouteImport.update({
   path: '/documents/',
   getParentRoute: () => AgentRoute,
 } as any)
+const AgentAuthorizationsIndexRoute =
+  AgentAuthorizationsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AgentAuthorizationsRoute,
+  } as any)
 const AdminPropertiesIndexRoute = AdminPropertiesIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -703,6 +711,12 @@ const AgentPodsIdBriefcaseRoute = AgentPodsIdBriefcaseRouteImport.update({
   path: '/pods/$id/briefcase',
   getParentRoute: () => AgentRoute,
 } as any)
+const AgentAuthorizationsIdCommissionRoute =
+  AgentAuthorizationsIdCommissionRouteImport.update({
+    id: '/$id/commission',
+    path: '/$id/commission',
+    getParentRoute: () => AgentAuthorizationsRoute,
+  } as any)
 const AdminPropertiesIdDueDiligenceRoute =
   AdminPropertiesIdDueDiligenceRouteImport.update({
     id: '/$id/due-diligence',
@@ -751,7 +765,7 @@ export interface FileRoutesByFullPath {
   '/admin/support': typeof AdminSupportRoute
   '/admin/tether-resolution': typeof AdminTetherResolutionRoute
   '/agent/attribution': typeof AgentAttributionRoute
-  '/agent/authorizations': typeof AgentAuthorizationsRoute
+  '/agent/authorizations': typeof AgentAuthorizationsRouteWithChildren
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/due-diligence': typeof AgentDueDiligenceRoute
@@ -827,6 +841,7 @@ export interface FileRoutesByFullPath {
   '/listings/$id/edit': typeof ListingsIdEditRoute
   '/admin/pods/': typeof AdminPodsIndexRoute
   '/admin/properties/': typeof AdminPropertiesIndexRoute
+  '/agent/authorizations/': typeof AgentAuthorizationsIndexRoute
   '/agent/documents/': typeof AgentDocumentsIndexRoute
   '/agent/listings/': typeof AgentListingsIndexRoute
   '/buyer/authorizations/': typeof BuyerAuthorizationsIndexRoute
@@ -834,6 +849,7 @@ export interface FileRoutesByFullPath {
   '/admin/pods/$id/briefcase': typeof AdminPodsIdBriefcaseRoute
   '/admin/pods/$id/select-heavy-lifter': typeof AdminPodsIdSelectHeavyLifterRoute
   '/admin/properties/$id/due-diligence': typeof AdminPropertiesIdDueDiligenceRoute
+  '/agent/authorizations/$id/commission': typeof AgentAuthorizationsIdCommissionRoute
   '/agent/pods/$id/briefcase': typeof AgentPodsIdBriefcaseRoute
   '/agent/pods/$id/hla-invitation': typeof AgentPodsIdHlaInvitationRoute
   '/agent/pods/$id/': typeof AgentPodsIdIndexRoute
@@ -863,7 +879,6 @@ export interface FileRoutesByTo {
   '/admin/support': typeof AdminSupportRoute
   '/admin/tether-resolution': typeof AdminTetherResolutionRoute
   '/agent/attribution': typeof AgentAttributionRoute
-  '/agent/authorizations': typeof AgentAuthorizationsRoute
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/due-diligence': typeof AgentDueDiligenceRoute
@@ -938,6 +953,7 @@ export interface FileRoutesByTo {
   '/listings/$id/edit': typeof ListingsIdEditRoute
   '/admin/pods': typeof AdminPodsIndexRoute
   '/admin/properties': typeof AdminPropertiesIndexRoute
+  '/agent/authorizations': typeof AgentAuthorizationsIndexRoute
   '/agent/documents': typeof AgentDocumentsIndexRoute
   '/agent/listings': typeof AgentListingsIndexRoute
   '/buyer/authorizations': typeof BuyerAuthorizationsIndexRoute
@@ -945,6 +961,7 @@ export interface FileRoutesByTo {
   '/admin/pods/$id/briefcase': typeof AdminPodsIdBriefcaseRoute
   '/admin/pods/$id/select-heavy-lifter': typeof AdminPodsIdSelectHeavyLifterRoute
   '/admin/properties/$id/due-diligence': typeof AdminPropertiesIdDueDiligenceRoute
+  '/agent/authorizations/$id/commission': typeof AgentAuthorizationsIdCommissionRoute
   '/agent/pods/$id/briefcase': typeof AgentPodsIdBriefcaseRoute
   '/agent/pods/$id/hla-invitation': typeof AgentPodsIdHlaInvitationRoute
   '/agent/pods/$id': typeof AgentPodsIdIndexRoute
@@ -980,7 +997,7 @@ export interface FileRoutesById {
   '/admin/support': typeof AdminSupportRoute
   '/admin/tether-resolution': typeof AdminTetherResolutionRoute
   '/agent/attribution': typeof AgentAttributionRoute
-  '/agent/authorizations': typeof AgentAuthorizationsRoute
+  '/agent/authorizations': typeof AgentAuthorizationsRouteWithChildren
   '/agent/broker-relationship': typeof AgentBrokerRelationshipRoute
   '/agent/dashboard': typeof AgentDashboardRoute
   '/agent/due-diligence': typeof AgentDueDiligenceRoute
@@ -1056,6 +1073,7 @@ export interface FileRoutesById {
   '/listings/$id/edit': typeof ListingsIdEditRoute
   '/admin/pods/': typeof AdminPodsIndexRoute
   '/admin/properties/': typeof AdminPropertiesIndexRoute
+  '/agent/authorizations/': typeof AgentAuthorizationsIndexRoute
   '/agent/documents/': typeof AgentDocumentsIndexRoute
   '/agent/listings/': typeof AgentListingsIndexRoute
   '/buyer/authorizations/': typeof BuyerAuthorizationsIndexRoute
@@ -1063,6 +1081,7 @@ export interface FileRoutesById {
   '/admin/pods/$id/briefcase': typeof AdminPodsIdBriefcaseRoute
   '/admin/pods/$id/select-heavy-lifter': typeof AdminPodsIdSelectHeavyLifterRoute
   '/admin/properties/$id/due-diligence': typeof AdminPropertiesIdDueDiligenceRoute
+  '/agent/authorizations/$id/commission': typeof AgentAuthorizationsIdCommissionRoute
   '/agent/pods/$id/briefcase': typeof AgentPodsIdBriefcaseRoute
   '/agent/pods/$id/hla-invitation': typeof AgentPodsIdHlaInvitationRoute
   '/agent/pods/$id/': typeof AgentPodsIdIndexRoute
@@ -1175,6 +1194,7 @@ export interface FileRouteTypes {
     | '/listings/$id/edit'
     | '/admin/pods/'
     | '/admin/properties/'
+    | '/agent/authorizations/'
     | '/agent/documents/'
     | '/agent/listings/'
     | '/buyer/authorizations/'
@@ -1182,6 +1202,7 @@ export interface FileRouteTypes {
     | '/admin/pods/$id/briefcase'
     | '/admin/pods/$id/select-heavy-lifter'
     | '/admin/properties/$id/due-diligence'
+    | '/agent/authorizations/$id/commission'
     | '/agent/pods/$id/briefcase'
     | '/agent/pods/$id/hla-invitation'
     | '/agent/pods/$id/'
@@ -1211,7 +1232,6 @@ export interface FileRouteTypes {
     | '/admin/support'
     | '/admin/tether-resolution'
     | '/agent/attribution'
-    | '/agent/authorizations'
     | '/agent/broker-relationship'
     | '/agent/dashboard'
     | '/agent/due-diligence'
@@ -1286,6 +1306,7 @@ export interface FileRouteTypes {
     | '/listings/$id/edit'
     | '/admin/pods'
     | '/admin/properties'
+    | '/agent/authorizations'
     | '/agent/documents'
     | '/agent/listings'
     | '/buyer/authorizations'
@@ -1293,6 +1314,7 @@ export interface FileRouteTypes {
     | '/admin/pods/$id/briefcase'
     | '/admin/pods/$id/select-heavy-lifter'
     | '/admin/properties/$id/due-diligence'
+    | '/agent/authorizations/$id/commission'
     | '/agent/pods/$id/briefcase'
     | '/agent/pods/$id/hla-invitation'
     | '/agent/pods/$id'
@@ -1403,6 +1425,7 @@ export interface FileRouteTypes {
     | '/listings/$id/edit'
     | '/admin/pods/'
     | '/admin/properties/'
+    | '/agent/authorizations/'
     | '/agent/documents/'
     | '/agent/listings/'
     | '/buyer/authorizations/'
@@ -1410,6 +1433,7 @@ export interface FileRouteTypes {
     | '/admin/pods/$id/briefcase'
     | '/admin/pods/$id/select-heavy-lifter'
     | '/admin/properties/$id/due-diligence'
+    | '/agent/authorizations/$id/commission'
     | '/agent/pods/$id/briefcase'
     | '/agent/pods/$id/hla-invitation'
     | '/agent/pods/$id/'
@@ -2003,6 +2027,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentDocumentsIndexRouteImport
       parentRoute: typeof AgentRoute
     }
+    '/agent/authorizations/': {
+      id: '/agent/authorizations/'
+      path: '/'
+      fullPath: '/agent/authorizations/'
+      preLoaderRoute: typeof AgentAuthorizationsIndexRouteImport
+      parentRoute: typeof AgentAuthorizationsRoute
+    }
     '/admin/properties/': {
       id: '/admin/properties/'
       path: '/'
@@ -2262,6 +2293,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentPodsIdBriefcaseRouteImport
       parentRoute: typeof AgentRoute
     }
+    '/agent/authorizations/$id/commission': {
+      id: '/agent/authorizations/$id/commission'
+      path: '/$id/commission'
+      fullPath: '/agent/authorizations/$id/commission'
+      preLoaderRoute: typeof AgentAuthorizationsIdCommissionRouteImport
+      parentRoute: typeof AgentAuthorizationsRoute
+    }
     '/admin/properties/$id/due-diligence': {
       id: '/admin/properties/$id/due-diligence'
       path: '/$id/due-diligence'
@@ -2346,9 +2384,22 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface AgentAuthorizationsRouteChildren {
+  AgentAuthorizationsIndexRoute: typeof AgentAuthorizationsIndexRoute
+  AgentAuthorizationsIdCommissionRoute: typeof AgentAuthorizationsIdCommissionRoute
+}
+
+const AgentAuthorizationsRouteChildren: AgentAuthorizationsRouteChildren = {
+  AgentAuthorizationsIndexRoute: AgentAuthorizationsIndexRoute,
+  AgentAuthorizationsIdCommissionRoute: AgentAuthorizationsIdCommissionRoute,
+}
+
+const AgentAuthorizationsRouteWithChildren =
+  AgentAuthorizationsRoute._addFileChildren(AgentAuthorizationsRouteChildren)
+
 interface AgentRouteChildren {
   AgentAttributionRoute: typeof AgentAttributionRoute
-  AgentAuthorizationsRoute: typeof AgentAuthorizationsRoute
+  AgentAuthorizationsRoute: typeof AgentAuthorizationsRouteWithChildren
   AgentBrokerRelationshipRoute: typeof AgentBrokerRelationshipRoute
   AgentDashboardRoute: typeof AgentDashboardRoute
   AgentDueDiligenceRoute: typeof AgentDueDiligenceRoute
@@ -2373,7 +2424,7 @@ interface AgentRouteChildren {
 
 const AgentRouteChildren: AgentRouteChildren = {
   AgentAttributionRoute: AgentAttributionRoute,
-  AgentAuthorizationsRoute: AgentAuthorizationsRoute,
+  AgentAuthorizationsRoute: AgentAuthorizationsRouteWithChildren,
   AgentBrokerRelationshipRoute: AgentBrokerRelationshipRoute,
   AgentDashboardRoute: AgentDashboardRoute,
   AgentDueDiligenceRoute: AgentDueDiligenceRoute,
