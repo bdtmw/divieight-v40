@@ -93,7 +93,7 @@ function BuyerAuthorizations() {
                   {blocked ? (
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent">
                       <FileWarning className="h-3.5 w-3.5" />
-                      Document review required
+                      {buyerPending ? "Document review required" : "Resident Agent review pending"}
                     </span>
                   ) : (
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1 text-xs font-medium text-foreground">
