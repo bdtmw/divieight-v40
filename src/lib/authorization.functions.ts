@@ -350,6 +350,8 @@ export const getBuyerAuthorization = createServerFn({ method: "GET" })
       members: [],
       property: null,
       agentName: null,
+      commissionItem: null,
+      commissionResponses: [],
     };
     if (!buyer) return empty;
 
