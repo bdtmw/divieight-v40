@@ -326,6 +326,9 @@ export interface BuyerAuthorizationPayload {
   members: AuthorizationMember[];
   property: { id: string; address: string; city: string; state: string } | null;
   agentName: string | null;
+  /** Discrete commission provision proposed by the Heavy Lifting Agent. */
+  commissionItem: CommissionItemRow | null;
+  commissionResponses: CommissionResponseRow[];
 }
 
 export const getBuyerAuthorization = createServerFn({ method: "GET" })
