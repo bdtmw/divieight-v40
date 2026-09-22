@@ -783,6 +783,13 @@ export const listAdminAuthorizations = createServerFn({ method: "GET" })
           respondedAt: string | null;
           onBehalfOf: string | null;
         }>;
+        commissionItem: CommissionItemRow | null;
+        commissionMembers: Array<{
+          memberId: string;
+          name: string;
+          decision: "confirmed" | "declined" | null;
+          respondedAt: string | null;
+        }>;
       }
     >;
     for (const r of rows) {
@@ -808,6 +815,19 @@ export const listAdminAuthorizations = createServerFn({ method: "GET" })
           onBehalfOf: !own && proxy ? nameOf(proxy.account_member_id) : null,
         };
       });
+      const commissionItem = await loadCommissionItem(db, r.id);
+      const commissionResponses = commissionItem
+        ? await loadCommissionResponses(db, commissionItem.id)
+        : [];
+      const commissionMembers = members.map((m) => {
+        const hit = commissionResponses.find((x) => x.account_member_id === m.id);
+        return {
+          memberId: m.id,
+          name: m.full_name ?? "Account Member",
+          decision: (hit?.decision as "confirmed" | "declined" | undefined) ?? null,
+          respondedAt: hit?.responded_at ?? null,
+        };
+      });
       out.push({
         ...r,
         propertyLabel: labels.get(r.property_id) ?? "",
@@ -817,6 +837,8 @@ export const listAdminAuthorizations = createServerFn({ method: "GET" })
         confirmedCount: state.confirmed.length,
         declinedCount: state.declined.length,
         memberResponses,
+        commissionItem,
+        commissionMembers,
       });
     }
     return { rows: out };
