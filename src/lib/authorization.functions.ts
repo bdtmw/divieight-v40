@@ -532,7 +532,13 @@ export const respondToAuthorization = createServerFn({ method: "POST" })
 
     const responses = await loadResponses(db, row.id);
     const state = authorizationState(row as AuthorizationRequestRow, responses, members);
-    const disposition = dispositionFor(state);
+    let disposition = dispositionFor(state);
+
+    // Authorizing the instrument is NOT authorizing the commission provision.
+    // While a proposed provision is unauthorized, the instrument does not tender.
+    const commissionItem = await loadCommissionItem(db, row.id);
+    const commissionPending = Boolean(commissionItem && commissionItem.status !== "authorized");
+    if (disposition === "authorized" && commissionPending) disposition = null;
 
     if (disposition) {
       await db
