@@ -77,7 +77,9 @@ function BuyerAuthorizationDetail() {
       (result.gateBlocker === "buyer" || result.gateBlocker === "both")
     ) {
       toast.error(
-        "You have an unread required document — review it before you can act on this request.",
+        result.gateBlocker === "both"
+          ? "Both you and your Resident Agent have unread documents — review yours first."
+          : "You have an unread required document — review it before you can act on this request.",
       );
       navigate({
         to: "/buyer/due-diligence/$id",

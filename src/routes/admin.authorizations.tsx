@@ -69,6 +69,7 @@ function AdminAuthorizations() {
   const [busy, setBusy] = useState(false);
 
   const refresh = useCallback(async () => {
+    setLoading(true);
     const [a, b] = await Promise.all([list({}), loadTargets({})]);
     setRows(a.rows as Row[]);
     setTargets(b.targets as Target[]);

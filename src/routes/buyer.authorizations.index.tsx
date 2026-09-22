@@ -78,6 +78,7 @@ function BuyerAuthorizations() {
           {rows.map((row) => {
             const blocked = row.status === "pending" && !row.gateClear;
             const buyerPending = row.gateBlocker === "buyer" || row.gateBlocker === "both";
+            const bothPending = row.gateBlocker === "both";
             return (
               <li key={row.id} className="rounded-xl border border-border bg-card p-5">
                 <div className="flex flex-wrap items-start justify-between gap-3">
@@ -93,7 +94,7 @@ function BuyerAuthorizations() {
                   {blocked ? (
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent">
                       <FileWarning className="h-3.5 w-3.5" />
-                      {buyerPending ? "Document review required" : "Resident Agent review pending"}
+                      {bothPending ? "Review required (both)" : buyerPending ? "Document review required" : "Resident Agent review pending"}
                     </span>
                   ) : (
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1 text-xs font-medium text-foreground">
@@ -105,7 +106,9 @@ function BuyerAuthorizations() {
                 {blocked ? (
                   <>
                     <p className="mt-4 text-xs text-muted-foreground">
-                      {buyerPending
+                      {bothPending
+                        ? "Both you and your Resident Agent have unread documents — review yours first."
+                        : buyerPending
                         ? "You have an unread required document — review it before you can act on this request."
                         : "Your Resident Agent still needs to review this document before you can proceed. No action is needed from you right now."}
                     </p>
