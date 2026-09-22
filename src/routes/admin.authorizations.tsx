@@ -267,15 +267,45 @@ function AdminAuthorizations() {
                     {row.buyerEmail ?? row.buyer_account_id} — {row.propertyLabel}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Deadline {formatDeadline(row.deadline_at)} · {row.outstanding} member response(s)
-                    outstanding
+                    Deadline {formatDeadline(row.deadline_at)} · {row.confirmedCount} of{" "}
+                    {row.memberCount} member(s) confirmed
+                    {row.declinedCount > 0 ? ` · ${row.declinedCount} declined` : ""} ·{" "}
+                    {row.outstanding} outstanding
                     {row.escalated_at ? " · escalated" : ""}
                     {row.escalated_second_at ? " · Manager alerted" : ""}
                   </p>
+                  {row.memberResponses.length > 0 ? (
+                    <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+                      {row.memberResponses.map((m) => (
+                        <li key={m.memberId}>
+                          <span className="text-foreground">{m.name}</span>:{" "}
+                          {m.decision === "confirmed"
+                            ? "Authorized"
+                            : m.decision === "declined"
+                              ? "Declined"
+                              : "Awaiting response"}
+                          {m.respondedAt ? ` · ${formatDeadline(m.respondedAt)}` : ""}
+                          {m.onBehalfOf ? ` · on behalf by ${m.onBehalfOf}` : ""}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                  {row.recommendation_kind ? (
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      Resident Agent:{" "}
+                      {row.recommendation_kind === "recommend"
+                        ? "Recommended"
+                        : row.recommendation_kind === "recommend_against"
+                          ? "Recommended against"
+                          : "No recommendation"}
+                      {row.recommendation_text ? ` — ${row.recommendation_text}` : ""}
+                    </p>
+                  ) : null}
                 </div>
                 <span className="rounded-full bg-muted px-3 py-1 text-xs text-foreground">
                   {authorizationStatusLabel(row)}
                 </span>
+
               </div>
             </li>
           ))}
