@@ -591,7 +591,7 @@ export const respondToAuthorization = createServerFn({ method: "POST" })
       }
     }
 
-    return { disposition, outstanding: state.outstanding.length };
+    return { disposition, outstanding: state.outstanding.length, commissionPending };
   });
 
 // ---------------------------------------------------------------------------
